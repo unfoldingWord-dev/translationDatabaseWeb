@@ -1,3 +1,21 @@
 {% load i18n %}
 
-{% trans "&copy; 2014 &lt;your company here&gt;" %}
+<p>
+    {% blocktrans %}
+    translationDatabase is an <a href="https://unfoldingword.org/">unfoldingWord</a>
+    project
+    {% endblocktrans %}
+</p>
+
+<p>
+    {% blocktrans %}
+    All translationDatabase content is available under a
+    <a href="http://creativecommons.org/licenses/by-sa/4.0">
+        Creative Commons Attribution-ShareAlike License
+    </a>.
+    {% endblocktrans %}
+</p>
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+    <img alt="{% trans "Creative Commons License" %}" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+</a>
