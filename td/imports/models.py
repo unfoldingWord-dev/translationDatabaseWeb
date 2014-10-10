@@ -36,6 +36,13 @@ class WikipediaISOLanguage(models.Model):
     @classmethod
     def reload(cls):
         response = requests.get("http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_WIKIPEDIA_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
         soup = bs4.BeautifulSoup(response.content)
         records = []
         for tr in soup.select("table.wikitable tr"):
@@ -93,6 +100,13 @@ class SIL_ISO_639_3(models.Model):
     @classmethod
     def reload(cls):
         response = requests.get("http://www-01.sil.org/iso639-3/iso-639-3.tab")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_SIL_ISO_639_3_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
         reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
         records = []
         for row in reader:
@@ -109,4 +123,4 @@ class SIL_ISO_639_3(models.Model):
         if len(records) > 0:
             cls.objects.all().delete()
             cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_SILISO639_3_RELOADED", extra={})
+            log(user=None, action="SOURCE_SIL_ISO_639_3_RELOADED", extra={})
