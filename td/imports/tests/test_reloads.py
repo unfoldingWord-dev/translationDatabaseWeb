@@ -16,6 +16,6 @@ class WikipediaReloadTests(TestCase):
         with patch("td.imports.models.requests") as mock_requests:
             mock_requests.get.return_value = mock_response = Mock()
             mock_response.status_code = 200
-            mock_response.text = self.data
+            mock_response.content = self.data
             WikipediaISOLanguage.reload()
             self.assertEquals(WikipediaISOLanguage.objects.count(), 184)

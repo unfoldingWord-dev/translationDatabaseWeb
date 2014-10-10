@@ -29,7 +29,7 @@ class WikipediaISOLanguage(models.Model):
     @classmethod
     def reload(cls):
         response = requests.get("http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes")
-        soup = bs4.BeautifulSoup(response.text)
+        soup = bs4.BeautifulSoup(response.content)
         records = []
         for tr in soup.select("table.wikitable tr"):
             row = [td.text for td in tr.find_all("td")]
