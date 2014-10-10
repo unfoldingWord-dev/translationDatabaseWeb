@@ -4,5 +4,11 @@ django-user-accounts==1.0
 metron==1.3.5
 eventlog==0.8.0
 django-jsonfield==0.9.13
+requests==2.4.3
+beautifulsoup4==4.3.2
 dj-database-url==0.3.0
 psycopg2==2.5.4
+
+
+# For Tests
+mock==1.0.1

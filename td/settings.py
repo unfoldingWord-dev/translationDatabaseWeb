@@ -134,6 +134,7 @@ INSTALLED_APPS = [
 
     # project
     "td",
+    "td.imports"
 ]
 
 # A sample logging configuration. The only tangible logging
