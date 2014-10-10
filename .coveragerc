@@ -1,4 +1,4 @@
 [run]
 source = td
-omit = *tests/*,*/migrations/*,td/urls.py,td/admin.py,*/management/*,td/settings*
+omit = *tests/*,*/migrations/*,apps.py,__init__.py,urls.py,admin.py,*/management/*,td/settings*
 branch = 1
