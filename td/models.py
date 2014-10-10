@@ -17,6 +17,9 @@ class AdditionalLanguage(models.Model):
         self.updated_at = timezone.now()
         return super(AdditionalLanguage, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.ietf_tag
+
     def __unicode__(self):
         return self.ietf_tag
 

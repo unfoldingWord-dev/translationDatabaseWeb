@@ -27,6 +27,9 @@ class WikipediaISOLanguage(models.Model):
     notes = models.TextField(blank=True)
     date_imported = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.language_name
+
     def __unicode__(self):
         return self.language_name
 
@@ -100,6 +103,9 @@ class SIL_ISO_639_3(models.Model):
     ref_name = models.CharField(max_length=150)
     comment = models.CharField(max_length=150, blank=True)
     date_imported = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.code
 
     def __unicode__(self):
         return self.code
