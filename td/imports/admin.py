@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import WikipediaISOLanguage
+from .models import WikipediaISOLanguage, SIL_ISO_639_3
 
 
 admin.site.register(
@@ -16,5 +16,29 @@ admin.site.register(
         "iso_639_9",
         "notes",
         "date_imported"
+    ]
+)
+
+
+admin.site.register(
+    SIL_ISO_639_3,
+    list_display=[
+        "code",
+        "part_2b",
+        "part_2t",
+        "part_1",
+        "scope",
+        "language_type",
+        "ref_name",
+        "comment",
+        "date_imported",
+    ],
+    list_filter=[
+        "scope",
+        "language_type"
+    ],
+    search_fields=[
+        "comment",
+        "ref_name"
     ]
 )
