@@ -49,15 +49,15 @@ class WikipediaISOLanguage(models.Model):
             row = [td.text for td in tr.find_all("td")]
             if len(row) == 10:
                 records.append(cls(
-                    language_family=row[1],
-                    language_name=row[2],
-                    native_name=row[3],
-                    iso_639_1=row[4][:2],
-                    iso_639_2t=row[5][:3],
-                    iso_639_2b=row[6][:3],
-                    iso_639_3=row[7][:3],
-                    iso_639_9=row[8][:4],
-                    notes=row[9]
+                    language_family=row[1].strip(),
+                    language_name=row[2].strip(),
+                    native_name=row[3].strip(),
+                    iso_639_1=row[4][:2].strip(),
+                    iso_639_2t=row[5][:3].strip(),
+                    iso_639_2b=row[6][:3].strip(),
+                    iso_639_3=row[7][:3].strip(),
+                    iso_639_9=row[8][:4].strip(),
+                    notes=row[9].strip()
                 ))
         if len(records) > 0:
             cls.objects.all().delete()
