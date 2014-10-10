@@ -27,6 +27,14 @@
     {% block extra_body %}{% endblock %}
 {% endblock %}
 
+{% block nav %}
+    <ul class="nav navbar-nav">
+        <li><a href="{% url "codes_text_export" %}">codes-d43.txt</a></li>
+        <li><a href="{% url "names_text_export" %}">langnames.txt</a></li>
+        <li><a href="{% url "names_json_export" %}">langnames.json</a></li>
+    </ul>
+{% endblock %}
+
 
 {% block script_base %}
     <script src="{% block jquery_src %}{% static "jquery/js/jquery-2.1.1.min.js" %}{% endblock %}"></script>
