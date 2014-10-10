@@ -16,6 +16,14 @@ admin.site.register(
         "iso_639_9",
         "notes",
         "date_imported"
+    ],
+    list_filter=[
+        "language_family"
+    ],
+    search_fields=[
+        "language_name",
+        "native_name",
+        "notes"
     ]
 )
 
