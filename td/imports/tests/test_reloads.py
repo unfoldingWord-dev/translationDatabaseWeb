@@ -7,7 +7,7 @@ from mock import patch, Mock
 from ..models import WikipediaISOLanguage
 
 
-class WikipediaImportTests(TestCase):
+class WikipediaReloadTests(TestCase):
 
     def setUp(self):
         self.data = open(os.path.join(os.path.dirname(__file__), "data/wikipedia.html")).read()
