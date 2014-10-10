@@ -1,0 +1,72 @@
+[
+{
+    "fields": {
+        "comment": "",
+        "ietf_tag": "ttt-x-ismai",
+        "created_at": "2014-08-25T15:17:07Z",
+        "updated_at": "2014-10-10T17:44:53.449Z",
+        "two_letter": "",
+        "native_name": "",
+        "common_name": "Ismaili",
+        "three_letter": ""
+    },
+    "model": "td.additionallanguage",
+    "pk": 1
+},
+{
+    "fields": {
+        "comment": "",
+        "ietf_tag": "es-419",
+        "created_at": "2014-10-10T17:44:56Z",
+        "updated_at": "2014-10-10T17:45:15.558Z",
+        "two_letter": "",
+        "native_name": "",
+        "common_name": "Espa\u00f1ol Latin America",
+        "three_letter": ""
+    },
+    "model": "td.additionallanguage",
+    "pk": 2
+},
+{
+    "fields": {
+        "comment": "",
+        "ietf_tag": "ttt-x-txizi",
+        "created_at": "2014-10-10T17:45:15Z",
+        "updated_at": "2014-10-10T17:45:27.037Z",
+        "two_letter": "",
+        "native_name": "",
+        "common_name": "Xizi",
+        "three_letter": ""
+    },
+    "model": "td.additionallanguage",
+    "pk": 3
+},
+{
+    "fields": {
+        "comment": "",
+        "ietf_tag": "pt-br",
+        "created_at": "2014-10-10T17:45:33Z",
+        "updated_at": "2014-10-10T17:46:03.870Z",
+        "two_letter": "",
+        "native_name": "",
+        "common_name": "Portugu\u00eas",
+        "three_letter": ""
+    },
+    "model": "td.additionallanguage",
+    "pk": 4
+},
+{
+    "fields": {
+        "comment": "",
+        "ietf_tag": "zh-tw",
+        "created_at": "2014-10-10T17:46:03Z",
+        "updated_at": "2014-10-10T17:46:16.758Z",
+        "two_letter": "",
+        "native_name": "",
+        "common_name": "\u7e41\u9ad4\u4e2d\u6587",
+        "three_letter": ""
+    },
+    "model": "td.additionallanguage",
+    "pk": 5
+}
+]
