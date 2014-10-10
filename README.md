@@ -7,10 +7,15 @@ translationDatabase
 
 ## Data Sources
 
+A lot of the sources of data are pull into and managed as repo as part of the
+Debian project called simplely, [ISO Codes](https://alioth.debian.org/anonscm/git/iso-codes/iso-codes.git).
+
+* [ISO 639-1 - Wikipedia](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+* [ISO 639-2 - LOC](http://www.loc.gov/standards/iso639-2/)
+* [ISO 639-3 - SIL](http://www-01.sil.org/iso639-3/download.asp)
+* [ISO 3166 - ISO](http://www.iso.org/iso/country_codes)
 * [ISO 15924 - Codes for the representation of names of scripts](http://www.unicode.org/iso15924/iso15924.txt.zip)
+
+* [Ethnologue Data](http://www.ethnologue.com/codes/download-code-tables)
 * [Unicode Supplamental Data](http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml)
 * [Geo Names - Languages in their own writing systems](http://www.geonames.de/languages.html)
-* [SIL ISO-639-3](http://www-01.sil.org/iso639-3/download.asp)
-* [ISO Codes (git repo)](https://alioth.debian.org/anonscm/git/iso-codes/iso-codes.git)
-* [Ethnologue Data](http://www.ethnologue.com/codes/download-code-tables)
-* [ISO-639-1 Wikipedia Native Names](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
