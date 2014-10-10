@@ -67,18 +67,28 @@ class WikipediaISOLanguage(models.Model):
 
 class SIL_ISO_639_3(models.Model):
 
+    SCOPE_INDIVIDUAL = "I"
+    SCOPE_MACRO_LANGUAGE = "M"
+    SCOPE_SPECIAL = "S"
     SCOPE_CHOICES = [
-        ("I", "Individual"),
-        ("M", "Macrolanguage"),
-        ("S", "Special")
+        (SCOPE_INDIVIDUAL, "Individual"),
+        (SCOPE_MACRO_LANGUAGE, "Macrolanguage"),
+        (SCOPE_SPECIAL, "Special")
     ]
+
+    TYPE_ANCIENT = "A"
+    TYPE_CONSTRUCTED = "C"
+    TYPE_EXTINCT = "E"
+    TYPE_HISTORICAL = "H"
+    TYPE_LIVING = "L"
+    TYPE_SPECIAL = "S"
     TYPE_CHOICES = [
-        ("A", "Ancient"),
-        ("C", "Constructed"),
-        ("E", "Extinct"),
-        ("H", "Historical"),
-        ("L", "Living"),
-        ("S", "Special")
+        (TYPE_ANCIENT, "Ancient"),
+        (TYPE_CONSTRUCTED, "Constructed"),
+        (TYPE_EXTINCT, "Extinct"),
+        (TYPE_HISTORICAL, "Historical"),
+        (TYPE_LIVING, "Living"),
+        (TYPE_SPECIAL, "Special")
     ]
 
     code = models.CharField(max_length=3)
