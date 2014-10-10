@@ -1,6 +1,9 @@
 import csv
 
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from django.db import models
 from django.utils import timezone
