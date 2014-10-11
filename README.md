@@ -21,5 +21,5 @@ Debian project called simplely, [ISO Codes](https://alioth.debian.org/anonscm/gi
 * [ISO 15924 - Codes for the representation of names of scripts](http://www.unicode.org/iso15924/iso15924.txt.zip)
 
 * [Ethnologue Data](http://www.ethnologue.com/codes/download-code-tables)
-* [Unicode Supplamental Data](http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml)
+* [Unicode Supplemental Data](http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml)
 * [Geo Names - Languages in their own writing systems](http://www.geonames.de/languages.html)
