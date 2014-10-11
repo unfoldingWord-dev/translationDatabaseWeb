@@ -63,6 +63,6 @@ where x.scope = %s and x.language_type = %s order by code;
     @property
     def json(self):
         return json.dumps([
-            dict(lc=x[0], ln=x[1])
+            dict(lc=x[0], ln=x[1].encode("utf-8"))
             for x in self.data()
         ], indent=4)
