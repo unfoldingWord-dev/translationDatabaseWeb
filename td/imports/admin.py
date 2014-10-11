@@ -1,6 +1,54 @@
 from django.contrib import admin
 
-from .models import WikipediaISOLanguage, SIL_ISO_639_3
+from .models import (
+    EthnologueCountryCode,
+    EthnologueLanguageCode,
+    EthnologueLanguageIndex,
+    SIL_ISO_639_3,
+    WikipediaISOLanguage
+)
+
+
+admin.site.register(
+    EthnologueCountryCode,
+    list_display=[
+        "code", "name", "area", "date_imported"
+    ],
+    list_filter=[
+        "area"
+    ],
+    search_fields=[
+        "code", "name", "area"
+    ]
+)
+
+
+admin.site.register(
+    EthnologueLanguageCode,
+    list_display=[
+        "code", "country_code", "status", "name", "date_imported"
+    ],
+    list_filter=[
+        "country_code", "status"
+    ],
+    search_fields=[
+        "code", "name"
+    ]
+)
+
+
+admin.site.register(
+    EthnologueLanguageIndex,
+    list_display=[
+        "language_code", "country_code", "name_type", "name", "date_imported"
+    ],
+    list_filter=[
+        "name_type", "country_code"
+    ],
+    search_fields=[
+        "language_code", "name"
+    ]
+)
 
 
 admin.site.register(

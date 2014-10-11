@@ -140,3 +140,150 @@ class SIL_ISO_639_3(models.Model):
             cls.objects.all().delete()
             cls.objects.bulk_create(records)
             log(user=None, action="SOURCE_SIL_ISO_639_3_RELOADED", extra={})
+
+
+class EthnologueLanguageCode(models.Model):
+
+    STATUS_EXTINCT = "E"
+    STATUS_LIVING = "L"
+    STATUS_CHOICES = [
+        (STATUS_EXTINCT, "Extinct"),
+        (STATUS_LIVING, "Living"),
+    ]
+
+    code = models.CharField(max_length=3, unique=True)
+    country_code = models.CharField(max_length=2)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    name = models.CharField(max_length=75)
+    date_imported = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.code
+
+    def __unicode__(self):
+        return self.code
+
+    class Meta:
+        verbose_name = "Ethnologue Language Code"
+
+    @classmethod
+    def reload(cls):
+        response = requests.get("http://www.ethnologue.com/sites/default/files/LanguageCodes.tab")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_ETHNOLOGUE_LANG_CODE_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
+        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        records = []
+        for row in reader:
+            records.append(cls(
+                code=row["LangID"],
+                country_code=row["CountryID"],
+                status=row["LangStatus"],
+                name=row["Name"],
+            ))
+        if len(records) > 0:
+            cls.objects.all().delete()
+            cls.objects.bulk_create(records)
+            log(user=None, action="SOURCE_ETHNOLOGUE_LANG_CODE_RELOADED", extra={})
+
+
+class EthnologueCountryCode(models.Model):
+
+    code = models.CharField(max_length=2, unique=True)
+    name = models.CharField(max_length=75)
+    area = models.CharField(max_length=10)
+    date_imported = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.code
+
+    def __unicode__(self):
+        return self.code
+
+    class Meta:
+        verbose_name = "Ethnologue Country Code"
+
+    @classmethod
+    def reload(cls):
+        response = requests.get("http://www.ethnologue.com/sites/default/files/CountryCodes.tab")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
+        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        records = []
+        for row in reader:
+            records.append(cls(
+                code=row["CountryID"],
+                name=row["Name"],
+                area=row["Area"],
+            ))
+        if len(records) > 0:
+            cls.objects.all().delete()
+            cls.objects.bulk_create(records)
+            log(user=None, action="SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOADED", extra={})
+
+
+class EthnologueLanguageIndex(models.Model):
+
+    TYPE_LANGUAGE = "L"
+    TYPE_LANGUAGE_ALTERNATE = "LA"
+    TYPE_DIALECT = "D"
+    TYPE_DIALECT_ALTERNATE = "DA"
+    TYPE_LANGUAGE_PEJORAATIVE = "LP"
+    TYPE_DIALECT_PEJORATIVE = "DP"
+    TYPE_CHOICES = [
+        (TYPE_LANGUAGE, "Language"),
+        (TYPE_LANGUAGE_ALTERNATE, "Language Alternate"),
+        (TYPE_DIALECT, "Dialect"),
+        (TYPE_DIALECT_ALTERNATE, "Dialect Alternate"),
+        (TYPE_LANGUAGE_PEJORAATIVE, "Language Pejorative"),
+        (TYPE_DIALECT_PEJORATIVE, "Dialect Pejorative")
+    ]
+
+    language_code = models.CharField(max_length=3)
+    country_code = models.CharField(max_length=2)
+    name_type = models.CharField(max_length=2, choices=TYPE_CHOICES)
+    name = models.CharField(max_length=75)
+    date_imported = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Ethnologue Language Index"
+        verbose_name_plural = "Ethnologue Language Index"
+
+    @classmethod
+    def reload(cls):
+        response = requests.get("http://www.ethnologue.com/sites/default/files/LanguageIndex.tab")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
+        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        records = []
+        for row in reader:
+            records.append(cls(
+                language_code=row["LangID"],
+                country_code=row["CountryID"],
+                name_type=row["NameType"],
+                name=row["Name"],
+            ))
+        if len(records) > 0:
+            cls.objects.all().delete()
+            cls.objects.bulk_create(records)
+            log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={})

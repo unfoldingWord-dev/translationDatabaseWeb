@@ -1,7 +1,48 @@
 # coding: utf-8
 from django.test import TestCase
 
-from ..models import WikipediaISOLanguage, SIL_ISO_639_3
+from ..models import (
+    EthnologueCountryCode,
+    EthnologueLanguageCode,
+    EthnologueLanguageIndex,
+    SIL_ISO_639_3,
+    WikipediaISOLanguage
+)
+
+
+class EthnologueLanguageCodeTestCase(TestCase):
+
+    def test_string_representation(self):
+        ethno = EthnologueLanguageCode(
+            code="zzj",
+            country_code="CN",
+            status=EthnologueLanguageCode.STATUS_LIVING,
+            name="Zhuang, Zuojiang"
+        )
+        self.assertEquals(str(ethno), "zzj")
+
+
+class EthnologueLanguageIndexTestCase(TestCase):
+
+    def test_string_representation(self):
+        ethno = EthnologueLanguageIndex(
+            language_code="zzj",
+            country_code="VN",
+            name_type=EthnologueLanguageIndex.TYPE_LANGUAGE_ALTERNATE,
+            name="Nung Chao"
+        )
+        self.assertEquals(str(ethno), "Nung Chao")
+
+
+class EthnologueCountryCodeTestCase(TestCase):
+
+    def test_string_representation(self):
+        ethno = EthnologueCountryCode(
+            code="ZW",
+            name="Zimbabwe",
+            area="Africa"
+        )
+        self.assertEquals(str(ethno), "ZW")
 
 
 class WikipediaTestCase(TestCase):
