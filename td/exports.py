@@ -54,15 +54,16 @@ where x.scope = %s and x.language_type = %s order by code;
         rows = cursor.fetchall()
         rows.extend(self.additionals.items())
         rows.sort()
+        rows = [(r[0].encode("utf-8"), r[1].encode("utf-8")) for r in rows]
         return rows
 
     @property
     def text(self):
-        return "\n".join(["{}\t{}".format(r[0], r[1]) for r in self.data()]).encode("utf-8")
+        return "\n".join(["{}\t{}".format(r[0], r[1]) for r in self.data()])
 
     @property
     def json(self):
         return json.dumps([
             dict(lc=x[0], ln=x[1])
             for x in self.data()
-        ], indent=4).encode("utf-8")
+        ], indent=4)
