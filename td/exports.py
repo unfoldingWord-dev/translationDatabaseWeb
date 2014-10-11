@@ -36,7 +36,7 @@ class LanguageCodesExport(Export):
 
     @property
     def text(self):
-        return ", ".join(self.data())
+        return ", ".join(self.data()).encode("utf-8")
 
 
 class LanguageNamesExport(Export):
@@ -58,11 +58,11 @@ where x.scope = %s and x.language_type = %s order by code;
 
     @property
     def text(self):
-        return "\n".join(["{}\t{}".format(r[0], r[1].encode("utf-8")) for r in self.data()])
+        return "\n".join(["{}\t{}".format(r[0], r[1]) for r in self.data()]).encode("utf-8")
 
     @property
     def json(self):
         return json.dumps([
-            dict(lc=x[0], ln=x[1].encode("utf-8"))
+            dict(lc=x[0], ln=x[1])
             for x in self.data()
-        ], indent=4)
+        ], indent=4).encode("utf-8")
