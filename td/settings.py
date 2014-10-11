@@ -10,7 +10,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
-    "default": dj_database_url.config(env="GONDOR_DATABASE_URL", default="postgres://localhost/td"),
+    "default": dj_database_url.config("postgres://localhost/td"),
 }
 
 ALLOWED_HOSTS = []
