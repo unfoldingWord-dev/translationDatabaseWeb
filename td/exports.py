@@ -36,7 +36,7 @@ class LanguageCodesExport(Export):
 
     @property
     def text(self):
-        return ", ".join(self.data()).encode("utf-8")
+        return " ".join(self.data()).encode("utf-8")
 
 
 class LanguageNamesExport(Export):
