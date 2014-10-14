@@ -45,16 +45,31 @@ class LanguageNamesExport(Export):
         cursor = connection.cursor()
         cursor.execute("""
     select coalesce(nullif(x.part_1, ''), x.code) as code,
-           coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name
+           coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
+           coalesce(cc.code, '') as country_code,
+           coalesce(cc.area, '') as region
       from imports_sil_iso_639_3 x
  left join imports_wikipediaisolanguage nn1 on x.part_1 = nn1.iso_639_1
  left join imports_wikipediaisolanguage nn2 on x.code = nn2.iso_639_3
-where x.scope = %s and x.language_type = %s order by code;
+ left join imports_ethnologuelanguagecode lc on x.code = lc.code
+ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
+     where x.scope = %s and x.language_type = %s order by code;
 """, [SIL_ISO_639_3.SCOPE_INDIVIDUAL, SIL_ISO_639_3.TYPE_LIVING])
         rows = cursor.fetchall()
-        rows.extend(self.additionals.items())
+        rows.extend([(x[0], x[1], "", "") for x in self.additionals.items()])
         rows.sort()
-        rows = [(r[0].encode("utf-8"), r[1].encode("utf-8")) for r in rows]
+        for row in rows:
+            if len(row) != 4:
+                print row
+        rows = [
+            (
+                r[0].encode("utf-8"),
+                r[1].encode("utf-8"),
+                r[2].encode("utf-8"),
+                r[3].encode("utf-8")
+            )
+            for r in rows
+        ]
         return rows
 
     @property
@@ -64,6 +79,6 @@ where x.scope = %s and x.language_type = %s order by code;
     @property
     def json(self):
         return json.dumps([
-            dict(lc=x[0], ln=x[1])
+            dict(lc=x[0], ln=x[1], cc=x[2], lr=x[3])
             for x in self.data()
         ], indent=4)
