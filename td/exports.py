@@ -79,6 +79,6 @@ class LanguageNamesExport(Export):
     @property
     def json(self):
         return json.dumps([
-            dict(lc=x[0], ln=x[1], cc=x[2], lr=x[3])
+            dict(lc=x[0], ln=x[1], cc=[x[2]], lr=x[3])
             for x in self.data()
         ], indent=4)
