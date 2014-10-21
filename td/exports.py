@@ -2,7 +2,7 @@ import json
 
 from django.db import connection
 
-from td.imports.models import SIL_ISO_639_3
+from td.imports.models import EthnologueLanguageCode
 
 from .models import AdditionalLanguage
 
@@ -22,14 +22,15 @@ class Export(object):
 class LanguageCodesExport(Export):
 
     def data(self):
-        qs = SIL_ISO_639_3.objects.filter(
-            scope=SIL_ISO_639_3.SCOPE_INDIVIDUAL,
-            language_type=SIL_ISO_639_3.TYPE_LIVING
-        )
-        codes = [
-            x.part_1 or x.code
-            for x in qs
-        ]
+        cursor = connection.cursor()
+        cursor.execute("""
+    select coalesce(nullif(x.part_1, ''), x.code) as code
+      from imports_ethnologuelanguagecode lc
+ left join imports_sil_iso_639_3 x on x.code = lc.code
+     where lc.status = %s order by code;
+""", [EthnologueLanguageCode.STATUS_LIVING])
+        rows = cursor.fetchall()
+        codes = [row[0] for row in rows if row[0] is not None]
         codes.extend(self.additionals.keys())
         codes.sort()
         return codes
@@ -48,13 +49,13 @@ class LanguageNamesExport(Export):
            coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
            coalesce(cc.code, '') as country_code,
            coalesce(cc.area, '') as region
-      from imports_sil_iso_639_3 x
+      from imports_ethnologuelanguagecode lc
+ left join imports_sil_iso_639_3 x on x.code = lc.code
  left join imports_wikipediaisolanguage nn1 on x.part_1 = nn1.iso_639_1
  left join imports_wikipediaisolanguage nn2 on x.code = nn2.iso_639_3
- left join imports_ethnologuelanguagecode lc on x.code = lc.code
  left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
-     where x.scope = %s and x.language_type = %s order by code;
-""", [SIL_ISO_639_3.SCOPE_INDIVIDUAL, SIL_ISO_639_3.TYPE_LIVING])
+     where lc.status = %s order by code;
+""", [EthnologueLanguageCode.STATUS_LIVING])
         rows = cursor.fetchall()
         rows.extend([(x[0], x[1], "", "") for x in self.additionals.items()])
         rows.sort()
@@ -69,6 +70,7 @@ class LanguageNamesExport(Export):
                 r[3].encode("utf-8")
             )
             for r in rows
+            if r[0] is not None
         ]
         return rows
 
