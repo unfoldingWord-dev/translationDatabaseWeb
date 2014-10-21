@@ -1,0 +1,1 @@
+dropdb td; createdb td && gondor sqldump primary | ./manage.py dbshell && ./manage.py syncdb --noinput
