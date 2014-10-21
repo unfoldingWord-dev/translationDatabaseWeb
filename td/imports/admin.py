@@ -58,7 +58,7 @@ class WikipediaISOLanguageAdmin(LockedDownModelAdmin):
         "date_imported"
     ]
     list_filter = ["language_family"]
-    search_fields = ["language_name", "native_name", "notes"]
+    search_fields = ["iso_639_3", "iso_639_1", "language_name", "native_name", "notes"]
 
 
 class SIL_ISO_639_3Admin(LockedDownModelAdmin):
