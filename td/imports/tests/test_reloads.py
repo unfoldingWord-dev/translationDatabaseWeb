@@ -21,8 +21,9 @@ class BaseReloadTestMixin(object):
     expected_success_count = 0
     log_reload_failed_action = ""
 
-    def setUp(self):
-        self.data = open(os.path.join(os.path.dirname(__file__), "data", self.filename)).read()
+    @classmethod
+    def setUpClass(cls):
+        cls.data = open(os.path.join(os.path.dirname(__file__), "data", cls.filename)).read()
 
     def test_reload(self):
         with patch("td.imports.models.requests") as mock_requests:

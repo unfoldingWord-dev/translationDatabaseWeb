@@ -15,7 +15,8 @@ class ExportTests(TestCase):
 
     fixtures = ["additional-languages.json"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         wikipedia = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/wikipedia.html")).read()  # noqa
         sil = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/iso_639_3.tab")).read()  # noqa
         with patch("td.imports.models.requests") as mock_requests:
