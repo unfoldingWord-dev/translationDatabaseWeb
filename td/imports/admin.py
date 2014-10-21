@@ -74,7 +74,7 @@ class SIL_ISO_639_3Admin(LockedDownModelAdmin):
         "date_imported",
     ]
     list_filter = ["scope", "language_type"]
-    search_fields = ["comment", "ref_name"]
+    search_fields = ["code", "part_1", "comment", "ref_name"]
 
 
 admin.site.register(EthnologueCountryCode, EthnologueCountryCodeAdmin)
