@@ -1,0 +1,37 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+<h1>SIL <span class="light">ISO 639-3</span></h1>
+<p class="lead">
+    Raw data from SIL's <a href="http://www-01.sil.org/iso639-3/iso-639-3.tab">ISO 639-3 Code Set</a>.
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th nowrap>Part 2B</th>
+            <th nowrap>Part 2T</th>
+            <th nowrap>Part 1</th>
+            <th>Scope</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in object_list %}
+        <tr>
+            <td>{{ row.code }}</td>
+            <td>{{ row.part_2b }}</td>
+            <td>{{ row.part_2t }}</td>
+            <td>{{ row.part_1 }}</td>
+            <td>{{ row.get_scope_display }}</td>
+            <td>{{ row.get_language_type_display }}</td>
+            <td>{{ row.ref_name }}</td>
+            <td>{{ row.comment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include "pagination/pagination.html" %}
+{% endblock %}

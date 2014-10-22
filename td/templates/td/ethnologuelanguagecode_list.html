@@ -1,0 +1,29 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+<h1>Ethnologue <span class="light">Language Codes</span></h1>
+<p class="lead">
+    The 234 countries of the world. These are loaded from the <code>LanguageCodes.tab</code> file provided by the <a href="http://www.ethnologue.com">Ethnologue</a>.
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in object_list %}
+        <tr>
+            <td>{{ row.code }}</td>
+            <td>{{ row.country_code }}</td>
+            <td>{{ row.get_status_display }}</td>
+            <td>{{ row.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include "pagination/pagination.html" %}
+{% endblock %}

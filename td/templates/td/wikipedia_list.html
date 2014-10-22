@@ -1,0 +1,38 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+<h1>Wikipedia <span class="light">ISO 639-1</span></h1>
+<p class="lead">
+    Data mapping codes to their two-part (ISO 639-1) codes pulled from the Wikipedia <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1 Codes</a>.
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Language Family</th>
+            <th>Language Name</th>
+            <th>Native Name</th>
+            <th nowrap>ISO 639-1</th>
+            <th nowrap>ISO 639-2t</th>
+            <th nowrap>ISO 639-2b</th>
+            <th nowrap>ISO 639-3</th>
+            <th nowrap>ISO 639-9</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in object_list %}
+        <tr>
+            <td>{{ row.language_family }}</td>
+            <td>{{ row.language_name }}</td>
+            <td>{{ row.native_name }}</td>
+            <td>{{ row.iso_639_1 }}</td>
+            <td>{{ row.iso_639_2t }}</td>
+            <td>{{ row.iso_639_2b }}</td>
+            <td>{{ row.iso_639_3 }}</td>
+            <td>{{ row.iso_639_9 }}</td>
+            <td>{{ row.notes }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

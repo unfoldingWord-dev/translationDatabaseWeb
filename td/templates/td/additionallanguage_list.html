@@ -1,0 +1,33 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+<h1>Additional Languages</h1>
+<p class="lead">
+    These are languages added to the system that don't exist in formal / official sources.
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>IETF Tag</th>
+            <th>Two Letter</th>
+            <th>Three Letter</th>
+            <th>Common Name</th>
+            <th>Native Name</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in object_list %}
+        <tr>
+            <td>{{ row.ietf_tag }}</td>
+            <td>{{ row.common_name }}</td>
+            <td>{{ row.two_letter }}</td>
+            <td>{{ row.three_letter }}</td>
+            <td>{{ row.native_name }}</td>
+            <td>{{ row.comment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include "pagination/pagination.html" %}
+{% endblock %}
