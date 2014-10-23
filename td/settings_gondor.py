@@ -11,7 +11,8 @@ TEMPLATE_DEBUG = DEBUG
 SITE_ID = 2
 
 ALLOWED_HOSTS = [
-    "vd725.gondor.co"
+    "vd725.gondor.co",
+    "td.unfoldingword.org"
 ]
 
 DATABASES = {
