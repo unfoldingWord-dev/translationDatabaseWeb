@@ -9,11 +9,6 @@ beautifulsoup4==4.3.2
 dj-database-url==0.3.0
 psycopg2==2.5.4
 
-
-# For Tests
-mock==1.0.1
-
-
 # For Gondor
 gondor==1.2.5
 gunicorn==19.1.1
