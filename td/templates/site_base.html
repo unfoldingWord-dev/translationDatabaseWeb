@@ -29,9 +29,36 @@
 
 {% block nav %}
     <ul class="nav navbar-nav">
-        <li><a href="{% url "codes_text_export" %}">codes-d43.txt</a></li>
-        <li><a href="{% url "names_text_export" %}">langnames.txt</a></li>
-        <li><a href="{% url "names_json_export" %}">langnames.json</a></li>
+        <li class="dropdown data-sources">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-sign-in"></i>
+                Data Sources
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><i class="fa fa-pencil"></i> Created</li>
+                <li><a href="{% url "ds_additional_languages" %}">Additional Languages</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header"><i class="fa fa-database"></i> Imports</li>
+                <li><a href="{% url "ds_ethnologue_country_codes" %}">Country Codes <em>Ethnologue</em></a></li>
+                <li><a href="{% url "ds_ethnologue_language_codes" %}">Language Codes <em>Ethnologue</em></a></li>
+                <li><a href="{% url "ds_ethnologue_language_index" %}">Language Index <em>Ethnologue</em></a></li>
+                <li><a href="{% url "ds_sil" %}">ISO 639-3 Code Set <em>SIL</em></a></li>
+                <li><a href="{% url "ds_wikipedia" %}">List of ISO 639-1 Codes <em>Wikipedia</em></a></li>
+            </ul>
+        </li>
+        <li class="dropdown exports">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-sign-out"></i>
+                Exports
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url "codes_text_export" %}">Language Codes<em>codes-d43.txt</em></a></li>
+                <li><a href="{% url "names_text_export" %}">Language Names<em>langnames.txt</em></a></li>
+                <li><a href="{% url "names_json_export" %}">Language Names JSON<em>langnames.json</em></a></li>
+            </ul>
+        </li>
     </ul>
 {% endblock %}
 
