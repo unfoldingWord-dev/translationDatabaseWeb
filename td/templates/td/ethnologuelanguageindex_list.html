@@ -5,7 +5,7 @@
 <p class="lead">
     The distinct names for over 7,000 languages. These are loaded from the <code>LanguageIndex.tab</code> file provided by the <a href="http://www.ethnologue.com">Ethnologue <i class="fa fa-external-link"></i></a>.
 </p>
-<table class="table table-bordered">
+<table class="table table-bordered" data-source="{% url "ajax_ds_ethnologue_language_index" %}">
     <thead>
         <tr>
             <th>Code</th>
@@ -15,15 +15,6 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in object_list %}
-        <tr>
-            <td>{{ row.language_code }}</td>
-            <td>{{ row.country_code }}</td>
-            <td>{{ row.get_name_type_display }}</td>
-            <td>{{ row.name }}</td>
-        </tr>
-        {% endfor %}
     </tbody>
 </table>
-{% include "pagination/pagination.html" %}
 {% endblock %}

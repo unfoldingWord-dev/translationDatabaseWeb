@@ -5,7 +5,7 @@
 <p class="lead">
     The 234 countries of the world. These are loaded from the <code>CountryCodes.tab</code> file provided by the <a href="http://www.ethnologue.com">Ethnologue <i class="fa fa-external-link"></i></a>. These codes are sourced from the international standard known as <strong>ISO-3166-1</strong>.
 </p>
-<table class="table table-bordered">
+<table class="table table-bordered" data-source="{% url "ajax_ds_ethnologue_country_codes" %}">
     <thead>
         <tr>
             <th>Code</th>
@@ -14,14 +14,6 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in object_list %}
-        <tr>
-            <td>{{ row.code }}</td>
-            <td>{{ row.name }}</td>
-            <td>{{ row.area }}</td>
-        </tr>
-        {% endfor %}
     </tbody>
 </table>
-{% include "pagination/pagination.html" %}
 {% endblock %}

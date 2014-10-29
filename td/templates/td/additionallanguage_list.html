@@ -5,7 +5,7 @@
 <p class="lead">
     These are languages added to the system that don't exist in formal / official sources.
 </p>
-<table class="table table-bordered">
+<table class="table table-bordered" data-source="{% url "ajax_ds_additional_languages" %}">
     <thead>
         <tr>
             <th>IETF Tag</th>
@@ -17,17 +17,6 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in object_list %}
-        <tr>
-            <td>{{ row.ietf_tag }}</td>
-            <td>{{ row.common_name }}</td>
-            <td>{{ row.two_letter }}</td>
-            <td>{{ row.three_letter }}</td>
-            <td>{{ row.native_name }}</td>
-            <td>{{ row.comment }}</td>
-        </tr>
-        {% endfor %}
     </tbody>
 </table>
-{% include "pagination/pagination.html" %}
 {% endblock %}

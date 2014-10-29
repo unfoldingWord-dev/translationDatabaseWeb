@@ -5,7 +5,7 @@
 <p class="lead">
     Data mapping codes to their two-part (ISO 639-1) codes pulled from the Wikipedia <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1 Codes <i class="fa fa-external-link"></i></a>.
 </p>
-<table class="table table-bordered">
+<table class="table table-bordered" data-source="{% url "ajax_ds_wikipedia" %}">
     <thead>
         <tr>
             <th>Language Family</th>
@@ -20,19 +20,6 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in object_list %}
-        <tr>
-            <td>{{ row.language_family }}</td>
-            <td>{{ row.language_name }}</td>
-            <td>{{ row.native_name }}</td>
-            <td>{{ row.iso_639_1 }}</td>
-            <td>{{ row.iso_639_2t }}</td>
-            <td>{{ row.iso_639_2b }}</td>
-            <td>{{ row.iso_639_3 }}</td>
-            <td>{{ row.iso_639_9 }}</td>
-            <td>{{ row.notes }}</td>
-        </tr>
-        {% endfor %}
     </tbody>
 </table>
 {% endblock %}
