@@ -13,20 +13,19 @@ from td.imports.models import (
     WikipediaISOLanguage
 )
 
-from .exports import LanguageCodesExport, LanguageNamesExport
-from .models import AdditionalLanguage
+from .models import AdditionalLanguage, Language
 
 
 def codes_text_export(request):
-    return HttpResponse(LanguageCodesExport().text, content_type="text/plain")
+    return HttpResponse(Language.codes_text(), content_type="text/plain")
 
 
 def names_text_export(reqeust):
-    return HttpResponse(LanguageNamesExport().text, content_type="text/plain")
+    return HttpResponse(Language.names_text(), content_type="text/plain")
 
 
 def names_json_export(request):
-    return HttpResponse(LanguageNamesExport().json, content_type="application/json")
+    return JsonResponse(Language.names_data(), safe=False)  # Set safe to False to allow list instead of dict to be returned
 
 
 class AdditionalLanguageListView(TemplateView):
