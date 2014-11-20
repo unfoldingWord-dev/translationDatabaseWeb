@@ -30,6 +30,8 @@ urlpatterns = patterns(
     url(r"^exports/langnames.txt$", "td.views.names_text_export", name="names_text_export"),
     url(r"^exports/langnames.json$", "td.views.names_json_export", name="names_json_export"),
 
+    url(r"^wycliffe/", include("td.wycliffe.urls")),
+
     url(r"^data-sources/additional-languages/$", AdditionalLanguageListView.as_view(), name="ds_additional_languages"),
     url(r"^data-sources/ethnologue/country-codes/$", EthnologueCountryCodeListView.as_view(), name="ds_ethnologue_country_codes"),
     url(r"^data-sources/ethnologue/language-codes/$", EthnologueLanguageCodeListView.as_view(), name="ds_ethnologue_language_codes"),

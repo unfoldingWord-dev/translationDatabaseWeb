@@ -1,0 +1,26 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+<h1>Countries</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Country</th>
+            <th>Population</th>
+            <th>Primary Denominations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for country in country_list %}
+            <tr>
+                <td><a href="{% url "country_detail" country.pk %}">{{ country.country.name }}</a></td>
+                <td class="text-right">{{ country.population|default:""|intcomma }}</td>
+                <td>{% for d in country.primary_denominations.all %}{{ d }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
