@@ -7,9 +7,15 @@ from td.models import Language as SourceLanguage
 class Denomination(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class BibleContent(models.Model):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Country(models.Model):
