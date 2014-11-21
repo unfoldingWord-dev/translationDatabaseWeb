@@ -2,10 +2,8 @@ from django.conf.urls import patterns, url
 
 from .views import (
     CountryListView,
-    CountryCreateView,
     CountryDetailView,
     CountryEditView,
-    LanguageListView,
     LanguageCreateView,
     LanguageDetailView,
     LanguageEditView,
@@ -27,10 +25,8 @@ from .views import (
 urlpatterns = patterns(
     "",
     url(r"countries/$", CountryListView.as_view(), name="country_list"),
-    url(r"countries/create/$", CountryCreateView.as_view(), name="country_create"),
     url(r"countries/(?P<pk>\d+)/$", CountryDetailView.as_view(), name="country_detail"),
     url(r"countries/(?P<pk>\d+)/edit/$", CountryEditView.as_view(), name="country_edit"),
-    url(r"countries/(?P<pk>\d+)/languages/$", LanguageListView.as_view(), name="language_list"),
     url(r"countries/(?P<pk>\d+)/languages/create/$", LanguageCreateView.as_view(), name="language_create"),
 
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),

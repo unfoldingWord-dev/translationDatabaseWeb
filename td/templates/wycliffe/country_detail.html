@@ -3,8 +3,55 @@
 {% load humanize %}
 
 {% block body %}
+<ol class="breadcrumb">
+  <li><a href="{% url "country_list" %}">Countries</a></li>
+  <li class="active">{{ country.country.name }}</li>
+</ol>
+
+<a class="btn btn-primary pull-right" href="{% url "country_edit" country.pk %}">Edit</a>
 <h1>{{ country.country.name }}</h1>
 
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead><tr><th>Population</th></tr></thead>
+            <tbody><tr><td>{{ country.population|default:""|intcomma }}</td></tr></tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <table class="table">
+            <thead><tr><th>Top Denominations</th></tr></thead>
+            <tbody>
+            {% for d in country.primary_denominations.all %}
+                <tr><td>{{ d.name }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<a class="btn btn-primary pull-right" href="{% url "language_create" country.pk %}">Add</a>
 <h2>Languages</h2>
 
+<table class="table">
+    <thead><tr><th></th><th>Living Language</th><th>Gateway Language</th><th># of Native Speakers</th><th>Denominations Translating</th></tr></thead>
+    <tbody>
+        {% for language in country.language_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "language_edit" country.pk %}">Edit</a>
+                </td>
+                <td>
+                    <a href="{% url "language_detail" country.pk %}">
+                        {{ language.living_language.name }} ({{ language.living_language.code }})
+                    </a>
+                </td>
+                <td>{{ language.gateway_dialect.name }} ({{ language.gateway_dialect.code }})</td>
+                <td>{{ language.native_speakers|default:""|intcomma }}</td>
+                <td>{% for d in language.denominations_translating.all %}{{ d }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
