@@ -38,6 +38,9 @@ class Language(models.Model):
     name = models.CharField(max_length=100)
     country = models.ForeignKey(EthnologueCountryCode, blank=True, null=True)
 
+    def __unicode__(self):
+        return self.name
+
     @property
     def country_code(self):
         if self.country:

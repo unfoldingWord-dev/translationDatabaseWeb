@@ -1,0 +1,125 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+<ol class="breadcrumb">
+  <li><a href="{% url "country_list" %}">Countries</a></li>
+  <li><a href="{% url "country_detail" language.country.country.pk %}">{{ language.country.country.name }}</a></li>
+  <li class="active">{{ language.living_language.name }}</li>
+</ol>
+
+<a class="btn btn-primary pull-right" href="{% url "language_edit" language.pk %}">Edit</a>
+<h1>{{ language.living_language.name }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr><th>Living Language</th><td>{{ language.living_language }}</td></tr>
+                <tr><th>Gateway Language</th><td>{{ language.gateway_dialect }}</td></tr>
+                <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <thead><tr><th>Denominations Translating</th></tr></thead>
+            <tbody>
+            {% for d in language.denominations_translating.all %}
+                <tr><td>{{ d.name }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<a class="btn btn-primary pull-right" href="{% url "wip_create" language.pk %}">Add</a>
+<h2>Works in Progress</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Kind</th><th>Content</th><th>Paradigm</th><th>Translators</th><th>Anticipated Completion Date</th></tr></thead>
+    <tbody>
+        {% for wip in language.workinprogress_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "wip_edit" wip.pk %}">Edit</a>
+                </td>
+                <td>{{ wip.get_kind_display }}</td>
+                <td>{{ wip.bible_content }}</td>
+                <td>{{ wip.get_paradigm_display }}</td>
+                <td>{% for t in wip.translators.all %}{{ t.name }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+                <td>{{ wip.anticipated_completion_date }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<a class="btn btn-primary pull-right" href="{% url "scripture_create" language.pk %}">Add</a>
+<h2>Scripture</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Kind</th><th>Content</th><th>Year</th><th>Publisher</th></tr></thead>
+    <tbody>
+        {% for scripture in language.scripture_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "scripture_edit" scripture.pk %}">Edit</a>
+                </td>
+                <td>{{ scripture.get_kind_display }}</td>
+                <td>{{ scripture.bible_content }}</td>
+                <td>{{ scripture.year }}</td>
+                <td>{{ scripture.publisher }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<a class="btn btn-primary pull-right" href="{% url "translation_need_create" language.pk %}">Add</a>
+<h2>Translation Needs</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Text Gaps</th><th>Text Updates</th><th>Other Gaps</th><th>Other Updates</th></tr></thead>
+    <tbody>
+        {% for need in language.translationneed_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "translation_need_edit" need.pk %}">Edit</a>
+                </td>
+                <td>{{ need.text_gaps }}</td>
+                <td>{{ need.text_updates }}</td>
+                <td>{{ need.other_gaps }}</td>
+                <td>{{ need.other_updates }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<a class="btn btn-primary pull-right" href="{% url "resource_create" language.pk %}">Add</a>
+<h2>Resources</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Name</th><th>Copyright</th><th>Copyright Holders</th><th>License</th></tr></thead>
+    <tbody>
+        {% for resource in language.resource_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "resource_edit" resource.pk %}">Edit</a>
+                </td>
+                <td>{{ resource.name }}</td>
+                <td>{{ resource.copyright }}</td>
+                <td>{{ resource.copyright_holder.all|join:", " }}</td>
+                <td>{{ resource.license }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% endblock %}
