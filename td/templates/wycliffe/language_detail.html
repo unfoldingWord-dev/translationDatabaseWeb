@@ -35,6 +35,28 @@
 </div>
 
 
+<a class="btn btn-primary pull-right" href="{% url "wip_create" language.pk %}">Add</a>
+<h2>Works in Progress</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Kind</th><th>Content</th><th>Paradigm</th><th>Translators</th><th>Anticipated Completion Date</th></tr></thead>
+    <tbody>
+        {% for wip in language.workinprogress_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "wip_edit" wip.pk %}">Edit</a>
+                </td>
+                <td>{{ wip.get_kind_display }}</td>
+                <td>{{ wip.bible_content }}</td>
+                <td>{{ wip.get_paradigm_display }}</td>
+                <td>{% for t in wip.translators.all %}{{ t.name }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+                <td>{{ wip.anticipated_completion_date }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
 <a class="btn btn-primary pull-right" href="{% url "scripture_create" language.pk %}">Add</a>
 <h2>Scripture</h2>
 
@@ -56,24 +78,48 @@
 </table>
 
 
-<a class="btn btn-primary pull-right" href="{% url "wip_create" language.pk %}">Add</a>
-<h2>Works in Progress</h2>
+
+<a class="btn btn-primary pull-right" href="{% url "translation_need_create" language.pk %}">Add</a>
+<h2>Translation Needs</h2>
 
 <table class="table">
-    <thead><tr><th></th><th>Kind</th><th>Content</th><th>Paradigm</th><th>Translators</th><th>Anticipated Completion Date</th></tr></thead>
+    <thead><tr><th></th><th>Text Gaps</th><th>Text Updates</th><th>Other Gaps</th><th>Other Updates</th></tr></thead>
     <tbody>
-        {% for wip in language.workinprogress_set.all %}
+        {% for need in language.translationneed_set.all %}
             <tr>
                 <td>
-                    <a class="btn btn-primary btn-xs" href="{% url "wip_edit" wip.pk %}">Edit</a>
+                    <a class="btn btn-primary btn-xs" href="{% url "translation_need_edit" need.pk %}">Edit</a>
                 </td>
-                <td>{{ wip.get_kind_display }}</td>
-                <td>{{ wip.bible_content }}</td>
-                <td>{{ wip.get_paradigm_display }}</td>
-                <td>{% for t in wip.translators.all %}{{ t.name }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
-                <td>{{ wip.anticipated_completion_date }}</td>
+                <td>{{ need.text_gaps }}</td>
+                <td>{{ need.text_updates }}</td>
+                <td>{{ need.other_gaps }}</td>
+                <td>{{ need.other_updates }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+
+<a class="btn btn-primary pull-right" href="{% url "resource_create" language.pk %}">Add</a>
+<h2>Resources</h2>
+
+<table class="table">
+    <thead><tr><th></th><th>Name</th><th>Copyright</th><th>Copyright Holders</th><th>License</th></tr></thead>
+    <tbody>
+        {% for resource in language.resource_set.all %}
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="{% url "resource_edit" resource.pk %}">Edit</a>
+                </td>
+                <td>{{ resource.name }}</td>
+                <td>{{ resource.copyright }}</td>
+                <td>{{ resource.copyright_holder.all|join:", " }}</td>
+                <td>{{ resource.license }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
 {% endblock %}

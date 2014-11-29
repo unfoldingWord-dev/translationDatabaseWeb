@@ -6,15 +6,19 @@ from account.mixins import LoginRequiredMixin
 
 from .forms import (
     CountryForm,
-    LanguageForm
+    LanguageForm,
+    ResourceForm,
+    ScriptureForm,
+    TranslationNeedForm,
+    WorkInProgressForm
 )
 from .models import (
     Country,
     Language,
-    WorkInProgress,
+    Resource,
     Scripture,
     TranslationNeed,
-    Resource
+    WorkInProgress
 )
 
 
@@ -81,39 +85,62 @@ class LanguageEditView(LoginRequiredMixin, UpdateView):
         return context
 
 
+class BaseLanguageView(LoginRequiredMixin):
 
-class WIPCreateView(LoginRequiredMixin, CreateView):
+    def dispatch(self, request, *args, **kwargs):
+        self.language = get_object_or_404(Language, pk=self.kwargs.get("pk"))
+        return super(BaseLanguageView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.language = self.language
+        obj.save()
+        form.save_m2m()
+        return redirect("language_detail", self.language.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseLanguageView, self).get_context_data(**kwargs)
+        context.update({
+            "language": self.language
+        })
+        return context
+
+
+class WIPCreateView(BaseLanguageView, CreateView):
     model = WorkInProgress
+    form_class = WorkInProgressForm
 
 
-
-
-class ScriptureCreateView(LoginRequiredMixin, CreateView):
+class ScriptureCreateView(BaseLanguageView, CreateView):
     model = Scripture
+    form_class = ScriptureForm
 
 
-
-
-class TranslationNeedCreateView(LoginRequiredMixin, CreateView):
+class TranslationNeedCreateView(BaseLanguageView, CreateView):
     model = TranslationNeed
+    form_class = TranslationNeedForm
 
 
-
-class ResourceCreateView(LoginRequiredMixin, CreateView):
+class ResourceCreateView(BaseLanguageView, CreateView):
     model = Resource
+    form_class = ResourceForm
 
 
-class WIPEditView(LoginRequiredMixin, UpdateView):
+class WIPEditView(BaseLanguageView, UpdateView):
     model = WorkInProgress
+    form_class = WorkInProgressForm
 
 
-class ScriptureEditView(LoginRequiredMixin, UpdateView):
+class ScriptureEditView(BaseLanguageView, UpdateView):
     model = Scripture
+    form_class = ScriptureForm
 
 
-class TranslationNeedEditView(LoginRequiredMixin, UpdateView):
+class TranslationNeedEditView(BaseLanguageView, UpdateView):
     model = TranslationNeed
+    form_class = TranslationNeedForm
 
 
-class ResourceEditView(LoginRequiredMixin, UpdateView):
+class ResourceEditView(BaseLanguageView, UpdateView):
     model = Resource
+    form_class = ResourceForm
