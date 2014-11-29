@@ -43,7 +43,7 @@
                     <a class="btn btn-primary btn-xs" href="{% url "language_edit" country.pk %}">Edit</a>
                 </td>
                 <td>
-                    <a href="{% url "language_detail" country.pk %}">
+                    <a href="{% url "language_detail" language.pk %}">
                         {{ language.living_language.name }} ({{ language.living_language.code }})
                     </a>
                 </td>
