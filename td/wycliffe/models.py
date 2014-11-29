@@ -74,7 +74,7 @@ class ScriptureBase(models.Model):
     ]
     kind = models.CharField(max_length=50, choices=KIND_CHOICES)
     language = models.ForeignKey(Language)
-    bible_content = models.ForeignKey(BibleContent)
+    bible_content = models.ForeignKey(BibleContent, verbose_name="Bible Content")
 
     class Meta:
         abstract = True
@@ -93,9 +93,12 @@ class WorkInProgress(ScriptureBase):
     translators = models.ManyToManyField(Translator, blank=True)
     anticipated_completion_date = models.DateField()
 
+    def __str__(self):
+        return "{}: {} ({})".format(self.get_kind_display(), self.bible_content.name, self.language.living_language.name)
+
 
 class Scripture(ScriptureBase):
-    wip = models.ForeignKey(WorkInProgress)
+    wip = models.ForeignKey(WorkInProgress, verbose_name="Work in Progress")
     year = models.IntegerField()
     publisher = models.CharField(max_length=200)
 
