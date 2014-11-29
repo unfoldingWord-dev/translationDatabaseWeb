@@ -81,32 +81,22 @@ class LanguageEditView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class WIPListView(LoginRequiredMixin, ListView):
-    model = WorkInProgress
-
 
 class WIPCreateView(LoginRequiredMixin, CreateView):
     model = WorkInProgress
 
 
-class ScriptureListView(LoginRequiredMixin, ListView):
-    model = Scripture
 
 
 class ScriptureCreateView(LoginRequiredMixin, CreateView):
     model = Scripture
 
 
-class TranslationNeedListView(LoginRequiredMixin, ListView):
-    model = TranslationNeed
 
 
 class TranslationNeedCreateView(LoginRequiredMixin, CreateView):
     model = TranslationNeed
 
-
-class ResourceListView(LoginRequiredMixin, ListView):
-    model = Resource
 
 
 class ResourceCreateView(LoginRequiredMixin, CreateView):
