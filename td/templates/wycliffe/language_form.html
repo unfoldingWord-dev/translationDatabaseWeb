@@ -6,9 +6,9 @@
 <ol class="breadcrumb">
   <li><a href="{% url "country_list" %}">Countries</a></li>
   <li><a href="{% url "country_detail" country.pk %}">{{ country.country.name }}</a></li>
-  <li class="active">Add Language</li>
+  <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Language</li>
 </ol>
-<h1>Add Language</h1>
+<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Language</h1>
 
 <form class="form" action="." method="POST">
     {% csrf_token %}
