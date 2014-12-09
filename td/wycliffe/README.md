@@ -11,7 +11,7 @@ Seed Data
     soup = bs4.BeautifulSoup(data.content)
     soup.select("div.cat li > a > b")
     for d in rows:
-        Denomination.objects.create(name=d.text)
+        Network.objects.create(name=d.text)
 
 
     bible_content = [

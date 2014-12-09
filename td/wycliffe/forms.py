@@ -15,7 +15,7 @@ class CountryForm(forms.ModelForm):
         model = Country
         fields = [
             "population",
-            "primary_denominations"
+            "primary_networks"
         ]
 
 
@@ -26,7 +26,7 @@ class LanguageForm(forms.ModelForm):
             "living_language",
             "gateway_dialect",
             "native_speakers",
-            "denominations_translating"
+            "networks_translating"
         ]
 
 

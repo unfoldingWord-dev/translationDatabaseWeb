@@ -4,7 +4,7 @@ from td.imports.models import EthnologueCountryCode
 from td.models import Language as SourceLanguage
 
 
-class Denomination(models.Model):
+class Network(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -21,7 +21,7 @@ class BibleContent(models.Model):
 class Country(models.Model):
     country = models.ForeignKey(EthnologueCountryCode)
     population = models.IntegerField(null=True, blank=True)
-    primary_denominations = models.ManyToManyField(Denomination, blank=True)
+    primary_networks = models.ManyToManyField(Network, blank=True)
 
 
 class Language(models.Model):
@@ -29,7 +29,7 @@ class Language(models.Model):
     living_language = models.ForeignKey(SourceLanguage, related_name="+")
     gateway_dialect = models.ForeignKey(SourceLanguage, related_name="+")
     native_speakers = models.IntegerField()
-    denominations_translating = models.ManyToManyField(Denomination)
+    networks_translating = models.ManyToManyField(Network)
 
 
 class Entity(models.Model):

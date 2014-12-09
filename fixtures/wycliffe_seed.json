@@ -3,980 +3,980 @@
     "fields": {
         "name": "African Methodist Episcopal Zion"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 1
 },
 {
     "fields": {
         "name": "African Orthodox Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 2
 },
 {
     "fields": {
         "name": "American Baptist Churches USA"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 3
 },
 {
     "fields": {
         "name": "Amish"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 4
 },
 {
     "fields": {
         "name": "Anabaptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 5
 },
 {
     "fields": {
         "name": "Anglican Catholic Church@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 6
 },
 {
     "fields": {
         "name": "Anglican Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 7
 },
 {
     "fields": {
         "name": "Antiochian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 8
 },
 {
     "fields": {
         "name": "Armenian Evangelical Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 9
 },
 {
     "fields": {
         "name": "Armenian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 10
 },
 {
     "fields": {
         "name": "Assemblies of God"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 11
 },
 {
     "fields": {
         "name": "Associated Gospel Churches of Canada@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 12
 },
 {
     "fields": {
         "name": "Association of Vineyard Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 13
 },
 {
     "fields": {
         "name": "Baptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 14
 },
 {
     "fields": {
         "name": "Baptist Bible Fellowship"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 15
 },
 {
     "fields": {
         "name": "Branch Davidian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 16
 },
 {
     "fields": {
         "name": "Brethren in Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 17
 },
 {
     "fields": {
         "name": "Bruderhof Communities"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 18
 },
 {
     "fields": {
         "name": "Byzantine Catholic Church@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 19
 },
 {
     "fields": {
         "name": "Calvary Chapel"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 20
 },
 {
     "fields": {
         "name": "Calvinist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 21
 },
 {
     "fields": {
         "name": "Catholic"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 22
 },
 {
     "fields": {
         "name": "Cell Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 23
 },
 {
     "fields": {
         "name": "Celtic Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 24
 },
 {
     "fields": {
         "name": "Charismatic Episcopal Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 25
 },
 {
     "fields": {
         "name": "Christadelphian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 26
 },
 {
     "fields": {
         "name": "Christian and Missionary Alliance"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 27
 },
 {
     "fields": {
         "name": "Christian Churches of God"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 28
 },
 {
     "fields": {
         "name": "Christian Identity"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 29
 },
 {
     "fields": {
         "name": "Christian Reformed Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 30
 },
 {
     "fields": {
         "name": "Christian Science"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 31
 },
 {
     "fields": {
         "name": "Church of God (Anderson)"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 32
 },
 {
     "fields": {
         "name": "Church of God (Cleveland)"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 33
 },
 {
     "fields": {
         "name": "Church of God (Seventh Day)"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 34
 },
 {
     "fields": {
         "name": "Church of God in Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 35
 },
 {
     "fields": {
         "name": "Church of God of Prophecy"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 36
 },
 {
     "fields": {
         "name": "Church of Jesus Christ of Latter-day Saints"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 37
 },
 {
     "fields": {
         "name": "Church of Scotland@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 38
 },
 {
     "fields": {
         "name": "Church of South India"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 39
 },
 {
     "fields": {
         "name": "Church of the Brethren"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 40
 },
 {
     "fields": {
         "name": "Church of the Lutheran Brethren of America"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 41
 },
 {
     "fields": {
         "name": "Church of the Nazarene"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 42
 },
 {
     "fields": {
         "name": "Church of the New Jerusalem"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 43
 },
 {
     "fields": {
         "name": "Church of the United Brethren in Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 44
 },
 {
     "fields": {
         "name": "Church Universal and Triumphant"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 45
 },
 {
     "fields": {
         "name": "Churches of Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 46
 },
 {
     "fields": {
         "name": "Churches of God General Conference"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 47
 },
 {
     "fields": {
         "name": "Congregational Christian Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 48
 },
 {
     "fields": {
         "name": "Coptic Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 49
 },
 {
     "fields": {
         "name": "Cumberland Presbyterian Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 50
 },
 {
     "fields": {
         "name": "Disciples of Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 51
 },
 {
     "fields": {
         "name": "Episcopal Church@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 52
 },
 {
     "fields": {
         "name": "Ethiopian Orthodox Tewahedo Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 53
 },
 {
     "fields": {
         "name": "Evangelical Congregational Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 54
 },
 {
     "fields": {
         "name": "Evangelical Covenant Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 55
 },
 {
     "fields": {
         "name": "Evangelical Formosan Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 56
 },
 {
     "fields": {
         "name": "Evangelical Free Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 57
 },
 {
     "fields": {
         "name": "Evangelical Lutheran Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 58
 },
 {
     "fields": {
         "name": "Evangelical Methodist Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 59
 },
 {
     "fields": {
         "name": "Evangelical Presbyterian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 60
 },
 {
     "fields": {
         "name": "Family, The (aka Children of God)"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 61
 },
 {
     "fields": {
         "name": "Fellowship of Christian Assemblies"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 62
 },
 {
     "fields": {
         "name": "Fellowship of Grace Brethren"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 63
 },
 {
     "fields": {
         "name": "Fellowship of Independent Evangelical Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 64
 },
 {
     "fields": {
         "name": "Free Church of Scotland"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 65
 },
 {
     "fields": {
         "name": "Free Methodist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 66
 },
 {
     "fields": {
         "name": "Free Presbyterian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 67
 },
 {
     "fields": {
         "name": "Free Will Baptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 68
 },
 {
     "fields": {
         "name": "Gnostic@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 69
 },
 {
     "fields": {
         "name": "Great Commission Association of Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 70
 },
 {
     "fields": {
         "name": "Greek Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 71
 },
 {
     "fields": {
         "name": "Hutterian Brethren"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 72
 },
 {
     "fields": {
         "name": "Independent Fundamental Churches of America"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 73
 },
 {
     "fields": {
         "name": "Indian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 74
 },
 {
     "fields": {
         "name": "International Church of the Foursquare Gospel"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 75
 },
 {
     "fields": {
         "name": "International Churches of Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 76
 },
 {
     "fields": {
         "name": "Jehovah's Witnesses"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 77
 },
 {
     "fields": {
         "name": "Living Church of God"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 78
 },
 {
     "fields": {
         "name": "Local Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 79
 },
 {
     "fields": {
         "name": "Lutheran"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 80
 },
 {
     "fields": {
         "name": "Lutheran Church - Missouri Synod"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 81
 },
 {
     "fields": {
         "name": "Mar Thoma Syrian Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 82
 },
 {
     "fields": {
         "name": "Mennonite"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 83
 },
 {
     "fields": {
         "name": "Messianic Judaism@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 84
 },
 {
     "fields": {
         "name": "Methodist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 85
 },
 {
     "fields": {
         "name": "Moravian Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 86
 },
 {
     "fields": {
         "name": "Nation of Yahweh"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 87
 },
 {
     "fields": {
         "name": "New Frontiers International"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 88
 },
 {
     "fields": {
         "name": "Old Catholic Church@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 89
 },
 {
     "fields": {
         "name": "Orthodox"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 90
 },
 {
     "fields": {
         "name": "Orthodox Church in America@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 91
 },
 {
     "fields": {
         "name": "Orthodox Presbyterian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 92
 },
 {
     "fields": {
         "name": "Pentecostal"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 93
 },
 {
     "fields": {
         "name": "Plymouth Brethren"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 94
 },
 {
     "fields": {
         "name": "Presbyterian"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 95
 },
 {
     "fields": {
         "name": "Presbyterian Church (USA)"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 96
 },
 {
     "fields": {
         "name": "Presbyterian Church in America"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 97
 },
 {
     "fields": {
         "name": "Primitive Baptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 98
 },
 {
     "fields": {
         "name": "Protestant Reformed Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 99
 },
 {
     "fields": {
         "name": "Reformed"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 100
 },
 {
     "fields": {
         "name": "Reformed Baptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 101
 },
 {
     "fields": {
         "name": "Reformed Church in America"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 102
 },
 {
     "fields": {
         "name": "Reformed Church in the United States"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 103
 },
 {
     "fields": {
         "name": "Reformed Churches of Australia@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 104
 },
 {
     "fields": {
         "name": "Reformed Episcopal Church@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 105
 },
 {
     "fields": {
         "name": "Reformed Presbyterian Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 106
 },
 {
     "fields": {
         "name": "Reorganized Church of Jesus Christ of Latter Day Saints"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 107
 },
 {
     "fields": {
         "name": "Revival Centres International"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 108
 },
 {
     "fields": {
         "name": "Romanian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 109
 },
 {
     "fields": {
         "name": "Rosicrucian@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 110
 },
 {
     "fields": {
         "name": "Russian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 111
 },
 {
     "fields": {
         "name": "Serbian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 112
 },
 {
     "fields": {
         "name": "Seventh Day Baptist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 113
 },
 {
     "fields": {
         "name": "Seventh-Day Adventist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 114
 },
 {
     "fields": {
         "name": "Shaker"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 115
 },
 {
     "fields": {
         "name": "Society of Friends"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 116
 },
 {
     "fields": {
         "name": "Southern Baptist Convention"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 117
 },
 {
     "fields": {
         "name": "Spiritist"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 118
 },
 {
     "fields": {
         "name": "Syrian Orthodox@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 119
 },
 {
     "fields": {
         "name": "True and Living Church of Jesus Christ of Saints of the Last Days"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 120
 },
 {
     "fields": {
         "name": "Two-by-Twos"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 121
 },
 {
     "fields": {
         "name": "Unification Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 122
 },
 {
     "fields": {
         "name": "Unitarian-Universalism@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 123
 },
 {
     "fields": {
         "name": "United Church of Canada@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 124
 },
 {
     "fields": {
         "name": "United Church of Christ"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 125
 },
 {
     "fields": {
         "name": "United Church of God"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 126
 },
 {
     "fields": {
         "name": "United Free Church of Scotland@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 127
 },
 {
     "fields": {
         "name": "United Methodist Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 128
 },
 {
     "fields": {
         "name": "United Reformed Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 129
 },
 {
     "fields": {
         "name": "Uniting Church in Australia@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 130
 },
 {
     "fields": {
         "name": "Unity Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 131
 },
 {
     "fields": {
         "name": "Unity Fellowship Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 132
 },
 {
     "fields": {
         "name": "Universal Fellowship of Metropolitan Community Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 133
 },
 {
     "fields": {
         "name": "Virtual Churches"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 134
 },
 {
     "fields": {
         "name": "Waldensian Church"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 135
 },
 {
     "fields": {
         "name": "Way International, The"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 136
 },
 {
     "fields": {
         "name": "Web Directories"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 137
 },
 {
     "fields": {
         "name": "Wesleyan"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 138
 },
 {
     "fields": {
         "name": "Wesleyan Methodist@"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 139
 },
 {
     "fields": {
         "name": "Worldwide Church of God"
     },
-    "model": "wycliffe.denomination",
+    "model": "wycliffe.network",
     "pk": 140
 },
 {
@@ -1458,7 +1458,7 @@
 {
     "fields": {
         "country": 1,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 67
     },
     "model": "wycliffe.country",
@@ -1467,7 +1467,7 @@
 {
     "fields": {
         "country": 2,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4496
     },
     "model": "wycliffe.country",
@@ -1476,7 +1476,7 @@
 {
     "fields": {
         "country": 3,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 29863
     },
     "model": "wycliffe.country",
@@ -1485,7 +1485,7 @@
 {
     "fields": {
         "country": 4,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 81
     },
     "model": "wycliffe.country",
@@ -1494,7 +1494,7 @@
 {
     "fields": {
         "country": 5,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 12
     },
     "model": "wycliffe.country",
@@ -1503,7 +1503,7 @@
 {
     "fields": {
         "country": 6,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3130
     },
     "model": "wycliffe.country",
@@ -1512,7 +1512,7 @@
 {
     "fields": {
         "country": 7,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3016
     },
     "model": "wycliffe.country",
@@ -1521,7 +1521,7 @@
 {
     "fields": {
         "country": 8,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 15941
     },
     "model": "wycliffe.country",
@@ -1530,7 +1530,7 @@
 {
     "fields": {
         "country": 9,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 38747
     },
     "model": "wycliffe.country",
@@ -1539,7 +1539,7 @@
 {
     "fields": {
         "country": 10,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 65
     },
     "model": "wycliffe.country",
@@ -1548,7 +1548,7 @@
 {
     "fields": {
         "country": 11,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8189
     },
     "model": "wycliffe.country",
@@ -1557,7 +1557,7 @@
 {
     "fields": {
         "country": 12,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1566,7 +1566,7 @@
 {
     "fields": {
         "country": 13,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 99
     },
     "model": "wycliffe.country",
@@ -1575,7 +1575,7 @@
 {
     "fields": {
         "country": 14,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8411
     },
     "model": "wycliffe.country",
@@ -1584,7 +1584,7 @@
 {
     "fields": {
         "country": 15,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3907
     },
     "model": "wycliffe.country",
@@ -1593,7 +1593,7 @@
 {
     "fields": {
         "country": 16,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 270
     },
     "model": "wycliffe.country",
@@ -1602,7 +1602,7 @@
 {
     "fields": {
         "country": 17,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 141822
     },
     "model": "wycliffe.country",
@@ -1611,7 +1611,7 @@
 {
     "fields": {
         "country": 18,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10419
     },
     "model": "wycliffe.country",
@@ -1620,7 +1620,7 @@
 {
     "fields": {
         "country": 19,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 13228
     },
     "model": "wycliffe.country",
@@ -1629,7 +1629,7 @@
 {
     "fields": {
         "country": 20,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 7726
     },
     "model": "wycliffe.country",
@@ -1638,7 +1638,7 @@
 {
     "fields": {
         "country": 21,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 727
     },
     "model": "wycliffe.country",
@@ -1647,7 +1647,7 @@
 {
     "fields": {
         "country": 22,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 7548
     },
     "model": "wycliffe.country",
@@ -1656,7 +1656,7 @@
 {
     "fields": {
         "country": 23,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8439
     },
     "model": "wycliffe.country",
@@ -1665,7 +1665,7 @@
 {
     "fields": {
         "country": 24,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1674,7 +1674,7 @@
 {
     "fields": {
         "country": 25,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 64
     },
     "model": "wycliffe.country",
@@ -1683,7 +1683,7 @@
 {
     "fields": {
         "country": 26,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1692,7 +1692,7 @@
 {
     "fields": {
         "country": 27,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9182
     },
     "model": "wycliffe.country",
@@ -1701,7 +1701,7 @@
 {
     "fields": {
         "country": 28,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1710,7 +1710,7 @@
 {
     "fields": {
         "country": 29,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 186405
     },
     "model": "wycliffe.country",
@@ -1719,7 +1719,7 @@
 {
     "fields": {
         "country": 30,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 323
     },
     "model": "wycliffe.country",
@@ -1728,7 +1728,7 @@
 {
     "fields": {
         "country": 31,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2163
     },
     "model": "wycliffe.country",
@@ -1737,7 +1737,7 @@
 {
     "fields": {
         "country": 32,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1765
     },
     "model": "wycliffe.country",
@@ -1746,7 +1746,7 @@
 {
     "fields": {
         "country": 33,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9755
     },
     "model": "wycliffe.country",
@@ -1755,7 +1755,7 @@
 {
     "fields": {
         "country": 34,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 270
     },
     "model": "wycliffe.country",
@@ -1764,7 +1764,7 @@
 {
     "fields": {
         "country": 35,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 32268
     },
     "model": "wycliffe.country",
@@ -1773,7 +1773,7 @@
 {
     "fields": {
         "country": 36,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1782,7 +1782,7 @@
 {
     "fields": {
         "country": 37,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4038
     },
     "model": "wycliffe.country",
@@ -1791,7 +1791,7 @@
 {
     "fields": {
         "country": 38,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3999
     },
     "model": "wycliffe.country",
@@ -1800,7 +1800,7 @@
 {
     "fields": {
         "country": 39,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 7252
     },
     "model": "wycliffe.country",
@@ -1809,7 +1809,7 @@
 {
     "fields": {
         "country": 40,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1818,7 +1818,7 @@
 {
     "fields": {
         "country": 41,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 18
     },
     "model": "wycliffe.country",
@@ -1827,7 +1827,7 @@
 {
     "fields": {
         "country": 42,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 16295
     },
     "model": "wycliffe.country",
@@ -1836,7 +1836,7 @@
 {
     "fields": {
         "country": 43,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 16322
     },
     "model": "wycliffe.country",
@@ -1845,7 +1845,7 @@
 {
     "fields": {
         "country": 44,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1854,7 +1854,7 @@
 {
     "fields": {
         "country": 45,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 45600
     },
     "model": "wycliffe.country",
@@ -1863,7 +1863,7 @@
 {
     "fields": {
         "country": 46,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4327
     },
     "model": "wycliffe.country",
@@ -1872,7 +1872,7 @@
 {
     "fields": {
         "country": 47,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 11269
     },
     "model": "wycliffe.country",
@@ -1881,7 +1881,7 @@
 {
     "fields": {
         "country": 48,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1890,7 +1890,7 @@
 {
     "fields": {
         "country": 49,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -1899,7 +1899,7 @@
 {
     "fields": {
         "country": 50,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 835
     },
     "model": "wycliffe.country",
@@ -1908,7 +1908,7 @@
 {
     "fields": {
         "country": 51,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10220
     },
     "model": "wycliffe.country",
@@ -1917,7 +1917,7 @@
 {
     "fields": {
         "country": 52,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 82689
     },
     "model": "wycliffe.country",
@@ -1926,7 +1926,7 @@
 {
     "fields": {
         "country": 53,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 793
     },
     "model": "wycliffe.country",
@@ -1935,7 +1935,7 @@
 {
     "fields": {
         "country": 54,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5431
     },
     "model": "wycliffe.country",
@@ -1944,7 +1944,7 @@
 {
     "fields": {
         "country": 55,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 79
     },
     "model": "wycliffe.country",
@@ -1953,7 +1953,7 @@
 {
     "fields": {
         "country": 56,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8895
     },
     "model": "wycliffe.country",
@@ -1962,7 +1962,7 @@
 {
     "fields": {
         "country": 57,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 32854
     },
     "model": "wycliffe.country",
@@ -1971,7 +1971,7 @@
 {
     "fields": {
         "country": 58,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 13228
     },
     "model": "wycliffe.country",
@@ -1980,7 +1980,7 @@
 {
     "fields": {
         "country": 59,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1330
     },
     "model": "wycliffe.country",
@@ -1989,7 +1989,7 @@
 {
     "fields": {
         "country": 60,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 74033
     },
     "model": "wycliffe.country",
@@ -1998,7 +1998,7 @@
 {
     "fields": {
         "country": 61,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 341
     },
     "model": "wycliffe.country",
@@ -2007,7 +2007,7 @@
 {
     "fields": {
         "country": 62,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4401
     },
     "model": "wycliffe.country",
@@ -2016,7 +2016,7 @@
 {
     "fields": {
         "country": 63,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 43064
     },
     "model": "wycliffe.country",
@@ -2025,7 +2025,7 @@
 {
     "fields": {
         "country": 64,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 77431
     },
     "model": "wycliffe.country",
@@ -2034,7 +2034,7 @@
 {
     "fields": {
         "country": 65,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5249
     },
     "model": "wycliffe.country",
@@ -2043,7 +2043,7 @@
 {
     "fields": {
         "country": 66,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 848
     },
     "model": "wycliffe.country",
@@ -2052,7 +2052,7 @@
 {
     "fields": {
         "country": 67,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 556
     },
     "model": "wycliffe.country",
@@ -2061,7 +2061,7 @@
 {
     "fields": {
         "country": 68,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 60496
     },
     "model": "wycliffe.country",
@@ -2070,7 +2070,7 @@
 {
     "fields": {
         "country": 69,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1384
     },
     "model": "wycliffe.country",
@@ -2079,7 +2079,7 @@
 {
     "fields": {
         "country": 70,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 59668
     },
     "model": "wycliffe.country",
@@ -2088,7 +2088,7 @@
 {
     "fields": {
         "country": 71,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 103
     },
     "model": "wycliffe.country",
@@ -2097,7 +2097,7 @@
 {
     "fields": {
         "country": 72,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4474
     },
     "model": "wycliffe.country",
@@ -2106,7 +2106,7 @@
 {
     "fields": {
         "country": 73,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 187
     },
     "model": "wycliffe.country",
@@ -2115,7 +2115,7 @@
 {
     "fields": {
         "country": 74,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 22113
     },
     "model": "wycliffe.country",
@@ -2124,7 +2124,7 @@
 {
     "fields": {
         "country": 75,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 28
     },
     "model": "wycliffe.country",
@@ -2133,7 +2133,7 @@
 {
     "fields": {
         "country": 76,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 57
     },
     "model": "wycliffe.country",
@@ -2142,7 +2142,7 @@
 {
     "fields": {
         "country": 77,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1517
     },
     "model": "wycliffe.country",
@@ -2151,7 +2151,7 @@
 {
     "fields": {
         "country": 78,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9402
     },
     "model": "wycliffe.country",
@@ -2160,7 +2160,7 @@
 {
     "fields": {
         "country": 79,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 448
     },
     "model": "wycliffe.country",
@@ -2169,7 +2169,7 @@
 {
     "fields": {
         "country": 80,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 504
     },
     "model": "wycliffe.country",
@@ -2178,7 +2178,7 @@
 {
     "fields": {
         "country": 81,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 11120
     },
     "model": "wycliffe.country",
@@ -2187,7 +2187,7 @@
 {
     "fields": {
         "country": 82,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 12599
     },
     "model": "wycliffe.country",
@@ -2196,7 +2196,7 @@
 {
     "fields": {
         "country": 83,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 170
     },
     "model": "wycliffe.country",
@@ -2205,7 +2205,7 @@
 {
     "fields": {
         "country": 84,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1586
     },
     "model": "wycliffe.country",
@@ -2214,7 +2214,7 @@
 {
     "fields": {
         "country": 85,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 751
     },
     "model": "wycliffe.country",
@@ -2223,7 +2223,7 @@
 {
     "fields": {
         "country": 86,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2232,7 +2232,7 @@
 {
     "fields": {
         "country": 87,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 7205
     },
     "model": "wycliffe.country",
@@ -2241,7 +2241,7 @@
 {
     "fields": {
         "country": 88,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4551
     },
     "model": "wycliffe.country",
@@ -2250,7 +2250,7 @@
 {
     "fields": {
         "country": 89,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8528
     },
     "model": "wycliffe.country",
@@ -2259,7 +2259,7 @@
 {
     "fields": {
         "country": 90,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10098
     },
     "model": "wycliffe.country",
@@ -2268,7 +2268,7 @@
 {
     "fields": {
         "country": 91,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 222781
     },
     "model": "wycliffe.country",
@@ -2277,7 +2277,7 @@
 {
     "fields": {
         "country": 92,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4148
     },
     "model": "wycliffe.country",
@@ -2286,7 +2286,7 @@
 {
     "fields": {
         "country": 93,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 6725
     },
     "model": "wycliffe.country",
@@ -2295,7 +2295,7 @@
 {
     "fields": {
         "country": 94,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 77
     },
     "model": "wycliffe.country",
@@ -2304,7 +2304,7 @@
 {
     "fields": {
         "country": 95,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1103371
     },
     "model": "wycliffe.country",
@@ -2313,7 +2313,7 @@
 {
     "fields": {
         "country": 96,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2322,7 +2322,7 @@
 {
     "fields": {
         "country": 97,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 28807
     },
     "model": "wycliffe.country",
@@ -2331,7 +2331,7 @@
 {
     "fields": {
         "country": 98,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2340,7 +2340,7 @@
 {
     "fields": {
         "country": 99,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 295
     },
     "model": "wycliffe.country",
@@ -2349,7 +2349,7 @@
 {
     "fields": {
         "country": 100,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 58093
     },
     "model": "wycliffe.country",
@@ -2358,7 +2358,7 @@
 {
     "fields": {
         "country": 101,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2651
     },
     "model": "wycliffe.country",
@@ -2367,7 +2367,7 @@
 {
     "fields": {
         "country": 102,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5703
     },
     "model": "wycliffe.country",
@@ -2376,7 +2376,7 @@
 {
     "fields": {
         "country": 103,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 128085
     },
     "model": "wycliffe.country",
@@ -2385,7 +2385,7 @@
 {
     "fields": {
         "country": 104,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 34256
     },
     "model": "wycliffe.country",
@@ -2394,7 +2394,7 @@
 {
     "fields": {
         "country": 105,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5264
     },
     "model": "wycliffe.country",
@@ -2403,7 +2403,7 @@
 {
     "fields": {
         "country": 106,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 14071
     },
     "model": "wycliffe.country",
@@ -2412,7 +2412,7 @@
 {
     "fields": {
         "country": 107,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 99
     },
     "model": "wycliffe.country",
@@ -2421,7 +2421,7 @@
 {
     "fields": {
         "country": 108,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 798
     },
     "model": "wycliffe.country",
@@ -2430,7 +2430,7 @@
 {
     "fields": {
         "country": 109,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 43
     },
     "model": "wycliffe.country",
@@ -2439,7 +2439,7 @@
 {
     "fields": {
         "country": 110,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2448,7 +2448,7 @@
 {
     "fields": {
         "country": 111,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2457,7 +2457,7 @@
 {
     "fields": {
         "country": 112,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2687
     },
     "model": "wycliffe.country",
@@ -2466,7 +2466,7 @@
 {
     "fields": {
         "country": 113,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 45
     },
     "model": "wycliffe.country",
@@ -2475,7 +2475,7 @@
 {
     "fields": {
         "country": 114,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 14825
     },
     "model": "wycliffe.country",
@@ -2484,7 +2484,7 @@
 {
     "fields": {
         "country": 115,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2493,7 +2493,7 @@
 {
     "fields": {
         "country": 116,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3577
     },
     "model": "wycliffe.country",
@@ -2502,7 +2502,7 @@
 {
     "fields": {
         "country": 117,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 161
     },
     "model": "wycliffe.country",
@@ -2511,7 +2511,7 @@
 {
     "fields": {
         "country": 118,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 35
     },
     "model": "wycliffe.country",
@@ -2520,7 +2520,7 @@
 {
     "fields": {
         "country": 119,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 20743
     },
     "model": "wycliffe.country",
@@ -2529,7 +2529,7 @@
 {
     "fields": {
         "country": 120,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3283
     },
     "model": "wycliffe.country",
@@ -2538,7 +2538,7 @@
 {
     "fields": {
         "country": 121,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1795
     },
     "model": "wycliffe.country",
@@ -2547,7 +2547,7 @@
 {
     "fields": {
         "country": 122,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3431
     },
     "model": "wycliffe.country",
@@ -2556,7 +2556,7 @@
 {
     "fields": {
         "country": 123,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 465
     },
     "model": "wycliffe.country",
@@ -2565,7 +2565,7 @@
 {
     "fields": {
         "country": 124,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2307
     },
     "model": "wycliffe.country",
@@ -2574,7 +2574,7 @@
 {
     "fields": {
         "country": 125,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2583,7 +2583,7 @@
 {
     "fields": {
         "country": 126,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 31478
     },
     "model": "wycliffe.country",
@@ -2592,7 +2592,7 @@
 {
     "fields": {
         "country": 127,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 35
     },
     "model": "wycliffe.country",
@@ -2601,7 +2601,7 @@
 {
     "fields": {
         "country": 128,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2610,7 +2610,7 @@
 {
     "fields": {
         "country": 129,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2619,7 +2619,7 @@
 {
     "fields": {
         "country": 130,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2628,7 +2628,7 @@
 {
     "fields": {
         "country": 131,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 18606
     },
     "model": "wycliffe.country",
@@ -2637,7 +2637,7 @@
 {
     "fields": {
         "country": 132,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 62
     },
     "model": "wycliffe.country",
@@ -2646,7 +2646,7 @@
 {
     "fields": {
         "country": 133,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2655,7 +2655,7 @@
 {
     "fields": {
         "country": 134,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 13518
     },
     "model": "wycliffe.country",
@@ -2664,7 +2664,7 @@
 {
     "fields": {
         "country": 135,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 50519
     },
     "model": "wycliffe.country",
@@ -2673,7 +2673,7 @@
 {
     "fields": {
         "country": 136,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2646
     },
     "model": "wycliffe.country",
@@ -2682,7 +2682,7 @@
 {
     "fields": {
         "country": 137,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2691,7 +2691,7 @@
 {
     "fields": {
         "country": 138,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 81
     },
     "model": "wycliffe.country",
@@ -2700,7 +2700,7 @@
 {
     "fields": {
         "country": 139,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 396
     },
     "model": "wycliffe.country",
@@ -2709,7 +2709,7 @@
 {
     "fields": {
         "country": 140,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3069
     },
     "model": "wycliffe.country",
@@ -2718,7 +2718,7 @@
 {
     "fields": {
         "country": 141,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4
     },
     "model": "wycliffe.country",
@@ -2727,7 +2727,7 @@
 {
     "fields": {
         "country": 142,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 402
     },
     "model": "wycliffe.country",
@@ -2736,7 +2736,7 @@
 {
     "fields": {
         "country": 143,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2745,7 +2745,7 @@
 {
     "fields": {
         "country": 144,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 329
     },
     "model": "wycliffe.country",
@@ -2754,7 +2754,7 @@
 {
     "fields": {
         "country": 145,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 12884
     },
     "model": "wycliffe.country",
@@ -2763,7 +2763,7 @@
 {
     "fields": {
         "country": 146,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 107029
     },
     "model": "wycliffe.country",
@@ -2772,7 +2772,7 @@
 {
     "fields": {
         "country": 147,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 25347
     },
     "model": "wycliffe.country",
@@ -2781,7 +2781,7 @@
 {
     "fields": {
         "country": 148,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 19792
     },
     "model": "wycliffe.country",
@@ -2790,7 +2790,7 @@
 {
     "fields": {
         "country": 149,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2031
     },
     "model": "wycliffe.country",
@@ -2799,7 +2799,7 @@
 {
     "fields": {
         "country": 150,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 237
     },
     "model": "wycliffe.country",
@@ -2808,7 +2808,7 @@
 {
     "fields": {
         "country": 151,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 13957
     },
     "model": "wycliffe.country",
@@ -2817,7 +2817,7 @@
 {
     "fields": {
         "country": 152,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2826,7 +2826,7 @@
 {
     "fields": {
         "country": 153,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 131530
     },
     "model": "wycliffe.country",
@@ -2835,7 +2835,7 @@
 {
     "fields": {
         "country": 154,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5487
     },
     "model": "wycliffe.country",
@@ -2844,7 +2844,7 @@
 {
     "fields": {
         "country": 155,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 16299
     },
     "model": "wycliffe.country",
@@ -2853,7 +2853,7 @@
 {
     "fields": {
         "country": 156,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4620
     },
     "model": "wycliffe.country",
@@ -2862,7 +2862,7 @@
 {
     "fields": {
         "country": 157,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 27133
     },
     "model": "wycliffe.country",
@@ -2871,7 +2871,7 @@
 {
     "fields": {
         "country": 158,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 14
     },
     "model": "wycliffe.country",
@@ -2880,7 +2880,7 @@
 {
     "fields": {
         "country": 159,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1
     },
     "model": "wycliffe.country",
@@ -2889,7 +2889,7 @@
 {
     "fields": {
         "country": 160,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4028
     },
     "model": "wycliffe.country",
@@ -2898,7 +2898,7 @@
 {
     "fields": {
         "country": 161,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 2567
     },
     "model": "wycliffe.country",
@@ -2907,7 +2907,7 @@
 {
     "fields": {
         "country": 162,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3232
     },
     "model": "wycliffe.country",
@@ -2916,7 +2916,7 @@
 {
     "fields": {
         "country": 163,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 27968
     },
     "model": "wycliffe.country",
@@ -2925,7 +2925,7 @@
 {
     "fields": {
         "country": 164,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 257
     },
     "model": "wycliffe.country",
@@ -2934,7 +2934,7 @@
 {
     "fields": {
         "country": 165,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5887
     },
     "model": "wycliffe.country",
@@ -2943,7 +2943,7 @@
 {
     "fields": {
         "country": 166,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 83054
     },
     "model": "wycliffe.country",
@@ -2952,7 +2952,7 @@
 {
     "fields": {
         "country": 167,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 157935
     },
     "model": "wycliffe.country",
@@ -2961,7 +2961,7 @@
 {
     "fields": {
         "country": 168,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 38530
     },
     "model": "wycliffe.country",
@@ -2970,7 +2970,7 @@
 {
     "fields": {
         "country": 169,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -2979,7 +2979,7 @@
 {
     "fields": {
         "country": 170,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 0
     },
     "model": "wycliffe.country",
@@ -2988,7 +2988,7 @@
 {
     "fields": {
         "country": 171,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3955
     },
     "model": "wycliffe.country",
@@ -2997,7 +2997,7 @@
 {
     "fields": {
         "country": 172,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3006,7 +3006,7 @@
 {
     "fields": {
         "country": 173,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10495
     },
     "model": "wycliffe.country",
@@ -3015,7 +3015,7 @@
 {
     "fields": {
         "country": 174,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 20
     },
     "model": "wycliffe.country",
@@ -3024,7 +3024,7 @@
 {
     "fields": {
         "country": 175,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 6158
     },
     "model": "wycliffe.country",
@@ -3033,7 +3033,7 @@
 {
     "fields": {
         "country": 176,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 813
     },
     "model": "wycliffe.country",
@@ -3042,7 +3042,7 @@
 {
     "fields": {
         "country": 177,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 785
     },
     "model": "wycliffe.country",
@@ -3051,7 +3051,7 @@
 {
     "fields": {
         "country": 178,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 21711
     },
     "model": "wycliffe.country",
@@ -3060,7 +3060,7 @@
 {
     "fields": {
         "country": 179,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3069,7 +3069,7 @@
 {
     "fields": {
         "country": 180,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 143202
     },
     "model": "wycliffe.country",
@@ -3078,7 +3078,7 @@
 {
     "fields": {
         "country": 181,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9038
     },
     "model": "wycliffe.country",
@@ -3087,7 +3087,7 @@
 {
     "fields": {
         "country": 182,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 24573
     },
     "model": "wycliffe.country",
@@ -3096,7 +3096,7 @@
 {
     "fields": {
         "country": 183,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 478
     },
     "model": "wycliffe.country",
@@ -3105,7 +3105,7 @@
 {
     "fields": {
         "country": 184,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 81
     },
     "model": "wycliffe.country",
@@ -3114,7 +3114,7 @@
 {
     "fields": {
         "country": 185,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 36233
     },
     "model": "wycliffe.country",
@@ -3123,7 +3123,7 @@
 {
     "fields": {
         "country": 186,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9041
     },
     "model": "wycliffe.country",
@@ -3132,7 +3132,7 @@
 {
     "fields": {
         "country": 187,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4326
     },
     "model": "wycliffe.country",
@@ -3141,7 +3141,7 @@
 {
     "fields": {
         "country": 188,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1967
     },
     "model": "wycliffe.country",
@@ -3150,7 +3150,7 @@
 {
     "fields": {
         "country": 189,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5401
     },
     "model": "wycliffe.country",
@@ -3159,7 +3159,7 @@
 {
     "fields": {
         "country": 190,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 5525
     },
     "model": "wycliffe.country",
@@ -3168,7 +3168,7 @@
 {
     "fields": {
         "country": 191,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 28
     },
     "model": "wycliffe.country",
@@ -3177,7 +3177,7 @@
 {
     "fields": {
         "country": 192,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 11658
     },
     "model": "wycliffe.country",
@@ -3186,7 +3186,7 @@
 {
     "fields": {
         "country": 193,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 8228
     },
     "model": "wycliffe.country",
@@ -3195,7 +3195,7 @@
 {
     "fields": {
         "country": 194,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 449
     },
     "model": "wycliffe.country",
@@ -3204,7 +3204,7 @@
 {
     "fields": {
         "country": 195,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3213,7 +3213,7 @@
 {
     "fields": {
         "country": 196,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3222,7 +3222,7 @@
 {
     "fields": {
         "country": 197,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 6881
     },
     "model": "wycliffe.country",
@@ -3231,7 +3231,7 @@
 {
     "fields": {
         "country": 198,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3240,7 +3240,7 @@
 {
     "fields": {
         "country": 199,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3249,7 +3249,7 @@
 {
     "fields": {
         "country": 200,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1032
     },
     "model": "wycliffe.country",
@@ -3258,7 +3258,7 @@
 {
     "fields": {
         "country": 201,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 26
     },
     "model": "wycliffe.country",
@@ -3267,7 +3267,7 @@
 {
     "fields": {
         "country": 202,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 9749
     },
     "model": "wycliffe.country",
@@ -3276,7 +3276,7 @@
 {
     "fields": {
         "country": 203,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 6145
     },
     "model": "wycliffe.country",
@@ -3285,7 +3285,7 @@
 {
     "fields": {
         "country": 204,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 64233
     },
     "model": "wycliffe.country",
@@ -3294,7 +3294,7 @@
 {
     "fields": {
         "country": 205,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 6507
     },
     "model": "wycliffe.country",
@@ -3303,7 +3303,7 @@
 {
     "fields": {
         "country": 206,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1
     },
     "model": "wycliffe.country",
@@ -3312,7 +3312,7 @@
 {
     "fields": {
         "country": 207,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3321,7 +3321,7 @@
 {
     "fields": {
         "country": 208,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 4833
     },
     "model": "wycliffe.country",
@@ -3330,7 +3330,7 @@
 {
     "fields": {
         "country": 209,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10102
     },
     "model": "wycliffe.country",
@@ -3339,7 +3339,7 @@
 {
     "fields": {
         "country": 210,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 102
     },
     "model": "wycliffe.country",
@@ -3348,7 +3348,7 @@
 {
     "fields": {
         "country": 211,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 73193
     },
     "model": "wycliffe.country",
@@ -3357,7 +3357,7 @@
 {
     "fields": {
         "country": 212,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 1305
     },
     "model": "wycliffe.country",
@@ -3366,7 +3366,7 @@
 {
     "fields": {
         "country": 213,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 10
     },
     "model": "wycliffe.country",
@@ -3375,7 +3375,7 @@
 {
     "fields": {
         "country": 214,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3384,7 +3384,7 @@
 {
     "fields": {
         "country": 215,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3393,7 +3393,7 @@
 {
     "fields": {
         "country": 216,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 46481
     },
     "model": "wycliffe.country",
@@ -3402,7 +3402,7 @@
 {
     "fields": {
         "country": 217,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 28816
     },
     "model": "wycliffe.country",
@@ -3411,7 +3411,7 @@
 {
     "fields": {
         "country": 218,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3420,7 +3420,7 @@
 {
     "fields": {
         "country": 219,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 3463
     },
     "model": "wycliffe.country",
@@ -3429,7 +3429,7 @@
 {
     "fields": {
         "country": 220,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 26593
     },
     "model": "wycliffe.country",
@@ -3438,7 +3438,7 @@
 {
     "fields": {
         "country": 221,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3447,7 +3447,7 @@
 {
     "fields": {
         "country": 222,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 119
     },
     "model": "wycliffe.country",
@@ -3456,7 +3456,7 @@
 {
     "fields": {
         "country": 223,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 26749
     },
     "model": "wycliffe.country",
@@ -3465,7 +3465,7 @@
 {
     "fields": {
         "country": 224,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 22
     },
     "model": "wycliffe.country",
@@ -3474,7 +3474,7 @@
 {
     "fields": {
         "country": 225,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3483,7 +3483,7 @@
 {
     "fields": {
         "country": 226,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 84238
     },
     "model": "wycliffe.country",
@@ -3492,7 +3492,7 @@
 {
     "fields": {
         "country": 227,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 211
     },
     "model": "wycliffe.country",
@@ -3501,7 +3501,7 @@
 {
     "fields": {
         "country": 228,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3510,7 +3510,7 @@
 {
     "fields": {
         "country": 229,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 185
     },
     "model": "wycliffe.country",
@@ -3519,7 +3519,7 @@
 {
     "fields": {
         "country": 230,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 20975
     },
     "model": "wycliffe.country",
@@ -3528,7 +3528,7 @@
 {
     "fields": {
         "country": 231,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": null
     },
     "model": "wycliffe.country",
@@ -3537,7 +3537,7 @@
 {
     "fields": {
         "country": 232,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 47432
     },
     "model": "wycliffe.country",
@@ -3546,7 +3546,7 @@
 {
     "fields": {
         "country": 233,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 11668
     },
     "model": "wycliffe.country",
@@ -3555,7 +3555,7 @@
 {
     "fields": {
         "country": 234,
-        "primary_denominations": [],
+        "primary_networks": [],
         "population": 13010
     },
     "model": "wycliffe.country",

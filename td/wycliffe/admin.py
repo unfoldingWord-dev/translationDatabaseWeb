@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (
-    Denomination,
+    Network,
     BibleContent,
     Country,
     Language,
@@ -15,7 +15,7 @@ from .models import (
 
 
 admin.site.register(
-    Denomination,
+    Network,
     list_display=["name"]
 )
 
