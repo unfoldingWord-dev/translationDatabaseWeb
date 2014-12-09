@@ -23,6 +23,9 @@ class Country(models.Model):
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
 
+    def __str__(self):
+        return self.country.name
+
 
 class Language(models.Model):
     country = models.ForeignKey(Country)
@@ -30,6 +33,9 @@ class Language(models.Model):
     gateway_dialect = models.ForeignKey(SourceLanguage, related_name="+")
     native_speakers = models.IntegerField()
     networks_translating = models.ManyToManyField(Network)
+
+    def __str__(self):
+        return self.living_language.name
 
 
 class Entity(models.Model):

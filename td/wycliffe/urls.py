@@ -7,6 +7,10 @@ from .views import (
     LanguageCreateView,
     LanguageDetailView,
     LanguageEditView,
+    NetworkCreateView,
+    NetworkDetailView,
+    NetworkEditView,
+    NetworkListView,
     WIPCreateView,
     ScriptureCreateView,
     TranslationNeedCreateView,
@@ -20,6 +24,11 @@ from .views import (
 
 urlpatterns = patterns(
     "",
+    url(r"networks/$", NetworkListView.as_view(), name="network_list"),
+    url(r"networks/create/$", NetworkCreateView.as_view(), name="network_create"),
+    url(r"networks/(?P<pk>\d+)/$", NetworkDetailView.as_view(), name="network_detail"),
+    url(r"networks/(?P<pk>\d+)/edit/$", NetworkEditView.as_view(), name="network_edit"),
+
     url(r"countries/$", CountryListView.as_view(), name="country_list"),
     url(r"countries/(?P<pk>\d+)/$", CountryDetailView.as_view(), name="country_detail"),
     url(r"countries/(?P<pk>\d+)/edit/$", CountryEditView.as_view(), name="country_edit"),

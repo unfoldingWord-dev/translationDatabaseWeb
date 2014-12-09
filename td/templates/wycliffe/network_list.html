@@ -1,0 +1,28 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <h1>Networks</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Network</th>
+                <th>Countries</th>
+                <th>Languages</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for network in network_list %}
+                <tr>
+                    <td><a class="btn btn-primary btn-xs" href="{% url "network_edit" network.pk %}">Edit</a></td>
+                    <td><a href="{% url "network_detail" network.pk %}">{{ network.name }}</a></td>
+                    <td>{{ network.country_set.all|join:", " }}</td>
+                    <td>{{ network.language_set.all|join:", "}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

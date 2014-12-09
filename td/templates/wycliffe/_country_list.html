@@ -1,8 +1,4 @@
-{% extends "site_base.html" %}
-
 {% load humanize %}
-
-{% block body %}
 <h1>Countries</h1>
 
 <table class="table table-bordered">
@@ -10,7 +6,7 @@
         <tr>
             <th>Country</th>
             <th>Population</th>
-            <th>Primary Denominations</th>
+            <th>Primary Networks</th>
         </tr>
     </thead>
     <tbody>
@@ -18,9 +14,12 @@
             <tr>
                 <td><a href="{% url "country_detail" country.pk %}">{{ country.country.name }}</a></td>
                 <td class="text-right">{{ country.population|default:""|intcomma }}</td>
-                <td>{% for d in country.primary_denominations.all %}{{ d }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+                <td>
+                    {% for network in country.primary_networks.all %}
+                        <a href="{{ network.get_absolute_url }}">{{ network }}</a>{% if forloop.last %}{% else %}, {% endif %}
+                    {% endfor %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}

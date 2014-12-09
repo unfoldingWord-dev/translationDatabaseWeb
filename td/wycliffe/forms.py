@@ -3,11 +3,21 @@ from django import forms
 from .models import (
     Country,
     Language,
+    Network,
     Resource,
     Scripture,
     TranslationNeed,
     WorkInProgress
 )
+
+
+
+class NetworkForm(forms.ModelForm):
+    class Meta:
+        model = Network
+        fields = [
+            "name"
+        ]
 
 
 class CountryForm(forms.ModelForm):

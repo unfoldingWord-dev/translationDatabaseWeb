@@ -1,0 +1,17 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+<ol class="breadcrumb">
+  <li><a href="{% url "network_list" %}">Networks</a></li>
+  <li class="active">{{ network.name }}</li>
+</ol>
+
+<a class="btn btn-primary pull-right" href="{% url "network_edit" network.pk %}">Edit</a>
+<h1>{{ network.name }}</h1>
+
+    {% include "wycliffe/_language_list.html" with language_list=network.language_set.all %}
+
+    {% include "wycliffe/_country_list.html" with country_list=network.country_set.all %}
+{% endblock %}

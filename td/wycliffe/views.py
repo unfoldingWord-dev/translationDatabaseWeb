@@ -7,6 +7,7 @@ from account.mixins import LoginRequiredMixin
 from .forms import (
     CountryForm,
     LanguageForm,
+    NetworkForm,
     ResourceForm,
     ScriptureForm,
     TranslationNeedForm,
@@ -15,6 +16,7 @@ from .forms import (
 from .models import (
     Country,
     Language,
+    Network,
     Resource,
     Scripture,
     TranslationNeed,
@@ -83,6 +85,30 @@ class LanguageEditView(LoginRequiredMixin, UpdateView):
             "country": self.object.country
         })
         return context
+
+
+class NetworkCreateView(LoginRequiredMixin, CreateView):
+    model = Network
+    form_class = NetworkForm
+
+    def get_success_url(self):
+        return reverse("network_detail", args=[self.object.pk])
+
+
+class NetworkDetailView(LoginRequiredMixin, DetailView):
+    model = Network
+
+
+class NetworkEditView(LoginRequiredMixin, UpdateView):
+    model = Network
+    form_class = NetworkForm
+
+    def get_success_url(self):
+        return reverse("network_detail", args=[self.object.pk])
+
+
+class NetworkListView(LoginRequiredMixin, ListView):
+    model = Network
 
 
 class BaseLanguageView(LoginRequiredMixin):
