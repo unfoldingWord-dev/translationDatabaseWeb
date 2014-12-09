@@ -42,7 +42,7 @@
                 <td>{{ wip.get_kind_display }}</td>
                 <td>{{ wip.bible_content }}</td>
                 <td>{{ wip.get_paradigm_display }}</td>
-                <td>{% for t in wip.translators.all %}{{ t.name }}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+                <td>{{ wip.translators.all|join:", " }}</td>
                 <td>{{ wip.anticipated_completion_date }}</td>
             </tr>
         {% endfor %}
