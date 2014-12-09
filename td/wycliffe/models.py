@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from td.imports.models import EthnologueCountryCode
 from td.models import Language as SourceLanguage
@@ -6,6 +7,9 @@ from td.models import Language as SourceLanguage
 
 class Network(models.Model):
     name = models.CharField(max_length=100)
+
+    def get_absolute_url(self):
+        return reverse("network_detail", args=[self.pk])
 
     def __str__(self):
         return self.name
@@ -44,6 +48,9 @@ class Entity(models.Model):
     d43username = models.CharField(max_length=255, blank=True, help_text="Door43 username.")
     location = models.CharField(max_length=255, blank=True, help_text="Location.")
     phone = models.CharField(max_length=255, blank=True, help_text="Phone number.")
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         abstract = True

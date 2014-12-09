@@ -19,14 +19,7 @@
         </table>
     </div>
     <div class="col-md-4">
-        <table class="table">
-            <thead><tr><th>Top Denominations</th></tr></thead>
-            <tbody>
-            {% for d in country.primary_denominations.all %}
-                <tr><td>{{ d.name }}</td></tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        {% include "wycliffe/_short_list.html" with title="Top Networks" data=country.primary_networks.all %}
     </div>
 </div>
 

@@ -23,14 +23,7 @@
         </table>
     </div>
     <div class="col-md-6">
-        <table class="table">
-            <thead><tr><th>Denominations Translating</th></tr></thead>
-            <tbody>
-            {% for d in language.denominations_translating.all %}
-                <tr><td>{{ d.name }}</td></tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        {% include "wycliffe/_short_list.html" with title="Networks Translating" data=language.networks_translating.all %}
     </div>
 </div>
 
