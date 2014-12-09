@@ -7,4 +7,5 @@ $(function () {
             stateSave: true
         });
     });
+    $(".select2-multiple").select2();
 });

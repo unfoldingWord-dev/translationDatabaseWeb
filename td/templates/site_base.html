@@ -9,6 +9,8 @@
     <link href="{% static "pinax/css/theme.css" %}" rel="stylesheet">
     <link href="{% static "css/site.css" %}" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2.css" %}">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2-bootstrap.css" %}">
     {% block extra_style %}{% endblock %}
 {% endblock %}
 
@@ -81,6 +83,7 @@
     <script src="{% block jquery_src %}{% static "jquery/js/jquery-2.1.1.min.js" %}{% endblock %}"></script>
     <script src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.js"></script>
     <script src="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+    <script src="{% static "select2-3.5.2/select2.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script src="{% static "pinax/js/theme.js" %}"></script>
     <script src="{% static "td/js/app.js" %}"></script>

@@ -11,7 +11,6 @@ from .models import (
 )
 
 
-
 class NetworkForm(forms.ModelForm):
     class Meta:
         model = Network
@@ -21,6 +20,11 @@ class NetworkForm(forms.ModelForm):
 
 
 class CountryForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CountryForm, self).__init__(*args, **kwargs)
+        self.fields["primary_networks"].widget.attrs["class"] = "select2-multiple"
+
     class Meta:
         model = Country
         fields = [
@@ -30,6 +34,11 @@ class CountryForm(forms.ModelForm):
 
 
 class LanguageForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(LanguageForm, self).__init__(*args, **kwargs)
+        self.fields["networks_translating"].widget.attrs["class"] = "select2-multiple"
+
     class Meta:
         model = Language
         fields = [
@@ -41,6 +50,11 @@ class LanguageForm(forms.ModelForm):
 
 
 class ResourceForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ResourceForm, self).__init__(*args, **kwargs)
+        self.fields["copyright_holder"].widget.attrs["class"] = "select2-multiple"
+
     class Meta:
         model = Resource
         fields = [
@@ -75,6 +89,7 @@ class TranslationNeedForm(forms.ModelForm):
 
 
 class WorkInProgressForm(forms.ModelForm):
+
     class Meta:
         model = WorkInProgress
         fields = [
