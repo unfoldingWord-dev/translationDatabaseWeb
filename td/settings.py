@@ -152,10 +152,10 @@ INSTALLED_APPS = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse"
-        }
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s %(message)s"
+        },
     },
     "handlers": {
         "console": {
