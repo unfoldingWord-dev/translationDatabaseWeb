@@ -14,3 +14,4 @@ django-redis-cache==0.13.0
 # For Gondor
 gondor==1.2.5
 gunicorn==19.1.1
+raven==5.1.1

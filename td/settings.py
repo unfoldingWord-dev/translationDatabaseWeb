@@ -136,6 +136,7 @@ INSTALLED_APPS = [
     "account",
     "eventlog",
     "metron",
+    "raven.contrib.django.raven_compat",
 
     # project
     "td",
@@ -157,16 +158,18 @@ LOGGING = {
         }
     },
     "handlers": {
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false"],
-            "class": "django.utils.log.AdminEmailHandler"
-        }
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple"
+        },
     },
     "loggers": {
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
         "django.request": {
-            "handlers": ["mail_admins"],
-            "level": "ERROR",
             "propagate": True,
         },
     }
@@ -198,3 +201,7 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
+
+RAVEN_CONFIG = {
+    "dsn": os.environ.get("RAVEN_DSN"),
+}
