@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
 
@@ -22,7 +23,39 @@ def names_text_export(reqeust):
 
 
 def names_json_export(request):
-    return JsonResponse(Language.names_data(), safe=False)  # Set safe to False to allow list instead of dict to be returned
+    data = cache_get_or_set("langnames", Language.names_data)
+    return JsonResponse(data, safe=False)  # Set safe to False to allow list instead of dict to be returned
+
+
+def cache_get_or_set(key, callable):
+    data = cache.get(key)
+    if data is None:
+        data = callable()
+        cache.set(key, data, None)
+    return data
+
+
+def languages_autocomplete(request):
+    term = request.GET.get("q").lower()
+    data = cache_get_or_set("langnames", Language.names_data)
+    d = []
+    if len(term) <= 3:
+        term = term.encode("utf-8")
+        # search: cc, lc
+        d.extend([
+            x
+            for x in data
+            if term in x["lc"].lower() or term in [y.lower() for y in x["cc"]]
+        ])
+    if len(term) >= 3:
+        # search: ln, lr
+        term = term.encode("utf-8")
+        d.extend([
+            x
+            for x in data
+            if term in x["ln"].lower() or term in x["lr"].lower()
+        ])
+    return JsonResponse({"results": d, "count": len(d), "term": term})
 
 
 class AdditionalLanguageListView(TemplateView):

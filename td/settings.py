@@ -172,6 +172,16 @@ LOGGING = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": "127.0.0.1:6379",
+        "OPTIONS": {
+            "DB": 0,
+        },
+    }
+}
+
 FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
 ]

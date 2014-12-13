@@ -6,6 +6,8 @@ from eventlog.models import log
 
 from td.imports.models import EthnologueCountryCode, EthnologueLanguageCode
 
+from .signals import languages_integrated
+
 
 class AdditionalLanguage(models.Model):
 
@@ -42,16 +44,24 @@ class Language(models.Model):
         return self.name
 
     @property
-    def country_code(self):
+    def cc(self):
         if self.country:
             return self.country.code.encode("utf-8")
         return ""
 
     @property
-    def region(self):
+    def lr(self):
         if self.country:
             return self.country.area.encode("utf-8")
         return ""
+
+    @property
+    def lc(self):
+        return self.code
+
+    @property
+    def ln(self):
+        return self.name.encode("utf-8")
 
     @classmethod
     def codes_text(cls):
@@ -70,7 +80,7 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(lc=x.code, ln=x.name.encode("utf-8"), cc=[x.country_code], lr=x.region)
+            dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr)
             for x in cls.objects.all().order_by("code")
         ]
 
@@ -97,8 +107,8 @@ class Language(models.Model):
         rows.sort()
         rows = [
             cls(
-                code=r[0].encode("utf-8"),
-                name=r[1].encode("utf-8"),
+                code=r[0],
+                name=r[1],
                 country=next(iter(EthnologueCountryCode.objects.filter(pk=int(r[2]))), None)
             )
             for r in rows
@@ -106,4 +116,5 @@ class Language(models.Model):
         ]
         cls.objects.all().delete()
         cls.objects.bulk_create(rows)
+        languages_integrated.send(sender=cls)
         log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})

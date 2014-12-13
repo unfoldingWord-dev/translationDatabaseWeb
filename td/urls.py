@@ -45,6 +45,8 @@ urlpatterns = patterns(
     url(r"^ajax/data-sources/ethnologue/language-index/$", AjaxEthnologueLanguageIndexListView.as_view(), name="ajax_ds_ethnologue_language_index"),
     url(r"^ajax/data-sources/sil-iso-639-3/$", AjaxSIL_ISO_639_3ListView.as_view(), name="ajax_ds_sil"),
     url(r"^ajax/data-sources/wikipedia/$", AjaxWikipediaISOLanguageListView.as_view(), name="ajax_ds_wikipedia"),
+
+    url(r"^ac/langnames/", "td.views.languages_autocomplete", name="names_autocomplete"),
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
