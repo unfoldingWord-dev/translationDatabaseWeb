@@ -64,16 +64,15 @@ class LanguageForm(forms.ModelForm):
                 }
             )
         )
-        self.initial.update({
-            "living_language": self.instance.living_language.code if self.instance.living_language else "",
-            "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
-        })
-        if self.instance.living_language is not None:
+        if self.instance.pk is not None:
+            self.initial.update({
+                "living_language": self.instance.living_language.code,
+                "gateway_dialect": self.instance.gateway_dialect.code
+            })
             lang = self.instance.living_language
             self.fields["living_language"].widget.attrs["data-lang-ln"] = lang.ln
             self.fields["living_language"].widget.attrs["data-lang-lc"] = lang.lc
             self.fields["living_language"].widget.attrs["data-lang-lr"] = lang.lr
-        if self.instance.gateway_dialect is not None:
             lang = self.instance.gateway_dialect
             self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
             self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
