@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
 from account.mixins import LoginRequiredMixin
+from eventlog.models import log
 
 from .forms import (
     CountryForm,
@@ -24,6 +25,41 @@ from .models import (
 )
 
 
+class EventLogMixin(object):
+
+    @property
+    def action(self):
+        return "{}_{}".format(
+            self.action_kind,
+            self.model._meta.verbose_name.upper().replace(" ", "_")
+        )
+
+    @property
+    def extra_data(self):
+        data = {
+            "pk": self.object.pk
+        }
+        return data
+
+    @property
+    def user(self):
+        if self.request.user.is_authenticated():
+            return self.request.user
+        return None
+
+    def log_action(self):
+        log(
+            user=self.user,
+            action=self.action,
+            extra=self.extra_data
+        )
+
+    def form_valid(self, form):
+        response = super(EventLogMixin, self).form_valid(form)
+        self.log_action()
+        return response
+
+
 class CountryListView(LoginRequiredMixin, ListView):
     model = Country
 
@@ -37,28 +73,31 @@ class CountryDetailView(LoginRequiredMixin, DetailView):
     model = Country
 
 
-class CountryEditView(LoginRequiredMixin, UpdateView):
+class CountryEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
     model = Country
     form_class = CountryForm
+    action_kind = "EDIT"
 
     def get_success_url(self):
         return reverse("country_detail", args=[self.object.pk])
 
 
-class LanguageCreateView(LoginRequiredMixin, CreateView):
+class LanguageCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
     model = Language
     form_class = LanguageForm
+    action_kind = "CREATE"
 
     def dispatch(self, request, *args, **kwargs):
         self.country = get_object_or_404(Country, pk=self.kwargs.get("pk"))
         return super(LanguageCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        language = form.save(commit=False)
-        language.country = self.country
-        language.save()
+        self.object = form.save(commit=False)
+        self.object.country = self.country
+        self.object.save()
         form.save_m2m()
-        return redirect("language_detail", language.pk)
+        self.log_action()
+        return redirect("language_detail", self.object.pk)
 
     def get_context_data(self, **kwargs):
         context = super(LanguageCreateView, self).get_context_data(**kwargs)
@@ -72,9 +111,10 @@ class LanguageDetailView(LoginRequiredMixin, DetailView):
     model = Language
 
 
-class LanguageEditView(LoginRequiredMixin, UpdateView):
+class LanguageEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
     model = Language
     form_class = LanguageForm
+    action_kind = "EDIT"
 
     def get_success_url(self):
         return reverse("language_detail", args=[self.object.pk])
@@ -87,9 +127,10 @@ class LanguageEditView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class NetworkCreateView(LoginRequiredMixin, CreateView):
+class NetworkCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
     model = Network
     form_class = NetworkForm
+    action_kind = "CREATE"
 
     def get_success_url(self):
         return reverse("network_detail", args=[self.object.pk])
@@ -99,9 +140,10 @@ class NetworkDetailView(LoginRequiredMixin, DetailView):
     model = Network
 
 
-class NetworkEditView(LoginRequiredMixin, UpdateView):
+class NetworkEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
     model = Network
     form_class = NetworkForm
+    action_kind = "EDIT"
 
     def get_success_url(self):
         return reverse("network_detail", args=[self.object.pk])
@@ -111,17 +153,18 @@ class NetworkListView(LoginRequiredMixin, ListView):
     model = Network
 
 
-class BaseLanguageView(LoginRequiredMixin):
+class BaseLanguageView(LoginRequiredMixin, EventLogMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.language = get_object_or_404(Language, pk=self.kwargs.get("pk"))
         return super(BaseLanguageView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        obj = form.save(commit=False)
-        obj.language = self.language
-        obj.save()
+        self.object = form.save(commit=False)
+        self.object.language = self.language
+        self.object.save()
         form.save_m2m()
+        self.log_action()
         return redirect("language_detail", self.language.pk)
 
     def get_context_data(self, **kwargs):
@@ -135,38 +178,46 @@ class BaseLanguageView(LoginRequiredMixin):
 class WIPCreateView(BaseLanguageView, CreateView):
     model = WorkInProgress
     form_class = WorkInProgressForm
+    action_kind = "CREATE"
 
 
 class ScriptureCreateView(BaseLanguageView, CreateView):
     model = Scripture
     form_class = ScriptureForm
+    action_kind = "CREATE"
 
 
 class TranslationNeedCreateView(BaseLanguageView, CreateView):
     model = TranslationNeed
     form_class = TranslationNeedForm
+    action_kind = "CREATE"
 
 
 class ResourceCreateView(BaseLanguageView, CreateView):
     model = Resource
     form_class = ResourceForm
+    action_kind = "CREATE"
 
 
 class WIPEditView(BaseLanguageView, UpdateView):
     model = WorkInProgress
     form_class = WorkInProgressForm
+    action_kind = "EDIT"
 
 
 class ScriptureEditView(BaseLanguageView, UpdateView):
     model = Scripture
     form_class = ScriptureForm
+    action_kind = "EDIT"
 
 
 class TranslationNeedEditView(BaseLanguageView, UpdateView):
     model = TranslationNeed
     form_class = TranslationNeedForm
+    action_kind = "EDIT"
 
 
 class ResourceEditView(BaseLanguageView, UpdateView):
     model = Resource
     form_class = ResourceForm
+    action_kind = "EDIT"
