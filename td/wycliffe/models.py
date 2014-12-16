@@ -1,10 +1,12 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.utils.encoding import python_2_unicode_compatible
 
 from td.imports.models import EthnologueCountryCode
 from td.models import Language as SourceLanguage
 
 
+@python_2_unicode_compatible
 class Network(models.Model):
     name = models.CharField(max_length=100)
 
@@ -15,6 +17,7 @@ class Network(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class BibleContent(models.Model):
     name = models.CharField(max_length=100)
 
@@ -22,6 +25,7 @@ class BibleContent(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class Country(models.Model):
     country = models.ForeignKey(EthnologueCountryCode)
     population = models.IntegerField(null=True, blank=True)
@@ -31,6 +35,7 @@ class Country(models.Model):
         return self.country.name
 
 
+@python_2_unicode_compatible
 class Language(models.Model):
     country = models.ForeignKey(Country)
     living_language = models.ForeignKey(SourceLanguage, related_name="+")
@@ -42,6 +47,7 @@ class Language(models.Model):
         return self.living_language.name
 
 
+@python_2_unicode_compatible
 class Entity(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=255, blank=True, help_text="Email address.")
@@ -93,6 +99,7 @@ class ScriptureBase(models.Model):
         abstract = True
 
 
+@python_2_unicode_compatible
 class WorkInProgress(ScriptureBase):
     PARADIGM_P1 = "P1"
     PARADIGM_P2 = "P2"
