@@ -141,6 +141,7 @@ class WorkInProgressForm(forms.ModelForm):
         self.fields["paradigm"].widget = forms.RadioSelect(choices=self.fields["paradigm"].widget.choices)
         self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
         self.fields["translators"].widget.attrs["class"] = "select2-multiple"
+        self.fields["anticipated_completion_date"].widget.attrs["class"] = "date-picker"
 
     class Meta:
         model = WorkInProgress

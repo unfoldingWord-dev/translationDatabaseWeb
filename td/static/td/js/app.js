@@ -51,4 +51,7 @@ $(function () {
     });
     $(".select2-multiple").select2();
     $(".language-selector").languageSelector();
+    $(".date-picker").daterangepicker({
+      singleDatePicker: true
+    });
 });
