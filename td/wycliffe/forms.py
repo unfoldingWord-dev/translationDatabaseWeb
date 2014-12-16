@@ -14,6 +14,9 @@ from .models import (
 
 
 class NetworkForm(forms.ModelForm):
+
+    required_css_class = "required"
+
     class Meta:
         model = Network
         fields = [
@@ -22,6 +25,8 @@ class NetworkForm(forms.ModelForm):
 
 
 class CountryForm(forms.ModelForm):
+
+    required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
         super(CountryForm, self).__init__(*args, **kwargs)
@@ -36,6 +41,8 @@ class CountryForm(forms.ModelForm):
 
 
 class LanguageForm(forms.ModelForm):
+
+    required_css_class = "required"
 
     def clean_living_language(self):
         code = self.cleaned_data["living_language"]
@@ -90,6 +97,8 @@ class LanguageForm(forms.ModelForm):
 
 class ResourceForm(forms.ModelForm):
 
+    required_css_class = "required"
+
     def __init__(self, *args, **kwargs):
         super(ResourceForm, self).__init__(*args, **kwargs)
         self.fields["copyright_holder"].widget.attrs["class"] = "select2-multiple"
@@ -105,6 +114,8 @@ class ResourceForm(forms.ModelForm):
 
 
 class ScriptureForm(forms.ModelForm):
+
+    required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
         super(ScriptureForm, self).__init__(*args, **kwargs)
@@ -123,6 +134,9 @@ class ScriptureForm(forms.ModelForm):
 
 
 class TranslationNeedForm(forms.ModelForm):
+
+    required_css_class = "required"
+
     class Meta:
         model = TranslationNeed
         fields = [
@@ -134,6 +148,8 @@ class TranslationNeedForm(forms.ModelForm):
 
 
 class WorkInProgressForm(forms.ModelForm):
+
+    required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
         super(WorkInProgressForm, self).__init__(*args, **kwargs)

@@ -26,3 +26,13 @@ body {
 div.jumbotron {
     margin-top: 60px;
 }
+
+label {
+    font-weight: normal;
+}
+label.required {
+    &:after {
+        content: " *";
+    }
+    font-weight: bold;
+}
