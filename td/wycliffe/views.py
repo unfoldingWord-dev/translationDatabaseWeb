@@ -152,6 +152,11 @@ class NetworkEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
 class NetworkListView(LoginRequiredMixin, ListView):
     model = Network
 
+    def get_queryset(self):
+        qs = super(NetworkListView, self).get_queryset()
+        qs = qs.order_by("name")
+        return qs
+
 
 class BaseLanguageView(LoginRequiredMixin, EventLogMixin):
 
