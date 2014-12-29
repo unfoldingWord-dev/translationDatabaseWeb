@@ -191,6 +191,13 @@ class ScriptureCreateView(BaseLanguageView, CreateView):
     form_class = ScriptureForm
     action_kind = "CREATE"
 
+    def get_form_kwargs(self):
+        kwargs = super(ScriptureCreateView, self).get_form_kwargs()
+        kwargs.update({
+            "language": self.language
+        })
+        return kwargs
+
 
 class TranslationNeedCreateView(BaseLanguageView, CreateView):
     model = TranslationNeed
@@ -214,6 +221,13 @@ class ScriptureEditView(BaseLanguageView, UpdateView):
     model = Scripture
     form_class = ScriptureForm
     action_kind = "EDIT"
+
+    def get_form_kwargs(self):
+        kwargs = super(ScriptureEditView, self).get_form_kwargs()
+        kwargs.update({
+            "language": self.language
+        })
+        return kwargs
 
 
 class TranslationNeedEditView(BaseLanguageView, UpdateView):

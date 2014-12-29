@@ -118,7 +118,7 @@ class WorkInProgress(ScriptureBase):
 
 
 class Scripture(ScriptureBase):
-    wip = models.ForeignKey(WorkInProgress, verbose_name="Work in Progress")
+    wip = models.ForeignKey(WorkInProgress, verbose_name="Work in Progress", null=True, blank=True)
     year = models.IntegerField()
     publisher = models.CharField(max_length=200)
 

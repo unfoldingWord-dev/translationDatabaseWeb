@@ -118,9 +118,11 @@ class ScriptureForm(forms.ModelForm):
     required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
+        self.language = kwargs.pop("language")
         super(ScriptureForm, self).__init__(*args, **kwargs)
         self.fields["kind"].widget = forms.RadioSelect(choices=self.fields["kind"].widget.choices)
         self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
+        self.fields["wip"].queryset = self.fields["wip"].queryset.filter(language=self.language)
 
     class Meta:
         model = Scripture
