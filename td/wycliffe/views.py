@@ -75,7 +75,8 @@ class RegionDetailView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
         context.update({
-            "region": self.kwargs.get("slug").title()
+            "region": self.kwargs.get("slug").title(),
+            "languages": Language.objects.filter(country__country__area__iexact=self.kwargs.get("slug")).order_by("living_language__name")
         })
         return context
 

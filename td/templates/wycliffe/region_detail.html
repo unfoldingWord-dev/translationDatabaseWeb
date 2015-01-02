@@ -8,5 +8,11 @@
       <li class="active">{{ region }}</li>
     </ol>
     <h1>{{ region }}</h1>
+
+    <h2>Countries</h2>
     {% include "wycliffe/_country_list.html" %}
+
+    <h2>Languages</h2>
+    {% include "wycliffe/_language_list.html" with language_list=languages %}
+
 {% endblock %}
