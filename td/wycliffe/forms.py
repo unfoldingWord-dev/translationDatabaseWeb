@@ -50,7 +50,8 @@ class LanguageForm(forms.ModelForm):
 
     def clean_gateway_dialect(self):
         code = self.cleaned_data["gateway_dialect"]
-        return SourceLanguage.objects.get(code=code)
+        if code:
+            return SourceLanguage.objects.get(code=code)
 
     def __init__(self, *args, **kwargs):
         super(LanguageForm, self).__init__(*args, **kwargs)
@@ -69,21 +70,23 @@ class LanguageForm(forms.ModelForm):
                     "class": "language-selector",
                     "data-source-url": reverse("names_autocomplete")
                 }
-            )
+            ),
+            required=False
         )
         if self.instance.pk is not None:
             self.initial.update({
                 "living_language": self.instance.living_language.code,
-                "gateway_dialect": self.instance.gateway_dialect.code
+                "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
             })
             lang = self.instance.living_language
             self.fields["living_language"].widget.attrs["data-lang-ln"] = lang.ln
             self.fields["living_language"].widget.attrs["data-lang-lc"] = lang.lc
             self.fields["living_language"].widget.attrs["data-lang-lr"] = lang.lr
             lang = self.instance.gateway_dialect
-            self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
-            self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
-            self.fields["gateway_dialect"].widget.attrs["data-lang-lr"] = lang.lr
+            if lang:
+                self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["gateway_dialect"].widget.attrs["data-lang-lr"] = lang.lr
 
     class Meta:
         model = Language

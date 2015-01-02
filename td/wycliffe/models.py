@@ -39,9 +39,9 @@ class Country(models.Model):
 class Language(models.Model):
     country = models.ForeignKey(Country)
     living_language = models.ForeignKey(SourceLanguage, related_name="+")
-    gateway_dialect = models.ForeignKey(SourceLanguage, related_name="+")
-    native_speakers = models.IntegerField()
-    networks_translating = models.ManyToManyField(Network)
+    gateway_dialect = models.ForeignKey(SourceLanguage, related_name="+", null=True, blank=True)
+    native_speakers = models.IntegerField(null=True, blank=True)
+    networks_translating = models.ManyToManyField(Network, null=True, blank=True)
 
     def __str__(self):
         return self.living_language.name
