@@ -7,9 +7,9 @@
   <li><a href="{% url "country_list" %}">Countries</a></li>
   <li><a href="{% url "country_detail" language.country.country.pk %}">{{ language.country.country.name }}</a></li>
   <li><a href="{% url "language_detail" language.pk %}">{{ language.living_language.name }}</a></li>
-  <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Scripture</li>
+  <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Existing Scripture</li>
 </ol>
-<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Scripture</h1>
+<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Existing Scripture</h1>
 
 <form class="form" action="." method="POST">
     {% csrf_token %}
