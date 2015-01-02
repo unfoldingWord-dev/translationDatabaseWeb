@@ -31,6 +31,12 @@ class Country(models.Model):
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
 
+    @classmethod
+    def regions(cls):
+        qs = cls.objects.all().values_list("country__area", flat=True).distinct()
+        qs = qs.order_by("country__area")
+        return qs
+
     def __str__(self):
         return self.country.name
 

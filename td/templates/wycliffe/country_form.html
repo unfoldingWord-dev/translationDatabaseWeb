@@ -4,7 +4,8 @@
 
 {% block body %}
 <ol class="breadcrumb">
-  <li><a href="{% url "country_list" %}">Countries</a></li>
+  <li><a href="{% url "region_list" %}">Regions</a></li>
+  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
   <li><a href="{% url "country_detail" country.pk %}">{{ country.country.name }}</a></li>
   <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} {{ country.country.name }}</li>
 </ol>

@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, url
 
 from .views import (
+    RegionListView,
+    RegionDetailView,
     CountryListView,
     CountryDetailView,
     CountryEditView,
@@ -29,6 +31,8 @@ urlpatterns = patterns(
     url(r"networks/(?P<pk>\d+)/$", NetworkDetailView.as_view(), name="network_detail"),
     url(r"networks/(?P<pk>\d+)/edit/$", NetworkEditView.as_view(), name="network_edit"),
 
+    url(r"regions/$", RegionListView.as_view(), name="region_list"),
+    url(r"regions/(?P<slug>\w+)/$", RegionDetailView.as_view(), name="region_detail"),
     url(r"countries/$", CountryListView.as_view(), name="country_list"),
     url(r"countries/(?P<pk>\d+)/$", CountryDetailView.as_view(), name="country_detail"),
     url(r"countries/(?P<pk>\d+)/edit/$", CountryEditView.as_view(), name="country_edit"),

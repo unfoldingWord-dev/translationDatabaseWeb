@@ -4,7 +4,8 @@
 
 {% block body %}
 <ol class="breadcrumb">
-  <li><a href="{% url "country_list" %}">Countries</a></li>
+  <li><a href="{% url "region_list" %}">Regions</a></li>
+  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
   <li class="active">{{ country.country.name }}</li>
 </ol>
 
@@ -25,6 +26,7 @@
 
 
 <a class="btn btn-primary pull-right" href="{% url "language_create" country.pk %}">Add</a>
+<h2>Languages</h2>
 {% include "wycliffe/_language_list.html" with language_list=country.language_set.all %}
 
 {% endblock %}

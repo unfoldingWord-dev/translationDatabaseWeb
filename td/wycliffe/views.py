@@ -60,6 +60,32 @@ class EventLogMixin(object):
         return response
 
 
+class RegionListView(LoginRequiredMixin, ListView):
+    model = Country
+    template_name = "wycliffe/region_list.html"
+
+    def get_queryset(self):
+        return Country.regions()
+
+
+class RegionDetailView(LoginRequiredMixin, ListView):
+    model = Country
+    template_name = "wycliffe/region_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(RegionDetailView, self).get_context_data(**kwargs)
+        context.update({
+            "region": self.kwargs.get("slug").title()
+        })
+        return context
+
+    def get_queryset(self):
+        qs = super(RegionDetailView, self).get_queryset()
+        qs = qs.filter(country__area__iexact=self.kwargs.get("slug"))
+        qs = qs.order_by("country__name")
+        return qs
+
+
 class CountryListView(LoginRequiredMixin, ListView):
     model = Country
 

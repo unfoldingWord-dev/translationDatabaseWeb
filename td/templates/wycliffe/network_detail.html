@@ -11,7 +11,9 @@
 <a class="btn btn-primary pull-right" href="{% url "network_edit" network.pk %}">Edit</a>
 <h1>{{ network.name }}</h1>
 
+<h2>Languages</h2>
     {% include "wycliffe/_language_list.html" with language_list=network.language_set.all %}
 
+<h2>Countries</h2>
     {% include "wycliffe/_country_list.html" with country_list=network.country_set.all %}
 {% endblock %}

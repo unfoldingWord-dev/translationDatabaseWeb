@@ -4,7 +4,8 @@
 
 {% block body %}
 <ol class="breadcrumb">
-  <li><a href="{% url "country_list" %}">Countries</a></li>
+  <li><a href="{% url "region_list" %}">Regions</a></li>
+  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
   <li><a href="{% url "country_detail" language.country.country.pk %}">{{ language.country.country.name }}</a></li>
   <li><a href="{% url "language_detail" language.pk %}">{{ language.living_language.name }}</a></li>
   <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Translation Need</li>
