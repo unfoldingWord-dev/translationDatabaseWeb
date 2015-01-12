@@ -8,12 +8,23 @@
   <li class="active">{{ network.name }}</li>
 </ol>
 
-<a class="btn btn-primary pull-right" href="{% url "network_edit" network.pk %}">Edit</a>
-<h1>{{ network.name }}</h1>
+<h1>
+    {{ network.name }}
+    <a class="btn btn-primary btn-xs" href="{% url "network_edit" network.pk %}"><i class="fa fa-pencil"></i> Edit</a>
+</h1>
 
-<h2>Languages</h2>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Languages</h2>
+    </div>
     {% include "wycliffe/_language_list.html" with language_list=network.language_set.all %}
+</div>
 
-<h2>Countries</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Countries</h2>
+    </div>
     {% include "wycliffe/_country_list.html" with country_list=network.country_set.all %}
+</div>
 {% endblock %}

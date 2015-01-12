@@ -137,6 +137,13 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
 class LanguageDetailView(LoginRequiredMixin, DetailView):
     model = Language
 
+    def get_context_data(self, **kwargs):
+        context = super(LanguageDetailView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.object.country
+        })
+        return context
+
 
 class LanguageEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
     model = Language
@@ -212,11 +219,25 @@ class WIPCreateView(BaseLanguageView, CreateView):
     form_class = WorkInProgressForm
     action_kind = "CREATE"
 
+    def get_context_data(self, **kwargs):
+        context = super(WIPCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
+
 
 class ScriptureCreateView(BaseLanguageView, CreateView):
     model = Scripture
     form_class = ScriptureForm
     action_kind = "CREATE"
+
+    def get_context_data(self, **kwargs):
+        context = super(ScriptureCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(ScriptureCreateView, self).get_form_kwargs()
@@ -231,11 +252,25 @@ class TranslationNeedCreateView(BaseLanguageView, CreateView):
     form_class = TranslationNeedForm
     action_kind = "CREATE"
 
+    def get_context_data(self, **kwargs):
+        context = super(TranslationNeedCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
+
 
 class ResourceCreateView(BaseLanguageView, CreateView):
     model = Resource
     form_class = ResourceForm
     action_kind = "CREATE"
+
+    def get_context_data(self, **kwargs):
+        context = super(ResourceCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
 
 
 class WIPEditView(BaseLanguageView, UpdateView):
@@ -243,11 +278,25 @@ class WIPEditView(BaseLanguageView, UpdateView):
     form_class = WorkInProgressForm
     action_kind = "EDIT"
 
+    def get_context_data(self, **kwargs):
+        context = super(WIPEditView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
+
 
 class ScriptureEditView(BaseLanguageView, UpdateView):
     model = Scripture
     form_class = ScriptureForm
     action_kind = "EDIT"
+
+    def get_context_data(self, **kwargs):
+        context = super(ScriptureEditView, self).get_context_data(**kwargs)
+        context.update({
+            "country": self.language.country
+        })
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(ScriptureEditView, self).get_form_kwargs()

@@ -6,20 +6,31 @@
 <ol class="breadcrumb">
   <li><a href="{% url "network_list" %}">Networks</a></li>
   {% if network %}<li><a href="{% url "network_detail" network.pk %}">{{ network.name }}</a></li> {% endif %}
-  <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} {{ network.name }}</li>
+  <li class="active">{% if form.instance.pk %}Edit {{ network.name }}{% else %}Add Network{% endif %}</li>
 </ol>
-<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} {{ network.name }}</h1>
 
-<form class="form" action="." method="POST">
-    {% csrf_token %}
-    {{ form|bootstrap }}
-    <button class="btn btn-primary">Save</button>
-    {% if form.instance.pk %}
-        {% url "network_detail" form.instance.pk as cancel_url %}
-    {% else %}
-        {% url "network_list" as cancel_url %}
-    {% endif %}
-    <a class="btn btn-default" href="{{ cancel_url }}">Cancel</a>
-</form>
-
+<div class"row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">{% if form.instance.pk %}Edit {{ network.name }}{% else %}Add Network{% endif %}</h1>
+            </div>
+            <div class="panel-body">
+                <form class="form" action="." method="POST">
+                    {% csrf_token %}
+                    {{ form|bootstrap }}
+                    <div class="pull-right">
+                        {% if form.instance.pk %}
+                            {% url "network_detail" form.instance.pk as cancel_url %}
+                        {% else %}
+                            {% url "network_list" as cancel_url %}
+                        {% endif %}
+                        <a class="btn btn-default" href="{{ cancel_url }}">Cancel</a>
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

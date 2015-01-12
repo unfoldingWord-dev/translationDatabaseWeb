@@ -31,6 +31,7 @@ class CountryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CountryForm, self).__init__(*args, **kwargs)
         self.fields["primary_networks"].widget.attrs["class"] = "select2-multiple"
+        self.fields["primary_networks"].help_text = ""
 
     class Meta:
         model = Country
@@ -56,6 +57,7 @@ class LanguageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LanguageForm, self).__init__(*args, **kwargs)
         self.fields["networks_translating"].widget.attrs["class"] = "select2-multiple"
+        self.fields["networks_translating"].help_text = ""
         self.fields["living_language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={

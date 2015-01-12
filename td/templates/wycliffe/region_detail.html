@@ -9,10 +9,17 @@
     </ol>
     <h1>{{ region }}</h1>
 
-    <h2>Countries</h2>
-    {% include "wycliffe/_country_list.html" %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Countries</h2>
+        </div>
+        {% include "wycliffe/_country_list.html" %}
+    </div>
 
-    <h2>Languages</h2>
-    {% include "wycliffe/_language_list.html" with language_list=languages %}
-
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Languages</h2>
+        </div>
+        {% include "wycliffe/_language_list.html" with language_list=languages %}
+    </div>
 {% endblock %}

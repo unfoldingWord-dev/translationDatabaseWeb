@@ -5,14 +5,14 @@
         {% for language in language_list %}
             <tr>
                 <td>
-                    <a class="btn btn-primary btn-xs" href="{% url "language_edit" language.pk %}">Edit</a>
+                    <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i> Edit</a>
                 </td>
                 <td>
                     <a href="{% url "language_detail" language.pk %}">
                         {{ language.living_language.name }} ({{ language.living_language.code }})
                     </a>
                 </td>
-                <td>{{ language.gateway_dialect.name }} ({{ language.gateway_dialect.code }})</td>
+                <td>{% if language.gateway_dialect %}{{ language.gateway_dialect.name }} ({{ language.gateway_dialect.code }}){% endif %}</td>
                 <td>{{ language.native_speakers|default:""|intcomma }}</td>
                 <td>
                     {% for network in language.networks_translating.all %}
