@@ -145,6 +145,8 @@ INSTALLED_APPS = [
     "td.wycliffe"
 ]
 
+DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
