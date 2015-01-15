@@ -1,0 +1,15 @@
+<div class="kaleo-invites-form">
+    {% if user.invitationstat.can_send %}
+        <form action="{% url "kaleo_invite" %}"
+              class="navbar-form navbar-left ajax"
+              data-replace-closest=".kaleo-invites-form"
+              method="POST"
+              accept-charset="utf-8">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+            </div>
+            <button type="submit" class="btn btn-default">Invite</button>
+        </form>
+    {% endif %}
+</div>

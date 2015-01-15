@@ -54,4 +54,14 @@ $(function () {
     $(".date-picker").daterangepicker({
       singleDatePicker: true
     });
+    $(document).on("eldarion-ajax:success", function (evt, $el) {
+        if ($el.hasClass("navbar-form")) {
+            var $el = $("<div>")
+              .addClass("alert")
+              .addClass("alert-info")
+              .html("<strong>Invite was sent!</sent>");
+            $("body").prepend($el);
+            setTimeout(function(){ $el.remove(); }, 3000);
+        }
+    });
 });

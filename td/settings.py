@@ -137,6 +137,7 @@ INSTALLED_APPS = [
     "eventlog",
     "metron",
     "raven.contrib.django.raven_compat",
+    "kaleo",
 
     # project
     "td",

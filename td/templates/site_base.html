@@ -1,5 +1,6 @@
 {% extends "theme_bootstrap/base.html" %}
 
+{% load kaleo_tags %}
 {% load staticfiles %}
 {% load metron_tags %}
 {% load i18n %}
@@ -111,7 +112,7 @@
     <ul class="nav navbar-nav">
         <li class="dropdown data-sources">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-sign-in"></i>
+                <i class="fa fa-database"></i>
                 Data Sources
                 <span class="caret"></span>
             </a>
@@ -125,15 +126,8 @@
                 <li><a href="{% url "ds_ethnologue_language_index" %}">Language Index <em>Ethnologue</em></a></li>
                 <li><a href="{% url "ds_sil" %}">ISO 639-3 Code Set <em>SIL</em></a></li>
                 <li><a href="{% url "ds_wikipedia" %}">List of ISO 639-1 Codes <em>Wikipedia</em></a></li>
-            </ul>
-        </li>
-        <li class="dropdown exports">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-sign-out"></i>
-                Exports
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
+                <li class="divider"></li>
+                <li class="dropdown-header"><i class="fa fa-database"></i> Exports</li>
                 <li><a href="{% url "codes_text_export" %}">Language Codes<em>codes-d43.txt</em></a></li>
                 <li><a href="{% url "names_text_export" %}">Language Names<em>langnames.txt</em></a></li>
                 <li><a href="{% url "names_json_export" %}">Language Names JSON<em>langnames.json</em></a></li>
@@ -142,7 +136,7 @@
         {% if request.user.is_authenticated %}
         <li class="dropdown exports">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-database"></i>
+                <i class="fa fa-sign-in"></i>
                 Wycliffe
                 <span class="caret"></span>
             </a>
@@ -154,6 +148,7 @@
         </li>
         {% endif %}
     </ul>
+    {% invite_form request.user %}
 {% endblock %}
 
 
@@ -162,6 +157,7 @@
     <script src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.js"></script>
     <script src="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.js"></script>
     <script src="{% static "select2-3.5.2/select2.min.js" %}"></script>
+    <script src="{% static "js/eldarion-ajax.min.js" %}"></script>
     <script src="{% static "daterangepicker/moment.js" %}"></script>
     <script src="{% static "daterangepicker/daterangepicker.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
