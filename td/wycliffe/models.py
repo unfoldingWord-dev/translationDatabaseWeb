@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
@@ -37,8 +39,74 @@ class Country(models.Model):
         qs = qs.order_by("country__area")
         return qs
 
+    @classmethod
+    def gateway_data(cls):
+        with_gateways = cls.objects.filter(language__gateway_dialect__isnull=False).distinct()
+        without_gateways = cls.objects.exclude(pk__in=with_gateways)
+        data = {
+            x.country.code: {"obj": x, "gateways": defaultdict(lambda: [])}
+            for x in with_gateways
+        }
+        data.update({
+            x.country.code: {"obj": x, "gateways": {"n/a": list(x.language_set.all())}}
+            for x in without_gateways
+        })
+        for country in with_gateways:
+            for lang in country.language_set.all():
+                if lang.gateway_dialect:
+                    data[country.country.code]["gateways"][lang.gateway_dialect.code].append(lang)
+                else:
+                    data[country.country.code]["gateways"]["n/a"].append(lang)
+        return data
+
     def __str__(self):
         return self.country.name
+
+
+def transform_country_data(data):
+    tree = {"name": "World", "parent": None, "children": []}
+    for code in data:
+        datum = {
+            "name": data[code]["obj"].country.name,
+            "parent": "World",
+            "children": [],
+            "hasGatewayLanguages": len(data[code]["gateways"]) > 1,
+            "detailUrl": reverse("country_detail", args=[data[code]["obj"].pk])
+        }
+        for gateway in data[code]["gateways"]:
+            if gateway == "n/a":
+                name = "No Gateway"
+            else:
+                name = data[code]["gateways"][gateway][0].gateway_dialect.name
+            gdatum = {
+                "name": name,
+                "parent": data[code]["obj"].country.name,
+                "children": [
+                    {
+                        "name": l.living_language.name,
+                        "detailUrl": reverse("language_detail", args=[l.pk]),
+                        "parent": name,
+                        "children": []
+                    }
+                    for l in data[code]["gateways"][gateway]
+                ],
+                "notGatewayLanguage": gateway == "n/a"
+            }
+            datum["children"].append(gdatum)
+        tree["children"].append(datum)
+    return tree
+
+"""
+tree = {
+    "name": "Root",
+    "parent": None,
+    "children": [
+        {"name": "", "parent": "Root", "children": []},
+        {"name": "", "parent": "Root", "children": []},
+        {"name": "", "parent": "Root", "children": []},
+    ]
+}
+"""
 
 
 @python_2_unicode_compatible

@@ -1,7 +1,9 @@
 from django.core.urlresolvers import reverse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
 
+from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from eventlog.models import log
 
@@ -21,8 +23,18 @@ from .models import (
     Resource,
     Scripture,
     TranslationNeed,
-    WorkInProgress
+    WorkInProgress,
+    transform_country_data
 )
+
+
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "wycliffe/home.html"
+
+
+@login_required
+def country_tree_data(request):
+    return JsonResponse(transform_country_data(Country.gateway_data()))
 
 
 class EventLogMixin(object):

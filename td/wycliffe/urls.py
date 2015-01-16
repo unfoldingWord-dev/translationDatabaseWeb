@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
 from .views import (
+    HomeView,
     RegionListView,
     RegionDetailView,
     CountryListView,
@@ -21,11 +22,13 @@ from .views import (
     ScriptureEditView,
     TranslationNeedEditView,
     ResourceEditView,
+    country_tree_data
 )
 
 
 urlpatterns = patterns(
     "",
+    url(r"^$", HomeView.as_view(), name="wycliffe_home"),
     url(r"networks/$", NetworkListView.as_view(), name="network_list"),
     url(r"networks/create/$", NetworkCreateView.as_view(), name="network_create"),
     url(r"networks/(?P<pk>\d+)/$", NetworkDetailView.as_view(), name="network_detail"),
@@ -49,4 +52,6 @@ urlpatterns = patterns(
     url(r"scriptures/(?P<pk>\d+)/edit/$", ScriptureEditView.as_view(), name="scripture_edit"),
     url(r"translation-needs/(?P<pk>\d+)/edit/$", TranslationNeedEditView.as_view(), name="translation_need_edit"),
     url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
+
+    url(r"country_gateways.json$", country_tree_data, name="country_tree_data")
 )
