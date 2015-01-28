@@ -27,10 +27,10 @@ def names_json_export(request):
     return JsonResponse(data, safe=False)  # Set safe to False to allow list instead of dict to be returned
 
 
-def cache_get_or_set(key, callable):
+def cache_get_or_set(key, acallable):
     data = cache.get(key)
     if data is None:
-        data = callable()
+        data = acallable()
         cache.set(key, data, None)
     return data
 
