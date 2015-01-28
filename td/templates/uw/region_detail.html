@@ -1,0 +1,25 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <ol class="breadcrumb">
+      <li><a href="{% url "region_list" %}">Regions</a></li>
+      <li class="active">{{ region }}</li>
+    </ol>
+    <h1>{{ region }}</h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Countries</h2>
+        </div>
+        {% include "uw/_country_list.html" %}
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Languages</h2>
+        </div>
+        {% include "uw/_language_list.html" with language_list=languages %}
+    </div>
+{% endblock %}

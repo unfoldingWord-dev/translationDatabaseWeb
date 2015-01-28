@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <h1>Regions</h1>
+    <ul>
+        {% for region in country_list %}
+            <li><a href="{% url "region_detail" region|lower %}">{{ region }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
