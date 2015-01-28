@@ -1,8 +1,0 @@
-<table class="table">
-    <thead><tr><th>{{ title }}</th></tr></thead>
-    <tbody>
-    {% for d in data %}
-        <tr><td><a href="{{ d.get_absolute_url }}">{{ d }}</a></td></tr>
-    {% endfor %}
-    </tbody>
-</table>
