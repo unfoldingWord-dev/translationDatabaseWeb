@@ -18,7 +18,7 @@ def codes_text_export(request):
     return HttpResponse(Language.codes_text(), content_type="text/plain")
 
 
-def names_text_export(reqeust):
+def names_text_export(request):
     return HttpResponse(Language.names_text(), content_type="text/plain")
 
 
