@@ -142,7 +142,7 @@ INSTALLED_APPS = [
     # project
     "td",
     "td.imports",
-    "td.wycliffe"
+    "td.uw"
 ]
 
 DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
