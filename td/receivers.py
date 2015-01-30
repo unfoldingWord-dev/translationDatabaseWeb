@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.core.exceptions import ObjectDoesNotExist
 
 from account.signals import password_changed
 from account.signals import user_sign_up_attempt, user_signed_up
@@ -8,8 +9,24 @@ from account.signals import user_login_attempt, user_logged_in
 
 from eventlog.models import log
 
-from .models import Language
+from .models import Language, AdditionalLanguage
 from .signals import languages_integrated
+from .tasks import integrate_imports
+
+
+@receiver(post_save, sender=AdditionalLanguage)
+def handle_additionallanguage_save(sender, **kwargs):
+    integrate_imports.delay()
+
+
+@receiver(post_delete, sender=AdditionalLanguage)
+def handle_additionallanguage_delete(sender, instance, **kwargs):
+    d_code = instance.two_letter or instance.three_letter or instance.ietf_tag
+    try:
+        lang = Language.objects.get(code=d_code)
+        lang.delete()
+    except ObjectDoesNotExist as ex:
+        pass
 
 
 @receiver(post_save, sender=Language)

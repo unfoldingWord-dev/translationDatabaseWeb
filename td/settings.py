@@ -1,6 +1,10 @@
 import os
-
 import dj_database_url
+import djcelery
+
+
+# initializes djcelery (django-celery) support
+djcelery.setup_loader()
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -138,6 +142,7 @@ INSTALLED_APPS = [
     "metron",
     "raven.contrib.django.raven_compat",
     "kaleo",
+    "djcelery",
 
     # project
     "td",
@@ -209,3 +214,10 @@ AUTHENTICATION_BACKENDS = [
 RAVEN_CONFIG = {
     "dsn": os.environ.get("RAVEN_DSN"),
 }
+
+# Celery / Redis Backend configuration
+BROKER_URL = "redis://localhost:6379/0"
+CELERY_IGNORE_RESULT = True   # for now, we don't have any tasks that require looking at the result
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']   # for security reasons, don't allow pickle
