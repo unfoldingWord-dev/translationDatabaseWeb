@@ -33,6 +33,7 @@ if "GONDOR_REDIS_URL" in os.environ:
             },
         },
     }
+    BROKER_URL = os.environ["GONDOR_REDIS_URL"]  # celery config
 
 
 MEDIA_ROOT = os.path.join(os.environ["GONDOR_DATA_DIR"], "site_media", "media")
