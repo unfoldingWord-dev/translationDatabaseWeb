@@ -12,6 +12,14 @@ pytz==2014.9
 django-redis-cache==0.13.0
 kaleo==1.5
 
+# for celery
+amqp==1.4.6
+anyjson==0.3.3
+billiard==3.3.0.19
+celery==3.1.17
+django-celery==3.1.16
+kombu==3.0.24
+
 # For Gondor
 gondor==1.2.5
 gunicorn==19.1.1
