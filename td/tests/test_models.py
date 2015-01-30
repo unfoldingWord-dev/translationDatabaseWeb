@@ -11,6 +11,7 @@ import requests
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3
 
 from ..models import AdditionalLanguage, Language
+from ..tasks import integrate_imports
 
 
 class AdditionalLanguageTestCase(TestCase):
@@ -52,7 +53,7 @@ class LanguageIntegrationTests(TestCase):
             mock_response.content = sil
             SIL_ISO_639_3.reload()
         management.call_command("loaddata", "additional-languages.json", verbosity=1, noinput=True)
-        Language.integrate_imports()
+        integrate_imports()  # run task synchronously here
 
     def test_codes_export(self):
         data = Language.codes_text().split(" ")
@@ -85,3 +86,16 @@ class LanguageIntegrationTests(TestCase):
         self.assertEquals(langs["es-419"]["cc"], [""])
         self.assertEquals(langs["es-419"]["ln"], u"Espa\xf1ol Latin America")
         self.assertEquals(langs["es-419"]["lr"], "")
+
+    def test_add_and_delete_from_additionallanguage(self):
+        additional = AdditionalLanguage.objects.create(
+            ietf_tag="zzz-z-test",
+            common_name="ZTest"
+        )
+        additional.save()
+        integrate_imports()   # run task synchronously
+        data = Language.names_text().split("\n")
+        self.assertTrue("zzz-z-test\tZTest" in data)
+        additional.delete()
+        data = Language.names_text().split("\n")
+        self.assertTrue("zzz-z-test\tZTest" not in data)

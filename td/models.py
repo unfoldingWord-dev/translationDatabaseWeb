@@ -84,37 +84,3 @@ class Language(models.Model):
             for x in cls.objects.all().order_by("code")
         ]
 
-    @classmethod
-    def integrate_imports(cls):
-        additionals = {
-            x.two_letter or x.three_letter or x.ietf_tag: x.native_name or x.common_name
-            for x in AdditionalLanguage.objects.all()
-        }
-        cursor = connection.cursor()
-        cursor.execute("""
-    select coalesce(nullif(x.part_1, ''), x.code) as code,
-           coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
-           coalesce(cc.id, -1)
-      from imports_sil_iso_639_3 x
- left join imports_ethnologuelanguagecode lc on x.code = lc.code
- left join imports_wikipediaisolanguage nn1 on x.part_1 = nn1.iso_639_1
- left join imports_wikipediaisolanguage nn2 on x.code = nn2.iso_639_3
- left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
-     where lc.status = %s or lc.status is NULL order by code;
-""", [EthnologueLanguageCode.STATUS_LIVING])
-        rows = cursor.fetchall()
-        rows.extend([(x[0], x[1], -1) for x in additionals.items()])
-        rows.sort()
-        rows = [
-            cls(
-                code=r[0],
-                name=r[1],
-                country=next(iter(EthnologueCountryCode.objects.filter(pk=int(r[2]))), None)
-            )
-            for r in rows
-            if r[0] is not None
-        ]
-        cls.objects.all().delete()
-        cls.objects.bulk_create(rows)
-        languages_integrated.send(sender=cls)
-        log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})
