@@ -2,8 +2,6 @@ import os
 
 from django.test import TestCase
 
-import requests
-
 from eventlog.models import Log
 from mock import patch, Mock
 
