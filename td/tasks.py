@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django.db import connection
 
 from celery import task

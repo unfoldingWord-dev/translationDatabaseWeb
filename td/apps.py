@@ -10,4 +10,5 @@ class AppConfig(BaseAppConfig):
     verbose_name = "Translation Database"
 
     def ready(self):
+        import_module("td.celery")
         import_module("td.receivers")
