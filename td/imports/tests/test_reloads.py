@@ -28,7 +28,7 @@ class BaseReloadTestMixin(object):
         cls.data = open(os.path.join(os.path.dirname(__file__), "data", cls.filename)).read()
 
     def test_reload(self):
-        with patch.object(requests, "get") as mock_requests:
+        with patch("requests.get", create=True) as mock_requests:
             mock_requests.return_value = mock_response = Mock()
             mock_response.status_code = 200
             mock_response.content = self.data
@@ -36,7 +36,7 @@ class BaseReloadTestMixin(object):
             self.assertEquals(self.ModelClass.objects.count(), self.expected_success_count)
 
     def test_reload_no_content(self):
-        with patch.object(requests, "get") as mock_requests:
+        with patch("requests.get") as mock_requests:
             mock_requests.return_value = mock_response = Mock()
             mock_response.status_code = 200
             mock_response.content = ""
@@ -44,7 +44,7 @@ class BaseReloadTestMixin(object):
             self.assertEquals(self.ModelClass.objects.count(), 0)
 
     def test_reload_bad_response(self):
-        with patch.object(requests, "get") as mock_requests:
+        with patch("requests.get") as mock_requests:
             mock_requests.return_value = mock_response = Mock()
             mock_response.status_code = 500
             mock_response.content = ""
