@@ -23,7 +23,12 @@ class BaseReloadTestMixin(object):
 
     @classmethod
     def setUpClass(cls):
-        cls.data = open(os.path.join(os.path.dirname(__file__), "data", cls.filename)).read()
+        fp = open(os.path.join(os.path.dirname(__file__), "data", cls.filename))
+        if cls.filename.endswith("html"):
+            cls.data = fp.read()
+        else:
+            cls.data = fp.readline()
+            cls.data += fp.readline()
 
     def test_reload(self):
         with patch("requests.get", create=True) as mock_requests:
@@ -63,7 +68,7 @@ class SILISO639_3ReloadTests(BaseReloadTestMixin, TestCase):
 
     ModelClass = SIL_ISO_639_3
     filename = "iso_639_3.tab"
-    expected_success_count = 7879
+    expected_success_count = 1
     log_reload_failed_action = "SOURCE_SIL_ISO_639_3_RELOAD_FAILED"
 
 
@@ -71,7 +76,7 @@ class EthnologueCountryCodeReloadTests(BaseReloadTestMixin, TestCase):
 
     ModelClass = EthnologueCountryCode
     filename = "CountryCodes.tab"
-    expected_success_count = 234
+    expected_success_count = 1
     log_reload_failed_action = "SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOAD_FAILED"
 
 
@@ -79,7 +84,7 @@ class EthnologueLanguageCodeReloadTests(BaseReloadTestMixin, TestCase):
 
     ModelClass = EthnologueLanguageCode
     filename = "LanguageCodes.tab"
-    expected_success_count = 7479
+    expected_success_count = 1
     log_reload_failed_action = "SOURCE_ETHNOLOGUE_LANG_CODE_RELOAD_FAILED"
 
 
@@ -87,5 +92,5 @@ class EthnologueLanguageIndexReloadTests(BaseReloadTestMixin, TestCase):
 
     ModelClass = EthnologueLanguageIndex
     filename = "LanguageIndex.tab"
-    expected_success_count = 57197
+    expected_success_count = 1
     log_reload_failed_action = "SOURCE_ETHNOLOGUE_LANG_INDEX_RELOAD_FAILED"
