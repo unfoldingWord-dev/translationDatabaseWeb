@@ -7,9 +7,11 @@ except ImportError:
 
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 import bs4
 import requests
+import xlrd
 
 from eventlog.models import log
 
@@ -287,3 +289,146 @@ class EthnologueLanguageIndex(models.Model):
             cls.objects.all().delete()
             cls.objects.bulk_create(records)
             log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={})
+
+
+@python_2_unicode_compatible
+class IMBPeopleGroup(models.Model):
+    peid = models.BigIntegerField(primary_key=True)
+    affinity_bloc = models.CharField(max_length=75)
+    people_cluster = models.CharField(max_length=75)
+    continent = models.CharField(max_length=20)
+    sub_continent = models.CharField(max_length=50)
+    country = models.CharField(max_length=30)
+    country_of_origin = models.CharField(max_length=30, blank=True)
+    people_group = models.CharField(max_length=50, db_index=True)
+    global_status_evangelical_christianity = models.IntegerField(default=0)
+    evangelical_engagement = models.BooleanField()
+    population = models.BigIntegerField(default=0)
+    dispersed = models.BooleanField(blank=True, null=True)
+    rol = models.CharField(max_length=3, db_index=True)
+    language = models.CharField(max_length=75)
+    religion = models.CharField(max_length=75)
+    written_scripture = models.BooleanField()
+    jesus_film = models.BooleanField()
+    radio_broadcast = models.BooleanField()
+    gospel_recording = models.BooleanField()
+    audio_scripture = models.BooleanField()
+    bible_stories = models.BooleanField()
+    resources = models.IntegerField(default=0)
+    physical_exertion = models.CharField(max_length=20)
+    freedom_index = models.CharField(max_length=20)
+    government_restrictions_index = models.CharField(max_length=20)
+    social_hostilities_index = models.CharField(max_length=20)
+    threat_level = models.CharField(max_length=20)
+    prayer_threads = models.CharField(max_length=3, default='', blank=True)
+    sbc_embracing_relationship = models.BooleanField(blank=True, null=True)
+    embracing_priority = models.BooleanField()
+    rop1 = models.CharField(max_length=4)
+    rop2 = models.CharField(max_length=5)
+    rop3 = models.CharField(max_length=6)
+    people_name = models.CharField(max_length=75)
+    fips = models.CharField(max_length=2)
+    fips_of_origin = models.CharField(max_length=2, default='', blank=True)
+    latitude = models.DecimalField(max_length=10, decimal_places=6)
+    longitude = models.DecimalField(max_length=10, decimal_places=6)
+    peid_of_origin = models.BigIntegerField(default=0, blank=0)
+    imb_affinity_group = models.CharField(max_length=75)
+
+    def __str__(self):
+        return "%s (%s)" % (self.people_group, str(self.peid))
+
+    class Meta:
+        verbose_name = 'IMB People Group'
+        verbose_name_plural = 'IMB People Groups'
+
+    @classmethod
+    def reload(cls):
+        response = requests.get("http://public.imb.org/globalresearch/Documents/GSEC2015-01/2015-01_GSEC_Listing_of_People_Groups.xls")
+        if response.status_code != 200:
+            log(
+                user=None,
+                action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
+        book = xlrd.open_workbook(filename=None, file_contents=response.content)
+        sheet = book.sheet_by_index(0)
+        # todo: replace this with code to "find" the PEID column properly
+        key_cell = (4, 0)
+        sh_field_names = [sheet.cell_value(key_cell[0], key_cell[1] + x) for x in range(0, 40)]
+        current_row_num = 5
+        rows_processed = 0
+        test_value = sheet.cell_value(current_row_num, 0)  # todo: possibly handle starting in another spot
+        records = []
+        while str(test_value) != '':
+            row = {sh_field_names[x]: sheet.cell_value(current_row_num, x) for x in range(0, 40)}
+            current_row_num += 1
+            records.append(cls(
+                peid=row['PEID'],
+                affinity_bloc=row['Affinity Bloc'],
+                people_cluster=row['People Cluster'],
+                continent=row['Continent'],
+                sub_continent=row['Sub-Continent'],
+                country=row['Country'],
+                country_of_origin=row['Country of Origin'],
+                people_group=row['People Group'],
+                global_status_evangelical_christianity=row['Global Status of  Evangelical Christianity'],
+                evangelical_engagement=row['Evangelical Engagement'],
+                population=row['Population'],
+                dispersed=row['Dispersed (Yes/No)'],
+                rol=row['ROL'],
+                language=row['Language'],
+                religion=row['Religion'],
+                written_scripture=row['Written Scripture'],
+                jesus_film=row['Jesus Film'],
+                radio_broadcast=row['Radio Broadcast'],
+                gospel_recording=row['Gospel Recording'],
+                audio_scripture=row['Audio Scripture'],
+                bible_stories=row['Bible Stories'],
+                resources=row['Resources'],
+                physical_exertion=row['Physical Exertion'],
+                freedom_index=row['Freedom Index'],
+                government_restrictions_index=row['Government Restrictions Index'],
+
+            ))
+
+        PEID
+Affinity Bloc
+People Cluster
+Continent
+Sub-Continent
+Country
+Country of Origin
+People Group
+Global Status of  Evangelical Christianity
+Evangelical Engagement
+Population
+Dispersed (Yes/No)
+ROL
+Language
+Religion
+Written Scripture
+Jesus Film
+Radio Broadcast
+Gospel Recording
+Audio Scripture
+Bible Stories
+Resources
+Physical Exertion
+Freedom Index
+Government Restrictions Index
+Social Hostilities Index
+Threat Level
+Prayer Threads
+SBC Embracing Relationship
+Embracing Priority
+ROP1
+ROP2
+ROP3
+People Name
+FIPS
+FIPS of Origin
+Latitude
+Longitude
+PEID of Origin
+IMB Affinity Group
