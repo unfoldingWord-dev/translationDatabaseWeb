@@ -1,0 +1,36 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+<h1>IMB <span class="light">People Groups</span></h1>
+<p class="lead">
+    Listing of People Groups data as part of the Global Status of Evangelical Christianity report from the <code>monthly.xls</code> file provided by <a href="http://public.imb.org/globalresearch/Pages/ResearchData.aspx">Global Research, International Mission Board <i class="fa fa-external-link"></i></a>.
+</p>
+<table class="table table-bordered" data-source="{% url "ajax_ds_imb_peoplegroups" %}">
+    <thead>
+        <tr>
+            <th>PEID</th>
+            <th>Affinity Bloc</th>
+            <th>People Cluster</th>
+            <th>Sub-Continent</th>
+            <th>Country</th>
+            <th>Country of Origin</th>
+            <th>People Group</th>
+            <th>People Name</th>
+            <th>GSEC</th>
+            <th>Population</th>
+            <th>Dispersed</th>
+            <th>ROL</th>
+            <th>Language</th>
+            <th>Religion</th>
+            <th>WS</th>
+            <th>JF</th>
+            <th>RB</th>
+            <th>GR</th>
+            <th>AS</th>
+            <th>BS</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+{% endblock %}

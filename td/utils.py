@@ -6,6 +6,17 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 
+def str_to_bool(value, allow_null=False):
+    if str(value).strip().lower() in ["yes", "true", "1", "y"]:
+        return True
+    if allow_null and str(value).strip().lower() in ["no", "n", "false", "0"]:
+        return False
+    elif allow_null:
+        return None
+    else:
+        return False
+
+
 class DataTableSourceView(View):
 
     @property

@@ -7,7 +7,8 @@ from td.imports.models import (
     EthnologueLanguageCode,
     EthnologueLanguageIndex,
     SIL_ISO_639_3,
-    WikipediaISOLanguage
+    WikipediaISOLanguage,
+    IMBPeopleGroup
 )
 
 from .models import AdditionalLanguage, Language
@@ -82,6 +83,10 @@ class WikipediaISOLanguageListView(TemplateView):
     template_name = "td/wikipedia_list.html"
 
 
+class IMBPeopleGroupListView(TemplateView):
+    template_name = "td/imbpeoplegroup_list.html"
+
+
 class AjaxAdditionalLanguageListView(DataTableSourceView):
     model = AdditionalLanguage
     fields = [
@@ -149,4 +154,30 @@ class AjaxWikipediaISOLanguageListView(DataTableSourceView):
         "iso_639_3",
         "iso_639_9",
         "notes"
+    ]
+
+
+class AjaxIMBPeopleGroupListView(DataTableSourceView):
+    model = IMBPeopleGroup
+    fields = [
+        "peid",
+        "affinity_bloc",
+        "people_cluster",
+        "sub_continent",
+        "country",
+        "country_of_origin",
+        "people_group",
+        "people_name",
+        "global_status_evangelical_christianity",
+        "population",
+        "dispersed",
+        "rol",
+        "language",
+        "religion",
+        "written_scripture",
+        "jesus_film",
+        "radio_broadcast",
+        "gospel_recording",
+        "audio_scripture",
+        "bible_stories"
     ]
