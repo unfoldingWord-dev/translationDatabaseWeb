@@ -6,6 +6,17 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 
+def str_to_bool(value, allow_null=False):
+    if str(value).strip().lower() in ["yes", "true", "1", "y"]:
+        return True
+    if allow_null and str(value).strip().lower() in ["no", "n", "false", "0"]:
+        return False
+    elif allow_null:
+        return None
+    else:
+        return False
+
+
 class DataTableSourceView(View):
 
     @property
@@ -81,7 +92,14 @@ class DataTableSourceView(View):
             if hasattr(obj, "get_{0}_display".format(field)):
                 row.append(getattr(obj, "get_{0}_display".format(field))())
             else:
-                row.append(getattr(obj, field))
+                v = getattr(obj, field)
+                if type(v) == type(bool()):
+                    if v:
+                        row.append('<i class="fa fa-check text-success"></i>')
+                    else:
+                        row.append('<i class="fa fa-times text-danger"></i>')
+                else:
+                    row.append(v)
         return row
 
     def get(self, request, *args, **kwargs):
