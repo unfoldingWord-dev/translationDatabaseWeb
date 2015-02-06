@@ -381,7 +381,7 @@ class IMBPeopleGroup(models.Model):
                 rol=row['ROL'],
                 language=row['Language'],
                 religion=row['Religion'],
-                written_scripture=str_to_bool(['Written Scripture']),
+                written_scripture=str_to_bool(row['Written Scripture']),
                 jesus_film=str_to_bool(row['Jesus Film']),
                 radio_broadcast=str_to_bool(row['Radio Broadcast']),
                 gospel_recording=str_to_bool(row['Gospel Recording']),
