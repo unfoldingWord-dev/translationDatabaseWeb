@@ -7,9 +7,13 @@ except ImportError:
 
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
+from td.utils import str_to_bool
 
 import bs4
 import requests
+import xlrd
 
 from eventlog.models import log
 
@@ -287,3 +291,125 @@ class EthnologueLanguageIndex(models.Model):
             cls.objects.all().delete()
             cls.objects.bulk_create(records)
             log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={})
+
+
+@python_2_unicode_compatible
+class IMBPeopleGroup(models.Model):
+    peid = models.BigIntegerField(primary_key=True, verbose_name='PEID')
+    affinity_bloc = models.CharField(max_length=75)
+    people_cluster = models.CharField(max_length=75)
+    continent = models.CharField(max_length=20)
+    sub_continent = models.CharField(max_length=50)
+    country = models.CharField(max_length=50)
+    country_of_origin = models.CharField(max_length=50, blank=True)
+    people_group = models.CharField(max_length=50, db_index=True)
+    global_status_evangelical_christianity = models.IntegerField(default=0)
+    evangelical_engagement = models.BooleanField(default=False)
+    population = models.BigIntegerField(default=0)
+    dispersed = models.NullBooleanField(blank=True, null=True, default=None)
+    rol = models.CharField(max_length=3, db_index=True, verbose_name='ROL')
+    language = models.CharField(max_length=75)
+    religion = models.CharField(max_length=75)
+    written_scripture = models.BooleanField(default=False)
+    jesus_film = models.BooleanField(default=False)
+    radio_broadcast = models.BooleanField(default=False)
+    gospel_recording = models.BooleanField(default=False)
+    audio_scripture = models.BooleanField(default=False)
+    bible_stories = models.BooleanField(default=False)
+    resources = models.IntegerField(default=0)
+    physical_exertion = models.CharField(max_length=20)
+    freedom_index = models.CharField(max_length=20)
+    government_restrictions_index = models.CharField(max_length=20)
+    social_hostilities_index = models.CharField(max_length=20)
+    threat_level = models.CharField(max_length=20)
+    prayer_threads = models.NullBooleanField(default=None, blank=True)
+    sbc_embracing_relationship = models.NullBooleanField(default=None, blank=True, null=True)
+    embracing_priority = models.BooleanField(default=False)
+    rop1 = models.CharField(max_length=4, verbose_name='ROP1')
+    rop2 = models.CharField(max_length=5, verbose_name='ROP2')
+    rop3 = models.DecimalField(max_digits=6, decimal_places=0, verbose_name='ROP3')
+    people_name = models.CharField(max_length=75)
+    fips = models.CharField(max_length=2, verbose_name='FIPS')
+    fips_of_origin = models.CharField(max_length=2, default='', blank=True, verbose_name='FIPS of Origin')
+    latitude = models.DecimalField(max_digits=10, decimal_places=6)
+    longitude = models.DecimalField(max_digits=10, decimal_places=6)
+    peid_of_origin = models.BigIntegerField(default=0, blank=0, verbose_name='PEID of Origin')
+    imb_affinity_group = models.CharField(max_length=75, verbose_name='IMB Affinity Group')
+
+    def __str__(self):
+        return "%s (%s)" % (self.people_group, str(self.peid))
+
+    class Meta:
+        verbose_name = 'IMB People Group'
+        verbose_name_plural = 'IMB People Groups'
+
+    @classmethod
+    def reload(cls):
+        response = requests.get("http://public.imb.org/globalresearch/Documents/GSEC2015-01/2015-01_GSEC_Listing_of_People_Groups.xls")
+        # todo: replace the above line with code to deal with changing file names...
+        if response.status_code != 200 or response.content is None or len(response.content) == 0:
+            log(
+                user=None,
+                action="SOURCE_IMB_PEOPLE_GROUPS_RELOAD_FAILED",
+                extra={"status_code": response.status_code, "text": response.content}
+            )
+            return
+        book = xlrd.open_workbook(filename=None, file_contents=response.content)
+        sheet = book.sheet_by_index(0)
+        key_cell = (4, 0)   # todo: replace this with code to "find" the PEID column properly
+        sh_field_names = [sheet.cell_value(key_cell[0], key_cell[1] + x) for x in range(0, 40)]
+        current_row_num = key_cell[0] + 1
+        rows_processed = 0
+        records = []
+        while True:
+            row = {sh_field_names[x]: sheet.cell_value(current_row_num, x) for x in range(0, 40)}
+            if str(row['PEID']) == '':
+                break
+            records.append(cls(
+                peid=row['PEID'],
+                affinity_bloc=row['Affinity Bloc'],
+                people_cluster=row['People Cluster'],
+                continent=row['Continent'],
+                sub_continent=row['Sub-Continent'],
+                country=row['Country'],
+                country_of_origin=row['Country of Origin'],
+                people_group=row['People Group'],
+                global_status_evangelical_christianity=row['Global Status of  Evangelical Christianity'],
+                evangelical_engagement=str_to_bool(row['Evangelical Engagement']),
+                population=row['Population'],
+                dispersed=str_to_bool(row['Dispersed (Yes/No)'], allow_null=True),
+                rol=row['ROL'],
+                language=row['Language'],
+                religion=row['Religion'],
+                written_scripture=str_to_bool(row['Written Scripture']),
+                jesus_film=str_to_bool(row['Jesus Film']),
+                radio_broadcast=str_to_bool(row['Radio Broadcast']),
+                gospel_recording=str_to_bool(row['Gospel Recording']),
+                audio_scripture=str_to_bool(row['Audio Scripture']),
+                bible_stories=str_to_bool(row['Bible Stories']),
+                resources=row['Resources'],
+                physical_exertion=row['Physical Exertion'],
+                freedom_index=row['Freedom Index'],
+                government_restrictions_index=row['Government Restrictions Index'],
+                social_hostilities_index=row['Social Hostilities Index'],
+                threat_level=row['Threat Level'],
+                prayer_threads=str_to_bool(row['Prayer Threads'], allow_null=True),
+                sbc_embracing_relationship=str_to_bool(row['SBC Embracing Relationship'], allow_null=True),
+                embracing_priority=str_to_bool(row['Embracing Priority']),
+                rop1=row['ROP1'],
+                rop2=row['ROP2'],
+                rop3=row['ROP3'],
+                people_name=row['People Name'],
+                fips=row['FIPS'],
+                fips_of_origin=row['FIPS of Origin'],
+                latitude=row['Latitude'],
+                longitude=row['Longitude'],
+                peid_of_origin=row['PEID of Origin'],
+                imb_affinity_group=row['IMB Affinity Group']
+            ))
+            current_row_num += 1
+            rows_processed += 1
+        if len(records):
+            cls.objects.all().delete()
+            cls.objects.bulk_create(records)
+            log(user=None, action="SOURCE_IMB_PEOPLE_GROUPS_LOADED", extra={})

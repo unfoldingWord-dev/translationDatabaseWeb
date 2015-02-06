@@ -10,7 +10,8 @@ from ..models import (
     EthnologueLanguageCode,
     EthnologueLanguageIndex,
     SIL_ISO_639_3,
-    WikipediaISOLanguage
+    WikipediaISOLanguage,
+    IMBPeopleGroup
 )
 
 
@@ -24,7 +25,7 @@ class BaseReloadTestMixin(object):
     @classmethod
     def setUpClass(cls):
         fp = open(os.path.join(os.path.dirname(__file__), "data", cls.filename))
-        if cls.filename.endswith("html"):
+        if cls.filename.endswith("html") or cls.filename.endswith("xls"):
             cls.data = fp.read()
         else:
             cls.data = fp.readline()
@@ -94,3 +95,10 @@ class EthnologueLanguageIndexReloadTests(BaseReloadTestMixin, TestCase):
     filename = "LanguageIndex.tab"
     expected_success_count = 1
     log_reload_failed_action = "SOURCE_ETHNOLOGUE_LANG_INDEX_RELOAD_FAILED"
+
+
+class IMBPeopleGroupReloadTests(BaseReloadTestMixin, TestCase):
+    ModelClass = IMBPeopleGroup
+    filename = "imb_people_groups.xls"
+    expected_success_count = 42
+    log_reload_failed_action = "SOURCE_IMB_PEOPLE_GROUPS_RELOAD_FAILED"

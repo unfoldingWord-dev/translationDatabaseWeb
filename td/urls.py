@@ -12,12 +12,14 @@ from .views import (
     EthnologueLanguageIndexListView,
     SIL_ISO_639_3ListView,
     WikipediaISOLanguageListView,
+    IMBPeopleGroupListView,
     AjaxAdditionalLanguageListView,
     AjaxEthnologueCountryCodeListView,
     AjaxEthnologueLanguageCodeListView,
     AjaxEthnologueLanguageIndexListView,
     AjaxSIL_ISO_639_3ListView,
-    AjaxWikipediaISOLanguageListView
+    AjaxWikipediaISOLanguageListView,
+    AjaxIMBPeopleGroupListView
 )
 
 urlpatterns = patterns(
@@ -39,6 +41,7 @@ urlpatterns = patterns(
     url(r"^data-sources/ethnologue/language-index/$", EthnologueLanguageIndexListView.as_view(), name="ds_ethnologue_language_index"),
     url(r"^data-sources/sil-iso-639-3/$", SIL_ISO_639_3ListView.as_view(), name="ds_sil"),
     url(r"^data-sources/wikipedia/$", WikipediaISOLanguageListView.as_view(), name="ds_wikipedia"),
+    url(r"^data-sources/imb/peoplegroups/$", IMBPeopleGroupListView.as_view(), name="ds_imb_peoplegroups"),
 
     url(r"^ajax/data-sources/additional-languages/$", AjaxAdditionalLanguageListView.as_view(), name="ajax_ds_additional_languages"),
     url(r"^ajax/data-sources/ethnologue/country-codes/$", AjaxEthnologueCountryCodeListView.as_view(), name="ajax_ds_ethnologue_country_codes"),
@@ -46,6 +49,7 @@ urlpatterns = patterns(
     url(r"^ajax/data-sources/ethnologue/language-index/$", AjaxEthnologueLanguageIndexListView.as_view(), name="ajax_ds_ethnologue_language_index"),
     url(r"^ajax/data-sources/sil-iso-639-3/$", AjaxSIL_ISO_639_3ListView.as_view(), name="ajax_ds_sil"),
     url(r"^ajax/data-sources/wikipedia/$", AjaxWikipediaISOLanguageListView.as_view(), name="ajax_ds_wikipedia"),
+    url(r"^ajax/data-sources/imb/peoplegroups/$", AjaxIMBPeopleGroupListView.as_view(), name="ajax_ds_imb_peoplegroups"),
 
     url(r"^ac/langnames/", "td.views.languages_autocomplete", name="names_autocomplete"),
 )
