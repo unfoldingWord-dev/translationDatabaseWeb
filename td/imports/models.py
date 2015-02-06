@@ -295,7 +295,7 @@ class EthnologueLanguageIndex(models.Model):
 
 @python_2_unicode_compatible
 class IMBPeopleGroup(models.Model):
-    peid = models.BigIntegerField(primary_key=True, verbose_name='PEID')
+    peid = models.BigIntegerField(primary_key=True, verbose_name="PEID")
     affinity_bloc = models.CharField(max_length=75)
     people_cluster = models.CharField(max_length=75)
     continent = models.CharField(max_length=20)
@@ -307,7 +307,7 @@ class IMBPeopleGroup(models.Model):
     evangelical_engagement = models.BooleanField(default=False)
     population = models.BigIntegerField(default=0)
     dispersed = models.NullBooleanField(blank=True, null=True, default=None)
-    rol = models.CharField(max_length=3, db_index=True, verbose_name='ROL')
+    rol = models.CharField(max_length=3, db_index=True, verbose_name="ROL")
     language = models.CharField(max_length=75)
     religion = models.CharField(max_length=75)
     written_scripture = models.BooleanField(default=False)
@@ -325,23 +325,23 @@ class IMBPeopleGroup(models.Model):
     prayer_threads = models.NullBooleanField(default=None, blank=True)
     sbc_embracing_relationship = models.NullBooleanField(default=None, blank=True, null=True)
     embracing_priority = models.BooleanField(default=False)
-    rop1 = models.CharField(max_length=4, verbose_name='ROP1')
-    rop2 = models.CharField(max_length=5, verbose_name='ROP2')
-    rop3 = models.DecimalField(max_digits=6, decimal_places=0, verbose_name='ROP3')
+    rop1 = models.CharField(max_length=4, verbose_name="ROP1")
+    rop2 = models.CharField(max_length=5, verbose_name="ROP2")
+    rop3 = models.DecimalField(max_digits=6, decimal_places=0, verbose_name="ROP3")
     people_name = models.CharField(max_length=75)
-    fips = models.CharField(max_length=2, verbose_name='FIPS')
-    fips_of_origin = models.CharField(max_length=2, default='', blank=True, verbose_name='FIPS of Origin')
+    fips = models.CharField(max_length=2, verbose_name="FIPS")
+    fips_of_origin = models.CharField(max_length=2, default="", blank=True, verbose_name="FIPS of Origin")
     latitude = models.DecimalField(max_digits=10, decimal_places=6)
     longitude = models.DecimalField(max_digits=10, decimal_places=6)
-    peid_of_origin = models.BigIntegerField(default=0, blank=0, verbose_name='PEID of Origin')
-    imb_affinity_group = models.CharField(max_length=75, verbose_name='IMB Affinity Group')
+    peid_of_origin = models.BigIntegerField(default=0, blank=0, verbose_name="PEID of Origin")
+    imb_affinity_group = models.CharField(max_length=75, verbose_name="IMB Affinity Group")
 
     def __str__(self):
         return "%s (%s)" % (self.people_group, str(self.peid))
 
     class Meta:
-        verbose_name = 'IMB People Group'
-        verbose_name_plural = 'IMB People Groups'
+        verbose_name = "IMB People Group"
+        verbose_name_plural = "IMB People Groups"
 
     @classmethod
     def reload(cls):
@@ -363,49 +363,49 @@ class IMBPeopleGroup(models.Model):
         records = []
         while True:
             row = {sh_field_names[x]: sheet.cell_value(current_row_num, x) for x in range(0, 40)}
-            if str(row['PEID']) == '':
+            if str(row["PEID"]) == "":
                 break
             records.append(cls(
-                peid=row['PEID'],
-                affinity_bloc=row['Affinity Bloc'],
-                people_cluster=row['People Cluster'],
-                continent=row['Continent'],
-                sub_continent=row['Sub-Continent'],
-                country=row['Country'],
-                country_of_origin=row['Country of Origin'],
-                people_group=row['People Group'],
-                global_status_evangelical_christianity=row['Global Status of  Evangelical Christianity'],
-                evangelical_engagement=str_to_bool(row['Evangelical Engagement']),
-                population=row['Population'],
-                dispersed=str_to_bool(row['Dispersed (Yes/No)'], allow_null=True),
-                rol=row['ROL'],
-                language=row['Language'],
-                religion=row['Religion'],
-                written_scripture=str_to_bool(row['Written Scripture']),
-                jesus_film=str_to_bool(row['Jesus Film']),
-                radio_broadcast=str_to_bool(row['Radio Broadcast']),
-                gospel_recording=str_to_bool(row['Gospel Recording']),
-                audio_scripture=str_to_bool(row['Audio Scripture']),
-                bible_stories=str_to_bool(row['Bible Stories']),
-                resources=row['Resources'],
-                physical_exertion=row['Physical Exertion'],
-                freedom_index=row['Freedom Index'],
-                government_restrictions_index=row['Government Restrictions Index'],
-                social_hostilities_index=row['Social Hostilities Index'],
-                threat_level=row['Threat Level'],
-                prayer_threads=str_to_bool(row['Prayer Threads'], allow_null=True),
-                sbc_embracing_relationship=str_to_bool(row['SBC Embracing Relationship'], allow_null=True),
-                embracing_priority=str_to_bool(row['Embracing Priority']),
-                rop1=row['ROP1'],
-                rop2=row['ROP2'],
-                rop3=row['ROP3'],
-                people_name=row['People Name'],
-                fips=row['FIPS'],
-                fips_of_origin=row['FIPS of Origin'],
-                latitude=row['Latitude'],
-                longitude=row['Longitude'],
-                peid_of_origin=row['PEID of Origin'],
-                imb_affinity_group=row['IMB Affinity Group']
+                peid=row["PEID"],
+                affinity_bloc=row["Affinity Bloc"],
+                people_cluster=row["People Cluster"],
+                continent=row["Continent"],
+                sub_continent=row["Sub-Continent"],
+                country=row["Country"],
+                country_of_origin=row["Country of Origin"],
+                people_group=row["People Group"],
+                global_status_evangelical_christianity=row["Global Status of  Evangelical Christianity"],
+                evangelical_engagement=str_to_bool(row["Evangelical Engagement"]),
+                population=row["Population"],
+                dispersed=str_to_bool(row["Dispersed (Yes/No)"], allow_null=True),
+                rol=row["ROL"],
+                language=row["Language"],
+                religion=row["Religion"],
+                written_scripture=str_to_bool(row["Written Scripture"]),
+                jesus_film=str_to_bool(row["Jesus Film"]),
+                radio_broadcast=str_to_bool(row["Radio Broadcast"]),
+                gospel_recording=str_to_bool(row["Gospel Recording"]),
+                audio_scripture=str_to_bool(row["Audio Scripture"]),
+                bible_stories=str_to_bool(row["Bible Stories"]),
+                resources=row["Resources"],
+                physical_exertion=row["Physical Exertion"],
+                freedom_index=row["Freedom Index"],
+                government_restrictions_index=row["Government Restrictions Index"],
+                social_hostilities_index=row["Social Hostilities Index"],
+                threat_level=row["Threat Level"],
+                prayer_threads=str_to_bool(row["Prayer Threads"], allow_null=True),
+                sbc_embracing_relationship=str_to_bool(row["SBC Embracing Relationship"], allow_null=True),
+                embracing_priority=str_to_bool(row["Embracing Priority"]),
+                rop1=row["ROP1"],
+                rop2=row["ROP2"],
+                rop3=row["ROP3"],
+                people_name=row["People Name"],
+                fips=row["FIPS"],
+                fips_of_origin=row["FIPS of Origin"],
+                latitude=row["Latitude"],
+                longitude=row["Longitude"],
+                peid_of_origin=row["PEID of Origin"],
+                imb_affinity_group=row["IMB Affinity Group"]
             ))
             current_row_num += 1
             rows_processed += 1
