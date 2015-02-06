@@ -22,15 +22,23 @@
             <th>ROL</th>
             <th>Language</th>
             <th>Religion</th>
-            <th>WS</th>
-            <th>JF</th>
-            <th>RB</th>
-            <th>GR</th>
-            <th>AS</th>
-            <th>BS</th>
+            <th><span data-toggle="tooltip" title="Written Scripture" data-placement="top">W</span></th>
+            <th><span data-toggle="tooltip" title="Jesus Film" data-placement="top">J</span></th>
+            <th><span data-toggle="tooltip" title="Radio Broadcast" data-placement="top">R</span></th>
+            <th><span data-toggle="tooltip" title="Gospel Reading" data-placement="top">G</span></th>
+            <th><span data-toggle="tooltip" title="Audio Scripture" data-placement="top">A</span></th>
+            <th><span data-toggle="tooltip" title="Bible Stories" data-placement="top">B</span></th>
         </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
+{% endblock %}
+
+{% block extra_script %}
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 {% endblock %}

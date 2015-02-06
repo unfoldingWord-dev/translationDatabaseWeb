@@ -92,7 +92,14 @@ class DataTableSourceView(View):
             if hasattr(obj, "get_{0}_display".format(field)):
                 row.append(getattr(obj, "get_{0}_display".format(field))())
             else:
-                row.append(getattr(obj, field))
+                v = getattr(obj, field)
+                if type(v) == type(bool()):
+                    if v:
+                        row.append('<i class="fa fa-check text-success"></i>')
+                    else:
+                        row.append('<i class="fa fa-times text-danger"></i>')
+                else:
+                    row.append(v)
         return row
 
     def get(self, request, *args, **kwargs):
