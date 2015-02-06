@@ -167,8 +167,6 @@ class AjaxIMBPeopleGroupListView(DataTableSourceView):
         "country",
         "country_of_origin",
         "people_group",
-        "people_name",
-        "global_status_evangelical_christianity",
         "population",
         "dispersed",
         "rol",
