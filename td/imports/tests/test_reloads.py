@@ -42,6 +42,7 @@ class BaseReloadTestMixin(object):
         with patch("requests.Session") as mock_requests:
             mock_requests.get().status_code = 200
             mock_requests.get().content = ""
+            self.assertEquals(self.ModelClass.objects.count(), 0)
             self.ModelClass.reload(mock_requests)
             self.assertEquals(self.ModelClass.objects.count(), 0)
 
@@ -49,6 +50,7 @@ class BaseReloadTestMixin(object):
         with patch("requests.Session") as mock_requests:
             mock_requests.get().status_code = 500
             mock_requests.get().content = ""
+            self.assertEquals(self.ModelClass.objects.count(), 0)
             self.ModelClass.reload(mock_requests)
             self.assertEquals(self.ModelClass.objects.count(), 0)
             self.assertTrue(Log.objects.filter(action=self.log_reload_failed_action).exists())
