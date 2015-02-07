@@ -25,6 +25,7 @@ class BaseReloadTestMixin(object):
     @classmethod
     def setUpClass(cls):
         fp = open(os.path.join(os.path.dirname(__file__), "data", cls.filename))
+        self.ModelClass.objects.delete()
         if cls.filename.endswith("html") or cls.filename.endswith("xls"):
             cls.data = fp.read()
         else:
