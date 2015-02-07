@@ -41,17 +41,17 @@ class LanguageIntegrationTests(TestCase):
         ethno = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/LanguageCodes.tab")).read()  # noqa
         country = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/CountryCodes.tab")).read()  # noqa
         sil = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/iso_639_3.tab")).read()  # noqa
-        with patch.object(requests, "get") as mock_requests:
-            mock_requests.return_value = mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.content = wikipedia
-            WikipediaISOLanguage.reload()
-            mock_response.content = ethno
-            EthnologueLanguageCode.reload()
-            mock_response.content = country
-            EthnologueCountryCode.reload()
-            mock_response.content = sil
-            SIL_ISO_639_3.reload()
+        with patch.object(requests, "Session") as mock_requests:
+            # mock_requests.return_value = mock_response = Mock()
+            mock_requests.get().status_code = 200
+            mock_requests.get().content = wikipedia
+            WikipediaISOLanguage.reload(mock_requests)
+            mock_requests.get().content = ethno
+            EthnologueLanguageCode.reload(mock_requests)
+            mock_requests.get().content = country
+            EthnologueCountryCode.reload(mock_requests)
+            mock_requests.get().content = sil
+            SIL_ISO_639_3.reload(mock_requests)
         management.call_command("loaddata", "additional-languages.json", verbosity=1, noinput=True)
         integrate_imports()  # run task synchronously here
 
