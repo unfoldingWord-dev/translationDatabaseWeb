@@ -25,7 +25,7 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
     try:
         lang = Language.objects.get(code=d_code)
         lang.delete()
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
 

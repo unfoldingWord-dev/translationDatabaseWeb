@@ -4,7 +4,7 @@ import os
 from django.core import management
 from django.test import TestCase
 
-from mock import patch, Mock
+from mock import patch
 
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3
 

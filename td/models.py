@@ -1,12 +1,7 @@
-from django.db import connection
 from django.db import models
 from django.utils import timezone
 
-from eventlog.models import log
-
-from td.imports.models import EthnologueCountryCode, EthnologueLanguageCode
-
-from .signals import languages_integrated
+from td.imports.models import EthnologueCountryCode
 
 
 class AdditionalLanguage(models.Model):
@@ -83,4 +78,3 @@ class Language(models.Model):
             dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr)
             for x in cls.objects.all().order_by("code")
         ]
-
