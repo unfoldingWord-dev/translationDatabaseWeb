@@ -3,10 +3,12 @@ from __future__ import absolute_import
 from django.db import connection
 
 from celery import task
+from eventlog.models import log
+
 from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode
+
 from .models import AdditionalLanguage, Language
 from .signals import languages_integrated
-from eventlog.models import log
 
 
 @task()
@@ -38,4 +40,3 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
             language.save()
     languages_integrated.send(sender=Language)
     log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})
-

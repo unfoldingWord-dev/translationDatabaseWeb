@@ -93,7 +93,7 @@ class DataTableSourceView(View):
                 row.append(getattr(obj, "get_{0}_display".format(field))())
             else:
                 v = getattr(obj, field)
-                if type(v) == type(bool()):
+                if isinstance(v, bool):
                     if v:
                         row.append('<i class="fa fa-check text-success"></i>')
                     else:

@@ -12,10 +12,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from td.utils import str_to_bool
 
 import bs4
-import requests
 import xlrd
 
 from eventlog.models import log
+from . import fetch
 
 
 class WikipediaISOLanguage(models.Model):
@@ -41,16 +41,11 @@ class WikipediaISOLanguage(models.Model):
         verbose_name = "Wikipedia ISO Language"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes")
-        if response.status_code != 200:
-            log(
-                user=None,
-                action="SOURCE_WIKIPEDIA_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.WikipediaFetcher(session).fetch()
+        if not content:
             return
-        soup = bs4.BeautifulSoup(response.content)
+        soup = bs4.BeautifulSoup(content)
         records = []
         for tr in soup.select("table.wikitable tr"):
             row = [td.text for td in tr.find_all("td")]
@@ -118,16 +113,11 @@ class SIL_ISO_639_3(models.Model):
         verbose_name = "SIL ISO Code Set"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://www-01.sil.org/iso639-3/iso-639-3.tab")
-        if response.status_code != 200:
-            log(
-                user=None,
-                action="SOURCE_SIL_ISO_639_3_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.ISO_639_3Fetcher(session).fetch()
+        if not content:
             return
-        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        reader = csv.DictReader(StringIO(content), dialect="excel-tab")
         records = []
         for row in reader:
             records.append(cls(
@@ -171,16 +161,11 @@ class EthnologueLanguageCode(models.Model):
         verbose_name = "Ethnologue Language Code"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://www.ethnologue.com/sites/default/files/LanguageCodes.tab")
-        if response.status_code != 200:
-            log(
-                user=None,
-                action="SOURCE_ETHNOLOGUE_LANG_CODE_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.EthnologueLanguageCodesFetcher(session).fetch()
+        if not content:
             return
-        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        reader = csv.DictReader(StringIO(content), dialect="excel-tab")
         records = []
         for row in reader:
             records.append(cls(
@@ -212,16 +197,11 @@ class EthnologueCountryCode(models.Model):
         verbose_name = "Ethnologue Country Code"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://www.ethnologue.com/sites/default/files/CountryCodes.tab")
-        if response.status_code != 200:
-            log(
-                user=None,
-                action="SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.EthnologueCountryCodesFetcher(session).fetch()
+        if not content:
             return
-        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        reader = csv.DictReader(StringIO(content), dialect="excel-tab")
         records = []
         for row in reader:
             records.append(cls(
@@ -269,16 +249,11 @@ class EthnologueLanguageIndex(models.Model):
         verbose_name_plural = "Ethnologue Language Index"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://www.ethnologue.com/sites/default/files/LanguageIndex.tab")
-        if response.status_code != 200:
-            log(
-                user=None,
-                action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.EthnologueLanguageIndexFetcher(session).fetch()
+        if not content:
             return
-        reader = csv.DictReader(StringIO(response.content), dialect="excel-tab")
+        reader = csv.DictReader(StringIO(content), dialect="excel-tab")
         records = []
         for row in reader:
             records.append(cls(
@@ -344,17 +319,11 @@ class IMBPeopleGroup(models.Model):
         verbose_name_plural = "IMB People Groups"
 
     @classmethod
-    def reload(cls):
-        response = requests.get("http://public.imb.org/globalresearch/Documents/GSEC2015-01/2015-01_GSEC_Listing_of_People_Groups.xls")
-        # todo: replace the above line with code to deal with changing file names...
-        if response.status_code != 200 or response.content is None or len(response.content) == 0:
-            log(
-                user=None,
-                action="SOURCE_IMB_PEOPLE_GROUPS_RELOAD_FAILED",
-                extra={"status_code": response.status_code, "text": response.content}
-            )
+    def reload(cls, session):
+        content = fetch.IMBPeopleFetcher(session).fetch()
+        if content is None or content == "":
             return
-        book = xlrd.open_workbook(filename=None, file_contents=response.content)
+        book = xlrd.open_workbook(file_contents=content)
         sheet = book.sheet_by_index(0)
         key_cell = (4, 0)   # todo: replace this with code to "find" the PEID column properly
         sh_field_names = [sheet.cell_value(key_cell[0], key_cell[1] + x) for x in range(0, 40)]

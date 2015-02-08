@@ -23,6 +23,3 @@ class Command(BaseCommand):
             drop table wycliffe_workinprogress cascade;
             drop table wycliffe_workinprogress_translators cascade;
         """)
-
-
-

@@ -3,7 +3,7 @@ import os
 from django.test import TestCase
 
 from eventlog.models import Log
-from mock import patch, Mock
+from mock import patch
 
 from ..models import (
     EthnologueCountryCode,
@@ -25,6 +25,7 @@ class BaseReloadTestMixin(object):
     @classmethod
     def setUpClass(cls):
         fp = open(os.path.join(os.path.dirname(__file__), "data", cls.filename))
+        cls.ModelClass.objects.all().delete()
         if cls.filename.endswith("html") or cls.filename.endswith("xls"):
             cls.data = fp.read()
         else:
@@ -32,27 +33,26 @@ class BaseReloadTestMixin(object):
             cls.data += fp.readline()
 
     def test_reload(self):
-        with patch("requests.get", create=True) as mock_requests:
-            mock_requests.return_value = mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.content = self.data
-            self.ModelClass.reload()
+        with patch("requests.Session", create=True) as mock_requests:
+            mock_requests.get().status_code = 200
+            mock_requests.get().content = self.data
+            self.ModelClass.reload(mock_requests)
             self.assertEquals(self.ModelClass.objects.count(), self.expected_success_count)
 
     def test_reload_no_content(self):
-        with patch("requests.get") as mock_requests:
-            mock_requests.return_value = mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.content = ""
-            self.ModelClass.reload()
+        with patch("requests.Session") as mock_requests:
+            mock_requests.get().status_code = 200
+            mock_requests.get().content = ""
+            self.assertEquals(self.ModelClass.objects.count(), 0)
+            self.ModelClass.reload(mock_requests)
             self.assertEquals(self.ModelClass.objects.count(), 0)
 
     def test_reload_bad_response(self):
-        with patch("requests.get") as mock_requests:
-            mock_requests.return_value = mock_response = Mock()
-            mock_response.status_code = 500
-            mock_response.content = ""
-            self.ModelClass.reload()
+        with patch("requests.Session") as mock_requests:
+            mock_requests.get().status_code = 500
+            mock_requests.get().content = ""
+            self.assertEquals(self.ModelClass.objects.count(), 0)
+            self.ModelClass.reload(mock_requests)
             self.assertEquals(self.ModelClass.objects.count(), 0)
             self.assertTrue(Log.objects.filter(action=self.log_reload_failed_action).exists())
 

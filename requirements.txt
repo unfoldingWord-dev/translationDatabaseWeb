@@ -17,7 +17,6 @@ gunicorn==19.1.1
 kaleo==1.5
 kombu==3.0.24
 metron==1.3.5
-mock==1.0.1
 pinax-theme-bootstrap==5.6.0
 psycopg2==2.5.4
 pytz==2014.10
