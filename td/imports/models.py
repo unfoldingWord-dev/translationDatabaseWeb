@@ -118,10 +118,9 @@ class SIL_ISO_639_3(models.Model):
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
-        records = []
+        rows_updated = rows_created = 0
         for row in reader:
-            records.append(cls(
-                code=row["Id"],
+            defaults = dict(
                 part_2b=row["Part2B"] or "",
                 part_2t=row["Part2T"] or "",
                 part_1=row["Part1"] or "",
@@ -129,11 +128,22 @@ class SIL_ISO_639_3(models.Model):
                 language_type=row["Language_Type"],
                 ref_name=row["Ref_Name"],
                 comment=row["Comment"] or ""
-            ))
-        if len(records) > 0:
-            cls.objects.all().delete()
-            cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_SIL_ISO_639_3_RELOADED", extra={})
+            )
+            record, created = cls.objects.get_or_create(
+                code=row["Id"],
+                defaults=defaults
+            )
+            if created:
+                rows_created += 1
+            else:
+                for key in defaults:
+                    setattr(record, key, defaults[key])
+                record.save()
+                rows_updated += 1
+        log(user=None, action="SOURCE_SIL_ISO_639_3_RELOADED", extra={
+            "rows_created": rows_created,
+            "rows-updated": rows_updated
+        })
 
 
 class EthnologueLanguageCode(models.Model):
@@ -166,18 +176,28 @@ class EthnologueLanguageCode(models.Model):
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
-        records = []
+        rows_updated = rows_created = 0
         for row in reader:
-            records.append(cls(
-                code=row["LangID"],
+            defaults = dict(
                 country_code=row["CountryID"],
                 status=row["LangStatus"],
                 name=row["Name"],
-            ))
-        if len(records) > 0:
-            cls.objects.all().delete()
-            cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_ETHNOLOGUE_LANG_CODE_RELOADED", extra={})
+            )
+            record, created = cls.objects.get_or_create(
+                code=row["LangID"],
+                defaults=defaults
+            )
+            if created:
+                rows_created += 1
+            else:
+                for key in defaults:
+                    setattr(record, key, defaults[key])
+                record.save()
+                rows_updated += 1
+        log(user=None, action="SOURCE_ETHNOLOGUE_LANG_CODE_RELOADED", extra={
+            "rows_created": rows_created,
+            "rows-updated": rows_updated
+        })
 
 
 class EthnologueCountryCode(models.Model):
@@ -202,17 +222,27 @@ class EthnologueCountryCode(models.Model):
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
-        records = []
+        rows_updated = rows_created = 0
         for row in reader:
-            records.append(cls(
-                code=row["CountryID"],
+            defaults = dict(
                 name=row["Name"],
-                area=row["Area"],
-            ))
-        if len(records) > 0:
-            cls.objects.all().delete()
-            cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOADED", extra={})
+                area=row["Area"]
+            )
+            record, created = cls.objects.get_or_create(
+                code=row["CountryID"],
+                defaults=defaults
+            )
+            if created:
+                rows_created += 1
+            else:
+                for key in defaults:
+                    setattr(record, key, defaults[key])
+                record.save()
+                rows_updated += 1
+        log(user=None, action="SOURCE_ETHNOLOGUE_COUNTRY_CODE_RELOADED", extra={
+            "rows_created": rows_created,
+            "rows-updated": rows_updated
+        })
 
 
 class EthnologueLanguageIndex(models.Model):
@@ -254,18 +284,28 @@ class EthnologueLanguageIndex(models.Model):
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
-        records = []
+        rows_updated = rows_created = 0
         for row in reader:
-            records.append(cls(
-                language_code=row["LangID"],
+            defaults = dict(
                 country_code=row["CountryID"],
                 name_type=row["NameType"],
-                name=row["Name"],
-            ))
-        if len(records) > 0:
-            cls.objects.all().delete()
-            cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={})
+                name=row["Name"]
+            )
+            record, created = cls.objects.get_or_create(
+                language_code=row["LangID"],
+                defaults=defaults
+            )
+            if created:
+                rows_created += 1
+            else:
+                for key in defaults:
+                    setattr(record, key, defaults[key])
+                record.save()
+                rows_updated += 1
+        log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={
+            "rows_created": rows_created,
+            "rows-updated": rows_updated
+        })
 
 
 @python_2_unicode_compatible
@@ -328,14 +368,12 @@ class IMBPeopleGroup(models.Model):
         key_cell = (4, 0)   # todo: replace this with code to "find" the PEID column properly
         sh_field_names = [sheet.cell_value(key_cell[0], key_cell[1] + x) for x in range(0, 40)]
         current_row_num = key_cell[0] + 1
-        rows_processed = 0
-        records = []
+        rows_created = rows_updated = 0
         while True:
             row = {sh_field_names[x]: sheet.cell_value(current_row_num, x) for x in range(0, 40)}
             if str(row["PEID"]) == "":
                 break
-            records.append(cls(
-                peid=row["PEID"],
+            defaults = dict(
                 affinity_bloc=row["Affinity Bloc"],
                 people_cluster=row["People Cluster"],
                 continent=row["Continent"],
@@ -375,10 +413,20 @@ class IMBPeopleGroup(models.Model):
                 longitude=row["Longitude"],
                 peid_of_origin=row["PEID of Origin"],
                 imb_affinity_group=row["IMB Affinity Group"]
-            ))
+            )
+            record, created = cls.objects.get_or_create(
+                peid=row["PEID"],
+                defaults=defaults
+            )
+            if created:
+                rows_created += 1
+            else:
+                for key in defaults:
+                    setattr(record, key, defaults[key])
+                record.save()
+                rows_updated += 1
             current_row_num += 1
-            rows_processed += 1
-        if len(records):
-            cls.objects.all().delete()
-            cls.objects.bulk_create(records)
-            log(user=None, action="SOURCE_IMB_PEOPLE_GROUPS_LOADED", extra={})
+        log(user=None, action="SOURCE_IMB_PEOPLE_GROUPS_LOADED", extra={
+            "rows_created": rows_created,
+            "rows-updated": rows_updated
+        })
