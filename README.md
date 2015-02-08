@@ -8,7 +8,7 @@ translationDatabase
 ## Data Sources
 
 A lot of the sources of data are pull into and managed as repo as part of the
-Debian project called simplely, [ISO Codes](https://alioth.debian.org/anonscm/git/iso-codes/iso-codes.git).
+Debian project called simply, [ISO Codes](https://alioth.debian.org/anonscm/git/iso-codes/iso-codes.git).
 
 ### In Use
 
