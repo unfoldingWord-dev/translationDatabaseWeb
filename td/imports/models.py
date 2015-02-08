@@ -286,22 +286,16 @@ class EthnologueLanguageIndex(models.Model):
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
         rows_updated = rows_created = 0
         for row in reader:
-            defaults = dict(
+            record, created = cls.objects.get_or_create(
+                language_code=row["LangID"],
                 country_code=row["CountryID"],
                 name_type=row["NameType"],
                 name=row["Name"]
             )
-            record, created = cls.objects.get_or_create(
-                language_code=row["LangID"],
-                defaults=defaults
-            )
             if created:
                 rows_created += 1
             else:
-                for key in defaults:
-                    setattr(record, key, defaults[key])
-                record.save()
-                rows_updated += 1
+                rows_updated += 1  # @@@ Should never be an update on this table
         log(user=None, action="SOURCE_ETHNOLOGUE_LANG_INDEX_RELOADED", extra={
             "rows_created": rows_created,
             "rows-updated": rows_updated
