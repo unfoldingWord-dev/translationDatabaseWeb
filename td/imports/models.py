@@ -42,7 +42,7 @@ class WikipediaISOLanguage(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.wikipedia_content(session)
+        content = fetch.WikipediaFetcher(session).fetch()
         if not content:
             return
         soup = bs4.BeautifulSoup(content)
@@ -114,7 +114,7 @@ class SIL_ISO_639_3(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.iso_639_3(session)
+        content = fetch.ISO_639_3Fetcher(session).fetch()
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
@@ -162,7 +162,7 @@ class EthnologueLanguageCode(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.ethnologue_language_codes(session)
+        content = fetch.EthnologueLanguageCodesFetcher(session).fetch()
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
@@ -198,7 +198,7 @@ class EthnologueCountryCode(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.ethnologue_country_codes(session)
+        content = fetch.EthnologueCountryCodesFetcher(session).fetch()
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
@@ -250,7 +250,7 @@ class EthnologueLanguageIndex(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.ethnologue_language_index(session)
+        content = fetch.EthnologueLanguageIndexFetcher(session).fetch()
         if not content:
             return
         reader = csv.DictReader(StringIO(content), dialect="excel-tab")
@@ -320,10 +320,10 @@ class IMBPeopleGroup(models.Model):
 
     @classmethod
     def reload(cls, session):
-        content = fetch.imdb_people(session)
+        content = fetch.IMBPeopleFetcher(session).fetch()
         if content is None:
             return
-        book = xlrd.open_workbook(filename=None, file_contents=content)
+        book = xlrd.open_workbook(file_contents=content)
         sheet = book.sheet_by_index(0)
         key_cell = (4, 0)   # todo: replace this with code to "find" the PEID column properly
         sh_field_names = [sheet.cell_value(key_cell[0], key_cell[1] + x) for x in range(0, 40)]
