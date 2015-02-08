@@ -321,7 +321,7 @@ class IMBPeopleGroup(models.Model):
     @classmethod
     def reload(cls, session):
         content = fetch.IMBPeopleFetcher(session).fetch()
-        if content is None:
+        if content is None or content == "":
             return
         book = xlrd.open_workbook(file_contents=content)
         sheet = book.sheet_by_index(0)
