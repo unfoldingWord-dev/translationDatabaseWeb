@@ -9,14 +9,17 @@ from account.signals import user_login_attempt, user_logged_in
 
 from eventlog.models import log
 
-from .models import Language, AdditionalLanguage
+from .models import AdditionalLanguage
+from td.uw.models import Language
 from .signals import languages_integrated
 from .tasks import integrate_imports
 
 
 @receiver(post_save, sender=AdditionalLanguage)
 def handle_additionallanguage_save(sender, **kwargs):
-    integrate_imports.delay()
+    # todo: re-integrate later
+    #integrate_imports.delay()
+    pass
 
 
 @receiver(post_delete, sender=AdditionalLanguage)

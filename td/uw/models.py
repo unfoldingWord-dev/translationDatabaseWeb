@@ -4,8 +4,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 
-from td.imports.models import EthnologueCountryCode
-from td.models import Language as SourceLanguage
+#from td.imports.models import EthnologueCountryCode
 
 
 @python_2_unicode_compatible
@@ -29,38 +28,40 @@ class BibleContent(models.Model):
 
 @python_2_unicode_compatible
 class Country(models.Model):
-    country = models.ForeignKey(EthnologueCountryCode)
+    code = models.CharField(max_length=2, unique=True)
+    name = models.CharField(max_length=75)
+    area = models.CharField(max_length=10)
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
 
     @classmethod
     def regions(cls):
-        qs = cls.objects.all().values_list("country__area", flat=True).distinct()
-        qs = qs.order_by("country__area")
+        qs = cls.objects.all().values_list("area", flat=True).distinct()
+        qs = qs.order_by("area")
         return qs
 
     @classmethod
     def gateway_data(cls):
-        with_gateways = cls.objects.filter(language__gateway_dialect__isnull=False).distinct()
+        with_gateways = cls.objects.filter(language__gateway_language__isnull=False).distinct()
         without_gateways = cls.objects.exclude(pk__in=with_gateways)
         data = {
-            x.country.code: {"obj": x, "gateways": defaultdict(lambda: [])}
+            x.code: {"obj": x, "gateways": defaultdict(lambda: [])}
             for x in with_gateways
         }
         data.update({
-            x.country.code: {"obj": x, "gateways": {"n/a": list(x.language_set.all())}}
+            x.code: {"obj": x, "gateways": {"n/a": list(x.language_set.all())}}
             for x in without_gateways
         })
         for country in with_gateways:
             for lang in country.language_set.all():
-                if lang.gateway_dialect:
-                    data[country.country.code]["gateways"][lang.gateway_dialect.code].append(lang)
+                if lang.gateway_language:
+                    data[country.code]["gateways"][lang.gateway_language.code].append(lang)
                 else:
-                    data[country.country.code]["gateways"]["n/a"].append(lang)
+                    data[country.code]["gateways"]["n/a"].append(lang)
         return data
 
     def __str__(self):
-        return self.country.name
+        return self.name
 
 
 def transform_country_data(data):
@@ -111,14 +112,56 @@ tree = {
 
 @python_2_unicode_compatible
 class Language(models.Model):
-    country = models.ForeignKey(Country)
-    living_language = models.ForeignKey(SourceLanguage, related_name="+")
-    gateway_dialect = models.ForeignKey(SourceLanguage, related_name="+", null=True, blank=True)
+    code = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True)
+    gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
     networks_translating = models.ManyToManyField(Network, null=True, blank=True)
 
     def __str__(self):
         return self.living_language.name
+
+    @property
+    def cc(self):
+        if self.country:
+            return self.country.code.encode("utf-8")
+        return ""
+
+    @property
+    def lr(self):
+        if self.country:
+            return self.country.area.encode("utf-8")
+        return ""
+
+    @property
+    def lc(self):
+        return self.code
+
+    @property
+    def ln(self):
+        return self.name.encode("utf-8")
+
+    @classmethod
+    def codes_text(cls):
+        return " ".join([
+            x.code
+            for x in cls.objects.all().order_by("code")
+        ])
+
+    @classmethod
+    def names_text(cls):
+        return "\n".join([
+            "{}\t{}".format(x.code, x.name.encode("utf-8"))
+            for x in cls.objects.all().order_by("code")
+        ])
+
+    @classmethod
+    def names_data(cls):
+        return [
+            dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr)
+            for x in cls.objects.all().order_by("code")
+        ]
 
 
 @python_2_unicode_compatible

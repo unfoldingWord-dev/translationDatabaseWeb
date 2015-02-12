@@ -7,8 +7,6 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('td', '0003_language'),
-        ('imports', '0004_auto_20141021_2122'),
     ]
 
     operations = [
@@ -26,8 +24,10 @@ class Migration(migrations.Migration):
             name='Country',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('code', models.CharField(unique=True, max_length=2)),
+                ('name', models.CharField(max_length=75)),
+                ('area', models.CharField(max_length=10)),
                 ('population', models.IntegerField(null=True, blank=True)),
-                ('country', models.ForeignKey(to='imports.EthnologueCountryCode')),
             ],
             options={
             },
@@ -37,10 +37,11 @@ class Migration(migrations.Migration):
             name='Language',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('code', models.CharField(unique=True, max_length=100)),
+                ('name', models.CharField(max_length=100, blank=True)),
                 ('native_speakers', models.IntegerField(null=True, blank=True)),
-                ('country', models.ForeignKey(to='uw.Country')),
-                ('gateway_dialect', models.ForeignKey(related_name='+', blank=True, to='td.Language', null=True)),
-                ('living_language', models.ForeignKey(related_name='+', to='td.Language')),
+                ('country', models.ForeignKey(blank=True, to='uw.Country', null=True)),
+                ('gateway_language', models.ForeignKey(related_name='gateway_to', blank=True, to='uw.Language', null=True)),
             ],
             options={
             },

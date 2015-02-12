@@ -11,7 +11,9 @@ from td.imports.models import (
     IMBPeopleGroup
 )
 
-from .models import AdditionalLanguage, Language
+from td.uw.models import Language
+from .models import AdditionalLanguage
+
 from .utils import DataTableSourceView
 
 

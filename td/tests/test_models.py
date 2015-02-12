@@ -8,7 +8,8 @@ from mock import patch
 
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3
 
-from ..models import AdditionalLanguage, Language
+from ..models import AdditionalLanguage
+from ..uw.models import Language
 from ..tasks import integrate_imports
 
 

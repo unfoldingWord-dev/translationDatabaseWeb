@@ -26,12 +26,12 @@ admin.site.register(
 
 admin.site.register(
     Country,
-    list_display=["country", "population"]
+    list_display=["code", "name", "area", "population"]
 )
 
 admin.site.register(
     Language,
-    list_display=["living_language", "gateway_dialect", "native_speakers"]
+    list_display=["code", "name", "gateway_language", "native_speakers"]
 )
 
 admin.site.register(

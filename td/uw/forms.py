@@ -1,7 +1,7 @@
 from django import forms
 from django.core.urlresolvers import reverse
 
-from td.models import Language as SourceLanguage
+#from td.models import Language as SourceLanguage
 from .models import (
     Country,
     Language,
@@ -36,6 +36,9 @@ class CountryForm(forms.ModelForm):
     class Meta:
         model = Country
         fields = [
+            "code",
+            "name",
+            "area",
             "population",
             "primary_networks"
         ]
@@ -45,28 +48,16 @@ class LanguageForm(forms.ModelForm):
 
     required_css_class = "required"
 
-    def clean_living_language(self):
-        code = self.cleaned_data["living_language"]
-        return SourceLanguage.objects.get(code=code)
-
-    def clean_gateway_dialect(self):
+    def clean_gateway_language(self):
         code = self.cleaned_data["gateway_dialect"]
         if code:
-            return SourceLanguage.objects.get(code=code)
+            return Language.objects.get(code=code)
 
     def __init__(self, *args, **kwargs):
         super(LanguageForm, self).__init__(*args, **kwargs)
         self.fields["networks_translating"].widget.attrs["class"] = "select2-multiple"
         self.fields["networks_translating"].help_text = ""
-        self.fields["living_language"] = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    "class": "language-selector",
-                    "data-source-url": reverse("names_autocomplete")
-                }
-            )
-        )
-        self.fields["gateway_dialect"] = forms.CharField(
+        self.fields["gateway_language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
@@ -76,15 +67,12 @@ class LanguageForm(forms.ModelForm):
             required=False
         )
         if self.instance.pk is not None:
-            self.initial.update({
-                "living_language": self.instance.living_language.code,
-                "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
-            })
-            lang = self.instance.living_language
-            self.fields["living_language"].widget.attrs["data-lang-ln"] = lang.ln
-            self.fields["living_language"].widget.attrs["data-lang-lc"] = lang.lc
-            self.fields["living_language"].widget.attrs["data-lang-lr"] = lang.lr
-            lang = self.instance.gateway_dialect
+            #self.initial.update({
+            #    "living_language": self.instance.living_language.code,
+            #    "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
+            #})
+            #lang = self.instance.living_language
+            lang = self.instance.gateway_language
             if lang:
                 self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
                 self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
@@ -93,8 +81,9 @@ class LanguageForm(forms.ModelForm):
     class Meta:
         model = Language
         fields = [
-            "living_language",
-            "gateway_dialect",
+            "code",
+            "name",
+            "gateway_language",
             "native_speakers",
             "networks_translating"
         ]
