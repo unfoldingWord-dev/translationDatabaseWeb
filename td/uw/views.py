@@ -88,14 +88,14 @@ class RegionDetailView(LoginRequiredMixin, ListView):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
         context.update({
             "region": self.kwargs.get("slug").title(),
-            "languages": Language.objects.filter(country__country__area__iexact=self.kwargs.get("slug")).order_by("living_language__name")
+            "languages": Language.objects.filter(country__area__iexact=self.kwargs.get("slug")).order_by("name")
         })
         return context
 
     def get_queryset(self):
         qs = super(RegionDetailView, self).get_queryset()
-        qs = qs.filter(country__area__iexact=self.kwargs.get("slug"))
-        qs = qs.order_by("country__name")
+        qs = qs.filter(area__iexact=self.kwargs.get("slug"))
+        qs = qs.order_by("name")
         return qs
 
 

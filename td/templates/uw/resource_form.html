@@ -5,14 +5,13 @@
 {% block body %}
 <ol class="breadcrumb">
   <li><a href="{% url "region_list" %}">Regions</a></li>
-  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
-  <li><a href="{% url "country_detail" language.country.country.pk %}">{{ language.country.country.name }}</a></li>
-  <li><a href="{% url "language_detail" language.pk %}">{{ language.living_language.name }}</a></li>
+  <li><a href="{% url "region_detail" country.area|lower %}">{{ country.area }}</a></li>
+  <li><a href="{% url "country_detail" language.country.pk %}">{{ language.country.name }}</a></li>
+  <li><a href="{% url "language_detail" language.pk %}">{{ language.name }}</a></li>
   <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Resource</li>
 </ol>
 
-
-<div class"row">
+<div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">

@@ -5,8 +5,8 @@
 {% block body %}
 <ol class="breadcrumb">
   <li><a href="{% url "region_list" %}">Regions</a></li>
-  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
-  <li><a href="{% url "country_detail" language.country.country.pk %}">{{ language.country.country.name }}</a></li>
+  <li><a href="{% url "region_detail" country.area|lower %}">{{ country.area }}</a></li>
+  <li><a href="{% url "country_detail" language.country.pk %}">{{ language.country.name }}</a></li>
   <li class="active">{{ language.living_language.name }}</li>
 </ol>
 
@@ -19,8 +19,8 @@
     <div class="col-md-6">
         <table class="table">
             <tbody>
-                <tr><th>Living Language</th><td>{{ language.living_language }}</td></tr>
-                <tr><th>Gateway Language</th><td>{{ language.gateway_dialect }}</td></tr>
+                <tr><th>Language</th><td>{{ language.name }}</td></tr>
+                <tr><th>Gateway Language</th><td>{{ language.gateway_language }}</td></tr>
                 <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
             </tbody>
         </table>

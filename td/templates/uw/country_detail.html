@@ -5,12 +5,12 @@
 {% block body %}
 <ol class="breadcrumb">
   <li><a href="{% url "region_list" %}">Regions</a></li>
-  <li><a href="{% url "region_detail" country.country.area|lower %}">{{ country.country.area }}</a></li>
-  <li class="active">{{ country.country.name }}</li>
+  <li><a href="{% url "region_detail" country.area|lower %}">{{ country.area }}</a></li>
+  <li class="active">{{ country.name }}</li>
 </ol>
 
 <h1>
-  {{ country.country.name }}
+  {{ country.name }}
   <a class="btn btn-primary btn-xs" href="{% url "country_edit" country.pk %}">Edit</a>
 </h1>
 
