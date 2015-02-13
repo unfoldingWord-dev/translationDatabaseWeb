@@ -104,7 +104,7 @@ class CountryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         qs = super(CountryListView, self).get_queryset()
-        qs = qs.order_by("country__name")
+        qs = qs.order_by("name")
         return qs
 
 
