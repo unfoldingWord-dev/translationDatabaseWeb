@@ -5,10 +5,10 @@ from django.db import connection
 from celery import task
 from eventlog.models import log
 
-from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode
+from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3
+from td.uw.models import Language, Country
 
 from .models import AdditionalLanguage
-from td.uw.models import Language, Country
 from .signals import languages_integrated
 
 
@@ -22,7 +22,13 @@ def integrate_imports():
     cursor.execute("""
 select coalesce(nullif(x.part_1, ''), x.code) as code,
        coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
-       coalesce(cc.code, '')
+       coalesce(cc.code, ''),
+       nullif(nn1.native_name, '') as nn1name,
+       nn1.id,
+       nullif(nn2.native_name, '') as nn2name,
+       nn2.id,
+       x.ref_name as xname,
+       x.id
   from imports_sil_iso_639_3 x
 left join imports_ethnologuelanguagecode lc on x.code = lc.code
 left join imports_wikipediaisolanguage nn1 on x.part_1 = nn1.iso_639_1
@@ -35,10 +41,19 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
     rows.sort()
     for r in rows:
         if r[0] is not None:
-            language, created = Language.objects.get_or_create(code=r[0])
+            language, _ = Language.objects.get_or_create(code=r[0])
             language.name = r[1]
-            language.country = next(iter(Country.objects.filter(code=r[2])), None)
+            if r[1] == r[3]:
+                language.source = EthnologueLanguageCode.objects.get(pk=r[4])
+            if r[1] == r[5]:
+                language.source = EthnologueLanguageCode.objects.get(pk=r[6])
+            if r[1] == r[7]:
+                language.source = SIL_ISO_639_3.objects.get(pk=r[8])
             language.save()
+            if r[2]:
+                language.country = next(iter(Country.objects.filter(code=r[2])), None)
+                language.source = EthnologueCountryCode.objects.get(code=r[2])
+                language.save()
     languages_integrated.send(sender=Language)
     log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})
 
@@ -46,7 +61,8 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
 @task()
 def update_countries_from_imports():
     for ecountry in EthnologueCountryCode.objects.all():
-        country, created_flag = Country.objects.get_or_create(code=ecountry.code)
+        country, _ = Country.objects.get_or_create(code=ecountry.code)
         country.area = ecountry.area
         country.name = ecountry.name
+        country.source = ecountry
         country.save()
