@@ -49,7 +49,6 @@ class CountryForm(EntityTrackingForm):
     class Meta:
         model = Country
         fields = [
-            "code",
             "name",
             "area",
             "population",

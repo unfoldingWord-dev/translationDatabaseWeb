@@ -32,9 +32,19 @@ class BibleContentAdmin(EntryTrackingAdmin):
 class CountryAdmin(EntryTrackingAdmin):
     list_display = ["code", "name", "area", "population"]
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("code",)
+        return self.readonly_fields
+
 
 class LanguageAdmin(EntryTrackingAdmin):
     list_display = ["code", "name", "gateway_language", "native_speakers"]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("code",)
+        return self.readonly_fields
 
 
 class TranslatorAdmin(EntryTrackingAdmin):
