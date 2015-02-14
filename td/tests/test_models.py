@@ -51,7 +51,7 @@ class LanguageIntegrationTests(TestCase):
             mock_requests.get().content = sil
             SIL_ISO_639_3.reload(mock_requests)
         management.call_command("loaddata", "additional-languages.json", verbosity=1, noinput=True)
-        update_countries_from_imports() # run task synchronously here
+        update_countries_from_imports()  # run task synchronously here
         integrate_imports()  # run task synchronously here
 
     def test_codes_export(self):

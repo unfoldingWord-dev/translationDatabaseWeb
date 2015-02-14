@@ -23,4 +23,3 @@ class AdditionalLanguage(models.Model):
 
     class Meta:
         verbose_name = "Additional Language"
-

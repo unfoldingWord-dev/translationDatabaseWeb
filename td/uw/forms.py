@@ -1,7 +1,6 @@
 from django import forms
 from django.core.urlresolvers import reverse
 
-#from td.models import Language as SourceLanguage
 from .models import (
     Country,
     Language,
@@ -67,16 +66,11 @@ class LanguageForm(forms.ModelForm):
             required=False
         )
         if self.instance.pk is not None:
-            #self.initial.update({
-            #    "living_language": self.instance.living_language.code,
-            #    "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
-            #})
-            #lang = self.instance.living_language
             lang = self.instance.gateway_language
             if lang:
-                self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["gateway_dialect"].widget.attrs["data-lang-lr"] = lang.lr
+                self.fields["gateway_language"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["gateway_language"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["gateway_language"].widget.attrs["data-lang-lr"] = lang.lr
 
     class Meta:
         model = Language

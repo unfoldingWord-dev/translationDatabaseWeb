@@ -18,8 +18,8 @@ from .tasks import integrate_imports
 @receiver(post_save, sender=AdditionalLanguage)
 def handle_additionallanguage_save(sender, **kwargs):
     # todo: re-integrate later
-    #integrate_imports.delay()
-    pass
+    if False:
+        integrate_imports.delay()
 
 
 @receiver(post_delete, sender=AdditionalLanguage)
