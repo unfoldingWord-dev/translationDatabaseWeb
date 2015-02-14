@@ -2,7 +2,10 @@ from collections import defaultdict
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+
+from django.contrib.contenttypes.models import ContentType
 
 from model_utils import FieldTracker
 
@@ -128,7 +131,7 @@ class Language(models.Model):
     tracker = FieldTracker()
 
     def __str__(self):
-        return self.living_language.name
+        return self.name
 
     @property
     def cc(self):
@@ -270,3 +273,54 @@ class Resource(models.Model):
     license = models.TextField(blank=True)
 
     tracker = FieldTracker()
+
+
+class EAVBase(models.Model):
+    attribute = models.CharField(max_length=100)
+    value = models.CharField(max_length=250)
+    source_ct = models.ForeignKey(ContentType)
+    source_id = models.IntegerField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        abstract = True
+
+
+class NetworkEAV(EAVBase):
+    entity = models.ForeignKey(Network, related_name="attributes")
+
+
+class BibleContentEAV(EAVBase):
+    entity = models.ForeignKey(BibleContent, related_name="attributes")
+
+
+class CountryEAV(EAVBase):
+    entity = models.ForeignKey(Country, related_name="attributes")
+
+
+class LanguageEAV(EAVBase):
+    entity = models.ForeignKey(Language, related_name="attributes")
+
+
+class TranslatorEAV(EAVBase):
+    entity = models.ForeignKey(Translator, related_name="attributes")
+
+
+class OrganizationEAV(EAVBase):
+    entity = models.ForeignKey(Organization, related_name="attributes")
+
+
+class WorkInProgressEAV(EAVBase):
+    entity = models.ForeignKey(WorkInProgress, related_name="attributes")
+
+
+class ScriptureEAV(EAVBase):
+    entity = models.ForeignKey(Scripture, related_name="attributes")
+
+
+class TranslationNeedEAV(EAVBase):
+    entity = models.ForeignKey(TranslationNeed, related_name="attributes")
+
+
+class ResourceEAV(EAVBase):
+    entity = models.ForeignKey(Resource, related_name="attributes")

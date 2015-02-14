@@ -12,7 +12,21 @@ from .models import (
 )
 
 
-class NetworkForm(forms.ModelForm):
+class EntityTrackingForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.source = kwargs.pop("source")
+        super(EntityTrackingForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super(EntityTrackingForm, self).save(commit=False)
+        instance.source = self.source
+        if commit:
+            instance.save()
+        return instance
+
+
+class NetworkForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -23,7 +37,7 @@ class NetworkForm(forms.ModelForm):
         ]
 
 
-class CountryForm(forms.ModelForm):
+class CountryForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -43,12 +57,12 @@ class CountryForm(forms.ModelForm):
         ]
 
 
-class LanguageForm(forms.ModelForm):
+class LanguageForm(EntityTrackingForm):
 
     required_css_class = "required"
 
     def clean_gateway_language(self):
-        code = self.cleaned_data["gateway_dialect"]
+        code = self.cleaned_data["gateway_language"]
         if code:
             return Language.objects.get(code=code)
 
@@ -83,7 +97,7 @@ class LanguageForm(forms.ModelForm):
         ]
 
 
-class ResourceForm(forms.ModelForm):
+class ResourceForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -101,7 +115,7 @@ class ResourceForm(forms.ModelForm):
         ]
 
 
-class ScriptureForm(forms.ModelForm):
+class ScriptureForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -123,7 +137,7 @@ class ScriptureForm(forms.ModelForm):
         ]
 
 
-class TranslationNeedForm(forms.ModelForm):
+class TranslationNeedForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -137,7 +151,7 @@ class TranslationNeedForm(forms.ModelForm):
         ]
 
 
-class WorkInProgressForm(forms.ModelForm):
+class WorkInProgressForm(EntityTrackingForm):
 
     required_css_class = "required"
 

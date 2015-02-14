@@ -37,6 +37,16 @@ def country_tree_data(request):
     return JsonResponse(transform_country_data(Country.gateway_data()))
 
 
+class EntityTrackingMixin(object):
+
+    def get_form_kwargs(self):
+        kwargs = super(EntityTrackingMixin, self).get_form_kwargs()
+        kwargs.update({
+            "source": self.request.user
+        })
+        return kwargs
+
+
 class EventLogMixin(object):
 
     @property
@@ -112,7 +122,7 @@ class CountryDetailView(LoginRequiredMixin, DetailView):
     model = Country
 
 
-class CountryEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
+class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Country
     form_class = CountryForm
     action_kind = "EDIT"
@@ -121,7 +131,7 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
         return reverse("country_detail", args=[self.object.pk])
 
 
-class LanguageCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
+class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, CreateView):
     model = Language
     form_class = LanguageForm
     action_kind = "CREATE"
@@ -157,7 +167,7 @@ class LanguageDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class LanguageEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
+class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Language
     form_class = LanguageForm
     action_kind = "EDIT"
@@ -173,7 +183,7 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
         return context
 
 
-class NetworkCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
+class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, CreateView):
     model = Network
     form_class = NetworkForm
     action_kind = "CREATE"
@@ -186,7 +196,7 @@ class NetworkDetailView(LoginRequiredMixin, DetailView):
     model = Network
 
 
-class NetworkEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
+class NetworkEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Network
     form_class = NetworkForm
     action_kind = "EDIT"
@@ -204,7 +214,7 @@ class NetworkListView(LoginRequiredMixin, ListView):
         return qs
 
 
-class BaseLanguageView(LoginRequiredMixin, EventLogMixin):
+class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.language = get_object_or_404(Language, pk=self.kwargs.get("pk"))
