@@ -4,12 +4,16 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 
+from model_utils import FieldTracker
+
 #from td.imports.models import EthnologueCountryCode
 
 
 @python_2_unicode_compatible
 class Network(models.Model):
     name = models.CharField(max_length=100)
+
+    tracker = FieldTracker()
 
     def get_absolute_url(self):
         return reverse("network_detail", args=[self.pk])
@@ -22,6 +26,8 @@ class Network(models.Model):
 class BibleContent(models.Model):
     name = models.CharField(max_length=100)
 
+    tracker = FieldTracker()
+
     def __str__(self):
         return self.name
 
@@ -33,6 +39,8 @@ class Country(models.Model):
     area = models.CharField(max_length=10)
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
+
+    tracker = FieldTracker()
 
     @classmethod
     def regions(cls):
@@ -119,6 +127,8 @@ class Language(models.Model):
     native_speakers = models.IntegerField(null=True, blank=True)
     networks_translating = models.ManyToManyField(Network, null=True, blank=True)
 
+    tracker = FieldTracker()
+
     def __str__(self):
         return self.living_language.name
 
@@ -172,6 +182,8 @@ class Entity(models.Model):
     location = models.CharField(max_length=255, blank=True, help_text="Location.")
     phone = models.CharField(max_length=255, blank=True, help_text="Phone number.")
 
+    tracker = FieldTracker()
+
     def __str__(self):
         return self.name
 
@@ -212,6 +224,8 @@ class ScriptureBase(models.Model):
     language = models.ForeignKey(Language)
     bible_content = models.ForeignKey(BibleContent, verbose_name="Bible Content")
 
+    tracker = FieldTracker()
+
     class Meta:
         abstract = True
 
@@ -247,6 +261,8 @@ class TranslationNeed(models.Model):
     other_gaps = models.TextField(blank=True)
     other_updates = models.TextField(blank=True)
 
+    tracker = FieldTracker()
+
 
 class Resource(models.Model):
     language = models.ForeignKey(Language)
@@ -254,3 +270,5 @@ class Resource(models.Model):
     copyright = models.CharField(max_length=100, blank=True)
     copyright_holder = models.ForeignKey(Organization, blank=True, null=True)
     license = models.TextField(blank=True)
+
+    tracker = FieldTracker()
