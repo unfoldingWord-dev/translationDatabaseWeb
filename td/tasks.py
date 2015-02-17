@@ -5,7 +5,7 @@ from django.db import connection
 from celery import task
 from eventlog.models import log
 
-from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3
+from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3, WikipediaISOLanguage
 from td.uw.models import Language, Country
 
 from .models import AdditionalLanguage
@@ -37,16 +37,16 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
  where lc.status = %s or lc.status is NULL order by code;
 """, [EthnologueLanguageCode.STATUS_LIVING])
     rows = cursor.fetchall()
-    rows.extend([(x[0], x[1], -1) for x in additionals.items()])
+    rows.extend([(x[0], x[1], None, "", None, "", None, "", None) for x in additionals.items()])
     rows.sort()
     for r in rows:
         if r[0] is not None:
             language, _ = Language.objects.get_or_create(code=r[0])
             language.name = r[1]
             if r[1] == r[3]:
-                language.source = EthnologueLanguageCode.objects.get(pk=r[4])
+                language.source = WikipediaISOLanguage.objects.get(pk=r[4])
             if r[1] == r[5]:
-                language.source = EthnologueLanguageCode.objects.get(pk=r[6])
+                language.source = WikipediaISOLanguage.objects.get(pk=r[6])
             if r[1] == r[7]:
                 language.source = SIL_ISO_639_3.objects.get(pk=r[8])
             language.save()
