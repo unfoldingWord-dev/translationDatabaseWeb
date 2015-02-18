@@ -17,14 +17,12 @@ from .tasks import integrate_imports
 
 @receiver(post_save, sender=AdditionalLanguage)
 def handle_additionallanguage_save(sender, **kwargs):
-    # todo: re-integrate later
-    if False:
-        integrate_imports.delay()
+    integrate_imports.delay()
 
 
 @receiver(post_delete, sender=AdditionalLanguage)
 def handle_additionallanguage_delete(sender, instance, **kwargs):
-    d_code = instance.two_letter or instance.three_letter or instance.ietf_tag
+    d_code = instance.merge_code()
     try:
         lang = Language.objects.get(code=d_code)
         lang.delete()
