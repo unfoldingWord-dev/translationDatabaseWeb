@@ -14,6 +14,12 @@ class AdditionalLanguage(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
 
+    def merge_code(self):
+        return self.two_letter or self.three_letter or self.ietf_tag
+
+    def merge_name(self):
+        return self.native_name or self.common_name
+
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
         return super(AdditionalLanguage, self).save(*args, **kwargs)
