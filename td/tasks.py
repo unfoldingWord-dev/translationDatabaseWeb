@@ -14,10 +14,6 @@ from .signals import languages_integrated
 
 @task()
 def integrate_imports():
-    additionals = {
-        x.two_letter or x.three_letter or x.ietf_tag: x.native_name or x.common_name
-        for x in AdditionalLanguage.objects.all()
-    }
     cursor = connection.cursor()
     cursor.execute("""
 select coalesce(nullif(x.part_1, ''), x.code) as code,
@@ -37,7 +33,7 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
  where lc.status = %s or lc.status is NULL order by code;
 """, [EthnologueLanguageCode.STATUS_LIVING])
     rows = cursor.fetchall()
-    rows.extend([(x[0], x[1], None, "", None, "", None, "", None) for x in additionals.items()])
+    rows.extend([(x.merge_code(), x.merge_name(), None, "", None, "", None, "!ADDL", x.id) for x in AdditionalLanguage.objects.all()])
     rows.sort()
     for r in rows:
         if r[0] is not None:
@@ -49,6 +45,8 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
                 language.source = WikipediaISOLanguage.objects.get(pk=r[6])
             if r[1] == r[7]:
                 language.source = SIL_ISO_639_3.objects.get(pk=r[8])
+            if r[7] == "!ADDL":
+                language.source = AdditionalLanguage.objects.get(pk=r[8])
             language.save()
             if r[2]:
                 language.country = next(iter(Country.objects.filter(code=r[2])), None)
