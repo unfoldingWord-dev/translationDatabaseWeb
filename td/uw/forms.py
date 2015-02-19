@@ -50,7 +50,7 @@ class CountryForm(EntityTrackingForm):
         model = Country
         fields = [
             "name",
-            "area",
+            "region",
             "population",
             "primary_networks"
         ]

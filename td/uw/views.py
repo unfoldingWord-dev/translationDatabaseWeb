@@ -24,7 +24,8 @@ from .models import (
     Scripture,
     TranslationNeed,
     WorkInProgress,
-    transform_country_data
+    transform_country_data,
+    Region
 )
 
 
@@ -83,28 +84,30 @@ class EventLogMixin(object):
 
 
 class RegionListView(LoginRequiredMixin, ListView):
-    model = Country
+    model = Region
     template_name = "uw/region_list.html"
 
     def get_queryset(self):
-        return Country.regions()
+        return Region.objects.all()
 
 
 class RegionDetailView(LoginRequiredMixin, ListView):
-    model = Country
+    model = Region
     template_name = "uw/region_detail.html"
 
     def get_context_data(self, **kwargs):
+        region = Region.objects.get(slug=self.kwargs.get("slug"))
         context = super(RegionDetailView, self).get_context_data(**kwargs)
         context.update({
-            "region": self.kwargs.get("slug").title(),
-            "languages": Language.objects.filter(country__area__iexact=self.kwargs.get("slug")).order_by("name")
+            "region": region,
+            "country_list": region.countries.all(),
+            "languages": Language.objects.filter(country__region=region).order_by("name")
         })
         return context
 
     def get_queryset(self):
         qs = super(RegionDetailView, self).get_queryset()
-        qs = qs.filter(area__iexact=self.kwargs.get("slug"))
+        qs = qs.filter(slug__iexact=self.kwargs.get("slug"))
         qs = qs.order_by("name")
         return qs
 

@@ -5,9 +5,9 @@
 {% block body %}
     <ol class="breadcrumb">
       <li><a href="{% url "region_list" %}">Regions</a></li>
-      <li class="active">{{ region }}</li>
+      <li class="active">{{ region.name }}</li>
     </ol>
-    <h1>{{ region }}</h1>
+    <h1>{{ region.name }}</h1>
 
     <div class="panel panel-default">
         <div class="panel-heading">

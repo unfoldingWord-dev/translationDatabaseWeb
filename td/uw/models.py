@@ -34,10 +34,23 @@ class BibleContent(models.Model):
 
 
 @python_2_unicode_compatible
+class Region(models.Model):
+    name = models.CharField(max_length=100, db_index=True)
+    slug = models.SlugField(max_length=100, db_index=True)
+    tracker = FieldTracker()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+    
+
+@python_2_unicode_compatible
 class Country(models.Model):
     code = models.CharField(max_length=2, unique=True)
     name = models.CharField(max_length=75)
-    area = models.CharField(max_length=10)
+    region = models.ForeignKey(Region, null=True, blank=True, related_name='countries')
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
 
@@ -45,8 +58,8 @@ class Country(models.Model):
 
     @classmethod
     def regions(cls):
-        qs = cls.objects.all().values_list("area", flat=True).distinct()
-        qs = qs.order_by("area")
+        qs = cls.objects.all().values_list("region", flat=True).distinct()
+        qs = qs.order_by("region.name")
         return qs
 
     @classmethod
@@ -142,7 +155,7 @@ class Language(models.Model):
     @property
     def lr(self):
         if self.country:
-            return self.country.area.encode("utf-8")
+            return self.country.region.name.encode("utf-8")
         return ""
 
     @property

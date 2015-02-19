@@ -10,7 +10,8 @@ from .models import (
     WorkInProgress,
     Scripture,
     TranslationNeed,
-    Resource
+    Resource,
+    Region
 )
 
 
@@ -30,7 +31,7 @@ class BibleContentAdmin(EntryTrackingAdmin):
 
 
 class CountryAdmin(EntryTrackingAdmin):
-    list_display = ["code", "name", "area", "population"]
+    list_display = ["code", "name", "region", "population"]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -45,6 +46,10 @@ class LanguageAdmin(EntryTrackingAdmin):
         if obj:
             return self.readonly_fields + ("code",)
         return self.readonly_fields
+
+
+class RegionAdmin(EntryTrackingAdmin):
+    list_display = ["name"]
 
 
 class TranslatorAdmin(EntryTrackingAdmin):
@@ -119,4 +124,9 @@ admin.site.register(
 admin.site.register(
     Resource,
     ResourceAdmin
+)
+
+admin.site.register(
+    Region,
+    RegionAdmin
 )
