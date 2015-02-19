@@ -6,7 +6,7 @@ from celery import task
 from eventlog.models import log
 
 from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3, WikipediaISOLanguage
-from td.uw.models import Language, Country
+from td.uw.models import Language, Country, Region
 
 from .models import AdditionalLanguage
 from .signals import languages_integrated
@@ -60,7 +60,7 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
 def update_countries_from_imports():
     for ecountry in EthnologueCountryCode.objects.all():
         country, _ = Country.objects.get_or_create(code=ecountry.code)
-        country.area = ecountry.area
+        country.region = next(iter(Region.objects.filter(name=ecountry.area)), None)
         country.name = ecountry.name
         country.source = ecountry
         country.save()
