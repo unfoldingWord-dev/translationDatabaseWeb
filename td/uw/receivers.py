@@ -6,30 +6,14 @@ from django.contrib.contenttypes.models import ContentType
 
 
 from .models import (
-    BibleContent,
     Country,
-    Language,
-    Network,
-    Organization,
-    Resource,
-    TranslationNeed,
-    Translator,
-    Scripture,
-    WorkInProgress
+    Language
 )
 
 
 ENTITIES = [
-    BibleContent,
     Country,
     Language,
-    Network,
-    Organization,
-    Resource,
-    TranslationNeed,
-    Translator,
-    Scripture,
-    WorkInProgress
 ]
 
 

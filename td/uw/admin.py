@@ -2,16 +2,12 @@ from django.contrib import admin
 
 from .models import (
     Network,
-    BibleContent,
     Country,
     Language,
-    Translator,
-    Organization,
-    WorkInProgress,
-    Scripture,
-    TranslationNeed,
     Resource,
-    Region
+    Region,
+    Media,
+    Title
 )
 
 
@@ -23,10 +19,6 @@ class EntryTrackingAdmin(admin.ModelAdmin):
 
 
 class NetworkAdmin(EntryTrackingAdmin):
-    list_display = ["name"]
-
-
-class BibleContentAdmin(EntryTrackingAdmin):
     list_display = ["name"]
 
 
@@ -48,32 +40,23 @@ class LanguageAdmin(EntryTrackingAdmin):
         return self.readonly_fields
 
 
+class ResourceAdmin(EntryTrackingAdmin):
+    list_display = ["title", "language", "media", "published_flag"]
+
+
+class TitleAdmin(EntryTrackingAdmin):
+    list_display = ["name", "slug"]
+    prepopulated_fields = {"slug": ["name"]}
+
+
+class MediaAdmin(EntryTrackingAdmin):
+    list_display = ["name", "slug"]
+    prepopulated_fields = {"slug": ["name"]}
+
+
 class RegionAdmin(EntryTrackingAdmin):
     list_display = ["name"]
-
-
-class TranslatorAdmin(EntryTrackingAdmin):
-    list_display = ["name", "email", "d43username", "location", "phone", "relationship", "other"]
-
-
-class OrganizationAdmin(EntryTrackingAdmin):
-    list_display = ["name", "email", "d43username", "location", "phone"]
-
-
-class WorkInProgressAdmin(EntryTrackingAdmin):
-    list_display = ["kind", "language", "bible_content", "paradigm", "anticipated_completion_date"]
-
-
-class ScriptureAdmin(EntryTrackingAdmin):
-    list_display = ["kind", "language", "bible_content", "year", "publisher"]
-
-
-class TranslationNeedAdmin(EntryTrackingAdmin):
-    list_display = ["language", "text_gaps", "text_updates", "other_gaps", "other_updates"]
-
-
-class ResourceAdmin(EntryTrackingAdmin):
-    list_display = ["language", "name", "copyright", "copyright_holder", "license"]
+    prepopulated_fields = {"slug": ["name"]}
 
 
 admin.site.register(
@@ -81,10 +64,6 @@ admin.site.register(
     NetworkAdmin
 )
 
-admin.site.register(
-    BibleContent,
-    BibleContentAdmin
-)
 
 admin.site.register(
     Country,
@@ -96,30 +75,6 @@ admin.site.register(
     LanguageAdmin
 )
 
-admin.site.register(
-    Translator,
-    TranslatorAdmin
-)
-
-admin.site.register(
-    Organization,
-    OrganizationAdmin
-)
-
-admin.site.register(
-    WorkInProgress,
-    WorkInProgressAdmin
-)
-
-admin.site.register(
-    Scripture,
-    ScriptureAdmin
-)
-
-admin.site.register(
-    TranslationNeed,
-    TranslationNeedAdmin
-)
 
 admin.site.register(
     Resource,
@@ -129,4 +84,14 @@ admin.site.register(
 admin.site.register(
     Region,
     RegionAdmin
+)
+
+admin.site.register(
+    Title,
+    TitleAdmin
+)
+
+admin.site.register(
+    Media,
+    MediaAdmin
 )

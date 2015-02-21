@@ -12,20 +12,14 @@ from .forms import (
     LanguageForm,
     NetworkForm,
     ResourceForm,
-    ScriptureForm,
-    TranslationNeedForm,
-    WorkInProgressForm
 )
 from .models import (
     Country,
     Language,
     Network,
     Resource,
-    Scripture,
-    TranslationNeed,
-    WorkInProgress,
     transform_country_data,
-    Region
+    Region,
 )
 
 
@@ -215,6 +209,11 @@ class NetworkListView(LoginRequiredMixin, ListView):
         qs = super(NetworkListView, self).get_queryset()
         qs = qs.order_by("name")
         return qs
+
+
+class ContentView(LoginRequiredMixin, ListView):
+    model = Content
+
 
 
 class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):

@@ -1,12 +1,19 @@
 from __future__ import absolute_import
 
 from django.db import connection
-
+from django.core.exceptions import ObjectDoesNotExist
 from celery import task
 from eventlog.models import log
 
-from td.imports.models import EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3, WikipediaISOLanguage
-from td.uw.models import Language, Country, Region
+from td.imports.models import (
+    EthnologueLanguageCode,
+    EthnologueCountryCode,
+    SIL_ISO_639_3,
+    WikipediaISOLanguage,
+    IMBPeopleGroup
+)
+
+from td.uw.models import Language, Country, Region, Title, Resource, Media
 
 from .models import AdditionalLanguage
 from .signals import languages_integrated
@@ -64,3 +71,33 @@ def update_countries_from_imports():
         country.name = ecountry.name
         country.source = ecountry
         country.save()
+
+
+def _get_or_create_object(model, slug, name):
+    o, c = model.objects.get_or_create(slug=slug)
+    if c:
+        o.name = name
+        o.save()
+    return o
+
+
+@task()
+def integrate_imb_language_data():
+    imb_map = {
+        "bible_stories": ("onestory-bible-stories", "OneStory Bible Storires", "audio", "Audio"),
+        "jesus_film": ("jesus-film", "The Jesus Film", "video", "Video"),
+        "gospel_recording": ("gospel-recording-grn", "Gospel Recording (GRN)", "audio", "Audio"),
+        "radio_broadcast": ("radio-broadcast-twr-febc", "Radio Broadcast (TWR/FEBC)", "audo", "Audio"),
+        "written_scripture": ("bible-portions", "Bible (Portions)", "print", "Print")
+    }
+    for imb in IMBPeopleGroup.objects.order_by("language").distinct("language"):
+        lcode = imb.language[-4:-1]
+        language = next(iter(Language.objects.filter(code=lcode)), None)
+        if language:
+            for k in imb_map.keys():
+                if getattr(imb, k):
+                    title = _get_or_create_object(Title, imb_map[k][0], imb_map[k][1])
+                    media = _get_or_create_object(Media, imb_map[k][2], imb_map[k][3])
+                    resource, _ = Resource.objects.get_or_create(language=language, title=title, media=media)
+                    resource.published_flag = True
+                    resource.save()

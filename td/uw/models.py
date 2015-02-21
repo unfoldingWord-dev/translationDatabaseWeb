@@ -4,8 +4,8 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
 from django.contrib.contenttypes.models import ContentType
+from jsonfield import JSONField
 
 from model_utils import FieldTracker
 
@@ -14,20 +14,8 @@ from model_utils import FieldTracker
 class Network(models.Model):
     name = models.CharField(max_length=100)
 
-    tracker = FieldTracker()
-
     def get_absolute_url(self):
         return reverse("network_detail", args=[self.pk])
-
-    def __str__(self):
-        return self.name
-
-
-@python_2_unicode_compatible
-class BibleContent(models.Model):
-    name = models.CharField(max_length=100)
-
-    tracker = FieldTracker()
 
     def __str__(self):
         return self.name
@@ -189,103 +177,37 @@ class Language(models.Model):
 
 
 @python_2_unicode_compatible
-class Entity(models.Model):
+class Media(models.Model):
     name = models.CharField(max_length=100)
-    email = models.CharField(max_length=255, blank=True, help_text="Email address.")
-    d43username = models.CharField(max_length=255, blank=True, help_text="Door43 username.")
-    location = models.CharField(max_length=255, blank=True, help_text="Location.")
-    phone = models.CharField(max_length=255, blank=True, help_text="Phone number.")
-
-    tracker = FieldTracker()
+    slug = models.SlugField()
 
     def __str__(self):
         return self.name
 
     class Meta:
-        abstract = True
-
-
-class Translator(Entity):
-    languages = models.ManyToManyField(Language, related_name="Contact", help_text="Langauges spoken by contact.")
-    relationship = models.TextField(blank=True, help_text="Relationships to other people or organizations.")
-    other = models.CharField(max_length=255, blank=True, help_text="Other information.")
-
-
-class Organization(Entity):
-    pass
-
-
-class ScriptureBase(models.Model):
-    KIND_FULL_BIBLE = "full-bible"
-    KIND_FULL_NT = "full-nt"
-    KIND_PORTIONS = "portions"
-    KIND_AUDIO = "audio"
-    KIND_VIDEO = "video"
-    KIND_BRAILLE = "braille"
-    KIND_CHILDREN = "children"
-    KIND_OBS = "obs"
-    KIND_CHOICES = [
-        (KIND_FULL_BIBLE, "Full Bible"),
-        (KIND_FULL_NT, "Full NT"),
-        (KIND_PORTIONS, "Bible Portions"),
-        (KIND_AUDIO, "Audio"),
-        (KIND_VIDEO, "Video"),
-        (KIND_BRAILLE, "Braille"),
-        (KIND_CHILDREN, "Illustrated Children's"),
-        (KIND_OBS, "Open Bible Stories")
-    ]
-    kind = models.CharField(max_length=50, choices=KIND_CHOICES)
-    language = models.ForeignKey(Language)
-    bible_content = models.ForeignKey(BibleContent, verbose_name="Bible Content")
-
-    tracker = FieldTracker()
-
-    class Meta:
-        abstract = True
+        verbose_name_plural = "Media"
 
 
 @python_2_unicode_compatible
-class WorkInProgress(ScriptureBase):
-    PARADIGM_P1 = "P1"
-    PARADIGM_P2 = "P2"
-    PARADIGM_P3 = "P3"
-    PARADIGM_CHOICES = [
-        (PARADIGM_P1, "P1"),
-        (PARADIGM_P2, "P2"),
-        (PARADIGM_P3, "P3")
-    ]
-    paradigm = models.CharField(max_length=2, choices=PARADIGM_CHOICES)
-    translators = models.ManyToManyField(Translator, blank=True)
-    anticipated_completion_date = models.DateField()
+class Title(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField()
+    extra_data = JSONField(blank=True)
 
     def __str__(self):
-        return "{}: {} ({})".format(self.get_kind_display(), self.bible_content.name, self.language.living_language.name)
+        return self.name
 
 
-class Scripture(ScriptureBase):
-    wip = models.ForeignKey(WorkInProgress, verbose_name="Work in Progress", null=True, blank=True)
-    year = models.IntegerField()
-    publisher = models.CharField(max_length=200)
-
-
-class TranslationNeed(models.Model):
-    language = models.ForeignKey(Language)
-    text_gaps = models.TextField(blank=True)
-    text_updates = models.TextField(blank=True)
-    other_gaps = models.TextField(blank=True)
-    other_updates = models.TextField(blank=True)
-
-    tracker = FieldTracker()
-
-
+@python_2_unicode_compatible
 class Resource(models.Model):
-    language = models.ForeignKey(Language)
-    name = models.CharField(max_length=200)
-    copyright = models.CharField(max_length=100, blank=True)
-    copyright_holder = models.ForeignKey(Organization, blank=True, null=True)
-    license = models.TextField(blank=True)
+    title = models.ForeignKey(Title, related_name="versions")
+    language = models.ForeignKey(Language, related_name="resources")
+    media = models.ForeignKey(Media, blank=True, null=True)
+    published_flag = models.BooleanField(default=True, db_index=True, blank=True)
+    extra_data = JSONField(blank=True)
 
-    tracker = FieldTracker()
+    def __str__(self):
+        return "{0} in {1}".format(str(self.title), str(self.language))
 
 
 class EAVBase(models.Model):
@@ -299,14 +221,6 @@ class EAVBase(models.Model):
         abstract = True
 
 
-class NetworkEAV(EAVBase):
-    entity = models.ForeignKey(Network, related_name="attributes")
-
-
-class BibleContentEAV(EAVBase):
-    entity = models.ForeignKey(BibleContent, related_name="attributes")
-
-
 class CountryEAV(EAVBase):
     entity = models.ForeignKey(Country, related_name="attributes")
 
@@ -314,26 +228,3 @@ class CountryEAV(EAVBase):
 class LanguageEAV(EAVBase):
     entity = models.ForeignKey(Language, related_name="attributes")
 
-
-class TranslatorEAV(EAVBase):
-    entity = models.ForeignKey(Translator, related_name="attributes")
-
-
-class OrganizationEAV(EAVBase):
-    entity = models.ForeignKey(Organization, related_name="attributes")
-
-
-class WorkInProgressEAV(EAVBase):
-    entity = models.ForeignKey(WorkInProgress, related_name="attributes")
-
-
-class ScriptureEAV(EAVBase):
-    entity = models.ForeignKey(Scripture, related_name="attributes")
-
-
-class TranslationNeedEAV(EAVBase):
-    entity = models.ForeignKey(TranslationNeed, related_name="attributes")
-
-
-class ResourceEAV(EAVBase):
-    entity = models.ForeignKey(Resource, related_name="attributes")

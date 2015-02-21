@@ -5,10 +5,7 @@ from .models import (
     Country,
     Language,
     Network,
-    Resource,
-    Scripture,
-    TranslationNeed,
-    WorkInProgress
+    Resource
 )
 
 
@@ -102,72 +99,18 @@ class ResourceForm(EntityTrackingForm):
 
     def __init__(self, *args, **kwargs):
         super(ResourceForm, self).__init__(*args, **kwargs)
-        self.fields["copyright_holder"].widget.attrs["class"] = "select2-multiple"
 
     class Meta:
         model = Resource
         fields = [
-            "name",
-            "copyright",
-            "copyright_holder",
-            "license"
+            "title",
+            "language",
+            "media",
+            "published_flag",
+            "extra_data"
         ]
 
 
-class ScriptureForm(EntityTrackingForm):
-
-    required_css_class = "required"
-
-    def __init__(self, *args, **kwargs):
-        self.language = kwargs.pop("language")
-        super(ScriptureForm, self).__init__(*args, **kwargs)
-        self.fields["kind"].widget = forms.RadioSelect(choices=self.fields["kind"].widget.choices)
-        self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
-        self.fields["wip"].queryset = self.fields["wip"].queryset.filter(language=self.language)
-
-    class Meta:
-        model = Scripture
-        fields = [
-            "kind",
-            "bible_content",
-            "wip",
-            "year",
-            "publisher"
-        ]
 
 
-class TranslationNeedForm(EntityTrackingForm):
 
-    required_css_class = "required"
-
-    class Meta:
-        model = TranslationNeed
-        fields = [
-            "text_gaps",
-            "text_updates",
-            "other_gaps",
-            "other_updates"
-        ]
-
-
-class WorkInProgressForm(EntityTrackingForm):
-
-    required_css_class = "required"
-
-    def __init__(self, *args, **kwargs):
-        super(WorkInProgressForm, self).__init__(*args, **kwargs)
-        self.fields["kind"].widget = forms.RadioSelect(choices=self.fields["kind"].widget.choices)
-        self.fields["paradigm"].widget = forms.RadioSelect(choices=self.fields["paradigm"].widget.choices)
-        self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
-        self.fields["translators"].widget.attrs["class"] = "select2-multiple"
-        self.fields["anticipated_completion_date"].widget.attrs["class"] = "date-picker"
-
-    class Meta:
-        model = WorkInProgress
-        fields = [
-            "kind",
-            "bible_content",
-            "paradigm",
-            "translators",
-            "anticipated_completion_date"
-        ]
