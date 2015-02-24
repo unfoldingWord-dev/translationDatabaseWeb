@@ -42,7 +42,10 @@ After installing requirements (via pip) within your environment or virtualenv:
 
 * `python manage.py migrate`
 * `python manage.py loaddata uw_network_seed`
-* `python manage.py loaddata uw_biblecontent_seed`
+* `python manage.py loaddata uw_region_seed`
+* `python manage.py loaddata uw_title_seed`
+* `python manage.py loaddata uw_media_seed`
+* `python manage.py loaddata additional-languages`
 * `python manage.py reload_imports`
 
 At this point, the basic country and language datasets will be populated but without many optional fields or extra data.
