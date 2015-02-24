@@ -33,96 +33,20 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <a class="btn btn-primary btn-xs pull-right" href="{% url "wip_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
-        <h2 class="panel-title">Works in Progress</h2>
-    </div>
-    <table class="table table-bordered">
-        <thead><tr><th></th><th>Kind</th><th>Content</th><th>Paradigm</th><th>Translators</th><th>Anticipated Completion Date</th></tr></thead>
-        <tbody>
-            {% for wip in language.workinprogress_set.all %}
-                <tr>
-                    <td>
-                        <a class="btn btn-default btn-xs" href="{% url "wip_edit" wip.pk %}"><i class="fa fa-pencil"></i> Edit</a>
-                    </td>
-                    <td>{{ wip.get_kind_display }}</td>
-                    <td>{{ wip.bible_content }}</td>
-                    <td>{{ wip.get_paradigm_display }}</td>
-                    <td>{{ wip.translators.all|join:", " }}</td>
-                    <td>{{ wip.anticipated_completion_date }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <a class="btn btn-primary btn-xs pull-right" href="{% url "scripture_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
-        <h2 class="panel-title">Existing Scripture</h2>
-    </div>
-    <table class="table table-bordered">
-        <thead><tr><th></th><th>Kind</th><th>Content</th><th>Year</th><th>Publisher</th></tr></thead>
-        <tbody>
-            {% for scripture in language.scripture_set.all %}
-                <tr>
-                    <td>
-                        <a class="btn btn-default btn-xs" href="{% url "scripture_edit" scripture.pk %}"><i class="fa fa-pencil"></i> Edit</a>
-                    </td>
-                    <td>{{ scripture.get_kind_display }}</td>
-                    <td>{{ scripture.bible_content }}</td>
-                    <td>{{ scripture.year }}</td>
-                    <td>{{ scripture.publisher }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <a class="btn btn-primary btn-xs pull-right" href="{% url "translation_need_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
-        <h2 class="panel-title">Translation Needs</h2>
-    </div>
-    <table class="table table-bordered">
-        <thead><tr><th></th><th>Text Gaps</th><th>Text Updates</th><th>Other Gaps</th><th>Other Updates</th></tr></thead>
-        <tbody>
-            {% for need in language.translationneed_set.all %}
-                <tr>
-                    <td>
-                        <a class="btn btn-default btn-xs" href="{% url "translation_need_edit" need.pk %}"><i class="fa fa-pencil"></i> Edit</a>
-                    </td>
-                    <td>{{ need.text_gaps }}</td>
-                    <td>{{ need.text_updates }}</td>
-                    <td>{{ need.other_gaps }}</td>
-                    <td>{{ need.other_updates }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-<div class="panel panel-default">
-    <div class="panel-heading">
         <a class="btn btn-primary btn-xs pull-right" href="{% url "resource_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
         <h2 class="panel-title">Resources</h2>
     </div>
     <table class="table table-bordered">
-        <thead><tr><th></th><th>Name</th><th>Copyright</th><th>Copyright Holders</th><th>License</th></tr></thead>
+        <thead><tr><th></th><th>Title</th><th>Media</th><th>Published</th></tr></thead>
         <tbody>
-            {% for resource in language.resource_set.all %}
+            {% for resource in language.resources.all %}
                 <tr>
                     <td>
                         <a class="btn btn-default btn-xs" href="{% url "resource_edit" resource.pk %}"><i class="fa fa-pencil"></i> Edit</a>
                     </td>
-                    <td>{{ resource.name }}</td>
-                    <td>{{ resource.copyright }}</td>
-                    <td>{{ resource.copyright_holder.all|join:", " }}</td>
-                    <td>{{ resource.license }}</td>
+                    <td>{{ resource.title }}</td>
+                    <td>{{ resource.media }}</td>
+                    <td>{{ resource.published_flag }}</td>
                 </tr>
             {% endfor %}
         </tbody>

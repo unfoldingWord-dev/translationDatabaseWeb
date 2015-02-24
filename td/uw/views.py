@@ -211,11 +211,6 @@ class NetworkListView(LoginRequiredMixin, ListView):
         return qs
 
 
-class ContentView(LoginRequiredMixin, ListView):
-    model = Content
-
-
-
 class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
 
     def dispatch(self, request, *args, **kwargs):
@@ -238,52 +233,6 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
         return context
 
 
-class WIPCreateView(BaseLanguageView, CreateView):
-    model = WorkInProgress
-    form_class = WorkInProgressForm
-    action_kind = "CREATE"
-
-    def get_context_data(self, **kwargs):
-        context = super(WIPCreateView, self).get_context_data(**kwargs)
-        context.update({
-            "country": self.language.country
-        })
-        return context
-
-
-class ScriptureCreateView(BaseLanguageView, CreateView):
-    model = Scripture
-    form_class = ScriptureForm
-    action_kind = "CREATE"
-
-    def get_context_data(self, **kwargs):
-        context = super(ScriptureCreateView, self).get_context_data(**kwargs)
-        context.update({
-            "country": self.language.country
-        })
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super(ScriptureCreateView, self).get_form_kwargs()
-        kwargs.update({
-            "language": self.language
-        })
-        return kwargs
-
-
-class TranslationNeedCreateView(BaseLanguageView, CreateView):
-    model = TranslationNeed
-    form_class = TranslationNeedForm
-    action_kind = "CREATE"
-
-    def get_context_data(self, **kwargs):
-        context = super(TranslationNeedCreateView, self).get_context_data(**kwargs)
-        context.update({
-            "country": self.language.country
-        })
-        return context
-
-
 class ResourceCreateView(BaseLanguageView, CreateView):
     model = Resource
     form_class = ResourceForm
@@ -295,45 +244,6 @@ class ResourceCreateView(BaseLanguageView, CreateView):
             "country": self.language.country
         })
         return context
-
-
-class WIPEditView(BaseLanguageView, UpdateView):
-    model = WorkInProgress
-    form_class = WorkInProgressForm
-    action_kind = "EDIT"
-
-    def get_context_data(self, **kwargs):
-        context = super(WIPEditView, self).get_context_data(**kwargs)
-        context.update({
-            "country": self.language.country
-        })
-        return context
-
-
-class ScriptureEditView(BaseLanguageView, UpdateView):
-    model = Scripture
-    form_class = ScriptureForm
-    action_kind = "EDIT"
-
-    def get_context_data(self, **kwargs):
-        context = super(ScriptureEditView, self).get_context_data(**kwargs)
-        context.update({
-            "country": self.language.country
-        })
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super(ScriptureEditView, self).get_form_kwargs()
-        kwargs.update({
-            "language": self.language
-        })
-        return kwargs
-
-
-class TranslationNeedEditView(BaseLanguageView, UpdateView):
-    model = TranslationNeed
-    form_class = TranslationNeedForm
-    action_kind = "EDIT"
 
 
 class ResourceEditView(BaseLanguageView, UpdateView):
