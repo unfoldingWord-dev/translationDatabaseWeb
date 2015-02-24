@@ -128,6 +128,7 @@ class Language(models.Model):
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
     networks_translating = models.ManyToManyField(Network, null=True, blank=True)
+    gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
 
     tracker = FieldTracker()
 
