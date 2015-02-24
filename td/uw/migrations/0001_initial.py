@@ -48,6 +48,7 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(unique=True, max_length=100)),
                 ('name', models.CharField(max_length=100, blank=True)),
                 ('native_speakers', models.IntegerField(null=True, blank=True)),
+                ('gateway_flag', models.BooleanField(default=False, db_index=True)),
                 ('country', models.ForeignKey(blank=True, to='uw.Country', null=True)),
                 ('gateway_language', models.ForeignKey(related_name='gateway_to', blank=True, to='uw.Language', null=True)),
             ],
