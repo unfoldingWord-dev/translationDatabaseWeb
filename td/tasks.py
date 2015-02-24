@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 from django.db import connection
-from django.core.exceptions import ObjectDoesNotExist
 from celery import task
 from eventlog.models import log
 
