@@ -233,20 +233,37 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
         return context
 
 
-class ResourceCreateView(BaseLanguageView, CreateView):
+class ResourceCreateView(LoginRequiredMixin, CreateView):
     model = Resource
     form_class = ResourceForm
     action_kind = "CREATE"
 
+    def dispatch(self, request, *args, **kwargs):
+        self.language = get_object_or_404(Language, pk=self.kwargs.get("pk"))
+        return super(ResourceCreateView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.language = self.language
+        self.object.save()
+        return redirect("language_detail", self.language.pk)
+
     def get_context_data(self, **kwargs):
         context = super(ResourceCreateView, self).get_context_data(**kwargs)
         context.update({
-            "country": self.language.country
+            "language": self.language
         })
         return context
 
 
-class ResourceEditView(BaseLanguageView, UpdateView):
+class ResourceEditView(LoginRequiredMixin, UpdateView):
     model = Resource
     form_class = ResourceForm
     action_kind = "EDIT"
+
+    def get_context_data(self, **kwargs):
+        context = super(ResourceEditView, self).get_context_data(**kwargs)
+        context.update({
+            "language": self.object.language,
+        })
+        return context
