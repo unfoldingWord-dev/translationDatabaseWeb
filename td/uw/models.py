@@ -210,6 +210,9 @@ class Resource(models.Model):
     def __str__(self):
         return "{0} in {1}".format(str(self.title), str(self.language))
 
+    class Meta:
+        unique_together = ("title", "language", "media")
+
 
 class EAVBase(models.Model):
     attribute = models.CharField(max_length=100)
