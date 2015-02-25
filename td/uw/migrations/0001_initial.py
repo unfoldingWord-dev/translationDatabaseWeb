@@ -137,6 +137,10 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='versions', to='uw.Title'),
             preserve_default=True,
         ),
+        migrations.AlterUniqueTogether(
+            name='resource',
+            unique_together=set([('title', 'language', 'media')]),
+        ),
         migrations.AddField(
             model_name='language',
             name='networks_translating',
