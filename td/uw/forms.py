@@ -93,7 +93,7 @@ class LanguageForm(EntityTrackingForm):
         ]
 
 
-class ResourceForm(EntityTrackingForm):
+class ResourceForm(forms.ModelForm):
 
     required_css_class = "required"
 
@@ -104,7 +104,6 @@ class ResourceForm(EntityTrackingForm):
         model = Resource
         fields = [
             "title",
-            "language",
             "media",
             "published_flag",
             "extra_data"
