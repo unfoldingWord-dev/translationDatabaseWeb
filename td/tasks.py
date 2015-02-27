@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from django.db import connection
 from celery import task
 from eventlog.models import log
+import csv
 
 from td.imports.models import (
     EthnologueLanguageCode,
@@ -100,3 +101,15 @@ def integrate_imb_language_data():
                     resource, _ = Resource.objects.get_or_create(language=language, title=title, media=media)
                     resource.published_flag = True
                     resource.save()
+
+
+@task()
+def update_gateway_language_flag(csv_datafile=None):
+    if not csv_datafile:
+        return
+    reader = csv.DictReader(csv_datafile, dialect="excel")
+    for row in reader:
+        lang = next(iter(Language.objects.filter(code=row["LangID"])), None)
+        if lang:
+            lang.gateway_flag = True
+            lang.save()

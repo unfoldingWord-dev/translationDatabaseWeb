@@ -110,6 +110,14 @@ class ResourceForm(forms.ModelForm):
         ]
 
 
+class UploadGatewayForm(forms.Form):
+    upload_file = forms.FileField()
+
+    required_css_class = "required"
+
+    #def __init__(self, *args, **kwargs):
+    #    super(UploadGatewayForm, self).__init__(*args, **kwargs)
+
 
 
 

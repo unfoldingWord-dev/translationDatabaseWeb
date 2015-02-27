@@ -1,17 +1,20 @@
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from eventlog.models import log
 
+from td.tasks import update_gateway_language_flag
+
 from .forms import (
     CountryForm,
     LanguageForm,
     NetworkForm,
     ResourceForm,
+    UploadGatewayForm,
 )
 from .models import (
     Country,
@@ -30,6 +33,21 @@ class HomeView(LoginRequiredMixin, TemplateView):
 @login_required
 def country_tree_data(request):
     return JsonResponse(transform_country_data(Country.gateway_data()))
+
+
+@login_required
+def upload_gateway_flag_file(request):
+    if request.method == "POST":
+        form = UploadGatewayForm(request.POST, request.FILES)
+        if form.is_valid():
+            print "got the file"
+            print str(request.FILES["upload_file"])
+            print "calling update function"
+            update_gateway_language_flag(request.FILES["upload_file"])
+            return redirect("uw_home")
+    else:
+        form = UploadGatewayForm()
+    return render(request, "uw/upload_gateway_language_flag.html", {"form": form})
 
 
 class EntityTrackingMixin(object):

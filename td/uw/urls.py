@@ -16,7 +16,8 @@ from .views import (
     NetworkListView,
     ResourceCreateView,
     ResourceEditView,
-    country_tree_data
+    country_tree_data,
+    upload_gateway_flag_file,
 )
 
 
@@ -38,6 +39,7 @@ urlpatterns = patterns(
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
     url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
+    url(r"gateway_language_flag/upload/$", upload_gateway_flag_file, name="gateway_upload"),
 
     url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
 
