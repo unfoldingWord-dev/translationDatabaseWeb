@@ -112,7 +112,7 @@ class ResourceForm(forms.ModelForm):
 
 class UploadGatewayForm(forms.Form):
     upload_file = forms.FileField()
-
+    language_column_name = forms.CharField(initial="LangID", help_text="The label for the language code column in the .csv file ")
     required_css_class = "required"
 
     #def __init__(self, *args, **kwargs):
