@@ -15,10 +15,14 @@
                     {% csrf_token %}
                     {{ form|bootstrap }}
                     <div class="pull-right">
-                        <a class="btn btn-default" href="#">Cancel</a>
-                        <button class="btn btn-primary">Save</button>
+                        <a class="btn btn-default" href="{% url "uw_home" %}">Cancel</a>
+                        <button class="btn btn-primary">Upload</button>
                     </div>
+
                 </form>
+            </div>
+            <div class="panel-footer">
+                <div class="panel-info">.csv (comma-delimited) file should contain the Language Code for each gateway language</div>
             </div>
          </div>
     </div>
