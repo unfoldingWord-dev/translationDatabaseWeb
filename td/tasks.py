@@ -104,12 +104,12 @@ def integrate_imb_language_data():
 
 
 @task()
-def update_gateway_language_flag(csv_datafile=None):
+def update_gateway_language_flag(csv_datafile=None, language_column="LangID"):
     if not csv_datafile:
         return
     reader = csv.DictReader(csv_datafile, dialect="excel")
     for row in reader:
-        lang = next(iter(Language.objects.filter(code=row["LangID"])), None)
+        lang = next(iter(Language.objects.filter(code=row[language_column])), None)
         if lang:
             lang.gateway_flag = True
             lang.save()
