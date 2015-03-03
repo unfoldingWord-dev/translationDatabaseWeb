@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
+from django.contrib import messages
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
@@ -43,8 +44,10 @@ def upload_gateway_flag_file(request):
             print "got the file"
             print str(request.FILES["upload_file"])
             print "calling update function"
-            update_gateway_language_flag(request.FILES["upload_file"])
-            return redirect("uw_home")
+            update_gateway_language_flag(request.FILES["upload_file"],
+                                         language_column=request.POST["language_column_name"])
+            messages.add_message(request, messages.SUCCESS, "Your .CSV file was successfully processed")
+            return redirect("gateway_flag_upload")
     else:
         form = UploadGatewayForm()
     return render(request, "uw/upload_gateway_language_flag.html", {"form": form})
