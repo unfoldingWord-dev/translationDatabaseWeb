@@ -81,15 +81,18 @@ admin.site.register(
     ResourceAdmin
 )
 
+
 admin.site.register(
     Region,
     RegionAdmin
 )
 
+
 admin.site.register(
     Title,
     TitleAdmin
 )
+
 
 admin.site.register(
     Media,

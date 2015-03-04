@@ -12,15 +12,13 @@ from eventlog.models import log
 from .models import AdditionalLanguage
 from td.uw.models import Language
 from .signals import languages_integrated
-from .tasks import integrate_imports
 
 
 @receiver(post_save, sender=AdditionalLanguage)
 def handle_additionallanguage_save(sender, **kwargs):
-    pass
-    # we don't need to call integrate_imports.delay()
-    # for a single language add
     # todo: create a new task that adds the new AdditionalLanguage to Language
+    pass
+
 
 @receiver(post_delete, sender=AdditionalLanguage)
 def handle_additionallanguage_delete(sender, instance, **kwargs):

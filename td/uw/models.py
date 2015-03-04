@@ -32,7 +32,7 @@ class Region(models.Model):
 
     class Meta:
         ordering = ['name']
-    
+
 
 @python_2_unicode_compatible
 class Country(models.Model):
@@ -231,4 +231,3 @@ class CountryEAV(EAVBase):
 
 class LanguageEAV(EAVBase):
     entity = models.ForeignKey(Language, related_name="attributes")
-
