@@ -1,0 +1,31 @@
+<ol class="breadcrumb">
+    {% if region %}
+        <li><a href="{% url "region_list" %}">Regions</a></li>
+        {% if country %}
+            <li><a href="{% url "region_detail" region.slug|lower %}">{{ region.name }}</a></li>
+        {% else %}
+            <li class="active">{{ region.name }}</li>
+        {% endif %}
+    {% endif %}
+    {% if country_form %}
+        <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} {{ country.name }}</li>
+    {% elif country %}
+        {% if language %}
+            <li><a href="{% url "country_detail" country.pk %}">{{ country.name }}</a></li>
+        {% else %}
+            <li class="active">{{ country.name }}</li>
+        {% endif %}
+    {% endif %}
+    {% if language_form %}
+        <li class="active">{% if language_form.instance.pk %}Edit {{ language_form.instance.name }}{% else %}Add Language{% endif %}</li>
+    {% elif language %}
+        {% if resource_form %}
+            <li><a href="{% url "language_detail" language.pk %}">{{ language.name }}</a></li>
+        {% else %}
+            <li class="active">{{ language.name }}</li>
+        {% endif %}
+    {% endif %}
+    {% if resource_form %}
+        <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Resource</li>
+    {% endif %}
+</ol>
