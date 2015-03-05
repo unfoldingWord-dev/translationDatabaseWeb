@@ -10,6 +10,8 @@ from .views import (
     LanguageCreateView,
     LanguageDetailView,
     LanguageEditView,
+    LanguageListView,
+    AjaxLanguageListView,
     NetworkCreateView,
     NetworkDetailView,
     NetworkEditView,
@@ -35,10 +37,12 @@ urlpatterns = patterns(
     url(r"countries/(?P<pk>\d+)/$", CountryDetailView.as_view(), name="country_detail"),
     url(r"countries/(?P<pk>\d+)/edit/$", CountryEditView.as_view(), name="country_edit"),
     url(r"countries/(?P<pk>\d+)/languages/create/$", LanguageCreateView.as_view(), name="language_create"),
-
+    url(r"ajax/languages/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
+    url(r"languages/$", LanguageListView.as_view(), name="language_list"),
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
     url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
+
     url(r"gateway_language_flag/upload/$", upload_gateway_flag_file, name="gateway_flag_upload"),
 
     url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
