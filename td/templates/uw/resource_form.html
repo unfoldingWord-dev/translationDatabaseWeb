@@ -3,13 +3,8 @@
 {% load humanize bootstrap %}
 
 {% block body %}
-<ol class="breadcrumb">
-  <li><a href="{% url "region_list" %}">Regions</a></li>
-  <li><a href="{% url "region_detail" language.country.region.slug|lower %}">{{ language.country.region }}</a></li>
-  <li><a href="{% url "country_detail" language.country.pk %}">{{ language.country.name }}</a></li>
-  <li><a href="{% url "language_detail" language.pk %}">{{ language.name }}</a></li>
-  <li class="active">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Resource</li>
-</ol>
+    {% include "uw/_breadcrumbs.html" with region=language.country.region country=language.country resource_form=form %}
+
 
 <div class="row">
     <div class="col-md-6">

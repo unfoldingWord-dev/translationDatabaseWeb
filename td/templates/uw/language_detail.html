@@ -3,15 +3,11 @@
 {% load humanize %}
 
 {% block body %}
-<ol class="breadcrumb">
-  <li><a href="{% url "region_list" %}">Regions</a></li>
-  <li><a href="{% url "region_detail" country.region.slug|lower %}">{{ country.region.name }}</a></li>
-  <li><a href="{% url "country_detail" language.country.pk %}">{{ language.country.name }}</a></li>
-  <li class="active">{{ language.living_language.name }}</li>
-</ol>
+
+    {% include "uw/_breadcrumbs.html" with region=country.region %}
 
 <h1>
-    {{ language.living_language.name }}
+    {{ language.name }}
     <a class="btn btn-primary btn-xs" href="{% url "language_edit" language.pk %}">Edit</a>
 </h1>
 

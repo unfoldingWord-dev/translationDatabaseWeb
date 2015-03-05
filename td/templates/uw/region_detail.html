@@ -3,10 +3,8 @@
 {% load humanize %}
 
 {% block body %}
-    <ol class="breadcrumb">
-      <li><a href="{% url "region_list" %}">Regions</a></li>
-      <li class="active">{{ region.name }}</li>
-    </ol>
+    {% include "uw/_breadcrumbs.html" %}
+
     <h1>{{ region.name }}</h1>
 
     <div class="panel panel-default">
