@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic import View
+from django.template import Variable, VariableDoesNotExist
 
 
 def str_to_bool(value, allow_null=False):
@@ -92,7 +93,11 @@ class DataTableSourceView(View):
             if hasattr(obj, "get_{0}_display".format(field)):
                 row.append(getattr(obj, "get_{0}_display".format(field))())
             else:
-                v = getattr(obj, field)
+                try:
+                    var = Variable("obj.{0}".format(field.replace("__", ".")))
+                    v = var.resolve({"obj": obj})
+                except VariableDoesNotExist:
+                    v = None
                 if isinstance(v, bool):
                     if v:
                         row.append('<i class="fa fa-check text-success"></i>')
