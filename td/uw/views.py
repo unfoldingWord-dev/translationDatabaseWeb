@@ -43,9 +43,6 @@ def upload_gateway_flag_file(request):
     if request.method == "POST":
         form = UploadGatewayForm(request.POST, request.FILES)
         if form.is_valid():
-            print "got the file"
-            print str(request.FILES["upload_file"])
-            print "calling update function"
             update_gateway_language_flag(request.FILES["upload_file"],
                                          language_column=request.POST["language_column_name"])
             messages.add_message(request, messages.SUCCESS, "Your .CSV file was successfully processed")
