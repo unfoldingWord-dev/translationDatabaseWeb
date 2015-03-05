@@ -26,6 +26,8 @@ from .models import (
     Region,
 )
 
+from td.utils import DataTableSourceView
+
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "uw/home.html"
@@ -147,6 +149,25 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
 
     def get_success_url(self):
         return reverse("country_detail", args=[self.object.pk])
+
+
+class LanguageListView(TemplateView):
+    template_name = "uw/language_list.html"
+
+
+class AjaxLanguageListView(DataTableSourceView):
+    model = Language
+    fields = [
+        "code",
+        "name",
+        "country__name",
+        "native_speakers",
+        "gateway_language__name",
+        "gateway_flag"
+    ]
+    link_column = "code"
+    link_url_name = "language_detail"
+    link_url_field = "pk"
 
 
 class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, CreateView):
