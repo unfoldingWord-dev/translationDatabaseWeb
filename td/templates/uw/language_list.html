@@ -1,0 +1,23 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">Languages</h1></div>
+        <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages" %}">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Country</th>
+                    <th># Native Speakers</th>
+                    <th>Gateway Language</th>
+                    <th>Gateway Flag</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
