@@ -15,9 +15,11 @@ from .signals import languages_integrated
 
 
 @receiver(post_save, sender=AdditionalLanguage)
-def handle_additionallanguage_save(sender, **kwargs):
-    # todo: create a new task that adds the new AdditionalLanguage to Language
-    pass
+def handle_additionallanguage_save(sender, instance, **kwargs):
+    a_code = instance.merge_code()
+    lang, created = Language.objects.get_or_create(code=a_code)
+    lang.name = instance.merge_name()
+    lang.save()
 
 
 @receiver(post_delete, sender=AdditionalLanguage)
