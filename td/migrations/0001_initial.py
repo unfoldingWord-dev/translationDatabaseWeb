@@ -25,6 +25,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(default=django.utils.timezone.now)),
             ],
             options={
+                'verbose_name': 'Additional Language',
             },
             bases=(models.Model,),
         ),

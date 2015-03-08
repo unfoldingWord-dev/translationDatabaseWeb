@@ -9,19 +9,22 @@ from account.signals import user_login_attempt, user_logged_in
 
 from eventlog.models import log
 
-from .models import Language, AdditionalLanguage
+from .models import AdditionalLanguage
+from td.uw.models import Language
 from .signals import languages_integrated
-from .tasks import integrate_imports
 
 
 @receiver(post_save, sender=AdditionalLanguage)
-def handle_additionallanguage_save(sender, **kwargs):
-    integrate_imports.delay()
+def handle_additionallanguage_save(sender, instance, **kwargs):
+    a_code = instance.merge_code()
+    lang, created = Language.objects.get_or_create(code=a_code)
+    lang.name = instance.merge_name()
+    lang.save()
 
 
 @receiver(post_delete, sender=AdditionalLanguage)
 def handle_additionallanguage_delete(sender, instance, **kwargs):
-    d_code = instance.two_letter or instance.three_letter or instance.ietf_tag
+    d_code = instance.merge_code()
     try:
         lang = Language.objects.get(code=d_code)
         lang.delete()

@@ -1,19 +1,29 @@
 from django import forms
 from django.core.urlresolvers import reverse
 
-from td.models import Language as SourceLanguage
 from .models import (
     Country,
     Language,
     Network,
-    Resource,
-    Scripture,
-    TranslationNeed,
-    WorkInProgress
+    Resource
 )
 
 
-class NetworkForm(forms.ModelForm):
+class EntityTrackingForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.source = kwargs.pop("source")
+        super(EntityTrackingForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super(EntityTrackingForm, self).save(commit=False)
+        instance.source = self.source
+        if commit:
+            instance.save()
+        return instance
+
+
+class NetworkForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -24,7 +34,7 @@ class NetworkForm(forms.ModelForm):
         ]
 
 
-class CountryForm(forms.ModelForm):
+class CountryForm(EntityTrackingForm):
 
     required_css_class = "required"
 
@@ -36,37 +46,27 @@ class CountryForm(forms.ModelForm):
     class Meta:
         model = Country
         fields = [
+            "name",
+            "region",
             "population",
             "primary_networks"
         ]
 
 
-class LanguageForm(forms.ModelForm):
+class LanguageForm(EntityTrackingForm):
 
     required_css_class = "required"
 
-    def clean_living_language(self):
-        code = self.cleaned_data["living_language"]
-        return SourceLanguage.objects.get(code=code)
-
-    def clean_gateway_dialect(self):
-        code = self.cleaned_data["gateway_dialect"]
+    def clean_gateway_language(self):
+        code = self.cleaned_data["gateway_language"]
         if code:
-            return SourceLanguage.objects.get(code=code)
+            return Language.objects.get(code=code)
 
     def __init__(self, *args, **kwargs):
         super(LanguageForm, self).__init__(*args, **kwargs)
         self.fields["networks_translating"].widget.attrs["class"] = "select2-multiple"
         self.fields["networks_translating"].help_text = ""
-        self.fields["living_language"] = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    "class": "language-selector",
-                    "data-source-url": reverse("names_autocomplete")
-                }
-            )
-        )
-        self.fields["gateway_dialect"] = forms.CharField(
+        self.fields["gateway_language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
@@ -76,25 +76,18 @@ class LanguageForm(forms.ModelForm):
             required=False
         )
         if self.instance.pk is not None:
-            self.initial.update({
-                "living_language": self.instance.living_language.code,
-                "gateway_dialect": self.instance.gateway_dialect.code if self.instance.gateway_dialect else ""
-            })
-            lang = self.instance.living_language
-            self.fields["living_language"].widget.attrs["data-lang-ln"] = lang.ln
-            self.fields["living_language"].widget.attrs["data-lang-lc"] = lang.lc
-            self.fields["living_language"].widget.attrs["data-lang-lr"] = lang.lr
-            lang = self.instance.gateway_dialect
+            lang = self.instance.gateway_language
             if lang:
-                self.fields["gateway_dialect"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["gateway_dialect"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["gateway_dialect"].widget.attrs["data-lang-lr"] = lang.lr
+                self.fields["gateway_language"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["gateway_language"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["gateway_language"].widget.attrs["data-lang-lr"] = lang.lr
 
     class Meta:
         model = Language
         fields = [
-            "living_language",
-            "gateway_dialect",
+            "code",
+            "name",
+            "gateway_language",
             "native_speakers",
             "networks_translating"
         ]
@@ -106,72 +99,33 @@ class ResourceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ResourceForm, self).__init__(*args, **kwargs)
-        self.fields["copyright_holder"].widget.attrs["class"] = "select2-multiple"
 
     class Meta:
         model = Resource
         fields = [
-            "name",
-            "copyright",
-            "copyright_holder",
-            "license"
+            "title",
+            "media",
+            "published_flag",
+            "extra_data"
         ]
 
 
-class ScriptureForm(forms.ModelForm):
-
+class UploadGatewayForm(forms.Form):
+    languages = forms.CharField(widget=forms.Textarea())
     required_css_class = "required"
 
-    def __init__(self, *args, **kwargs):
-        self.language = kwargs.pop("language")
-        super(ScriptureForm, self).__init__(*args, **kwargs)
-        self.fields["kind"].widget = forms.RadioSelect(choices=self.fields["kind"].widget.choices)
-        self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
-        self.fields["wip"].queryset = self.fields["wip"].queryset.filter(language=self.language)
-
-    class Meta:
-        model = Scripture
-        fields = [
-            "kind",
-            "bible_content",
-            "wip",
-            "year",
-            "publisher"
+    def clean_languages(self):
+        lang_ids = [
+            l.lower().strip() for l in self.cleaned_data["languages"].split("\n")
         ]
-
-
-class TranslationNeedForm(forms.ModelForm):
-
-    required_css_class = "required"
-
-    class Meta:
-        model = TranslationNeed
-        fields = [
-            "text_gaps",
-            "text_updates",
-            "other_gaps",
-            "other_updates"
-        ]
-
-
-class WorkInProgressForm(forms.ModelForm):
-
-    required_css_class = "required"
-
-    def __init__(self, *args, **kwargs):
-        super(WorkInProgressForm, self).__init__(*args, **kwargs)
-        self.fields["kind"].widget = forms.RadioSelect(choices=self.fields["kind"].widget.choices)
-        self.fields["paradigm"].widget = forms.RadioSelect(choices=self.fields["paradigm"].widget.choices)
-        self.fields["bible_content"].widget.attrs["class"] = "select2-multiple"
-        self.fields["translators"].widget.attrs["class"] = "select2-multiple"
-        self.fields["anticipated_completion_date"].widget.attrs["class"] = "date-picker"
-
-    class Meta:
-        model = WorkInProgress
-        fields = [
-            "kind",
-            "bible_content",
-            "paradigm",
-            "translators",
-            "anticipated_completion_date"
-        ]
+        errors = []
+        for lid in lang_ids:
+            try:
+                Language.objects.get(code=lid)
+            except Language.DoesNotExist:
+                errors.append(lid)
+        if errors:
+            raise forms.ValidationError(
+                "You entered some invalid language codes: {}".format(", ".join(errors))
+            )
+        return lang_ids

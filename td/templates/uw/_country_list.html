@@ -10,7 +10,7 @@
     <tbody>
         {% for country in country_list %}
             <tr>
-                <td><a href="{% url "country_detail" country.pk %}">{{ country.country.name }}</a></td>
+                <td><a href="{% url "country_detail" country.pk %}">{{ country.name }}</a></td>
                 <td class="text-right">{{ country.population|default:""|intcomma }}</td>
                 <td>
                     {% for network in country.primary_networks.all %}

@@ -27,3 +27,27 @@ Debian project called simply, [ISO Codes](https://alioth.debian.org/anonscm/git/
 * [Unicode Supplemental Data](http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml)
 * [Geo Names - Languages in their own writing systems](http://www.geonames.de/languages.html)
 * [Glottolog](http://glottolog.org)
+
+## Getting Started
+
+To setup a new working environment of this project, several items are needed:
+
+* Python (consult the requirements.txt for specific libraries/packages) 
+* Redis
+* Postgres
+
+### Initialize the Database
+
+After installing requirements (via pip) within your environment or virtualenv:
+
+* `python manage.py migrate`
+* `python manage.py loaddata uw_network_seed`
+* `python manage.py loaddata uw_region_seed`
+* `python manage.py loaddata uw_title_seed`
+* `python manage.py loaddata uw_media_seed`
+* `python manage.py loaddata additional-languages`
+* `python manage.py reload_imports`
+
+At this point, the basic country and language datasets will be populated but without many optional fields or extra data.
+
+

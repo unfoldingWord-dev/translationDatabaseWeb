@@ -142,9 +142,12 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url "language_list" %}">Languages</a></li>
                 <li><a href="{% url "region_list" %}">Regions</a></li>
                 <li><a href="{% url "country_list" %}">Countries</a></li>
                 <li><a href="{% url "network_list" %}">Networks</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url "gateway_flag_update" %}">Update Gateway Languages</a></li>
             </ul>
         </li>
         {% endif %}

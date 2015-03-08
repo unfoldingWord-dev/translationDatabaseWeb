@@ -1,0 +1,478 @@
+[
+{
+    "fields": {
+        "name": "Full Bible"
+    },
+    "model": "uw.biblecontent",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Full NT"
+    },
+    "model": "uw.biblecontent",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Genesis"
+    },
+    "model": "uw.biblecontent",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Exodus"
+    },
+    "model": "uw.biblecontent",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Leviticus"
+    },
+    "model": "uw.biblecontent",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Numbers"
+    },
+    "model": "uw.biblecontent",
+    "pk": 6
+},
+{
+    "fields": {
+        "name": "Deuteronomy"
+    },
+    "model": "uw.biblecontent",
+    "pk": 7
+},
+{
+    "fields": {
+        "name": "Joshua"
+    },
+    "model": "uw.biblecontent",
+    "pk": 8
+},
+{
+    "fields": {
+        "name": "Judges"
+    },
+    "model": "uw.biblecontent",
+    "pk": 9
+},
+{
+    "fields": {
+        "name": "Ruth"
+    },
+    "model": "uw.biblecontent",
+    "pk": 10
+},
+{
+    "fields": {
+        "name": "1 Samuel"
+    },
+    "model": "uw.biblecontent",
+    "pk": 11
+},
+{
+    "fields": {
+        "name": "2 Samuel"
+    },
+    "model": "uw.biblecontent",
+    "pk": 12
+},
+{
+    "fields": {
+        "name": "1 Kings"
+    },
+    "model": "uw.biblecontent",
+    "pk": 13
+},
+{
+    "fields": {
+        "name": "2 Kings"
+    },
+    "model": "uw.biblecontent",
+    "pk": 14
+},
+{
+    "fields": {
+        "name": "1 Chronicles"
+    },
+    "model": "uw.biblecontent",
+    "pk": 15
+},
+{
+    "fields": {
+        "name": "2 Chronicles"
+    },
+    "model": "uw.biblecontent",
+    "pk": 16
+},
+{
+    "fields": {
+        "name": "Ezra"
+    },
+    "model": "uw.biblecontent",
+    "pk": 17
+},
+{
+    "fields": {
+        "name": "Nehemiah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 18
+},
+{
+    "fields": {
+        "name": "Esther"
+    },
+    "model": "uw.biblecontent",
+    "pk": 19
+},
+{
+    "fields": {
+        "name": "Job"
+    },
+    "model": "uw.biblecontent",
+    "pk": 20
+},
+{
+    "fields": {
+        "name": "Psalms"
+    },
+    "model": "uw.biblecontent",
+    "pk": 21
+},
+{
+    "fields": {
+        "name": "Proverbs"
+    },
+    "model": "uw.biblecontent",
+    "pk": 22
+},
+{
+    "fields": {
+        "name": "Ecclesiastes"
+    },
+    "model": "uw.biblecontent",
+    "pk": 23
+},
+{
+    "fields": {
+        "name": "Solomon"
+    },
+    "model": "uw.biblecontent",
+    "pk": 24
+},
+{
+    "fields": {
+        "name": "Isaiah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 25
+},
+{
+    "fields": {
+        "name": "Jeremiah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 26
+},
+{
+    "fields": {
+        "name": "Lamentations"
+    },
+    "model": "uw.biblecontent",
+    "pk": 27
+},
+{
+    "fields": {
+        "name": "Ezekiel"
+    },
+    "model": "uw.biblecontent",
+    "pk": 28
+},
+{
+    "fields": {
+        "name": "Daniel"
+    },
+    "model": "uw.biblecontent",
+    "pk": 29
+},
+{
+    "fields": {
+        "name": "Hosea"
+    },
+    "model": "uw.biblecontent",
+    "pk": 30
+},
+{
+    "fields": {
+        "name": "Joel"
+    },
+    "model": "uw.biblecontent",
+    "pk": 31
+},
+{
+    "fields": {
+        "name": "Amos"
+    },
+    "model": "uw.biblecontent",
+    "pk": 32
+},
+{
+    "fields": {
+        "name": "Obadiah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 33
+},
+{
+    "fields": {
+        "name": "Jonah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 34
+},
+{
+    "fields": {
+        "name": "Micah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 35
+},
+{
+    "fields": {
+        "name": "Nahum"
+    },
+    "model": "uw.biblecontent",
+    "pk": 36
+},
+{
+    "fields": {
+        "name": "Habakkuk"
+    },
+    "model": "uw.biblecontent",
+    "pk": 37
+},
+{
+    "fields": {
+        "name": "Zephaniah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 38
+},
+{
+    "fields": {
+        "name": "Haggai"
+    },
+    "model": "uw.biblecontent",
+    "pk": 39
+},
+{
+    "fields": {
+        "name": "Zechariah"
+    },
+    "model": "uw.biblecontent",
+    "pk": 40
+},
+{
+    "fields": {
+        "name": "Malachi"
+    },
+    "model": "uw.biblecontent",
+    "pk": 41
+},
+{
+    "fields": {
+        "name": "Matthew"
+    },
+    "model": "uw.biblecontent",
+    "pk": 42
+},
+{
+    "fields": {
+        "name": "Mark"
+    },
+    "model": "uw.biblecontent",
+    "pk": 43
+},
+{
+    "fields": {
+        "name": "Luke"
+    },
+    "model": "uw.biblecontent",
+    "pk": 44
+},
+{
+    "fields": {
+        "name": "John"
+    },
+    "model": "uw.biblecontent",
+    "pk": 45
+},
+{
+    "fields": {
+        "name": "Acts"
+    },
+    "model": "uw.biblecontent",
+    "pk": 46
+},
+{
+    "fields": {
+        "name": "Romans"
+    },
+    "model": "uw.biblecontent",
+    "pk": 47
+},
+{
+    "fields": {
+        "name": "1 Corinthians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 48
+},
+{
+    "fields": {
+        "name": "2 Corinthians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 49
+},
+{
+    "fields": {
+        "name": "Galatians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 50
+},
+{
+    "fields": {
+        "name": "Ephesians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 51
+},
+{
+    "fields": {
+        "name": "Philippians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 52
+},
+{
+    "fields": {
+        "name": "Colossians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 53
+},
+{
+    "fields": {
+        "name": "1 Thessalonians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 54
+},
+{
+    "fields": {
+        "name": "2 Thessalonians"
+    },
+    "model": "uw.biblecontent",
+    "pk": 55
+},
+{
+    "fields": {
+        "name": "1 Timothy"
+    },
+    "model": "uw.biblecontent",
+    "pk": 56
+},
+{
+    "fields": {
+        "name": "2 Timothy"
+    },
+    "model": "uw.biblecontent",
+    "pk": 57
+},
+{
+    "fields": {
+        "name": "Titus"
+    },
+    "model": "uw.biblecontent",
+    "pk": 58
+},
+{
+    "fields": {
+        "name": "Philemon"
+    },
+    "model": "uw.biblecontent",
+    "pk": 59
+},
+{
+    "fields": {
+        "name": "Hebrews"
+    },
+    "model": "uw.biblecontent",
+    "pk": 60
+},
+{
+    "fields": {
+        "name": "James"
+    },
+    "model": "uw.biblecontent",
+    "pk": 61
+},
+{
+    "fields": {
+        "name": "1 Peter"
+    },
+    "model": "uw.biblecontent",
+    "pk": 62
+},
+{
+    "fields": {
+        "name": "2 Peter"
+    },
+    "model": "uw.biblecontent",
+    "pk": 63
+},
+{
+    "fields": {
+        "name": "1 John"
+    },
+    "model": "uw.biblecontent",
+    "pk": 64
+},
+{
+    "fields": {
+        "name": "2 John"
+    },
+    "model": "uw.biblecontent",
+    "pk": 65
+},
+{
+    "fields": {
+        "name": "3 John"
+    },
+    "model": "uw.biblecontent",
+    "pk": 66
+},
+{
+    "fields": {
+        "name": "Jude"
+    },
+    "model": "uw.biblecontent",
+    "pk": 67
+},
+{
+    "fields": {
+        "name": "Revelation"
+    },
+    "model": "uw.biblecontent",
+    "pk": 68
+}
+]

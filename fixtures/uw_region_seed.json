@@ -1,0 +1,42 @@
+[
+  {
+    "fields": {
+      "name": "Americas",
+      "slug": "americas"
+    },
+    "model": "uw.region",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "name": "Africa",
+      "slug": "africa"
+    },
+    "model": "uw.region",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "name": "Asia",
+      "slug": "asia"
+    },
+    "model": "uw.region",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "name": "Europe",
+      "slug": "europe"
+    },
+    "model": "uw.region",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "name": "Pacific",
+      "slug": "pacific"
+    },
+    "model": "uw.region",
+    "pk": 5
+  }
+]

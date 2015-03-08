@@ -4,6 +4,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic import View
+from django.template import Variable, VariableDoesNotExist
+from django.core.urlresolvers import reverse
 
 
 def str_to_bool(value, allow_null=False):
@@ -18,6 +20,9 @@ def str_to_bool(value, allow_null=False):
 
 
 class DataTableSourceView(View):
+
+    def __init__(self, **kwargs):
+        super(DataTableSourceView, self).__init__(**kwargs)
 
     @property
     def queryset(self):
@@ -92,14 +97,21 @@ class DataTableSourceView(View):
             if hasattr(obj, "get_{0}_display".format(field)):
                 row.append(getattr(obj, "get_{0}_display".format(field))())
             else:
-                v = getattr(obj, field)
+                try:
+                    var = Variable("obj.{0}".format(field.replace("__", ".")))
+                    v = var.resolve({"obj": obj})
+                except VariableDoesNotExist:
+                    v = None
                 if isinstance(v, bool):
                     if v:
                         row.append('<i class="fa fa-check text-success"></i>')
                     else:
                         row.append('<i class="fa fa-times text-danger"></i>')
                 else:
-                    row.append(v)
+                    if hasattr(self, "link_column") and self.link_column == field:
+                        row.append('<a href="{0}">{1}</a>'.format(reverse(self.link_url_name, kwargs={self.link_url_field: getattr(obj, self.link_url_field)}), v))
+                    else:
+                        row.append(v)
         return row
 
     def get(self, request, *args, **kwargs):
