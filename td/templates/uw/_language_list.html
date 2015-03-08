@@ -1,6 +1,6 @@
 {% load humanize %}
 <table class="table">
-    <thead><tr><th></th><th>Language</th><th>Gateway Language</th><th># of Native Speakers</th><th>Networks Translating</th></tr></thead>
+    <thead><tr><th></th><th>Language</th><th>Is Gateway</th><th>Gateway Language</th><th># of Native Speakers</th><th>Networks Translating</th></tr></thead>
     <tbody>
         {% for language in language_list %}
             <tr>
@@ -12,6 +12,7 @@
                         {{ language.name }} ({{ language.code }})
                     </a>
                 </td>
+                <td>{% if language.gateway_flag %}<i class="fa fa-check fa-lg"></i>{% endif %}</td>
                 <td>{% if language.gateway_language %}{{ language.gateway_language.name }} ({{ language.gateway_language.code }}){% endif %}</td>
                 <td>{{ language.native_speakers|default:""|intcomma }}</td>
                 <td>
