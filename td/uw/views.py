@@ -41,7 +41,10 @@ def upload_gateway_flag_file(request):
     if request.method == "POST":
         form = UploadGatewayForm(request.POST, request.FILES)
         if form.is_valid():
-            Language.objects.filter(code__in=form.cleaned_data["languages"]).update(gateway_flag=True)
+            for lang in Language.objects.filter(code__in=form.cleaned_data["languages"]):
+                lang.gateway_flag = True
+                lang.source = request.user
+                lang.save()
             messages.add_message(request, messages.SUCCESS, "Gateway languages updated")
             return redirect("gateway_flag_update")
     else:
