@@ -8,21 +8,26 @@
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h1 class="panel-title">Upload Gateway Language List</h1>
+                <h1 class="panel-title">Update Gateway Languages</h1>
             </div>
             <div class="panel-body">
-                <form class="form" action="." method="POST" enctype="multipart/form-data">
+                <form class="form" action="." method="POST">
                     {% csrf_token %}
                     {{ form|bootstrap }}
                     <div class="pull-right">
                         <a class="btn btn-default" href="{% url "uw_home" %}">Cancel</a>
-                        <button class="btn btn-primary">Upload</button>
+                        <button class="btn btn-primary">Update</button>
                     </div>
 
                 </form>
             </div>
             <div class="panel-footer">
-                <div class="panel-info">.csv (comma-delimited) file should contain the Language Code for each gateway language</div>
+                <div class="panel-info">
+                    One language code per line
+                    <a class="pull-right" target="_blank" href="http://distantshores.org/resources/whitepapers/gateway-languages-strategy">
+                        Latest Published List
+                    </a>
+                </div>
             </div>
          </div>
     </div>

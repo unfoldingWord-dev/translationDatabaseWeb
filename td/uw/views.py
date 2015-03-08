@@ -8,8 +8,6 @@ from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from eventlog.models import log
 
-from td.tasks import update_gateway_language_flag
-
 from .forms import (
     CountryForm,
     LanguageForm,
@@ -43,13 +41,19 @@ def upload_gateway_flag_file(request):
     if request.method == "POST":
         form = UploadGatewayForm(request.POST, request.FILES)
         if form.is_valid():
-            update_gateway_language_flag(request.FILES["upload_file"],
-                                         language_column=request.POST["language_column_name"])
-            messages.add_message(request, messages.SUCCESS, "Your .CSV file was successfully processed")
-            return redirect("gateway_flag_upload")
+            Language.objects.filter(code__in=form.cleaned_data["languages"]).update(gateway_flag=True)
+            messages.add_message(request, messages.SUCCESS, "Gateway languages updated")
+            return redirect("gateway_flag_update")
     else:
-        form = UploadGatewayForm()
-    return render(request, "uw/upload_gateway_language_flag.html", {"form": form})
+        form = UploadGatewayForm(
+            initial={
+                "languages": "\n".join([
+                    l.code.lower()
+                    for l in Language.objects.filter(gateway_flag=True).order_by("code")
+                ])
+            }
+        )
+    return render(request, "uw/gateway_languages_update.html", {"form": form})
 
 
 class EntityTrackingMixin(object):

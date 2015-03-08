@@ -101,15 +101,3 @@ def integrate_imb_language_data():
                     resource, _ = Resource.objects.get_or_create(language=language, title=title, media=media)
                     resource.published_flag = True
                     resource.save()
-
-
-@task()
-def update_gateway_language_flag(csv_datafile=None, language_column="LangID"):
-    if not csv_datafile:
-        return
-    reader = csv.DictReader(csv_datafile, dialect="excel")
-    for row in reader:
-        lang = next(iter(Language.objects.filter(code=row[language_column])), None)
-        if lang:
-            lang.gateway_flag = True
-            lang.save()

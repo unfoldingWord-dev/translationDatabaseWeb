@@ -111,6 +111,21 @@ class ResourceForm(forms.ModelForm):
 
 
 class UploadGatewayForm(forms.Form):
-    upload_file = forms.FileField()
-    language_column_name = forms.CharField(initial="LangID", help_text="The label for the language code column in the .csv file ")
+    languages = forms.CharField(widget=forms.Textarea())
     required_css_class = "required"
+
+    def clean_languages(self):
+        lang_ids = [
+            l.lower().strip() for l in self.cleaned_data["languages"].split("\n")
+        ]
+        errors = []
+        for lid in lang_ids:
+            try:
+                Language.objects.get(code=lid)
+            except Language.DoesNotExist:
+                errors.append(lid)
+        if errors:
+            raise forms.ValidationError(
+                "You entered some invalid language codes: {}".format(", ".join(errors))
+            )
+        return lang_ids
