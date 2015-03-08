@@ -34,9 +34,10 @@
 {% endblock %}
 
 {% block extra_script %}
-<script type="text/javascript">
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
-</script>
+    {{ block.super }}
+    <script type="text/javascript">
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+    </script>
 {% endblock %}
