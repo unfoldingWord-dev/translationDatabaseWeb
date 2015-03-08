@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 
 from django.db import connection
+
 from celery import task
 from eventlog.models import log
-import csv
 
 from td.imports.models import (
     EthnologueLanguageCode,
