@@ -104,6 +104,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 
 MIDDLEWARE_CLASSES = [
+    "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -140,7 +141,7 @@ INSTALLED_APPS = [
     "account",
     "eventlog",
     "metron",
-    "raven.contrib.django.raven_compat",
+    "opbeat.contrib.django",
     "kaleo",
     "djcelery",
 
@@ -149,6 +150,12 @@ INSTALLED_APPS = [
     "td.imports",
     "td.uw"
 ]
+
+OPBEAT = {
+    "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
+    "APP_ID": "0a390f34de",
+    "SECRET_TOKEN": "33bfd9626aefc97b73a376310d184b6da1715ed6"
+}
 
 DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
 
@@ -211,9 +218,6 @@ AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
 
-RAVEN_CONFIG = {
-    "dsn": os.environ.get("RAVEN_DSN"),
-}
 
 # Celery / Redis Backend configuration
 BROKER_URL = "redis://localhost:6379/0"
