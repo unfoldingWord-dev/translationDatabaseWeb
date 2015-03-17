@@ -218,6 +218,7 @@ AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
 
+UWADMIN_OBS_API_URL = "https://api.unfoldingword.org/obs/txt/1/obs-catalog.json"
 
 # Celery / Redis Backend configuration
 BROKER_URL = "redis://localhost:6379/0"
