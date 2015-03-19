@@ -1,4 +1,5 @@
 {% extends "site_base.html" %}
+{% load render_dict %}
 
 {% load humanize %}
 
@@ -33,7 +34,7 @@
         <h2 class="panel-title">Resources</h2>
     </div>
     <table class="table table-bordered">
-        <thead><tr><th></th><th>Title</th><th>Media</th><th>Published</th></tr></thead>
+        <thead><tr><th></th><th>Title</th><th>Media</th><th>Published</th><th>Info</th></tr></thead>
         <tbody>
             {% for resource in language.resources.all %}
                 <tr>
@@ -43,6 +44,7 @@
                     <td>{{ resource.title }}</td>
                     <td>{{ resource.media }}</td>
                     <td>{{ resource.published_flag }}</td>
+                    <td>{{ resource.extra_data|dict_to_dl }}</td>
                 </tr>
             {% endfor %}
         </tbody>
