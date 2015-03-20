@@ -164,6 +164,7 @@ class AjaxLanguageListView(DataTableSourceView):
     fields = [
         "code",
         "name",
+        "direction",
         "country__name",
         "native_speakers",
         "gateway_language__name",

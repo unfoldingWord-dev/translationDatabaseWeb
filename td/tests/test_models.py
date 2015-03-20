@@ -78,14 +78,17 @@ class LanguageIntegrationTests(TestCase):
         self.assertEquals(langs["aa"]["cc"], ["ET"])
         self.assertEquals(langs["aa"]["ln"], "Afaraf")
         self.assertEquals(langs["aa"]["lr"], "Africa")
+        self.assertEquals(langs["aa"]["ld"], "ltr")
         self.assertTrue("kmg" in langs)
         self.assertEquals(langs["kmg"]["cc"], ["PG"])
         self.assertEquals(langs["kmg"]["ln"], u"K\xe2te")
         self.assertEquals(langs["kmg"]["lr"], "Pacific")
+        self.assertEquals(langs["kmg"]["ld"], "ltr")
         self.assertTrue("es-419" in langs)
         self.assertEquals(langs["es-419"]["cc"], [""])
         self.assertEquals(langs["es-419"]["ln"], u"Espa\xf1ol Latin America")
         self.assertEquals(langs["es-419"]["lr"], "")
+        self.assertEquals(langs["es-419"]["ld"], "ltr")
 
     def test_add_and_delete_from_additionallanguage(self):
         additional = AdditionalLanguage.objects.create(
@@ -99,3 +102,17 @@ class LanguageIntegrationTests(TestCase):
         additional.delete()
         data = Language.names_text().split("\n")
         self.assertTrue("zzz-z-test\tZTest" not in data)
+
+    def test_additionallanguage_direction(self):
+        additional = AdditionalLanguage.objects.create(
+            ietf_tag="zzz-r-test",
+            common_name="ZRTest",
+            direction="r"
+        )
+        additional.save()
+        langnames = Language.names_text().split("\n")
+        self.assertTrue("zzz-r-test\tZRTest" in langnames)
+        data = json.loads(json.dumps(Language.names_data()))
+        langs = {x["lc"]: x for x in data}
+        self.assertTrue("zzz-r-test" in langs)
+        self.assertEquals(langs["zzz-r-test"]["ld"], "rtl")

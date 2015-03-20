@@ -11,6 +11,7 @@ admin.site.register(
         "two_letter",
         "three_letter",
         "native_name",
+        "direction",
         "comment",
         "created_at",
         "updated_at",
