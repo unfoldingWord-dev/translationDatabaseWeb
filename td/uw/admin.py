@@ -32,7 +32,7 @@ class CountryAdmin(EntryTrackingAdmin):
 
 
 class LanguageAdmin(EntryTrackingAdmin):
-    list_display = ["code", "name", "gateway_language", "native_speakers"]
+    list_display = ["code", "name", "gateway_language", "direction", "native_speakers"]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:

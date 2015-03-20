@@ -87,6 +87,7 @@ class LanguageForm(EntityTrackingForm):
         fields = [
             "code",
             "name",
+            "direction",
             "gateway_language",
             "native_speakers",
             "networks_translating"

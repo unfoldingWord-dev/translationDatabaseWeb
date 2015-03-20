@@ -19,6 +19,7 @@ def handle_additionallanguage_save(sender, instance, **kwargs):
     a_code = instance.merge_code()
     lang, created = Language.objects.get_or_create(code=a_code)
     lang.name = instance.merge_name()
+    lang.direction = instance.direction
     lang.save()
 
 

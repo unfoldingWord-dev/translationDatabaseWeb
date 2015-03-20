@@ -122,6 +122,10 @@ tree = {
 
 @python_2_unicode_compatible
 class Language(models.Model):
+    DIRECTION_CHOICES = (
+        ("l", "ltr"),
+        ("r", "rtl")
+    )
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True)
@@ -129,6 +133,7 @@ class Language(models.Model):
     native_speakers = models.IntegerField(null=True, blank=True)
     networks_translating = models.ManyToManyField(Network, null=True, blank=True)
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
+    direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
 
     tracker = FieldTracker()
 
@@ -172,7 +177,7 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr, gw=x.gateway_flag)
+            dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
             for x in cls.objects.all().order_by("code")
         ]
 

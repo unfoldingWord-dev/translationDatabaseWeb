@@ -97,6 +97,7 @@ class AjaxAdditionalLanguageListView(DataTableSourceView):
         "three_letter",
         "common_name",
         "native_name",
+        "direction",
         "comment"
     ]
 
