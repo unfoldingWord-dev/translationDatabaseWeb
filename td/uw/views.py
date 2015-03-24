@@ -104,7 +104,7 @@ class EventLogMixin(object):
         return response
 
 
-class RegionListView(LoginRequiredMixin, ListView):
+class RegionListView(ListView):
     model = Region
     template_name = "uw/region_list.html"
 
@@ -112,7 +112,7 @@ class RegionListView(LoginRequiredMixin, ListView):
         return Region.objects.all()
 
 
-class RegionDetailView(LoginRequiredMixin, ListView):
+class RegionDetailView(ListView):
     model = Region
     template_name = "uw/region_detail.html"
 
@@ -133,7 +133,7 @@ class RegionDetailView(LoginRequiredMixin, ListView):
         return qs
 
 
-class CountryListView(LoginRequiredMixin, ListView):
+class CountryListView(ListView):
     model = Country
 
     def get_queryset(self):
@@ -142,7 +142,7 @@ class CountryListView(LoginRequiredMixin, ListView):
         return qs
 
 
-class CountryDetailView(LoginRequiredMixin, DetailView):
+class CountryDetailView(DetailView):
     model = Country
 
 
@@ -200,7 +200,7 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin,
         return context
 
 
-class LanguageDetailView(LoginRequiredMixin, DetailView):
+class LanguageDetailView(DetailView):
     model = Language
 
     def get_context_data(self, **kwargs):
@@ -236,7 +236,7 @@ class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, 
         return reverse("network_detail", args=[self.object.pk])
 
 
-class NetworkDetailView(LoginRequiredMixin, DetailView):
+class NetworkDetailView(DetailView):
     model = Network
 
 
@@ -249,7 +249,7 @@ class NetworkEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
         return reverse("network_detail", args=[self.object.pk])
 
 
-class NetworkListView(LoginRequiredMixin, ListView):
+class NetworkListView(ListView):
     model = Network
 
     def get_queryset(self):
