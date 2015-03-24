@@ -9,7 +9,9 @@
 
 <h1>
     {{ language.name }}
+    {% if user.is_authenticated %}
     <a class="btn btn-primary btn-xs" href="{% url "language_edit" language.pk %}">Edit</a>
+    {% endif %}
 </h1>
 
 <div class="row">
@@ -30,7 +32,9 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
+        {% if user.is_authenticated %}
         <a class="btn btn-primary btn-xs pull-right" href="{% url "resource_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
+        {% endif %}
         <h2 class="panel-title">Resources</h2>
     </div>
     <table class="table table-bordered">
@@ -39,7 +43,9 @@
             {% for resource in language.resources.all %}
                 <tr>
                     <td>
+                        {% if user.is_authenticated %}
                         <a class="btn btn-default btn-xs" href="{% url "resource_edit" resource.pk %}"><i class="fa fa-pencil"></i> Edit</a>
+                        {% endif %}
                     </td>
                     <td>{{ resource.title }}</td>
                     <td>{{ resource.media }}</td>
