@@ -134,6 +134,7 @@ class Language(models.Model):
     networks_translating = models.ManyToManyField(Network, null=True, blank=True)
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
+    iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
 
     tracker = FieldTracker()
 
