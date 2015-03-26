@@ -20,6 +20,7 @@ def handle_additionallanguage_save(sender, instance, **kwargs):
     lang, created = Language.objects.get_or_create(code=a_code)
     lang.name = instance.merge_name()
     lang.direction = instance.direction
+    lang.iso_639_3 = instance.three_letter
     lang.save()
 
 
