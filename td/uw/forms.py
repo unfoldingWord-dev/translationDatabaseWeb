@@ -86,6 +86,7 @@ class LanguageForm(EntityTrackingForm):
         model = Language
         fields = [
             "code",
+            "iso_639_3",
             "name",
             "direction",
             "gateway_language",

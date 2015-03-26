@@ -90,6 +90,17 @@ class LanguageIntegrationTests(TestCase):
         self.assertEquals(langs["es-419"]["lr"], "")
         self.assertEquals(langs["es-419"]["ld"], "ltr")
 
+    def test_three_letter_field(self):
+        additional = AdditionalLanguage(
+            two_letter="z3",
+            common_name="ZTest of 3 Letters",
+            three_letter="z3z",
+            ietf_tag="z3-test"
+        )
+        additional.save()
+        lang = Language.objects.get(code="z3")
+        self.assertEquals(lang.iso_639_3, additional.three_letter)
+
     def test_add_and_delete_from_additionallanguage(self):
         additional = AdditionalLanguage.objects.create(
             ietf_tag="zzz-z-test",
