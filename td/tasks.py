@@ -31,7 +31,8 @@ select coalesce(nullif(x.part_1, ''), x.code) as code,
        nullif(nn2.native_name, '') as nn2name,
        nn2.id,
        x.ref_name as xname,
-       x.id
+       x.id,
+       x.code as iso_639_3
   from imports_sil_iso_639_3 x
 left join imports_ethnologuelanguagecode lc on x.code = lc.code
 left join imports_wikipediaisolanguage nn1 on x.part_1 = nn1.iso_639_1
@@ -40,7 +41,7 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
  where lc.status = %s or lc.status is NULL order by code;
 """, [EthnologueLanguageCode.STATUS_LIVING])
     rows = cursor.fetchall()
-    rows.extend([(x.merge_code(), x.merge_name(), None, "", None, "", None, "!ADDL", x.id) for x in AdditionalLanguage.objects.all()])
+    rows.extend([(x.merge_code(), x.merge_name(), None, "", None, "", None, "!ADDL", x.id, x.three_letter) for x in AdditionalLanguage.objects.all()])
     rows.sort()
     for r in rows:
         if r[0] is not None:
@@ -54,6 +55,8 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
                 language.source = SIL_ISO_639_3.objects.get(pk=r[8])
             if r[7] == "!ADDL":
                 language.source = AdditionalLanguage.objects.get(pk=r[8])
+            if r[9] != "":
+                language.iso_639_3 = r[9]
             language.save()
             if r[2]:
                 language.country = next(iter(Country.objects.filter(code=r[2])), None)
@@ -91,8 +94,9 @@ def integrate_imb_language_data():
         "written_scripture": ("bible-portions", "Bible (Portions)", "print", "Print")
     }
     for imb in IMBPeopleGroup.objects.order_by("language").distinct("language"):
-        lcode = imb.language[-4:-1]
-        language = next(iter(Language.objects.filter(code=lcode)), None)
+        language = next(iter(Language.objects.filter(iso_639_3=imb.rol)), None)
+        if not language:
+            language = next(iter(Language.objects.filter(code=imb.rol)), None)
         if language:
             for k in imb_map.keys():
                 if getattr(imb, k):
