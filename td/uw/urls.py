@@ -20,6 +20,7 @@ from .views import (
     ResourceEditView,
     country_tree_data,
     upload_gateway_flag_file,
+    upload_rtl_list,
 )
 
 
@@ -44,6 +45,7 @@ urlpatterns = patterns(
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
 
     url(r"gateway_language_flag/update/$", upload_gateway_flag_file, name="gateway_flag_update"),
+    url(r"rtl_languages/update/$", upload_rtl_list, name="rtl_languages_update"),
 
     url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
 

@@ -1,0 +1,35 @@
+{% extends "site_base.html" %}
+
+{% load humanize bootstrap %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">Update RTL Languages</h1>
+            </div>
+            <div class="panel-body">
+                <form class="form" action="." method="POST">
+                    {% csrf_token %}
+                    {{ form|bootstrap }}
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="{% url "uw_home" %}">Cancel</a>
+                        <button class="btn btn-primary">Update</button>
+                    </div>
+
+                </form>
+            </div>
+            <div class="panel-footer">
+                <div class="panel-info">
+                    One language code per line
+                    <a class="pull-right" target="_blank" href="http://meta.wikimedia.org/wiki/Template:List_of_language_names_ordered_by_code">
+                        Wikimedia List of Languages (indicating script direction)
+                    </a>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+{% endblock %}

@@ -147,8 +147,9 @@
                 <li><a href="{% url "country_list" %}">Countries</a></li>
                 <li><a href="{% url "network_list" %}">Networks</a></li>
                 {% if request.user.is_authenticated %}
-                <li class="divider"></li>
-                <li><a href="{% url "gateway_flag_update" %}">Update Gateway Languages</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{% url "gateway_flag_update" %}">Update Gateway Languages</a></li>
+                    <li><a href="{% url "rtl_languages_update" %}">Update RTL Languages (Scripts)</a></li>
                 {% endif %}
             </ul>
         </li>
