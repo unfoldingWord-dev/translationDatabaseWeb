@@ -59,6 +59,29 @@ def upload_gateway_flag_file(request):
     return render(request, "uw/gateway_languages_update.html", {"form": form})
 
 
+@login_required
+def upload_rtl_list(request):
+    if request.method == "POST":
+        form = UploadGatewayForm(request.POST)
+        if form.is_valid():
+            for lang in Language.objects.filter(code__in=form.cleaned_data["languages"]):
+                lang.direction = "r"
+                lang.source = request.user
+                lang.save()
+            messages.add_message(request, messages.SUCCESS, "RTL languages updated")
+            return redirect("rtl_languages_update")
+    else:
+        form = UploadGatewayForm(
+            initial={
+                "languages": "\n".join([
+                    l.code.lower()
+                    for l in Language.objects.filter(direction="r").order_by("code")
+                ])
+            }
+        )
+    return render(request, "uw/rtl_languages_update.html", {"form": form})
+
+
 class EntityTrackingMixin(object):
 
     def get_form_kwargs(self):
