@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     {{ form|bootstrap }}
                     <div class="pull-right">
-                        <a class="btn btn-default" href="{% url "country_detail" country.pk %}">Cancel</a>
+                        <a class="btn btn-default" href="{% url "language_detail" language.pk %}">Cancel</a>
                         <button class="btn btn-primary">Save</button>
                     </div>
                 </form>
