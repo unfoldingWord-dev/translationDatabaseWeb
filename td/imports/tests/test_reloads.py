@@ -11,6 +11,7 @@ from ..models import (
     EthnologueLanguageIndex,
     SIL_ISO_639_3,
     WikipediaISOLanguage,
+    WikipediaISOCountry,
     IMBPeopleGroup
 )
 
@@ -63,6 +64,14 @@ class WikipediaReloadTests(BaseReloadTestMixin, TestCase):
     filename = "wikipedia.html"
     expected_success_count = 184
     log_reload_failed_action = "SOURCE_WIKIPEDIA_RELOAD_FAILED"
+
+
+class WikipediaCountryReloadTests(BaseReloadTestMixin, TestCase):
+
+    ModelClass = WikipediaISOCountry
+    filename = "wikipedia_country.html"
+    expected_success_count = 249
+    log_reload_failed_action = "SOURCE_WIKIPEDIA_COUNTRIES_FAILED"
 
 
 class SILISO639_3ReloadTests(BaseReloadTestMixin, TestCase):

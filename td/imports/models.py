@@ -17,6 +17,7 @@ import xlrd
 from eventlog.models import log
 from . import fetch
 
+
 @python_2_unicode_compatible
 class WikipediaISOCountry(models.Model):
     english_short_name = models.CharField(max_length=100)
