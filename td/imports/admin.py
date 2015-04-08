@@ -5,7 +5,8 @@ from .models import (
     EthnologueLanguageCode,
     EthnologueLanguageIndex,
     SIL_ISO_639_3,
-    WikipediaISOLanguage
+    WikipediaISOLanguage,
+    WikipediaISOCountry
 )
 
 
@@ -42,6 +43,17 @@ class EthnologueLanguageIndexAdmin(LockedDownModelAdmin):
     list_display = ["language_code", "country_code", "name_type", "name", "date_imported"]
     list_filter = ["name_type", "country_code"]
     search_fields = ["language_code", "name"]
+
+
+class WikipediaISOCountryAdmin(LockedDownModelAdmin):
+    list_display = [
+        "alpha_2",
+        "alpha_3",
+        "numeric_code",
+        "english_short_name",
+        "iso_3166_2_code"
+    ]
+    search_fields = ["alpha_2", "alpha_3", "english_short_name"]
 
 
 class WikipediaISOLanguageAdmin(LockedDownModelAdmin):
@@ -81,4 +93,5 @@ admin.site.register(EthnologueCountryCode, EthnologueCountryCodeAdmin)
 admin.site.register(EthnologueLanguageCode, EthnologueLanguageCodeAdmin)
 admin.site.register(EthnologueLanguageIndex, EthnologueLanguageIndexAdmin)
 admin.site.register(WikipediaISOLanguage, WikipediaISOLanguageAdmin)
+admin.site.register(WikipediaISOCountry, WikipediaISOCountryAdmin)
 admin.site.register(SIL_ISO_639_3, SIL_ISO_639_3Admin)
