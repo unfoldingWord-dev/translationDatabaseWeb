@@ -6,7 +6,8 @@ from ..models import (
     EthnologueLanguageCode,
     EthnologueLanguageIndex,
     SIL_ISO_639_3,
-    WikipediaISOLanguage
+    WikipediaISOLanguage,
+    WikipediaISOCountry
 )
 
 
@@ -67,3 +68,14 @@ class SIL_ISO_639_3TestCase(TestCase):
             ref_name="Ghotuo"
         )
         self.assertEquals(str(sil), "aaa")
+
+
+class WikipediaCountryTestCase(TestCase):
+
+    def test_string_representation(self):
+        wcountry = WikipediaISOCountry(
+            alpha_2="ZZ",
+            alpha_3="ZZZ",
+            english_short_name="Z Test Country",
+        )
+        self.assertEquals(str(wcountry), "Z Test Country (ZZ) (ZZZ)")
