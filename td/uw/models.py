@@ -42,7 +42,6 @@ class Country(models.Model):
     region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
-    #gateway_language = models.ForeignKey(Language, blank=True, null=True, default=True)
     extra_data = JSONField(blank=True)
 
     tracker = FieldTracker()
