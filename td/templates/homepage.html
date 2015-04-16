@@ -1,8 +1,17 @@
 {% extends "banner_base.html" %}
+{% load staticfiles %}
 
 {% load i18n %}
 
 {% block head_title %}{% trans "Welcome" %}{% endblock %}
+
+{% block extra_style %}
+    <link rel="stylesheet" href="{% static "css/flags.css" %}">
+    <style>
+    div.jumbotron {margin-top: 0px; margin-bottom: 10px;}
+    div.datamaps-legend {margin-top: 36%;}
+    </style>
+{% endblock %}
 
 {% block body_class %}home{% endblock %}
 
@@ -13,4 +22,65 @@
             help <a href="http://door43.org/en/get-started" class="btn btn-default">translate</a> or <a href="https://unfoldingword.org/give/" class="btn btn-default">donate</a> to a project.
         </div>
     {% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+ <div id="maprow" class="row maprow">
+    <div id="mapcontainer" class="col-lg-11 col-md-11 col-sm-11">
+
+    </div>
+    <h2>gateway languages</h2>
+
+ </div>
+{% endblock %}
+
+{% block custom_bottom_script %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="{% static "js/datamaps.world.min.js" %}"></script>
+<script>
+    var m_width = $("#mapcontainer").width(),
+            m_ratio = .42,
+            m_height = m_width * m_ratio;
+    d3.json("/uw/country_map_data.json", function(error, map_data) {
+        var map = new Datamap({
+            element: document.getElementById('mapcontainer'),
+            responsive: true,
+            width: m_width,
+            height: m_height,
+            fills: map_data["fills"],
+            data: map_data["country_data"],
+            geographyConfig: {
+                hideAntarctica: true,
+                borderColor: "#202020",
+                highlightOnHover: true,
+                highlightBorderWidth: 2,
+                highlightFillColor: 'rgba(128,128,128,0.5)',
+                popupTemplate: function(geography, data) {
+                    if (data) {
+                        geography.properties.url = data.url;
+                        return '<div class="hoverinfo"><div class="flag flag-' + data.country_code.toLowerCase() + '"> </div><strong>' + geography.properties.name + '</strong><br/>(' + data.fillKey + ') ' + data.gateway_language + '</div>';
+                    }
+                    else
+                        return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
+                }
+            },
+            done: function(datamap) {
+                datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                    var $this = d3.select(this);
+                    var previousAttributes = JSON.parse( $this.attr('data-previousAttributes') );
+                        for ( var attr in previousAttributes ) {
+                            $this.style(attr, previousAttributes[attr]);
+                        }
+                    window.location.href = geography.properties.url;
+                });
+                this.element.style.paddingBottom = "38%";
+            }
+        });
+
+        d3.select(window).on('resize', function() {
+            map.resize();
+        })
+    });
+</script>
 {% endblock %}

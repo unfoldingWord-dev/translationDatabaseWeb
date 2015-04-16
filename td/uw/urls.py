@@ -21,6 +21,7 @@ from .views import (
     country_tree_data,
     upload_gateway_flag_file,
     upload_rtl_list,
+    country_map_data,
 )
 
 
@@ -49,5 +50,6 @@ urlpatterns = patterns(
 
     url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
 
-    url(r"country_gateways.json$", country_tree_data, name="country_tree_data")
+    url(r"country_gateways.json$", country_tree_data, name="country_tree_data"),
+    url(r"country_map_data.json$", country_map_data, name="country_map_data"),
 )
