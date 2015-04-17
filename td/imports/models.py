@@ -18,6 +18,44 @@ from eventlog.models import log
 from . import fetch
 
 
+@python_2_unicode_compatible
+class WikipediaISOCountry(models.Model):
+    english_short_name = models.CharField(max_length=100)
+    alpha_2 = models.CharField(max_length=2)
+    alpha_3 = models.CharField(max_length=3)
+    numeric_code = models.CharField(max_length=3)
+    iso_3166_2_code = models.CharField(max_length=20)
+
+    def __str__(self):
+        return "{0} ({1}) ({2})".format(self.english_short_name, self.alpha_2, self.alpha_3)
+
+    class Meta:
+        verbose_name = "Wikipedia ISO 3166-1 Country"
+        verbose_name_plural = "Wikipedia ISO 3166-1 Countries"
+
+    @classmethod
+    def reload(cls, session):
+        content = fetch.WikipediaCountryFetcher(session).fetch()
+        if not content:
+            return
+        soup = bs4.BeautifulSoup(content)
+        records = []
+        for tr in soup.select("table.sortable tr"):
+            row = [td.text for td in tr.find_all("td")]
+            if len(row) == 5:
+                records.append(cls(
+                    english_short_name=row[0].strip(),
+                    alpha_2=row[1].strip(),
+                    alpha_3=row[2].strip(),
+                    numeric_code=row[3].strip(),
+                    iso_3166_2_code=row[4].strip()
+                ))
+        if len(records) > 0:
+            cls.objects.all().delete()
+            cls.objects.bulk_create(records)
+            log(user=None, action="SOURCE_WIKIPEDIA_COUNTRIES_RELOADED", extra={})
+
+
 class WikipediaISOLanguage(models.Model):
 
     language_family = models.CharField(max_length=100)

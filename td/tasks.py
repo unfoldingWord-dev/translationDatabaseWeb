@@ -10,6 +10,7 @@ from td.imports.models import (
     EthnologueCountryCode,
     SIL_ISO_639_3,
     WikipediaISOLanguage,
+    WikipediaISOCountry,
     IMBPeopleGroup
 )
 
@@ -73,6 +74,12 @@ def update_countries_from_imports():
         country.region = next(iter(Region.objects.filter(name=ecountry.area)), None)
         country.name = ecountry.name
         country.source = ecountry
+        country.save()
+    for wcountry in WikipediaISOCountry.objects.all():
+        country, created_flag = Country.objects.get_or_create(code=wcountry.alpha_2)
+        if created_flag:
+            country.name = wcountry.english_short_name
+        country.alpha_3_code = wcountry.alpha_3
         country.save()
 
 

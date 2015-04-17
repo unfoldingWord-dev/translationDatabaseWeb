@@ -37,10 +37,12 @@ class Region(models.Model):
 @python_2_unicode_compatible
 class Country(models.Model):
     code = models.CharField(max_length=2, unique=True)
+    alpha_3_code = models.CharField(max_length=3, blank=True, default="")
     name = models.CharField(max_length=75)
-    region = models.ForeignKey(Region, null=True, blank=True, related_name='countries')
+    region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True)
+    extra_data = JSONField(blank=True)
 
     tracker = FieldTracker()
 
@@ -78,7 +80,7 @@ def transform_country_data(data):
     tree = {"name": "World", "parent": None, "children": []}
     for code in data:
         datum = {
-            "name": data[code]["obj"].country.name,
+            "name": data[code]["obj"].name,
             "parent": "World",
             "children": [],
             "hasGatewayLanguages": len(data[code]["gateways"]) > 1,
@@ -88,13 +90,13 @@ def transform_country_data(data):
             if gateway == "n/a":
                 name = "No Gateway"
             else:
-                name = data[code]["gateways"][gateway][0].gateway_dialect.name
+                name = data[code]["gateways"][gateway][0].gateway_language.name
             gdatum = {
                 "name": name,
-                "parent": data[code]["obj"].country.name,
+                "parent": data[code]["obj"].name,
                 "children": [
                     {
-                        "name": l.living_language.name,
+                        "name": l.name,
                         "detailUrl": reverse("language_detail", args=[l.pk]),
                         "parent": name,
                         "children": []
@@ -135,6 +137,7 @@ class Language(models.Model):
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
+    extra_data = JSONField(blank=True)
 
     tracker = FieldTracker()
 

@@ -25,6 +25,11 @@ class WikipediaFetcher(Fetcher):
     error_action_label = "SOURCE_WIKIPEDIA_RELOAD_FAILED"
 
 
+class WikipediaCountryFetcher(Fetcher):
+    url = "http://en.wikipedia.org/wiki/ISO_3166-1"
+    error_action_label = "SOURCE_WIKIPEDIA_COUNTRIES_FAILED"
+
+
 class ISO_639_3Fetcher(Fetcher):
 
     url = "http://www-01.sil.org/iso639-3/iso-639-3.tab"
