@@ -15,6 +15,16 @@
 
 {% block body_class %}home{% endblock %}
 
+
+{% block content %}
+ <div id="maprow" class="row maprow">
+    <h2 class="floating-map-title">gateway languages</h2>
+    <div id="mapcontainer" class="col-lg-11 col-md-11 col-sm-11">
+
+    </div>
+ </div>
+{% endblock %}
+
 {% block banner %}
     <h1>{% trans "end the spiritual famine." %}</h1>
     {% blocktrans %}
@@ -24,15 +34,6 @@
     {% endblocktrans %}
 {% endblock %}
 
-{% block content %}
- <div id="maprow" class="row maprow">
-    <div id="mapcontainer" class="col-lg-11 col-md-11 col-sm-11">
-
-    </div>
-    <h2>gateway languages</h2>
-
- </div>
-{% endblock %}
 
 {% block custom_bottom_script %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
