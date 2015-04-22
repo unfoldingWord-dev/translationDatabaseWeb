@@ -13,7 +13,15 @@
     {% endif %}
 </h1>
 
+
+
 <div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead><tr><th>Gateway Language</th></tr></thead>
+            <tbody><tr><td>{% if country.gateway_language %}{{ country.gateway_language.name }} ({{ country.gateway_language.code }}){% else %}None{% endif %}</td></tr></tbody>
+        </table>
+    </div>
     <div class="col-md-4">
         <table class="table">
             <thead><tr><th>Population</th></tr></thead>

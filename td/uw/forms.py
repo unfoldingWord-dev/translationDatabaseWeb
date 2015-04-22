@@ -35,13 +35,39 @@ class NetworkForm(EntityTrackingForm):
 
 
 class CountryForm(EntityTrackingForm):
-
     required_css_class = "required"
+    gl = forms.CharField(max_length=3)
+
+    def clean_gl(self):
+        code = self.cleaned_data["gl"]
+        if code:
+            return Language.objects.get(code=code).code
 
     def __init__(self, *args, **kwargs):
         super(CountryForm, self).__init__(*args, **kwargs)
         self.fields["primary_networks"].widget.attrs["class"] = "select2-multiple"
         self.fields["primary_networks"].help_text = ""
+        self.fields["gl"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": reverse("names_autocomplete")
+                }
+            ),
+            required=False,
+            label="Gateway Language"
+        )
+        if self.instance.pk is not None:
+            if self.instance.gateway_language():
+                lang = self.instance.gateway_language()
+                self.fields["gl"].initial = lang.code
+                self.fields["gl"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["gl"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["gl"].widget.attrs["data-lang-lr"] = lang.lr
+
+    def save(self, commit=True):
+        self.instance.extra_data.update({"gateway_language": self.cleaned_data["gl"]})
+        return super(CountryForm, self).save(commit=commit)
 
     class Meta:
         model = Country
