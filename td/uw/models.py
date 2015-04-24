@@ -46,6 +46,12 @@ class Country(models.Model):
 
     tracker = FieldTracker()
 
+    def gateway_language(self):
+        if "gateway_language" in self.extra_data:
+            return next(iter(Language.objects.filter(code=self.extra_data["gateway_language"])), None)
+        else:
+            return None
+
     @classmethod
     def regions(cls):
         qs = cls.objects.all().values_list("region", flat=True).distinct()
