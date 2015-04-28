@@ -47,10 +47,12 @@ class Country(models.Model):
     tracker = FieldTracker()
 
     def gateway_language(self):
-        if "gateway_language" in self.extra_data:
-            return next(iter(Language.objects.filter(code=self.extra_data["gateway_language"])), None)
-        else:
-            return None
+        if not hasattr(self, "_gateway_language"):
+            data = self.extra_data
+            if not isinstance(data, dict):
+                data = {}
+            self._gateway_language = next(iter(Language.objects.filter(code=data.get("gateway_language"))), None)
+        return self._gateway_language
 
     @classmethod
     def regions(cls):

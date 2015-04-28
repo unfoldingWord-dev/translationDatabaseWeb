@@ -74,10 +74,10 @@ def country_map_data(request):
     }
     country_to_language = {
         country.alpha_3_code: {
-            "fillKey": country.extra_data["gateway_language"],
+            "fillKey": country.gateway_language().code if country.gateway_language() else "defaultFill",
             "url": reverse("country_detail", args=[country.pk]),
             "country_code": country.code,
-            "gateway_language": Language.objects.get(code=country.extra_data["gateway_language"]).name
+            "gateway_language": country.gateway_language().name if country.gateway_language() else ""
         }
         for country in Country.objects.all()
     }
