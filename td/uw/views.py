@@ -37,45 +37,50 @@ def country_tree_data(request):
 
 
 def country_map_data(request):
-    language_to_color = {"defaultFill": "#CCCCCC",
-                         "en": "#ACEA73",
-                         "fr": "#CCAAEA",
-                         "es": "#E9E36F",
-                         "es-419": "#E9E36F",
-                         "pt": "#E1AB5B",
-                         "nl": "#BA4759",
-                         "hi": "#868686",
-                         "ru": "#794C53",
-                         "ar": "#84E9CF",
-                         "sw": "#F54982",
-                         "am": "#F7E718",
-                         "tr": "#3A39DD",
-                         "ps": "#6FCF1A",
-                         "ja": "#216A8B",
-                         "id": "#591468",
-                         "zh": "#6B9BE0",
-                         "km": "#39FF06",
-                         "tl": "#DEE874",
-                         "bn": "#346507",
-                         "my": "#F1FF31",
-                         "lo": "#CE0008",
-                         "th": "#B7FFF8",
-                         "mn": "#DE7E6A",
-                         "fa": "#5F441A",
-                         "ur": "#BEB41F",
-                         "vi": "#E8AB50",
-                         "ne": "#741633",
-                         "dz": "#F2951C",
-                         "ms": "#A7DA3D",
-                         "pis": "#8A8A8A",
-                         "tpi": "#E966C7",
-                         "ta": "#8A8A8A"
-                         }
-    country_to_language = {country.alpha_3_code: {"fillKey": country.extra_data["gateway_language"],
-                                                  "url": reverse("country_detail", args=[country.pk]),
-                                                  "country_code": country.code,
-                                                  "gateway_language": Language.objects.get(code=country.extra_data["gateway_language"]).name
-                                                  } for country in Country.objects.all()}
+    language_to_color = {
+        "defaultFill": "#CCCCCC",
+        "en": "#ACEA73",
+        "fr": "#CCAAEA",
+        "es": "#E9E36F",
+        "es-419": "#E9E36F",
+        "pt": "#E1AB5B",
+        "nl": "#BA4759",
+        "hi": "#868686",
+        "ru": "#794C53",
+        "ar": "#84E9CF",
+        "sw": "#F54982",
+        "am": "#F7E718",
+        "tr": "#3A39DD",
+        "ps": "#6FCF1A",
+        "ja": "#216A8B",
+        "id": "#591468",
+        "zh": "#6B9BE0",
+        "km": "#39FF06",
+        "tl": "#DEE874",
+        "bn": "#346507",
+        "my": "#F1FF31",
+        "lo": "#CE0008",
+        "th": "#B7FFF8",
+        "mn": "#DE7E6A",
+        "fa": "#5F441A",
+        "ur": "#BEB41F",
+        "vi": "#E8AB50",
+        "ne": "#741633",
+        "dz": "#F2951C",
+        "ms": "#A7DA3D",
+        "pis": "#8A8A8A",
+        "tpi": "#E966C7",
+        "ta": "#8A8A8A"
+    }
+    country_to_language = {
+        country.alpha_3_code: {
+            "fillKey": country.extra_data["gateway_language"],
+            "url": reverse("country_detail", args=[country.pk]),
+            "country_code": country.code,
+            "gateway_language": Language.objects.get(code=country.extra_data["gateway_language"]).name
+        }
+        for country in Country.objects.all()
+    }
     return JsonResponse({"fills": language_to_color, "country_data": country_to_language})
 
 
