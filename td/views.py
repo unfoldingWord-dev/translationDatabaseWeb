@@ -45,18 +45,24 @@ def languages_autocomplete(request):
     if len(term) <= 3:
         term = term.encode("utf-8")
         # search: cc, lc
+        # first do a *starts with* style search of language code (lc)
         d.extend([
             x
             for x in data
-            if term in x["lc"].lower() or term in [y.lower() for y in x["cc"]]
+            if term == x["lc"].lower()[:len(term)]
+        ])
+        d.extend([
+            x
+            for x in data
+            if term in [y.lower() for y in x["cc"]]
         ])
     if len(term) >= 3:
-        # search: ln, lr
+        # search: lc, ln, lr
         term = term.encode("utf-8")
         d.extend([
             x
             for x in data
-            if term in x["ln"].lower() or term in x["lr"].lower()
+            if term in x["lc"] or term in x["ln"].lower() or term in x["lr"].lower()
         ])
     return JsonResponse({"results": d, "count": len(d), "term": term})
 
