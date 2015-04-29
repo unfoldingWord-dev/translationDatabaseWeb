@@ -2,11 +2,14 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
+from django.db.models import Q
 from django.contrib import messages
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from eventlog.models import log
+
+import operator
 
 from .forms import (
     CountryForm,
@@ -226,11 +229,37 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
         return reverse("country_detail", args=[self.object.pk])
 
 
+class LanguageTableSourceView(DataTableSourceView):
+
+    def __init__(self, **kwargs):
+        super(LanguageTableSourceView, self).__init__(**kwargs)
+
+    @property
+    def filtered_data(self):
+        if len(self.search_term) <= 3:
+            qs = self.queryset.filter(
+                reduce(
+                    operator.or_,
+                    [Q(code__istartswith=self.search_term)]
+                )
+            ).order_by("code")
+            if qs.count():
+                return qs
+        return self.queryset.filter(
+            reduce(
+                operator.or_,
+                [Q(x) for x in self.filter_predicates]
+            )
+        ).order_by(
+            self.order_by
+        )
+
+
 class LanguageListView(TemplateView):
     template_name = "uw/language_list.html"
 
 
-class AjaxLanguageListView(DataTableSourceView):
+class AjaxLanguageListView(LanguageTableSourceView):
     model = Language
     fields = [
         "code",
