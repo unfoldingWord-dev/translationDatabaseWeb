@@ -240,8 +240,7 @@ class LanguageTableSourceView(DataTableSourceView):
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
-                    [Q(code__istartswith=self.search_term),
-                     Q(iso_639_3__istartswith=self.search_term)]
+                    [Q(code__istartswith=self.search_term)]
                 )
             ).order_by("code")
             if qs.count():
