@@ -50,3 +50,10 @@ def _process_obs_response(response):
 
 def update_obs_resources():
     _process_obs_response(_get_obs_api_data())
+
+
+def seed_languages_gateway_language():
+    for lang in Language.objects.filter(gateway_language=None, gateway_flag=False):
+        if lang.country and lang.country.gateway_language():
+            lang.gateway_language = lang.country.gateway_language()
+            lang.save()
