@@ -57,4 +57,3 @@ def seed_languages_gateway_language():
         if lang.country and lang.country.gateway_language():
             lang.gateway_language = lang.country.gateway_language()
             lang.save()
-

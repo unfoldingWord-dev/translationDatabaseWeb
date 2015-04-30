@@ -2,6 +2,7 @@ from django.test import TestCase
 from ..models import Language, Country
 from ..tasks import seed_languages_gateway_language
 
+
 class SeedGatewayTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
