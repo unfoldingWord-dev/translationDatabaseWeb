@@ -60,7 +60,11 @@
                 popupTemplate: function(geography, data) {
                     if (data) {
                         geography.properties.url = data.url;
-                        return '<div class="hoverinfo"><div class="flag flag-' + data.country_code.toLowerCase() + '"> </div><strong>' + geography.properties.name + '</strong><br/>(' + data.fillKey + ') ' + data.gateway_language + '</div>';
+                        return '<div class="hoverinfo"><div class="flag flag-' +
+                                data.country_code.toLowerCase() + '"> </div><strong>' +
+                                geography.properties.name + '</strong><br/>' +
+                                data.gateway_languages.join('<br/>') +
+                                '</div>';
                     }
                     else
                         return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
