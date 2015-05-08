@@ -10,7 +10,7 @@ from account.signals import user_login_attempt, user_logged_in
 from eventlog.models import log
 
 from .models import AdditionalLanguage
-from td.uw.models import Language
+from td.uw.models import Language, Country
 from .signals import languages_integrated
 
 
@@ -37,11 +37,23 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, **kwargs):
     cache.delete("langnames")
+    cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Language)
 def handle_language_delete(sender, **kwargs):
     cache.delete("langnames")
+    cache.set("map_gateway_refresh", True)
+
+
+@receiver(post_save, sender=Country)
+def handle_country_save(sender, **kwargs):
+    cache.set("map_gateway_refresh", True)
+
+
+@receiver(post_delete, sender=Country)
+def handle_country_delete(sender, **kwargs):
+    cache.set("map_gateway_refresh", True)
 
 
 @receiver(languages_integrated)

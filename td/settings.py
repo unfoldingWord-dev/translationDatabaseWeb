@@ -226,3 +226,4 @@ CELERY_IGNORE_RESULT = True   # for now, we don't have any tasks that require lo
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']   # for security reasons, don't allow pickle
+CELERY_RESULT_BACKEND = "redis://"

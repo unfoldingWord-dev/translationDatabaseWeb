@@ -54,6 +54,21 @@ class Country(models.Model):
             self._gateway_language = next(iter(Language.objects.filter(code=data.get("gateway_language"))), None)
         return self._gateway_language
 
+    def gateway_languages(self, with_primary=True):
+        gl = self.gateway_language()
+        if gl:
+            ogls = [gl]
+        else:
+            ogls = []
+        for lang in self.language_set.all():
+            if lang.gateway_flag and lang not in ogls:
+                ogls.append(lang)
+            elif lang.gateway_language and lang.gateway_language not in ogls:
+                ogls.append(lang.gateway_language)
+        if not with_primary and gl:
+            ogls.remove(gl)
+        return ogls
+
     @classmethod
     def regions(cls):
         qs = cls.objects.all().values_list("region", flat=True).distinct()
