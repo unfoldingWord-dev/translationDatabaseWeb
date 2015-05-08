@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from celery import task
 import requests
 from eventlog.models import log
-from models import Language, Title, Media
+from models import Language, Title, Media, Country
 
 
 def _get_obs_api_data():
@@ -57,3 +60,33 @@ def seed_languages_gateway_language():
         if lang.country and lang.country.gateway_language():
             lang.gateway_language = lang.country.gateway_language()
             lang.save()
+
+
+def update_map_gateways():
+    country_gateways = {
+        country.alpha_3_code: {
+            "fillKey": country.gateway_language().code if country.gateway_language() else "defaultFill",
+            "url": reverse("country_detail", args=[country.pk]),
+            "country_code": country.code,
+            "gateway_language": country.gateway_language().name if country.gateway_language() else "",
+            "gateway_languages": [unicode("({0}) {1}").format(ogl.code, ogl.name) for ogl in country.gateway_languages()]
+        }
+        for country in Country.objects.all()
+    }
+    cache.set("map_gateways", country_gateways)
+    log(user=None, action="UPDATE_MAP_GATEWAYS")
+
+
+def get_map_gateways():
+    mg = cache.get("map_gateways", None)
+    if not mg:
+        update_map_gateways()
+        mg = cache.get("map_gateways", {})
+    return mg
+
+
+@task()
+def check_map_gateways():
+    if cache.get("map_gateways_refresh", True):
+        cache.set("map_gateways_refresh", False)
+        update_map_gateways()

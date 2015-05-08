@@ -8,6 +8,7 @@ from django.contrib import messages
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from eventlog.models import log
+from .tasks import get_map_gateways
 
 import operator
 
@@ -75,16 +76,8 @@ def country_map_data(request):
         "tpi": "#E966C7",
         "ta": "#8A8A8A"
     }
-    country_to_language = {
-        country.alpha_3_code: {
-            "fillKey": country.gateway_language().code if country.gateway_language() else "defaultFill",
-            "url": reverse("country_detail", args=[country.pk]),
-            "country_code": country.code,
-            "gateway_language": country.gateway_language().name if country.gateway_language() else ""
-        }
-        for country in Country.objects.all()
-    }
-    return JsonResponse({"fills": language_to_color, "country_data": country_to_language})
+    map_gateways = get_map_gateways()
+    return JsonResponse({"fills": language_to_color, "country_data": map_gateways})
 
 
 @login_required
