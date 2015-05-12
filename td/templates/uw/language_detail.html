@@ -60,6 +60,26 @@
         </tbody>
     </table>
 </div>
+    {% if language.gateway_to.count %}
+<div class="panel panel-default">
+    <div class="panel-heading"><h1 class="panel-title">Gateway To:</h1></div>
+    <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages_gateway" language.pk %}">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>ISO-639-3</th>
+                <th>Name</th>
+                <th>Direction</th>
+                <th>Country</th>
+                <th># Native Speakers</th>
+                <th>Gateway Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+    {% endif %}
 
 
 {% endblock %}

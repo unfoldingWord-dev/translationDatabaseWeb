@@ -228,6 +228,13 @@ class LanguageTableSourceView(DataTableSourceView):
         super(LanguageTableSourceView, self).__init__(**kwargs)
 
     @property
+    def queryset(self):
+        if "pk" in self.kwargs:
+            return Language.objects.filter(gateway_language=self.kwargs["pk"])
+        else:
+            return self.model._default_manager.all()
+
+    @property
     def filtered_data(self):
         if len(self.search_term) and len(self.search_term) <= 3:
             qs = self.queryset.filter(
@@ -262,6 +269,22 @@ class AjaxLanguageListView(LanguageTableSourceView):
         "country__name",
         "native_speakers",
         "gateway_language__name",
+        "gateway_flag"
+    ]
+    link_column = "code"
+    link_url_name = "language_detail"
+    link_url_field = "pk"
+
+
+class AjaxLanguageGatewayListView(LanguageTableSourceView):
+    model = Language
+    fields = [
+        "code",
+        "iso_639_3",
+        "name",
+        "direction",
+        "country__name",
+        "native_speakers",
         "gateway_flag"
     ]
     link_column = "code"
