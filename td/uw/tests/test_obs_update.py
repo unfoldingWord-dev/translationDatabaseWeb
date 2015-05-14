@@ -49,7 +49,7 @@ class OBSTestCase(TestCase):
             mock_response.status_code = 200
             mock_response.json.return_value = GOOD_JSON_DATA
             _process_obs_response(mock_response)
-            self.assertEquals(Resource.objects.count(), len(GOOD_JSON_DATA) * 2)
+            self.assertEquals(Resource.objects.count(), len(GOOD_JSON_DATA))
 
     def test_bad_obs_fetch(self):
         Resource.objects.all().delete()

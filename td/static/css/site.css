@@ -13,3 +13,17 @@
 .floating-map-title {
     position: absolute; width: 200px; margin-top: 100px; margin-left: 10px;
 }
+
+.multiple-checkbox ul {
+    list-style: none;
+}
+
+.multiple-checkbox label {
+    display: inline;
+}
+
+.multiple-checkbox input {
+    display: block;
+    position: absolute;
+    margin-left: -20px;
+}

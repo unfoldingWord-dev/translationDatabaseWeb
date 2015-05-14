@@ -34,14 +34,15 @@ def _process_obs_response(response):
         for row in response.json():
             lang = next(iter(Language.objects.filter(code=row["language"])), None)
             if lang:
+                resource, created = lang.resources.get_or_create(title=title)
+                resource.extra_data = row["status"]
+                resource.save()
                 for media, _ in medias:
-                    resource, created = lang.resources.get_or_create(title=title, media=media)
-                    resource.extra_data = row["status"]
-                    resource.save()
-                    if created:
-                        resources_created += 1
-                    else:
-                        resources_updated += 1
+                    resource.medias.add(media)
+                if created:
+                    resources_created += 1
+                else:
+                    resources_updated += 1
             record_count += 1
         log(
             user=None,

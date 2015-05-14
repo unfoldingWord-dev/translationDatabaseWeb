@@ -97,7 +97,7 @@ def integrate_imb_language_data():
         "bible_stories": ("onestory-bible-stories", "OneStory Bible Storires", "audio", "Audio"),
         "jesus_film": ("jesus-film", "The Jesus Film", "video", "Video"),
         "gospel_recording": ("gospel-recording-grn", "Gospel Recording (GRN)", "audio", "Audio"),
-        "radio_broadcast": ("radio-broadcast-twr-febc", "Radio Broadcast (TWR/FEBC)", "audo", "Audio"),
+        "radio_broadcast": ("radio-broadcast-twr-febc", "Radio Broadcast (TWR/FEBC)", "audio", "Audio"),
         "written_scripture": ("bible-portions", "Bible (Portions)", "print", "Print")
     }
     for imb in IMBPeopleGroup.objects.order_by("language").distinct("language"):
@@ -109,6 +109,7 @@ def integrate_imb_language_data():
                 if getattr(imb, k):
                     title = _get_or_create_object(Title, imb_map[k][0], imb_map[k][1])
                     media = _get_or_create_object(Media, imb_map[k][2], imb_map[k][3])
-                    resource, _ = Resource.objects.get_or_create(language=language, title=title, media=media)
+                    resource, _ = Resource.objects.get_or_create(language=language, title=title)
                     resource.published_flag = True
                     resource.save()
+                    resource.medias.add(media)
