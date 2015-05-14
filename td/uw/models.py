@@ -175,7 +175,7 @@ class Language(models.Model):
 
     @property
     def lr(self):
-        if self.country:
+        if self.country and self.country.region:
             return self.country.region.name.encode("utf-8")
         return ""
 
