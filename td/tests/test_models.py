@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from mock import patch
 
-from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3
+from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3, WikipediaISOCountry
 
 from ..models import AdditionalLanguage
 from ..uw.models import Language
@@ -40,6 +40,7 @@ class LanguageIntegrationTests(TestCase):
         ethno = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/LanguageCodes.tab")).read()  # noqa
         country = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/CountryCodes.tab")).read()  # noqa
         sil = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/iso_639_3.tab")).read()  # noqa
+        w_country = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/wikipedia_country.html")).read()
         with patch("requests.Session") as mock_requests:
             mock_requests.get().status_code = 200
             mock_requests.get().content = wikipedia
@@ -50,6 +51,9 @@ class LanguageIntegrationTests(TestCase):
             EthnologueCountryCode.reload(mock_requests)
             mock_requests.get().content = sil
             SIL_ISO_639_3.reload(mock_requests)
+            mock_requests.get().content = w_country
+            WikipediaISOCountry.reload(mock_requests)
+
         management.call_command("loaddata", "additional-languages.json", verbosity=1, noinput=True)
         management.call_command("loaddata", "uw_region_seed.json", verbosity=1, noinput=True)
         update_countries_from_imports()  # run task synchronously here
