@@ -52,7 +52,7 @@
                         {% endif %}
                     </td>
                     <td>{{ resource.title }}</td>
-                    <td>{{ resource.media }}</td>
+                    <td>{% for media in resource.medias.all %}<span class="label label-default">{{ media }}</span><br/>{% endfor %}</td>
                     <td>{{ resource.published_flag }}</td>
                     <td>{{ resource.extra_data|dict_to_dl }}</td>
                 </tr>

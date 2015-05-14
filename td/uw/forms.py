@@ -122,7 +122,6 @@ class LanguageForm(EntityTrackingForm):
 
 
 class ResourceForm(forms.ModelForm):
-
     required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
@@ -132,10 +131,13 @@ class ResourceForm(forms.ModelForm):
         model = Resource
         fields = [
             "title",
-            "media",
+            "medias",
             "published_flag",
             "extra_data"
         ]
+        widgets = {
+            "medias": forms.CheckboxSelectMultiple(attrs={"class": "multi-checkbox"})
+        }
 
 
 class UploadGatewayForm(forms.Form):

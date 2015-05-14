@@ -235,7 +235,8 @@ class Title(models.Model):
 class Resource(models.Model):
     title = models.ForeignKey(Title, related_name="versions")
     language = models.ForeignKey(Language, related_name="resources")
-    media = models.ForeignKey(Media, blank=True, null=True)
+    # media = models.ForeignKey(Media, blank=True, null=True)
+    medias = models.ManyToManyField(Media, blank=True, null=True, verbose_name="Media")
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
     extra_data = JSONField(blank=True)
 
@@ -243,7 +244,7 @@ class Resource(models.Model):
         return "{0} in {1}".format(str(self.title), str(self.language))
 
     class Meta:
-        unique_together = ("title", "language", "media")
+        unique_together = ("title", "language")
 
 
 class EAVBase(models.Model):
