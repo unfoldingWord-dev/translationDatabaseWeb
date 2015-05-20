@@ -5,7 +5,9 @@ from .models import (
     Country,
     Language,
     Network,
-    Resource
+    Resource,
+    Publisher,
+    Title
 )
 
 
@@ -121,6 +123,28 @@ class LanguageForm(EntityTrackingForm):
         ]
 
 
+class TitleForm(forms.ModelForm):
+    required_css_class = "required"
+
+    class Meta:
+        model = Title
+        fields = [
+            "name",
+            "slug",
+            "publisher"
+        ]
+
+
+class PublisherForm(forms.ModelForm):
+    required_css_class = "required"
+
+    class Meta:
+        model = Publisher
+        fields = [
+            "name"
+        ]
+
+
 class ResourceForm(forms.ModelForm):
     required_css_class = "required"
 
@@ -132,11 +156,15 @@ class ResourceForm(forms.ModelForm):
         fields = [
             "title",
             "medias",
+            "publisher",
             "published_flag",
             "extra_data"
         ]
         widgets = {
             "medias": forms.CheckboxSelectMultiple(attrs={"class": "multi-checkbox"})
+        }
+        help_texts = {
+            "publisher": "overrides the publisher set for the selected Title"
         }
 
 

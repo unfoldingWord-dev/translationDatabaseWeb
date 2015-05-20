@@ -1,0 +1,36 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            {% if user.is_authenticated %}
+            <a class="btn btn-primary pull-right btn-xs" href="{% url "title_create" %}">
+                <i class="fa fa-plus"></i>
+                Add
+            </a>
+            {% endif %}
+            <h1 class="panel-title">Titles</h1>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Publisher</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for title in title_list %}
+                    <tr>
+                        <td>{% if user.is_authenticated %}<a class="btn btn-default btn-xs" href="{% url "title_edit" title.slug %}"><i class="fa fa-pencil"></i> Edit</a>{% endif %}</td>
+                        <td><a href="{% url "title_detail" title.slug %}">{{ title.name }}</a></td>
+                        <td>{{ title.publisher }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

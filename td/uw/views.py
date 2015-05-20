@@ -18,6 +18,8 @@ from .forms import (
     NetworkForm,
     ResourceForm,
     UploadGatewayForm,
+    TitleForm,
+    PublisherForm
 )
 from .models import (
     Country,
@@ -26,6 +28,8 @@ from .models import (
     Resource,
     transform_country_data,
     Region,
+    Title,
+    Publisher
 )
 
 from td.utils import DataTableSourceView
@@ -373,6 +377,68 @@ class NetworkListView(ListView):
         qs = super(NetworkListView, self).get_queryset()
         qs = qs.order_by("name")
         return qs
+
+
+class PublisherListView(ListView):
+    model = Publisher
+
+    def get_queryset(self):
+        qs = super(PublisherListView, self).get_queryset()
+        qs = qs.order_by("name")
+        return qs
+
+
+class PublisherDetailView(DetailView):
+    model = Publisher
+
+
+class PublisherEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
+    model = Publisher
+    form_class = PublisherForm
+    action_kind = "EDIT"
+
+    def get_success_url(self):
+        return reverse("publisher_detail", args=[self.object.pk])
+
+
+class PublisherCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
+    model = Publisher
+    form_class = PublisherForm
+    action_kind = "CREATE"
+
+    def get_success_url(self):
+        return reverse("publisher_detail", args=[self.object.pk])
+
+
+class TitleListView(ListView):
+    model = Title
+
+    def get_queryset(self):
+        qs = super(TitleListView, self).get_queryset()
+        qs = qs.order_by("name")
+        return qs
+
+
+class TitleDetailView(DetailView):
+    model = Title
+
+
+class TitleEditView(LoginRequiredMixin, EventLogMixin, UpdateView):
+    model = Title
+    form_class = TitleForm
+    action_kind = "EDIT"
+
+    def get_success_url(self):
+        return reverse("title_detail", args=[self.object.slug])
+
+
+class TitleCreateView(LoginRequiredMixin, EventLogMixin, CreateView):
+    model = Title
+    form_class = TitleForm
+    action_kind = "CREATE"
+
+    def get_success_url(self):
+        return reverse("title_detail", args=[self.object.slug])
 
 
 class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):

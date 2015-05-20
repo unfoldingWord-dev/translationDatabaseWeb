@@ -222,9 +222,19 @@ class Media(models.Model):
 
 
 @python_2_unicode_compatible
+class Publisher(models.Model):
+    name = models.CharField(max_length=255)
+    extra_data = JSONField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
 class Title(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
+    publisher = models.ForeignKey(Publisher, blank=True, null=True)
     extra_data = JSONField(blank=True)
 
     def __str__(self):
@@ -235,10 +245,13 @@ class Title(models.Model):
 class Resource(models.Model):
     title = models.ForeignKey(Title, related_name="versions")
     language = models.ForeignKey(Language, related_name="resources")
-    # media = models.ForeignKey(Media, blank=True, null=True)
     medias = models.ManyToManyField(Media, blank=True, null=True, verbose_name="Media")
+    publisher = models.ForeignKey(Publisher, blank=True, null=True)
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
     extra_data = JSONField(blank=True)
+
+    def the_publisher(self):
+        return self.publisher or self.title.publisher
 
     def __str__(self):
         return "{0} in {1}".format(str(self.title), str(self.language))
