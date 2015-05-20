@@ -1,0 +1,36 @@
+{% extends "site_base.html" %}
+
+{% load humanize bootstrap %}
+
+{% block body %}
+<ol class="breadcrumb">
+  <li><a href="{% url "publisher_list" %}">Publishers</a></li>
+  {% if publisher %}<li><a href="{% url "publisher_detail" publisher.pk %}">{{ publisher.name }}</a></li> {% endif %}
+  <li class="active">{% if form.instance.pk %}Edit {{ publisher.name }}{% else %}Add Publisher{% endif %}</li>
+</ol>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">{% if form.instance.pk %}Edit {{ publisher.name }}{% else %}Add Publisher{% endif %}</h1>
+            </div>
+            <div class="panel-body">
+                <form class="form" action="." method="POST">
+                    {% csrf_token %}
+                    {{ form|bootstrap }}
+                    <div class="pull-right">
+                        {% if form.instance.pk %}
+                            {% url "publisher_detail" form.instance.pk as cancel_url %}
+                        {% else %}
+                            {% url "publisher_list" as cancel_url %}
+                        {% endif %}
+                        <a class="btn btn-default" href="{{ cancel_url }}">Cancel</a>
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

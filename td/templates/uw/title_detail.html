@@ -1,0 +1,52 @@
+{% extends "site_base.html" %}
+{% load render_dict %}
+{% load humanize %}
+
+{% block body %}
+<ol class="breadcrumb">
+  <li><a href="{% url "title_list" %}">Titles</a></li>
+  <li class="active">{{ title.name }}</li>
+</ol>
+
+<h1>
+    {{ title.name }}
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary btn-xs" href="{% url "title_edit" title.slug %}"><i class="fa fa-pencil"></i> Edit</a>
+    {% endif %}
+</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr><th>Title</th><td>{{ title.name }}</td></tr>
+                <tr><th>Publisher</th><td>{{ title.publisher.name }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Resources</h2>
+    </div>
+    <table class="table table-bordered">
+        <thead><tr><th></th><th>Language</th><th>Media</th><th>Published</th><th>Info</th></tr></thead>
+        <tbody>
+            {% for resource in title.versions.all %}
+                <tr>
+                    <td>
+                        {% if user.is_authenticated %}
+                        <a class="btn btn-default btn-xs" href="{% url "resource_edit" resource.pk %}"><i class="fa fa-pencil"></i> Edit</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ resource.language }}</td>
+                    <td>{% for media in resource.medias.all %}<span class="label label-default">{{ media }}</span><br/>{% endfor %}</td>
+                    <td>{{ resource.published_flag }}</td>
+                    <td>{{ resource.extra_data|dict_to_dl }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
