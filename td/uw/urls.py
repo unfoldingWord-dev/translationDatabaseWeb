@@ -54,6 +54,7 @@ urlpatterns = patterns(
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
     url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
+    url(r"languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
     url(r"publishers/$", PublisherListView.as_view(), name="publisher_list"),
     url(r"publishers/create/$", PublisherCreateView.as_view(), name="publisher_create"),
     url(r"publishers/(?P<pk>\d+)/$", PublisherDetailView.as_view(), name="publisher_detail"),
@@ -65,8 +66,6 @@ urlpatterns = patterns(
 
     url(r"gateway_language_flag/update/$", upload_gateway_flag_file, name="gateway_flag_update"),
     url(r"rtl_languages/update/$", upload_rtl_list, name="rtl_languages_update"),
-
-    url(r"resources/(?P<pk>\d+)/edit/$", ResourceEditView.as_view(), name="resource_edit"),
 
     url(r"country_gateways.json$", country_tree_data, name="country_tree_data"),
     url(r"country_map_data.json$", country_map_data, name="country_map_data"),
