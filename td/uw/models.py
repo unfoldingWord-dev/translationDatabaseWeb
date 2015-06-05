@@ -248,6 +248,8 @@ class Resource(models.Model):
     medias = models.ManyToManyField(Media, blank=True, null=True, verbose_name="Media")
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
+    published_date = models.DateField(default=None, null=True, blank=True, db_index=True)
+    copyright_year = models.IntegerField(default=None, null=True, blank=True, db_index=True, verbose_name="copyright")
     extra_data = JSONField(blank=True)
 
     def the_publisher(self):

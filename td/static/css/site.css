@@ -22,7 +22,7 @@
     display: inline;
 }
 
-.multiple-checkbox input {
+.multiple-checkbox li input {
     display: block;
     position: absolute;
     margin-left: -20px;
