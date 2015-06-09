@@ -20,9 +20,11 @@
  <div id="maprow" class="row maprow">
     <h2 class="floating-map-title">gateway languages</h2>
     <div id="mapcontainer" class="col-lg-11 col-md-11 col-sm-11">
-
     </div>
  </div>
+<div class="exportbutton">
+    <button class="pull-right btn btn-success" onclick="submit_download_form('pdf');"><i class="fa fa-download"></i> PDF</button>
+</div>
 {% endblock %}
 
 {% block banner %}
@@ -36,6 +38,13 @@
 
 
 {% block custom_bottom_script %}
+    <!-- Hidden <FORM> to submit the SVG data to the server, which will convert it to SVG/PDF/PNG downloadable file.
+     The form is populated and submitted by the JavaScript below. -->
+    <form id="svgform" method="post" action="{% url "gateway_languages_map_export" %}">
+      <input type="hidden" id="output_format" name="output_format" value="">
+      <input type="hidden" id="data" name="data" value="">
+    </form>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
     <script src="{% static "js/datamaps.world.min.js" %}"></script>
@@ -87,5 +96,25 @@
             map.resize();
         })
     });
+/*
+   Utility function: populates the <FORM> with the SVG data
+   and the requested output format, and submits the form.
+*/
+function submit_download_form(output_format)
+{
+	// Get the d3js SVG element
+	var tmp = document.getElementById("mapcontainer");
+	var svg = tmp.getElementsByTagName("svg")[0];
+	// Extract the data as SVG text string
+	var svg_xml = (new XMLSerializer).serializeToString(svg);
+
+	// Submit the <FORM> to the server.
+	// The result will be a file to download.
+	var form = document.getElementById("svgform");
+	form['output_format'].value = output_format;
+	form['data'].value = svg_xml ;
+	form.submit();
+}
+
 </script>
 {% endblock %}
