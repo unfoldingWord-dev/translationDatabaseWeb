@@ -27,3 +27,9 @@
     position: absolute;
     margin-left: -20px;
 }
+
+.exportbutton {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    margin-right: 15px;
+}
