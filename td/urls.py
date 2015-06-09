@@ -32,6 +32,7 @@ urlpatterns = patterns(
     url(r"^exports/codes-d43.txt$", "td.views.codes_text_export", name="codes_text_export"),
     url(r"^exports/langnames.txt$", "td.views.names_text_export", name="names_text_export"),
     url(r"^exports/langnames.json$", "td.views.names_json_export", name="names_json_export"),
+    url(r"^exports/gatewaylanguages-map/$", "td.views.export_svg", name="gateway_languages_map_export"),
 
     url(r"^uw/", include("td.uw.urls")),
 
