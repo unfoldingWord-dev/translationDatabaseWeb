@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
+from django.views.decorators.csrf import csrf_exempt
 
 from td.imports.models import (
     EthnologueCountryCode,
@@ -14,7 +15,7 @@ from td.imports.models import (
 from td.uw.models import Language
 from .models import AdditionalLanguage
 
-from .utils import DataTableSourceView
+from .utils import DataTableSourceView, svg_to_pdf
 
 
 def codes_text_export(request):
@@ -36,6 +37,15 @@ def cache_get_or_set(key, acallable):
         data = acallable()
         cache.set(key, data, None)
     return data
+
+
+@csrf_exempt
+def export_svg(request):
+    svg = request.POST.get("data")
+    response = HttpResponse(content_type="application/pdf")
+    response.write(svg_to_pdf(svg))
+    response["Content-Disposition"] = "attachment; filename=gateway_languages_map.pdf"
+    return response
 
 
 def languages_autocomplete(request):

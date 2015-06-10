@@ -7,6 +7,10 @@ from django.views.generic import View
 from django.template import Variable, VariableDoesNotExist
 from django.core.urlresolvers import reverse
 
+from xml.dom import minidom
+from svglib.svglib import SvgRenderer
+from reportlab.graphics import renderPDF
+
 
 def str_to_bool(value, allow_null=False):
     if str(value).strip().lower() in ["yes", "true", "1", "y"]:
@@ -17,6 +21,15 @@ def str_to_bool(value, allow_null=False):
         return None
     else:
         return False
+
+
+def svg_to_pdf(svg_data):
+    svgr = SvgRenderer()
+    doc = minidom.parseString(svg_data.encode("utf-8"))
+    svgr.render(doc.documentElement)
+    drawing = svgr.finish()
+    pdf = renderPDF.drawToString(drawing)
+    return pdf
 
 
 class DataTableSourceView(View):
