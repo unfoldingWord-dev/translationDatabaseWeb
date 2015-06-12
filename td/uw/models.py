@@ -204,7 +204,7 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
+            dict(pk=x.pk, lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
             for x in cls.objects.all().order_by("code")
         ]
 

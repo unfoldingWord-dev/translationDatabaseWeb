@@ -21,13 +21,14 @@
               },
               initSelection: function (element, callback) {
                 data = {
+                  "pk": element.data("lang-pk"),
                   "ln": element.data("lang-ln"),
                   "lc": element.data("lang-lc"),
                   "lr": element.data("lang-lr")
                 }
                 callback(data);
               },
-              id: function (lang) { return lang.lc; },
+              id: function (lang) { return lang.pk; },
               formatResult: function (lang) {
                 return "<strong>" + lang.ln + "</strong> <code>" + lang.lc + "</code> [" + lang.lr + "]";
               },
