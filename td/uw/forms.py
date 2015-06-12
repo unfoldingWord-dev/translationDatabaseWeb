@@ -44,9 +44,9 @@ class CountryForm(EntityTrackingForm):
     gl = forms.CharField(max_length=3)
 
     def clean_gl(self):
-        code = self.cleaned_data["gl"]
-        if code:
-            return Language.objects.get(code=code).code
+        pk = self.cleaned_data["gl"]
+        if pk:
+            return Language.objects.get(pk=pk).code
 
     def __init__(self, *args, **kwargs):
         super(CountryForm, self).__init__(*args, **kwargs)
@@ -65,7 +65,8 @@ class CountryForm(EntityTrackingForm):
         if self.instance.pk is not None:
             if self.instance.gateway_language():
                 lang = self.instance.gateway_language()
-                self.fields["gl"].initial = lang.code
+                self.fields["gl"].initial = lang.pk
+                self.fields["gl"].widget.attrs["data-lang-pk"] = lang.pk
                 self.fields["gl"].widget.attrs["data-lang-ln"] = lang.ln
                 self.fields["gl"].widget.attrs["data-lang-lc"] = lang.lc
                 self.fields["gl"].widget.attrs["data-lang-lr"] = lang.lr
@@ -89,9 +90,9 @@ class LanguageForm(EntityTrackingForm):
     required_css_class = "required"
 
     def clean_gateway_language(self):
-        code = self.cleaned_data["gateway_language"]
-        if code:
-            return Language.objects.get(code=code)
+        pk = self.cleaned_data["gateway_language"]
+        if pk:
+            return Language.objects.get(pk=pk)
 
     def __init__(self, *args, **kwargs):
         super(LanguageForm, self).__init__(*args, **kwargs)
@@ -109,6 +110,7 @@ class LanguageForm(EntityTrackingForm):
         if self.instance.pk is not None:
             lang = self.instance.gateway_language
             if lang:
+                self.fields["gateway_language"].widget.attrs["data-lang-pk"] = lang.pk
                 self.fields["gateway_language"].widget.attrs["data-lang-ln"] = lang.ln
                 self.fields["gateway_language"].widget.attrs["data-lang-lc"] = lang.lc
                 self.fields["gateway_language"].widget.attrs["data-lang-lr"] = lang.lr
