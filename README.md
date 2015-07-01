@@ -4,6 +4,11 @@ translationDatabase
 [![Build Status](https://travis-ci.org/unfoldingWord-dev/translationDatabaseWeb.svg)](https://travis-ci.org/unfoldingWord-dev/translationDatabaseWeb)
 [![Coverage Status](https://img.shields.io/coveralls/unfoldingWord-dev/translationDatabaseWeb.svg)](https://coveralls.io/r/unfoldingWord-dev/translationDatabaseWeb)
 
+## Goals
+
+The goals for translationDatabase are to manage and track data for languages and the progress of getting unrestricted biblical content into every language.
+
+For more information on the unfoldingWord project, see the [About page](https://unfoldingword.org/about/).
 
 ## Data Sources
 
