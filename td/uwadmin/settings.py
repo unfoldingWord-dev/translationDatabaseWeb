@@ -1,24 +1,18 @@
 import os
-import dj_database_url
-import djcelery
 
-
-# initializes djcelery (django-celery) support
-djcelery.setup_loader()
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = PACKAGE_ROOT
 
-ADMINS = [
-    ("Patrick Altman", "paltman@eldarion.com"),
-]
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
-    "default": dj_database_url.config(default="postgres://localhost/td"),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "dev.db",
+    }
 }
 
 ALLOWED_HOSTS = []
@@ -81,7 +75,7 @@ STATICFILES_FINDERS = [
 ]
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = "b%)gb-x(1%^qd@mpp!p&_1hkx(l^5(76$9#d2gs4kqt!h=-1^b"
+SECRET_KEY = "*8&!7c)+6vpo5znx1_&@!k-qf#0xeyc0-y)s)nji5=^4-$$a)p"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = [
@@ -105,7 +99,6 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 MIDDLEWARE_CLASSES = [
     "reversion.middleware.RevisionMiddleware",
-    "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -115,10 +108,10 @@ MIDDLEWARE_CLASSES = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "td.urls"
+ROOT_URLCONF = "uwadmin.urls"
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = "td.wsgi.application"
+WSGI_APPLICATION = "uwadmin.wsgi.application"
 
 TEMPLATE_DIRS = [
     os.path.join(PACKAGE_ROOT, "templates"),
@@ -128,7 +121,6 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.humanize",
     "django.contrib.messages",
     "django.contrib.sessions",
     "django.contrib.sites",
@@ -142,26 +134,14 @@ INSTALLED_APPS = [
     "account",
     "eventlog",
     "metron",
-    "opbeat.contrib.django",
-    "kaleo",
-    "djcelery",
     "reversion",
+    "djcelery",
+    "absoluteuri",
 
     # project
-    "td",
-    "td.imports",
-    "td.uw",
-    "td.uwadmin",
-    "td.uwutils"
+    "uwadmin",
+    "uwutils"
 ]
-
-OPBEAT = {
-    "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
-    "APP_ID": "0a390f34de",
-    "SECRET_TOKEN": "33bfd9626aefc97b73a376310d184b6da1715ed6"
-}
-
-DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -171,35 +151,23 @@ DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "simple": {
-            "format": "%(levelname)s %(message)s"
-        },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse"
+        }
     },
     "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "simple"
-        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler"
+        }
     },
     "loggers": {
-        "": {
-            "handlers": ["console"],
-            "level": "INFO",
-        },
         "django.request": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
             "propagate": True,
-        },
-    }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "127.0.0.1:6379",
-        "OPTIONS": {
-            "DB": 0,
         },
     }
 }
@@ -208,7 +176,10 @@ FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
 ]
 
+# Email settings
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_NOTIFY_LIST = ["someone@unfoldingword.org"]
+EMAIL_FROM = "uwadmin@unfoldingword.org"
 
 ACCOUNT_OPEN_SIGNUP = False
 ACCOUNT_EMAIL_UNIQUE = True
@@ -216,18 +187,25 @@ ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
 ACCOUNT_LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
-ACCOUNT_USE_AUTH_AUTHENTICATE = True
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
-
-UWADMIN_OBS_API_URL = "https://api.unfoldingword.org/obs/txt/1/obs-catalog.json"
 
 # Celery / Redis Backend configuration
 BROKER_URL = "redis://localhost:6379/0"
 CELERY_IGNORE_RESULT = True   # for now, we don't have any tasks that require looking at the result
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']   # for security reasons, don't allow pickle
-CELERY_RESULT_BACKEND = "redis://"
+CELERY_ACCEPT_CONTENT = ["json", "msgpack", "yaml"]   # for security reasons, don't allow pickle
+
+
+# Location of dokuwiki related stuff
+PAGES_ROOT = '/var/www/vhosts/door43.org/httpdocs/data/gitrepo/pages'
+
+
+# Override above settings with anything in local_settings
+try:
+    from local_settings import *  # noqa
+except ImportError:
+    pass

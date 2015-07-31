@@ -1,0 +1,39 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}Home{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}uW Admin{% endblocktrans %}</h1>
+            {% if user.is_authenticated %}
+            <p>
+                {% blocktrans %}
+                What do you want to do?
+                {% endblocktrans %}
+            </p>
+            {% url "contact_list" as contacts_url %}
+            {% url "obs_list" as obs_list %}
+            {% url "obs_create" as obs_create %}
+            {% blocktrans %}
+                <a href="{{ contacts_url }}" class="btn btn-primary large">Contacts</a>
+                <a href="{{ obs_list }}" class="btn btn-primary large">View OBS Records</a>
+                <a href="{{ obs_create }}" class="btn btn-primary large">Create OBS Records</a>
+            {% endblocktrans %}
+            {% else %}
+            <p>
+                {% url "account_login" as login_url %}
+                {% blocktrans %}
+                    Login to get started.
+                    <a href="{{ login_url }}" class="btn btn-default">Log In</a>
+                {% endblocktrans %}
+            </p>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

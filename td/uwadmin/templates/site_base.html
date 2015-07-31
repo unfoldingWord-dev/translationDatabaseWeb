@@ -1,0 +1,81 @@
+{% extends "theme_bootstrap/base.html" %}
+
+{% load staticfiles %}
+{% load metron_tags %} {% load i18n %}
+
+
+{% block style_base %}
+    <link href="{% static "pinax/css/theme.css" %}" rel="stylesheet">
+    <link href="{% static "css/site.css" %}" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2.css" %}">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2-bootstrap.css" %}">
+    {% block extra_style %}{% endblock %}
+{% endblock %}
+
+
+{% block extra_head_base %}
+    {% block extra_head %}{% endblock %}
+{% endblock %}
+
+
+{% block footer %}
+    {% include "_footer.html" %}
+{% endblock %}
+
+
+{% block extra_body_base %}
+    {% analytics %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
+
+{% block nav %}
+    {% if user.is_authenticated %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url "contact_list" %}"><i class="fa fa-group"></i> Contacts</a>
+        </li>
+        <li>
+            <a href="{% url "obs_list" %}"><i class="fa fa-cogs"></i> OBS Records</a>
+        </li>
+    </ul>
+    {% else %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url "publish_request" %}"><i class="fa fa-th"></i> Request Publication</a>
+        </li>
+    </ul>
+    {% endif %}
+{% endblock %}
+
+
+{% block script_base %}
+    {{ block.super }}
+    <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#contacts").autocomplete({
+              source: "{% url "api_contacts" %}",
+              minLength: 2,
+              select: function( event, ui ) {
+                  window.location.href = ui.item.url;
+              }
+            });
+        });
+        $(function() {
+            $( "#id_date_started" ).datepicker();
+        });
+        $(function() {
+            $( "#id_publish_date" ).datepicker();
+        });
+        $(function() {
+            $("#contacts-id").autocomplete({
+              source: "{% url "api_contacts" %}",
+              minLength: 2
+            });
+        });
+    </script>
+    <script src="{% static "select2-3.5.2/select2.min.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
+    {% block extra_script %}{% endblock %}
+{% endblock %}

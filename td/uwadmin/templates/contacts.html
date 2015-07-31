@@ -1,0 +1,27 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}Contacts{% endblock %}
+
+{% block body %}
+    <ul class="breadcrumb">
+        <li><a href="{% url "home" %}">Home</a></li>
+        <li>Contacts</li>
+    </ul>
+
+    <h1>{% trans "Contacts" %}</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                <input type="text" class="form-control" id="contacts" placeholder="Search...">
+            </div>
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <a href="/contacts/create/"><button class="btn btn-primary"><i class="fa fa-user"></i> Create</button></a>
+        </div>
+    </div>
+{% endblock %}

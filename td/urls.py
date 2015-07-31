@@ -25,7 +25,7 @@ from .views import (
 urlpatterns = patterns(
     "",
     url(r"^$", TemplateView.as_view(template_name="homepage.html"), name="home"),
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^siteadmin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
     url(r"^invites/", include("kaleo.urls")),
 
@@ -35,6 +35,7 @@ urlpatterns = patterns(
     url(r"^exports/gatewaylanguages-map/$", "td.views.export_svg", name="gateway_languages_map_export"),
 
     url(r"^uw/", include("td.uw.urls")),
+    url(r"^admin/", include("td.uwadmin.urls")),
 
     url(r"^data-sources/additional-languages/$", AdditionalLanguageListView.as_view(), name="ds_additional_languages"),
     url(r"^data-sources/ethnologue/country-codes/$", EthnologueCountryCodeListView.as_view(), name="ds_ethnologue_country_codes"),

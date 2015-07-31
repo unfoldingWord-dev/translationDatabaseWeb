@@ -1,0 +1,74 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}Request Publication{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        Request a Publication
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <form action="" method="post" class="form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                        {% if form.instance.pk %}
+                            <div>
+                            <ul class="list-unstyled">
+                                {% for la in form.instance.licenseagreement_set.all %}
+                                    <li><a href="{{ la.document.url }}" class="btn btn-primary"><i class="fa fa-paperclip"></i> View</a> {{ la.document.name }}</li>
+                                {% endfor %}
+                            </ul>
+                            </div>
+                            <div class="actions pull-right">
+                              <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Approve</button>
+                              <a href="{% url "publish_request_delete" form.instance.pk %}" class="btn btn-warning"><i class="fa fa-ban"></i> Reject</a>
+                            </div>
+                        {% else %}
+                        <button type="submit" class="btn btn-primary pull-right">
+                            {% if form.errors %}
+                                Re-Submit
+                                {% else %}
+                            Submit
+                                {% endif %}
+                        </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">
+$(function() {
+ $("#id_source_text").change(function() {
+     var SelectedValue = $("#id_source_text").val();
+var ServiceUrl = "{% url "ajax_language_version" %}" + "?q=" + SelectedValue;
+var content = '';
+$.support.cors = true;
+$.ajax({
+type: 'GET',
+url: ServiceUrl,
+async: true,
+cache: false,
+crossDomain: true,
+contentType: "application/json; charset=utf-8",
+dataType: 'json',
+error: function (xhr, err) {
+},
+success: function (result, status) {
+$('#id_source_version').val(result.current_version);
+}
+});
+});
+});
+    </script>
+{% endblock %}
