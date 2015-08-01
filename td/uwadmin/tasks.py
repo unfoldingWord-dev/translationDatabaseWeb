@@ -86,5 +86,3 @@ def approve_publish_request(request_id, user_id):
     pr.save()
     notify_requestor_approved.delay(pr.pk)
     return obs.pk
-
-

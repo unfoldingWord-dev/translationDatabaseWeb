@@ -13,7 +13,7 @@ from account.mixins import LoginRequiredMixin
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
 from .models import Contact, OpenBibleStory, LangCode, PublishRequest
 from .signals import published
-from .tasks import send_request_email, approve_publish_request, notify_requestor_rejected
+from .tasks import send_request_email, approve_publish_request
 
 
 @login_required
@@ -201,7 +201,7 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         # check validity of request...
         self.object = form.save()
         messages.info(self.request, "Publish Request Approved")
-        obs_id = approve_publish_request(self.object.pk, self.request.user.id)
+        approve_publish_request(self.object.pk, self.request.user.id)
         return redirect("obs_update", code=self.object.language.langcode)
 
 
@@ -211,8 +211,8 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.info(self.request, "Publish Request Rejected/Deleted")
-        pr = self.get_object()
         # todo: when we figure out how to indicate the request is rejected... send an email
+        # pr = self.get_object()
         # notify_requestor_rejected(pr.pk)
         return super(PublishRequestDeleteView, self).delete(request, *args, **kwargs)
 
