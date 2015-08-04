@@ -1,0 +1,84 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}{% trans "Open Bible Stories" %}{% endblock %}
+
+{% block body %}
+    <ul class="breadcrumb">
+        <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+        <li>{% trans "Open Bible Stories" %}</li>
+    </ul>
+
+    <div class="panel panel-default">
+        <div class="panel-heading panel-heading-with-table">
+            <h2 class="panel-title">{% trans "Publish Requests" %}</h2>
+        </div>
+        {% if publish_requests %}
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Requestor</th>
+                        <th>Resource</th>
+                        <th>Language</th>
+                        <th>Checking Level</th>
+                        <th>Contributors</th>
+                        <th>Created at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pr in publish_requests %}
+                        <tr>
+                            {% include "uwadmin/_pr_row_data.html" with pr=pr %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel-body">None</div>
+        {% endif %}
+        <div class="panel-heading panel-heading-with-table">
+            <a href="{% url "obs_create" %}" class="btn btn-xs btn-primary pull-right">
+                <i class="fa fa-plus"></i>
+                Add
+            </a>
+            <h2 class="panel-title">{% trans "Open Bible Stories" %}</h2>
+        </div>
+        {% if object_list %}
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Language</th>
+                        <th>Contact</th>
+                        <th>Date Started</th>
+                        <th>Notes</th>
+                        <th>Offline</th>
+                        <th>Publish Date</th>
+                        <th>Version</th>
+                        <th>Source</th>
+                        <th>Checking Entity</th>
+                        <th>Checking Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obs in object_list %}
+                        <tr>
+                            {% include "uwadmin/_obs_row_data.html" %}
+                        </tr>
+                        {% for version in obs.versions %}
+                            <tr class="version">
+                                {% include "uwadmin/_obs_row_data.html" with obs=version.object_version.object %}
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel-body">None, <a href="{% url "obs_create" %}">add one</a>!</div>
+        {% endif %}
+    </div>
+
+{% endblock %}

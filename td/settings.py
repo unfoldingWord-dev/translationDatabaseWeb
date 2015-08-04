@@ -104,6 +104,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 
 MIDDLEWARE_CLASSES = [
+    "reversion.middleware.RevisionMiddleware",
     "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -144,11 +145,14 @@ INSTALLED_APPS = [
     "opbeat.contrib.django",
     "kaleo",
     "djcelery",
+    "reversion",
 
     # project
     "td",
     "td.imports",
-    "td.uw"
+    "td.uw",
+    "td.uwadmin",
+    "td.uwutils"
 ]
 
 OPBEAT = {

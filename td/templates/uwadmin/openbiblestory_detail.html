@@ -1,0 +1,29 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}{{ openbiblestory.language.langname }} Open Bible Story{% endblock %}
+
+{% block body %}
+    <ul class="breadcrumb">
+        <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+        <li><a href="{% url "obs_list" %}">{% trans "Open Bible Stories" %}</a></li>
+        <li>{{ openbiblestory.language.langname }}</li>
+    </ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        {{ openbiblestory.language.langname }}
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    @@@
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
