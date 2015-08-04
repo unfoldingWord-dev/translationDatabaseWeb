@@ -13,11 +13,10 @@ htmlcov
 coverage.xml
 nosetests.xml
 
-# distribution / packaging
-dist/
-
 # IDE stuff
 .idea
 
 # Mac OS X junk
 .DS_Store
+
+node_modules
