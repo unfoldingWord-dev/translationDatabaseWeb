@@ -1,7 +1,7 @@
 key: 4MRYMUBM79N
 vcs: git
 runtime: python-2.7.3
-requirements_file: requirements.txt
+requirements_file: requirements/base.txt
 on_deploy:
     - manage.py syncdb --noinput
     - manage.py collectstatic --noinput
