@@ -37,9 +37,16 @@ Debian project called simply, [ISO Codes](https://alioth.debian.org/anonscm/git/
 
 To setup a new working environment of this project, several items are needed:
 
-* Python (consult the requirements.txt for specific libraries/packages) 
+* Python (consult the requirements.txt for specific libraries/packages)
 * Redis
 * Postgres
+* Node
+
+### Building Static Media
+
+    npm install
+    webpack -w  # with -w it will run a watcher and rebuild as you make changes to anything in static/src/*
+
 
 ### Initialize the Database
 
@@ -54,5 +61,3 @@ After installing requirements (via pip) within your environment or virtualenv:
 * `python manage.py reload_imports`
 
 At this point, the basic country and language datasets will be populated but without many optional fields or extra data.
-
-
