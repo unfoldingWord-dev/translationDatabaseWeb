@@ -1,4 +1,4 @@
-from eventlog.models import log
+from pinax.eventlog.models import log
 
 
 class Fetcher(object):

@@ -140,7 +140,7 @@ INSTALLED_APPS = [
 
     # external
     "account",
-    "eventlog",
+    "pinax.eventlog",
     "metron",
     "opbeat.contrib.django",
     "kaleo",

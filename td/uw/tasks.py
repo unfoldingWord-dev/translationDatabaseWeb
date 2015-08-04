@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from celery import task
 import requests
-from eventlog.models import log
+from pinax.eventlog.models import log
 from models import Language, Title, Media, Country
 
 

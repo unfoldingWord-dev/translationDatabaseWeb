@@ -2,7 +2,7 @@ import os
 
 from django.test import TestCase
 
-from eventlog.models import Log
+from pinax.eventlog.models import Log
 from mock import patch
 
 from ..models import (

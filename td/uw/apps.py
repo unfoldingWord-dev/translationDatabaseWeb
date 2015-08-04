@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 
+import importlib
+
 from django.apps import AppConfig as BaseAppConfig
-from django.utils.importlib import import_module
 
 
 class AppConfig(BaseAppConfig):
@@ -10,4 +11,4 @@ class AppConfig(BaseAppConfig):
     verbose_name = "unfoldingWord Metadata"
 
     def ready(self):
-        import_module("td.uw.receivers")
+        importlib.import_module("td.uw.receivers")

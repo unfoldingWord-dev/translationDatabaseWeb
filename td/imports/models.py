@@ -14,7 +14,7 @@ from td.utils import str_to_bool
 import bs4
 import xlrd
 
-from eventlog.models import log
+from pinax.eventlog.models import log
 from . import fetch
 
 

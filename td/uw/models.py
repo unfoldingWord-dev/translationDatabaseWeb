@@ -156,7 +156,7 @@ class Language(models.Model):
     country = models.ForeignKey(Country, null=True, blank=True)
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
-    networks_translating = models.ManyToManyField(Network, null=True, blank=True)
+    networks_translating = models.ManyToManyField(Network, blank=True)
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
@@ -245,7 +245,7 @@ class Title(models.Model):
 class Resource(models.Model):
     title = models.ForeignKey(Title, related_name="versions")
     language = models.ForeignKey(Language, related_name="resources")
-    medias = models.ManyToManyField(Media, blank=True, null=True, verbose_name="Media")
+    medias = models.ManyToManyField(Media, blank=True, verbose_name="Media")
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
     published_date = models.DateField(default=None, null=True, blank=True, db_index=True)

@@ -2,7 +2,7 @@ from django.test import TestCase
 from mock import patch
 from ..models import Resource, Language
 from ..tasks import _process_obs_response
-from eventlog.models import Log
+from pinax.eventlog.models import Log
 
 
 GOOD_JSON_DATA = [{"date_modified": "20141208",

@@ -67,7 +67,7 @@ class Contact(models.Model):
     location = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=255, blank=True, verbose_name="Phone number")
     languages = models.ManyToManyField(LangCode, related_name="contacts")
-    org = models.ManyToManyField(Organization, blank=True, null=True, verbose_name="organizations")
+    org = models.ManyToManyField(Organization, blank=True, verbose_name="organizations")
     other = models.TextField(blank=True, verbose_name="Other information")
 
     class Meta:

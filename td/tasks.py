@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.db import connection
 
 from celery import task
-from eventlog.models import log
+from pinax.eventlog.models import log
 
 from td.imports.models import (
     EthnologueLanguageCode,
