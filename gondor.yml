@@ -3,7 +3,7 @@ vcs: git
 runtime: python-2.7.3
 requirements_file: requirements/base.txt
 on_deploy:
-    - manage.py syncdb --noinput
+    - manage.py migrate --fake-initial
     - manage.py collectstatic --noinput
 static_urls:
     - /site_media:
