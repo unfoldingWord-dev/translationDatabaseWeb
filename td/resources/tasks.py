@@ -4,7 +4,8 @@ from django.core.urlresolvers import reverse
 from celery import task
 import requests
 from pinax.eventlog.models import log
-from models import Language, Title, Media, Country
+from .models import Title, Media
+from td.models import Country, Language
 
 
 def _get_obs_api_data():

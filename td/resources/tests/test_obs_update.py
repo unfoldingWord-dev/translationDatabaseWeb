@@ -1,6 +1,7 @@
 from django.test import TestCase
 from mock import patch
-from ..models import Resource, Language
+from ..models import Resource
+from td.models import Language
 from ..tasks import _process_obs_response
 from pinax.eventlog.models import Log
 

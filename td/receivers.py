@@ -10,7 +10,7 @@ from account.signals import user_login_attempt, user_logged_in
 from pinax.eventlog.models import log
 
 from .models import AdditionalLanguage
-from td.uw.models import Language, Country
+from td.models import Country, Language
 from .signals import languages_integrated
 
 

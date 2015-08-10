@@ -8,7 +8,7 @@ import jsonfield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uw', '0006_auto_20150513_0119'),
+        ('resources', '0006_auto_20150513_0119'),
     ]
 
     operations = [
@@ -26,19 +26,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='publisher',
-            field=models.ForeignKey(blank=True, to='uw.Publisher', null=True),
+            field=models.ForeignKey(blank=True, to='resources.Publisher', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='title',
             name='publisher',
-            field=models.ForeignKey(blank=True, to='uw.Publisher', null=True),
+            field=models.ForeignKey(blank=True, to='resources.Publisher', null=True),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='resource',
             name='medias',
-            field=models.ManyToManyField(to='uw.Media', verbose_name=b'Media', blank=True),
+            field=models.ManyToManyField(to='resources.Media', verbose_name=b'Media', blank=True),
             preserve_default=True,
         ),
     ]

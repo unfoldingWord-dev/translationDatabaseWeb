@@ -150,7 +150,7 @@ INSTALLED_APPS = [
     # project
     "td",
     "td.imports",
-    "td.uw",
+    "td.resources",
     "td.publishing",
 ]
 

@@ -8,7 +8,7 @@ import jsonfield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uw', '0004_auto_20150407_2349'),
+        ('resources', '0004_auto_20150407_2349'),
     ]
 
     operations = [

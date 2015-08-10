@@ -1,38 +1,27 @@
 from django.conf.urls import patterns, url
 
+from td.resources.views import ResourceEditView, ResourceCreateView, HomeView
 from .views import (
-    HomeView,
+    country_tree_data,
+    country_map_data,
+    upload_gateway_flag_file,
+    upload_rtl_list,
     RegionListView,
     RegionDetailView,
     CountryListView,
     CountryDetailView,
     CountryEditView,
-    LanguageCreateView,
-    LanguageDetailView,
-    LanguageEditView,
     LanguageListView,
     AjaxLanguageListView,
     AjaxLanguageGatewayListView,
+    LanguageCreateView,
+    LanguageDetailView,
+    LanguageEditView,
     NetworkCreateView,
     NetworkDetailView,
     NetworkEditView,
-    NetworkListView,
-    ResourceCreateView,
-    ResourceEditView,
-    PublisherListView,
-    PublisherDetailView,
-    PublisherEditView,
-    PublisherCreateView,
-    TitleListView,
-    TitleDetailView,
-    TitleEditView,
-    TitleCreateView,
-    country_tree_data,
-    upload_gateway_flag_file,
-    upload_rtl_list,
-    country_map_data,
+    NetworkListView
 )
-
 
 urlpatterns = patterns(
     "",
@@ -55,14 +44,6 @@ urlpatterns = patterns(
     url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
     url(r"languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
-    url(r"publishers/$", PublisherListView.as_view(), name="publisher_list"),
-    url(r"publishers/create/$", PublisherCreateView.as_view(), name="publisher_create"),
-    url(r"publishers/(?P<pk>\d+)/$", PublisherDetailView.as_view(), name="publisher_detail"),
-    url(r"publishers/(?P<pk>\d+)/edit/$", PublisherEditView.as_view(), name="publisher_edit"),
-    url(r"titles/$", TitleListView.as_view(), name="title_list"),
-    url(r"titles/create/$", TitleCreateView.as_view(), name="title_create"),
-    url(r"titles/(?P<slug>[-\w\d]+)/$", TitleDetailView.as_view(), name="title_detail"),
-    url(r"titles/(?P<slug>[-\w\d]+)/edit/$", TitleEditView.as_view(), name="title_edit"),
 
     url(r"gateway_language_flag/update/$", upload_gateway_flag_file, name="gateway_flag_update"),
     url(r"rtl_languages/update/$", upload_rtl_list, name="rtl_languages_update"),

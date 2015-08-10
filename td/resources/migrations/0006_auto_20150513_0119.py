@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uw', '0005_auto_20150408_0012'),
+        ('resources', '0005_auto_20150408_0012'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='resource',
             name='medias',
-            field=models.ManyToManyField(to='uw.Media', null=True, blank=True),
+            field=models.ManyToManyField(to='resources.Media', null=True, blank=True),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

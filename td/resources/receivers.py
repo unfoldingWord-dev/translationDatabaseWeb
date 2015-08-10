@@ -6,10 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 
 
 from .models import (
-    Country,
     Language
 )
-
+from td.models import Country, Language
 
 ENTITIES = [
     Country,

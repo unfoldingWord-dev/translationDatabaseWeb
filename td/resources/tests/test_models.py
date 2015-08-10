@@ -1,5 +1,6 @@
 from django.test import TestCase
-from ..models import Resource, Media, Title, Language, Publisher
+from ..models import Resource, Media, Title, Publisher
+from td.models import Language
 
 
 class MediaTestCase(TestCase):

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import Language, Country
+from td.models import Country, Language
 from ..tasks import seed_languages_gateway_language
 
 

@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('value', models.CharField(max_length=250)),
                 ('source_id', models.IntegerField()),
                 ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('entity', models.ForeignKey(related_name='attributes', to='uw.Country')),
+                ('entity', models.ForeignKey(related_name='attributes', to='......models.Country')),
                 ('source_ct', models.ForeignKey(to='contenttypes.ContentType')),
             ],
             options={
@@ -49,8 +49,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100, blank=True)),
                 ('native_speakers', models.IntegerField(null=True, blank=True)),
                 ('gateway_flag', models.BooleanField(default=False, db_index=True)),
-                ('country', models.ForeignKey(blank=True, to='uw.Country', null=True)),
-                ('gateway_language', models.ForeignKey(related_name='gateway_to', blank=True, to='uw.Language', null=True)),
+                ('country', models.ForeignKey(blank=True, to='......models.Country', null=True)),
+                ('gateway_language', models.ForeignKey(related_name='gateway_to', blank=True, to='......models.Language', null=True)),
             ],
             options={
             },
@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ('value', models.CharField(max_length=250)),
                 ('source_id', models.IntegerField()),
                 ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('entity', models.ForeignKey(related_name='attributes', to='uw.Language')),
+                ('entity', models.ForeignKey(related_name='attributes', to='......models.Language')),
                 ('source_ct', models.ForeignKey(to='contenttypes.ContentType')),
             ],
             options={
@@ -112,8 +112,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('published_flag', models.BooleanField(default=True, db_index=True)),
                 ('extra_data', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('language', models.ForeignKey(related_name='resources', to='uw.Language')),
-                ('media', models.ForeignKey(blank=True, to='uw.Media', null=True)),
+                ('language', models.ForeignKey(related_name='resources', to='......models.Language')),
+                ('media', models.ForeignKey(blank=True, to='resources.Media', null=True)),
             ],
             options={
             },
@@ -134,7 +134,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='title',
-            field=models.ForeignKey(related_name='versions', to='uw.Title'),
+            field=models.ForeignKey(related_name='versions', to='resources.Title'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -144,19 +144,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='language',
             name='networks_translating',
-            field=models.ManyToManyField(to='uw.Network', blank=True),
+            field=models.ManyToManyField(to='......models.Network', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='country',
             name='primary_networks',
-            field=models.ManyToManyField(to='uw.Network', blank=True),
+            field=models.ManyToManyField(to='......models.Network', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='country',
             name='region',
-            field=models.ForeignKey(related_name='countries', blank=True, to='uw.Region', null=True),
+            field=models.ForeignKey(related_name='countries', blank=True, to='......models.Region', null=True),
             preserve_default=True,
         ),
     ]
