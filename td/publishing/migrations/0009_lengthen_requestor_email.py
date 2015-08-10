@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0008_langcode_version'),
+        ('publishing', '0008_langcode_version'),
     ]
 
     operations = [

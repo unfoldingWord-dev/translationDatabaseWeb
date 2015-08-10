@@ -8,7 +8,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0003_langcode_gateway_flag'),
+        ('publishing', '0003_langcode_gateway_flag'),
     ]
 
     operations = [
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('checking_level', models.IntegerField(choices=[(1, b'1'), (2, b'2'), (3, b'3')])),
                 ('contributors', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('language', models.ForeignKey(to='uwadmin.LangCode')),
+                ('language', models.ForeignKey(to='publishing.LangCode')),
             ],
             options={
             },
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='licenseagreement',
             name='publish_request',
-            field=models.ForeignKey(to='uwadmin.PublishRequest'),
+            field=models.ForeignKey(to='publishing.PublishRequest'),
             preserve_default=True,
         ),
     ]

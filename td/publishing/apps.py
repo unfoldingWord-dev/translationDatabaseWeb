@@ -5,7 +5,7 @@ from django.apps import AppConfig as BaseAppConfig
 
 class AppConfig(BaseAppConfig):
 
-    name = "td.uwadmin"
+    name = "td.publishing"
 
     def ready(self):
-        importlib.import_module("td.uwadmin.receivers")
+        importlib.import_module("td.publishing.receivers")

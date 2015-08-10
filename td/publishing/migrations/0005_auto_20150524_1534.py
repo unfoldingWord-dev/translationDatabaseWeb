@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0004_auto_20150318_0034'),
+        ('publishing', '0004_auto_20150318_0034'),
     ]
 
     operations = [
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='publishrequest',
             name='source_text',
-            field=models.ForeignKey(related_name='source_publish_requests', to='uwadmin.LangCode', null=True),
+            field=models.ForeignKey(related_name='source_publish_requests', to='publishing.LangCode', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='publishrequest',
             name='language',
-            field=models.ForeignKey(related_name='publish_requests', to='uwadmin.LangCode'),
+            field=models.ForeignKey(related_name='publish_requests', to='publishing.LangCode'),
             preserve_default=True,
         ),
     ]

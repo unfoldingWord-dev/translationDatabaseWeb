@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0007_publishrequest_requestor_email'),
+        ('publishing', '0007_publishrequest_requestor_email'),
     ]
 
     operations = [

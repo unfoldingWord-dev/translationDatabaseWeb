@@ -151,8 +151,7 @@ INSTALLED_APPS = [
     "td",
     "td.imports",
     "td.uw",
-    "td.uwadmin",
-    "td.uwutils"
+    "td.publishing",
 ]
 
 OPBEAT = {

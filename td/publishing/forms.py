@@ -6,7 +6,7 @@ from django.utils.formats import mark_safe
 from multiupload.fields import MultiFileField
 
 from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest, LangCode
-from td.uwutils.translations import OBSTranslation
+from .translations import OBSTranslation
 
 
 class RecentComForm(forms.ModelForm):

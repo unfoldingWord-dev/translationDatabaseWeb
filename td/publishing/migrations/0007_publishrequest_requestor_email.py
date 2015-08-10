@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0002_auto_20150317_2304'),
+        ('publishing', '0006_auto_20150529_0122'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='langcode',
-            name='gateway_flag',
-            field=models.BooleanField(default=False),
+            model_name='publishrequest',
+            name='requestor_email',
+            field=models.EmailField(default=b'', help_text=b'email address to be notified of request status', max_length=75, blank=True),
             preserve_default=True,
         ),
     ]

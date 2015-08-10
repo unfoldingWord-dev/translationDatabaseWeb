@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uwadmin', '0001_initial'),
+        ('publishing', '0005_auto_20150524_1534'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='openbiblestory',
-            name='checking_entity',
-            field=models.ManyToManyField(related_name='resource_publications', to='uwadmin.Organization', blank=True),
+            name='contact',
+            field=models.ForeignKey(related_name='open_bible_stories', blank=True, to='publishing.Contact', null=True),
             preserve_default=True,
         ),
     ]

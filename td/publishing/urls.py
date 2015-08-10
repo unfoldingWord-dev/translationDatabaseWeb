@@ -23,7 +23,7 @@ from .views import (
 
 urlpatterns = patterns(
     "",
-    url(r"^$", TemplateView.as_view(template_name="uwadmin/homepage.html"), name="home"),
+    url(r"^$", TemplateView.as_view(template_name="publishing/homepage.html"), name="home"),
     url(r"^api/contacts/", api_contact, name="api_contacts"),
     url(r"^contacts/$", ContactList.as_view(), name="contact_list"),
     url(r"^contacts/create/$", ContactCreate.as_view(), name="contact_create"),
