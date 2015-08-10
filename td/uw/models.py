@@ -20,6 +20,9 @@ class Network(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'uw_network'
+
 
 @python_2_unicode_compatible
 class Region(models.Model):
@@ -31,6 +34,7 @@ class Region(models.Model):
         return self.name
 
     class Meta:
+        db_table = 'uw_region'
         ordering = ['name']
 
 
@@ -41,10 +45,13 @@ class Country(models.Model):
     name = models.CharField(max_length=75)
     region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
     population = models.IntegerField(null=True, blank=True)
-    primary_networks = models.ManyToManyField(Network, blank=True)
+    primary_networks = models.ManyToManyField(Network, blank=True, db_table='uw_country_primary_networks')
     extra_data = JSONField(blank=True)
 
     tracker = FieldTracker()
+
+    class Meta:
+        db_table = 'uw_country'
 
     def gateway_language(self):
         if not hasattr(self, "_gateway_language"):
@@ -156,13 +163,16 @@ class Language(models.Model):
     country = models.ForeignKey(Country, null=True, blank=True)
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
-    networks_translating = models.ManyToManyField(Network, blank=True)
+    networks_translating = models.ManyToManyField(Network, blank=True, db_table='uw_language_networks_translating')
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
     extra_data = JSONField(blank=True)
 
     tracker = FieldTracker()
+
+    class Meta:
+        db_table = 'uw_language'
 
     def __str__(self):
         return self.name
@@ -218,6 +228,7 @@ class Media(models.Model):
         return self.name
 
     class Meta:
+        db_table = 'uw_media'
         verbose_name_plural = "Media"
 
 
@@ -228,6 +239,9 @@ class Publisher(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        db_table = 'uw_publisher'
 
 
 @python_2_unicode_compatible
@@ -240,12 +254,15 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'uw_title'
+
 
 @python_2_unicode_compatible
 class Resource(models.Model):
     title = models.ForeignKey(Title, related_name="versions")
     language = models.ForeignKey(Language, related_name="resources")
-    medias = models.ManyToManyField(Media, blank=True, verbose_name="Media")
+    medias = models.ManyToManyField(Media, blank=True, verbose_name="Media", db_table='uw_resource_medias')
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
     published_date = models.DateField(default=None, null=True, blank=True, db_index=True)
@@ -259,6 +276,7 @@ class Resource(models.Model):
         return "{0} in {1}".format(str(self.title), str(self.language))
 
     class Meta:
+        db_table = 'uw_resource'
         unique_together = ("title", "language")
 
 
@@ -276,6 +294,12 @@ class EAVBase(models.Model):
 class CountryEAV(EAVBase):
     entity = models.ForeignKey(Country, related_name="attributes")
 
+    class Meta:
+        db_table = 'uw_countryeav'
+
 
 class LanguageEAV(EAVBase):
     entity = models.ForeignKey(Language, related_name="attributes")
+
+    class Meta:
+        db_table = 'uw_languageeav'
