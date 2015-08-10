@@ -10,8 +10,10 @@ from django.contrib import messages
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
+from td.models import Language
+
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
-from .models import Contact, OpenBibleStory, LangCode, PublishRequest
+from .models import Contact, OpenBibleStory, PublishRequest
 from .signals import published
 from .tasks import send_request_email, approve_publish_request
 
@@ -125,7 +127,7 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
     def lang(self):
         if not hasattr(self, "_lang"):
             if self.kwargs.get("code"):
-                self._lang = get_object_or_404(LangCode, langcode=self.kwargs.get("code"))
+                self._lang = get_object_or_404(Language, langcode=self.kwargs.get("code"))
             else:
                 self._lang = None
         return self._lang
@@ -219,7 +221,7 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
-    langs = LangCode.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    langs = Language.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
     d = [
         {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
         for x in langs
@@ -229,7 +231,7 @@ def languages_autocomplete(request):
 
 def source_languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
-    langs = LangCode.objects.filter(checking_level=3).filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    langs = Language.objects.filter(checking_level=3).filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
     d = [
         {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag, "ver": x.version}
         for x in langs
@@ -239,5 +241,5 @@ def source_languages_autocomplete(request):
 
 def ajax_language_version(request):
     search_lang = request.GET.get("q").lower().encode("utf-8")
-    lang = get_object_or_404(LangCode, pk=search_lang)
+    lang = get_object_or_404(Language, pk=search_lang)
     return JsonResponse({"current_version": lang.version})

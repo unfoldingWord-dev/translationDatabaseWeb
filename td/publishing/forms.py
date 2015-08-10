@@ -5,7 +5,8 @@ from django.utils.formats import mark_safe
 
 from multiupload.fields import MultiFileField
 
-from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest, LangCode
+from td.models import Language
+from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest
 from .translations import OBSTranslation
 
 
@@ -119,7 +120,7 @@ class PublishRequestForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
         elif self.data.get("language", None):
             try:
-                lang = LangCode.objects.get(pk=self.data["language"])
+                lang = Language.objects.get(pk=self.data["language"])
                 self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
@@ -130,7 +131,7 @@ class PublishRequestForm(forms.ModelForm):
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
         if lang_id:
-            return LangCode.objects.get(pk=lang_id)
+            return Language.objects.get(pk=lang_id)
 
     def clean(self):
         cleaned_data = super(PublishRequestForm, self).clean()
