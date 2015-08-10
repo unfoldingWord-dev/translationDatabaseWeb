@@ -1,8 +1,7 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
-from django.contrib.auth.models import User
 
 import requests
 import reversion
@@ -104,7 +103,7 @@ class RecentCommunication(models.Model):
     contact = models.ForeignKey(Contact, related_name="recent_communications")
     communication = models.TextField(blank=True, verbose_name="Message")
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     class Meta:
         ordering = ["contact", "created"]
@@ -130,7 +129,7 @@ class OpenBibleStory(models.Model):
     notes = models.TextField(blank=True)
     offline = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     # Publishing
     publish_date = models.DateField(null=True, blank=True)
@@ -155,7 +154,7 @@ class Comment(models.Model):
     open_bible_story = models.ForeignKey(OpenBibleStory, related_name="comments")
     comment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 @python_2_unicode_compatible
