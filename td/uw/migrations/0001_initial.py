@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='language',
             name='networks_translating',
-            field=models.ManyToManyField(to='uw.Network', null=True, blank=True),
+            field=models.ManyToManyField(to='uw.Network', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(

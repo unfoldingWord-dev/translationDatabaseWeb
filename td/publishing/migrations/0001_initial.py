@@ -141,7 +141,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contact',
             name='org',
-            field=models.ManyToManyField(to='publishing.Organization', null=True, verbose_name=b'organizations', blank=True),
+            field=models.ManyToManyField(to='publishing.Organization', verbose_name=b'organizations', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(

@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='resource',
             name='medias',
-            field=models.ManyToManyField(to='uw.Media', null=True, verbose_name=b'Media', blank=True),
+            field=models.ManyToManyField(to='uw.Media', verbose_name=b'Media', blank=True),
             preserve_default=True,
         ),
     ]
