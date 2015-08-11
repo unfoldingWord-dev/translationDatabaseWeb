@@ -73,11 +73,11 @@ class SourceTextFilter(admin.SimpleListFilter):
 
 
 class OpenBibleStoryAdmin(reversion.VersionAdmin):
-    # list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
-    # list_display_links = ["language"]
-    # list_editable = ["contact", "notes"]
+    list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
+    list_display_links = ["language"]
+    list_editable = ["contact", "notes"]
     list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", SourceTextFilter, "source_version"]
-    # search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
+    search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
 
 
 class LicenseAgreementInline(admin.TabularInline):
@@ -85,7 +85,7 @@ class LicenseAgreementInline(admin.TabularInline):
 
 
 class PublishRequestAdmin(admin.ModelAdmin):
-    # list_display = ["requestor", "resource", "language", "checking_level", "contributors"]
+    list_display = ["requestor", "resource", "language", "checking_level", "contributors"]
     list_filter = ["checking_level"]
     inlines = [LicenseAgreementInline]
 
