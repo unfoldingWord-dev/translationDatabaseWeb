@@ -85,12 +85,21 @@ CHECKING_LEVEL_CHOICES = [
 ]
 
 
-@reversion.register()
-class OpenBibleStory(models.Model):
-    language = models.OneToOneField(Language, related_name="open_bible_story", verbose_name="Language")
+@python_2_unicode_compatible
+class OfficialResourceType(models.Model):
+    short_name = models.CharField(max_length=5, help_text="a 5 character identification code")
+    long_name = models.CharField(max_length=50, help_text="a more descriptive name")
+    description = models.TextField(blank=True)
 
-    # Tracking
-    contact = models.ForeignKey(Contact, related_name="open_bible_stories", null=True, blank=True)
+    def __str__(self):
+        return "({0}) {1}".format(self.short_name, self.long_name)
+
+
+@reversion.register()
+class OfficialResource(models.Model):
+    language = models.ForeignKey(Language, related_name="official_resources", verbose_name="Language")
+    resource_type = models.ForeignKey(OfficialResourceType, verbose_name="official_resources")
+    contact = models.ForeignKey(Contact, related_name="official_resources", null=True, blank=True)
     date_started = models.DateField()
     notes = models.TextField(blank=True)
     offline = models.BooleanField(default=False)
@@ -113,11 +122,11 @@ class OpenBibleStory(models.Model):
         ordering = ["language", "contact"]
 
     def __unicode__(self):
-        return self.language.langcode
+        return self.language.code
 
 
 class Comment(models.Model):
-    open_bible_story = models.ForeignKey(OpenBibleStory, related_name="comments")
+    official_resource = models.ForeignKey(OfficialResource, related_name="comments")
     comment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -125,8 +134,8 @@ class Comment(models.Model):
 
 @python_2_unicode_compatible
 class PublishRequest(models.Model):
-    requestor = models.CharField(max_length=100)
-    resource = models.CharField(max_length=20, choices=[("obs", "Open Bible Stories")], default="obs")
+
+    resource_type = models.ForeignKey(OfficialResourceType)
     language = models.ForeignKey(Language, related_name="publish_requests")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
     source_text = models.ForeignKey(Language, related_name="source_publish_requests", null=True)
