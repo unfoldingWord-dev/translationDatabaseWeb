@@ -21,9 +21,6 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Connection',
@@ -33,7 +30,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['con_src'],
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ConnectionType',
@@ -45,7 +41,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Contact',
@@ -61,7 +56,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='LangCode',
@@ -69,12 +63,20 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('langcode', models.CharField(unique=True, max_length=25, verbose_name=b'Language Code')),
                 ('langname', models.CharField(max_length=255, verbose_name=b'Language Name')),
+                ('gateway_flag', models.BooleanField(default=False)),
                 ('checking_level', models.IntegerField(null=True)),
+                ('version', models.CharField(default=b'', max_length=25)),
             ],
             options={
                 'ordering': ['langcode'],
             },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='LicenseAgreement',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('document', models.FileField(upload_to=b'agreements/')),
+            ],
         ),
         migrations.CreateModel(
             name='OpenBibleStory',
@@ -88,17 +90,7 @@ class Migration(migrations.Migration):
                 ('version', models.CharField(max_length=10, blank=True)),
                 ('source_version', models.CharField(max_length=10, blank=True)),
                 ('checking_level', models.IntegerField(blank=True, null=True, choices=[(1, b'1'), (2, b'2'), (3, b'3')])),
-                ('checking_entity', models.ManyToManyField(related_name='resource_publications', to='publishing.Contact', blank=True)),
-                ('contact', models.ForeignKey(related_name='open_bible_stories', to='publishing.Contact')),
-                ('contributors', models.ManyToManyField(related_name='+', to='publishing.Contact', blank=True)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('language', models.OneToOneField(related_name='open_bible_story', verbose_name=b'Language', to='publishing.LangCode')),
-                ('source_text', models.ForeignKey(related_name='+', blank=True, to='publishing.LangCode', null=True)),
             ],
-            options={
-                'ordering': ['language', 'contact'],
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Organization',
@@ -116,7 +108,22 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='PublishRequest',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('requestor', models.CharField(max_length=100)),
+                ('resource', models.CharField(default=b'obs', max_length=20, choices=[(b'obs', b'Open Bible Stories')])),
+                ('checking_level', models.IntegerField(choices=[(1, b'1'), (2, b'2'), (3, b'3')])),
+                ('source_version', models.CharField(max_length=10, blank=True)),
+                ('contributors', models.TextField(blank=True)),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('approved_at', models.DateTimeField(default=None, null=True, db_index=True, blank=True)),
+                ('requestor_email', models.EmailField(default=b'', help_text=b'email address to be notified of request status', max_length=254, blank=True)),
+                ('language', models.ForeignKey(related_name='publish_requests', to='publishing.LangCode')),
+                ('source_text', models.ForeignKey(related_name='source_publish_requests', to='publishing.LangCode', null=True)),
+            ],
         ),
         migrations.CreateModel(
             name='RecentCommunication',
@@ -130,42 +137,70 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['contact', 'created'],
             },
-            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='checking_entity',
+            field=models.ManyToManyField(related_name='resource_publications', to='publishing.Organization', blank=True),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='contact',
+            field=models.ForeignKey(related_name='open_bible_stories', blank=True, to='publishing.Contact', null=True),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='contributors',
+            field=models.ManyToManyField(related_name='+', to='publishing.Contact', blank=True),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='created_by',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='language',
+            field=models.OneToOneField(related_name='open_bible_story', verbose_name=b'Language', to='publishing.LangCode'),
+        ),
+        migrations.AddField(
+            model_name='openbiblestory',
+            name='source_text',
+            field=models.ForeignKey(related_name='+', blank=True, to='publishing.LangCode', null=True),
+        ),
+        migrations.AddField(
+            model_name='licenseagreement',
+            name='publish_request',
+            field=models.ForeignKey(to='publishing.PublishRequest'),
         ),
         migrations.AddField(
             model_name='contact',
             name='languages',
             field=models.ManyToManyField(related_name='contacts', to='publishing.LangCode'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='contact',
             name='org',
             field=models.ManyToManyField(to='publishing.Organization', verbose_name=b'organizations', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='connection',
             name='con_dst',
             field=models.ForeignKey(related_name='destination_connections', verbose_name=b'Connection', to='publishing.Contact'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='connection',
             name='con_src',
             field=models.ForeignKey(related_name='source_connections', to='publishing.Contact'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='connection',
             name='con_type',
             field=models.ForeignKey(verbose_name=b'Type', to='publishing.ConnectionType'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='comment',
             name='open_bible_story',
             field=models.ForeignKey(related_name='comments', to='publishing.OpenBibleStory'),
-            preserve_default=True,
         ),
     ]

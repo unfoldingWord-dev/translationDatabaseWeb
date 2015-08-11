@@ -3,7 +3,43 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+import requests
 import reversion
+
+
+@python_2_unicode_compatible
+class LangCode(models.Model):
+    langcode = models.CharField(max_length=25, unique=True, verbose_name="Language Code")
+    langname = models.CharField(max_length=255, verbose_name="Language Name")
+    gateway_flag = models.BooleanField(default=False)
+    checking_level = models.IntegerField(null=True)
+    version = models.CharField(max_length=25, default="")
+
+    @classmethod
+    def update_checking_levels(cls):
+        catalog = requests.get("https://api.unfoldingword.org/obs/txt/1/obs-catalog.json").json()
+        for lang in catalog:
+            cls.objects.filter(langcode=lang["language"]).update(checking_level=lang["status"]["checking_level"],
+                                                                 version=lang["status"]["version"])
+
+    @classmethod
+    def sync(cls):
+        data = requests.get("http://td.unfoldingword.org/exports/langnames.json").json()
+        for lang in data:
+            obj, created = cls.objects.get_or_create(
+                langcode=lang["lc"],
+                defaults={"langname": lang["ln"], "gateway_flag": lang["gw"]}
+            )
+            if not created:
+                obj.langname = lang["ln"]
+                obj.gateway_flag = lang["gw"]
+                obj.save()
+
+    class Meta:
+        ordering = ["langcode"]
+
+    def __str__(self):
+        return self.langcode
 
 
 class Organization(models.Model):
@@ -12,7 +48,7 @@ class Organization(models.Model):
     phone = models.CharField(max_length=255, blank=True, verbose_name="Phone number")
     website = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
-    # languages = models.ManyToManyField(LangCode, related_name="organizations")
+    languages = models.ManyToManyField(LangCode, related_name="organizations")
     other = models.TextField(blank=True, verbose_name="Other information")
     checking_entity = models.BooleanField(default=False)
 
@@ -29,7 +65,7 @@ class Contact(models.Model):
     d43username = models.CharField(max_length=255, blank=True, verbose_name="Door43 username")
     location = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=255, blank=True, verbose_name="Phone number")
-    # languages = models.ManyToManyField(LangCode, related_name="contacts")
+    languages = models.ManyToManyField(LangCode, related_name="contacts")
     org = models.ManyToManyField(Organization, blank=True, verbose_name="organizations")
     other = models.TextField(blank=True, verbose_name="Other information")
 
@@ -85,7 +121,7 @@ CHECKING_LEVEL_CHOICES = [
 
 @reversion.register()
 class OpenBibleStory(models.Model):
-    # language = models.OneToOneField(LangCode, related_name="open_bible_story", verbose_name="Language")
+    language = models.OneToOneField(LangCode, related_name="open_bible_story", verbose_name="Language")
 
     # Tracking
     contact = models.ForeignKey(Contact, related_name="open_bible_stories", null=True, blank=True)
@@ -98,7 +134,7 @@ class OpenBibleStory(models.Model):
     # Publishing
     publish_date = models.DateField(null=True, blank=True)
     version = models.CharField(max_length=10, blank=True)
-    # source_text = models.ForeignKey(LangCode, null=True, blank=True, related_name="+")
+    source_text = models.ForeignKey(LangCode, null=True, blank=True, related_name="+")
     source_version = models.CharField(max_length=10, blank=True)
     checking_entity = models.ManyToManyField(Organization, related_name="resource_publications", blank=True)
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
@@ -126,9 +162,9 @@ class Comment(models.Model):
 class PublishRequest(models.Model):
     requestor = models.CharField(max_length=100)
     resource = models.CharField(max_length=20, choices=[("obs", "Open Bible Stories")], default="obs")
-    # language = models.ForeignKey(LangCode, related_name="publish_requests")
+    language = models.ForeignKey(LangCode, related_name="publish_requests")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
-    # source_text = models.ForeignKey(LangCode, related_name="source_publish_requests", null=True)
+    source_text = models.ForeignKey(LangCode, related_name="source_publish_requests", null=True)
     source_version = models.CharField(max_length=10, blank=True)
     contributors = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
