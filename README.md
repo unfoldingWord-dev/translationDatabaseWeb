@@ -46,7 +46,7 @@ To setup a new working environment of this project, several items are needed:
 
     npm install
     npm run watch     # run a watcher on the static folder
-    npm run build     # builds static and exists
+    npm run build     # builds static and exits
     npm run buildprod # builds for production (uglify/minification)
 
 
