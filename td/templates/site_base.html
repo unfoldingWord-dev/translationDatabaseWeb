@@ -8,7 +8,7 @@
 
 {% block styles %}
     <link href='http://fonts.googleapis.com/css?family=Merriweather+Sans:400,700,300' rel='stylesheet' type='text/css'>
-    <link href="{% static "css/site.css" %}" rel="stylesheet">
+    {% include "_styles.html" %}
     {% block extra_style %}{% endblock %}
     <style>
         .tt-query,
@@ -158,7 +158,7 @@
 
 
 {% block scripts %}
-    <script src="{% static "js/site.js" %}"></script>
+    {% include "_scripts.html" %}
     {% block custom_bottom_script %}
     {% endblock custom_bottom_script %}
 {% endblock %}
