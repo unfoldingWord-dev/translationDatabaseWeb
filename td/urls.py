@@ -37,7 +37,7 @@ urlpatterns = patterns(
     url(r"^uw/", include("td.resources.urls")),
     url(r"^uw/", include("td.urls_languages")),
 
-    url(r"^admin/", include("td.publishing.urls")),
+    url(r"^publishing/", include("td.publishing.urls")),
 
     url(r"^data-sources/additional-languages/$", AdditionalLanguageListView.as_view(), name="ds_additional_languages"),
     url(r"^data-sources/ethnologue/country-codes/$", EthnologueCountryCodeListView.as_view(), name="ds_ethnologue_country_codes"),

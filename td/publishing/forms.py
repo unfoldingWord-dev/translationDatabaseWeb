@@ -6,7 +6,7 @@ from django.utils.formats import mark_safe
 from multiupload.fields import MultiFileField
 
 from td.models import Language
-from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest
+from .models import RecentCommunication, Connection, OfficialResource, PublishRequest
 from .translations import OBSTranslation
 
 
@@ -62,12 +62,12 @@ class ConnectionForm(forms.ModelForm):
             )
 
 
-class OpenBibleStoryForm(forms.ModelForm):
+class OfficialResourceForm(forms.ModelForm):
 
     publish = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
-        super(OpenBibleStoryForm, self).__init__(*args, **kwargs)
+        super(OfficialResourceForm, self).__init__(*args, **kwargs)
         self.fields["language"].queryset = self.fields["language"].queryset.all()
         self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
         if self.instance.publish_date:
@@ -78,7 +78,7 @@ class OpenBibleStoryForm(forms.ModelForm):
             self.fields["checking_level"].widget.attrs["disabled"] = "disabled"
 
     class Meta:
-        model = OpenBibleStory
+        model = OfficialResource
         fields = [
             "language",
             "contact",
@@ -147,7 +147,7 @@ class PublishRequestForm(forms.ModelForm):
         fields = [
             "requestor",
             "requestor_email",
-            "resource",
+            "resource_type",
             "language",
             "source_text",
             "source_version",

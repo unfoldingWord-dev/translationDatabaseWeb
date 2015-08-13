@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from celery import task
-from .models import PublishRequest, OpenBibleStory
+from .models import PublishRequest, OfficialResource
 from django.utils.datetime_safe import datetime
 
 
@@ -72,17 +72,18 @@ def _compute_version(source_version):
 
 def approve_publish_request(request_id, user_id):
     pr = PublishRequest.objects.get(pk=request_id)
-    obs = OpenBibleStory()
-    obs.created_by_id = user_id
-    obs.language = pr.language
-    obs.checking_level = pr.checking_level
-    obs.source_text = pr.source_text
-    obs.source_version = pr.source_version
-    obs.version = _compute_version(pr.source_version)
-    obs.notes = "requestor: {0}\ncontributors: {1}".format(pr.requestor, pr.contributors)
-    obs.date_started = pr.created_at.date()
-    obs.save()
+    oresource = OfficialResource()
+    oresource.resource_type = pr.resource_type
+    oresource.created_by_id = user_id
+    oresource.language = pr.language
+    oresource.checking_level = pr.checking_level
+    oresource.source_text = pr.source_text
+    oresource.source_version = pr.source_version
+    oresource.version = _compute_version(pr.source_version)
+    oresource.notes = "requestor: {0}\ncontributors: {1}".format(pr.requestor, pr.contributors)
+    oresource.date_started = pr.created_at.date()
+    oresource.save()
     pr.approved_at = datetime.now()
     pr.save()
     notify_requestor_approved.delay(pr.pk)
-    return obs.pk
+    return oresource.pk

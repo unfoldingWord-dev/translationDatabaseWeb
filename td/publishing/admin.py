@@ -16,6 +16,7 @@ from .models import (
     LicenseAgreement
 )
 
+
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "website", "phone", "location", "other", "checking_entity"]
     list_display_links = ["name"]
@@ -77,7 +78,7 @@ class OfficialResourceTypeAdmin(admin.ModelAdmin):
 
 
 class OfficialResourceAdmin(reversion.VersionAdmin):
-    list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
+    list_display = ["language", "resource_type", "source_text", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_version", "created", "created_by"]
     list_display_links = ["language"]
     list_editable = ["contact", "notes"]
     list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", SourceTextFilter, "source_version"]
@@ -89,7 +90,7 @@ class LicenseAgreementInline(admin.TabularInline):
 
 
 class PublishRequestAdmin(admin.ModelAdmin):
-    list_display = ["requestor", "resource", "language", "checking_level", "contributors"]
+    list_display = ["requestor", "resource_type", "language", "checking_level", "contributors"]
     list_filter = ["checking_level"]
     inlines = [LicenseAgreementInline]
 

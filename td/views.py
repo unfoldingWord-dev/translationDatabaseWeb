@@ -2,6 +2,7 @@ import operator
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
+from pinax.eventlog.mixins import EventLogMixin
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.urlresolvers import reverse

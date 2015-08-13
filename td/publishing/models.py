@@ -126,7 +126,7 @@ class OfficialResource(models.Model):
 
 
 class Comment(models.Model):
-    official_resource = models.ForeignKey(OfficialResource, related_name="comments")
+    official_resource = models.ForeignKey(OfficialResource, related_name="comments", null=True)
     comment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -134,8 +134,8 @@ class Comment(models.Model):
 
 @python_2_unicode_compatible
 class PublishRequest(models.Model):
-
-    resource_type = models.ForeignKey(OfficialResourceType)
+    requestor = models.CharField(max_length=100)
+    resource_type = models.ForeignKey(OfficialResourceType, null=True)
     language = models.ForeignKey(Language, related_name="publish_requests")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
     source_text = models.ForeignKey(Language, related_name="source_publish_requests", null=True)

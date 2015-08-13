@@ -12,8 +12,8 @@ from account.mixins import LoginRequiredMixin
 
 from td.models import Language
 
-from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
-from .models import Contact, OpenBibleStory, PublishRequest
+from .forms import RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm
+from .models import Contact, OfficialResource, PublishRequest
 from .signals import published
 from .tasks import send_request_email, approve_publish_request
 
@@ -97,9 +97,9 @@ class ContactCreate(ContactMixin, CreateView):
     template_name = "contact_create.html"
 
 
-class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
-    form_class = OpenBibleStoryForm
-    model = OpenBibleStory
+class OfficialResourceCreateView(LoginRequiredMixin, CreateView):
+    form_class = OfficialResourceForm
+    model = OfficialResource
 
     def get_success_url(self):
         return reverse("obs_list")
@@ -119,9 +119,9 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = OpenBibleStoryForm
-    model = OpenBibleStory
+class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = OfficialResourceForm
+    model = OfficialResource
 
     @property
     def lang(self):
@@ -161,22 +161,22 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
         return get_object_or_404(OpenBibleStory, language=self.lang)
 
 
-class OpenBibleStoryListView(LoginRequiredMixin, ListView):
-    model = OpenBibleStory
+class OfficialResourceListView(LoginRequiredMixin, ListView):
+    model = OfficialResource
 
     def get_context_data(self, **kwargs):
-        context = super(OpenBibleStoryListView, self).get_context_data(**kwargs)
+        context = super(OfficialResourceListView, self).get_context_data(**kwargs)
         context["publish_requests"] = PublishRequest.objects.filter(approved_at=None, resource="obs")
         return context
 
     def get_queryset(self, **kwargs):
-        qs = super(OpenBibleStoryListView, self).get_queryset(**kwargs)
+        qs = super(OfficialResourceListView, self).get_queryset(**kwargs)
         qs = qs.order_by("language__langname", "-created")
         return qs
 
 
-class OpenBibleStoryDetailView(LoginRequiredMixin, DetailView):
-    model = OpenBibleStory
+class OfficialResourceDetailView(LoginRequiredMixin, DetailView):
+    model = OfficialResource
 
 
 class PublishRequestCreateView(CreateView):
