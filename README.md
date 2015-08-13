@@ -42,6 +42,18 @@ To setup a new working environment of this project, several items are needed:
 * Postgres
 * Node
 
+### Git
+
+Fork this repo to make your own copy of the codebase. Set this repo as `upstream` and your copy as `origin`.
+
+`git remote add upstream <this-repo>`
+`git remote add origin <your-repo>`
+
+Work on your copy by creating a new branch for the feature you're working on. It's important to keep your copy up-to-date by fetching from the upstream and merge it to your copy. Do this daily before you start working.
+
+`git fetch upstream`
+`git merge upstream/master`
+
 ### Linux
 
 You may need to get the following packages to be able to install the requirements.
