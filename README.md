@@ -46,7 +46,7 @@ To setup a new working environment of this project, several items are needed:
 
 You may need to get the following packages to be able to install the requirements.
 
-Note: Use 'sudo apt-get install <package-name>'. Some of the packages may be included in another.
+Note: Use `sudo apt-get install <package-name>`. Some of the packages may be included in another.
 
 * nodejs-legacy
 * postgresql-9.3
