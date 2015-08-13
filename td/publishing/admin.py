@@ -10,11 +10,11 @@ from .models import (
     Connection,
     ConnectionType,
     RecentCommunication,
-    OpenBibleStory,
+    OfficialResource,
+    OfficialResourceType,
     PublishRequest,
     LicenseAgreement
 )
-
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "website", "phone", "location", "other", "checking_entity"]
@@ -72,7 +72,11 @@ class SourceTextFilter(admin.SimpleListFilter):
         return queryset.filter(Q(source_text__isnull=True) | Q(source_text__checking_level=3))
 
 
-class OpenBibleStoryAdmin(reversion.VersionAdmin):
+class OfficialResourceTypeAdmin(admin.ModelAdmin):
+    list_display = ["short_name", "long_name", "description"]
+
+
+class OfficialResourceAdmin(reversion.VersionAdmin):
     list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
     list_display_links = ["language"]
     list_editable = ["contact", "notes"]
@@ -95,5 +99,6 @@ admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Connection, ConnectionAdmin)
 admin.site.register(ConnectionType, ConnectionTypeAdmin)
 admin.site.register(RecentCommunication, RecentCommunicationAdmin)
-admin.site.register(OpenBibleStory, OpenBibleStoryAdmin)
+admin.site.register(OfficialResourceType, OfficialResourceTypeAdmin)
+admin.site.register(OfficialResource, OfficialResourceAdmin)
 admin.site.register(PublishRequest, PublishRequestAdmin)
