@@ -42,6 +42,25 @@ To setup a new working environment of this project, several items are needed:
 * Postgres
 * Node
 
+### Linux
+
+You may need to get the following packages to be able to install the requirements.
+
+Note: Use 'sudo apt-get install <package-name>'. Some of the packages may be included in another.
+
+* nodejs-legacy
+* postgresql-9.3
+* postgresql-client-9.3
+* postgresql-client-common
+* postgresql-server-dev-9.3
+* redis-server
+* redis-tool
+* git-all
+* python-dev
+* python-pip
+
+After acquiring the above packages, proceed to `pip install -r requirements.txt` and `npm install`
+
 ### Building Static Media
 
     npm install
