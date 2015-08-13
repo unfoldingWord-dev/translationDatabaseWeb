@@ -109,7 +109,7 @@ class PublishRequestForm(forms.ModelForm):
             ),
             required=True
         )
-        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
+        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(official_resources__checking_level=3)
 
         if self.instance.pk:
             lang = self.instance.language

@@ -1,7 +1,5 @@
 from django.db.models import Q
-
 from django.contrib import admin
-
 import reversion
 
 from .models import (
@@ -81,7 +79,7 @@ class OfficialResourceAdmin(reversion.VersionAdmin):
     list_display = ["language", "resource_type", "source_text", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_version", "created", "created_by"]
     list_display_links = ["language"]
     list_editable = ["contact", "notes"]
-    list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", SourceTextFilter, "source_version"]
+    list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", "source_text", "source_version"]
     search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
 
 
