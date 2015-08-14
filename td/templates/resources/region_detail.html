@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block body %}
-    {% include "uw/_breadcrumbs.html" %}
+    {% include "resources/_breadcrumbs.html" %}
 
     <h1>{{ region.name }}</h1>
 
@@ -11,13 +11,13 @@
         <div class="panel-heading">
             <h2 class="panel-title">Countries</h2>
         </div>
-        {% include "uw/_country_list.html" %}
+        {% include "resources/_country_list.html" %}
     </div>
 
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2 class="panel-title">Languages</h2>
         </div>
-        {% include "uw/_language_list.html" with language_list=languages %}
+        {% include "resources/_language_list.html" with language_list=languages %}
     </div>
 {% endblock %}

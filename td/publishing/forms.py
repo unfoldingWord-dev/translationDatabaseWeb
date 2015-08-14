@@ -68,7 +68,24 @@ class OfficialResourceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OfficialResourceForm, self).__init__(*args, **kwargs)
-        self.fields["language"].queryset = self.fields["language"].queryset.all()
+        self.fields["language"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": reverse("names_autocomplete")
+                }
+            ),
+            required=True,
+            label="Language"
+        )
+        if self.instance.pk is not None:
+            if self.instance.language:
+                lang = self.instance.language
+                self.fields["language"].initial = lang.pk
+                self.fields["language"].widget.attrs["data-lang-pk"] = lang.pk
+                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
         self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
         if self.instance.publish_date:
             self.fields["publish"].initial = True

@@ -333,6 +333,7 @@ class RegionDetailView(ListView):
 
 class CountryListView(ListView):
     model = Country
+    template_name = "resources/country_list.html"
 
     def get_queryset(self):
         qs = super(CountryListView, self).get_queryset()
@@ -342,12 +343,14 @@ class CountryListView(ListView):
 
 class CountryDetailView(DetailView):
     model = Country
+    template_name = "resources/country_detail.html"
 
 
 class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Country
     form_class = CountryForm
     action_kind = "EDIT"
+    template_name = "resources/country_form.html"
 
     def get_success_url(self):
         return reverse("country_detail", args=[self.object.pk])

@@ -4,7 +4,7 @@
 
 {% block body %}
 
-    {% include "uw/_breadcrumbs.html" with region=country.region %}
+    {% include "resources/_breadcrumbs.html" with region=country.region %}
 
 <h1>
   {{ country.name }}
@@ -29,7 +29,7 @@
         </table>
     </div>
     <div class="col-md-4">
-        {% include "uw/_short_list.html" with title="Top Networks" data=country.primary_networks.all %}
+        {% include "resources/_short_list.html" with title="Top Networks" data=country.primary_networks.all %}
     </div>
 </div>
 
@@ -41,7 +41,7 @@
         {% endif %}
         <h2 class="panel-title">Languages</h2>
     </div>
-    {% include "uw/_language_list.html" with language_list=country.language_set.all %}
+    {% include "resources/_language_list.html" with language_list=country.language_set.all %}
 </div>
 
 {% endblock %}
