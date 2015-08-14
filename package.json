@@ -27,8 +27,7 @@
     "jquery": "^2.1.4",
     "less": "^2.5.1",
     "less-loader": "^2.2.0",
-    "select2": "^4.0.0",
-    "select2-bootstrap-css": "^1.4.6",
+    "select2": "^3.5.1",
     "style-loader": "^0.12.3",
     "topojson": "^1.6.19",
     "webpack": "^1.10.5"

@@ -32,7 +32,6 @@ var glmap = require("./glmap");
                   return {q: term}
                 },
                 results: function (data, page) {
-                  console.log(data.results);
                   return {results: data.results}
                 },
                 cache: true
