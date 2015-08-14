@@ -15,7 +15,7 @@ var glmap = require("./glmap");
 (function ($) {
     $('[data-toggle="tooltip"]').tooltip()
     $('[data-toggle="popover"]').popover()
-    glmap.drawMap();
+    if (document.getElementById('mapcontainer') !== null) glmap.drawMap();
     $(document).on("click", ".btn-export-map", function() {glmap.submitDownloadForm("pdf");});
     $.fn.languageSelector = function (options) {
         var settings = $.extend({}, options);

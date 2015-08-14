@@ -45,7 +45,9 @@ To setup a new working environment of this project, several items are needed:
 ### Building Static Media
 
     npm install
-    webpack -w  # with -w it will run a watcher and rebuild as you make changes to anything in static/src/*
+    npm run watch     # run a watcher on the static folder
+    npm run build     # builds static and exits
+    npm run buildprod # builds for production (uglify/minification)
 
 
 ### Initialize the Database
