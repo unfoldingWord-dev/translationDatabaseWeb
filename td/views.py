@@ -453,6 +453,7 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin,
 
 class LanguageDetailView(DetailView):
     model = Language
+    template_name = "resources/language_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
@@ -465,6 +466,7 @@ class LanguageDetailView(DetailView):
 class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Language
     form_class = LanguageForm
+    template_name = "resources/language_form.html"
     action_kind = "EDIT"
 
     def get_success_url(self):

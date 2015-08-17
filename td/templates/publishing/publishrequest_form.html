@@ -47,28 +47,4 @@
 {% endblock %}
 
 {% block extra_script %}
-    <script type="text/javascript">
-$(function() {
- $("#id_source_text").change(function() {
-     var SelectedValue = $("#id_source_text").val();
-var ServiceUrl = "{% url "ajax_language_version" %}" + "?q=" + SelectedValue;
-var content = '';
-$.support.cors = true;
-$.ajax({
-type: 'GET',
-url: ServiceUrl,
-async: true,
-cache: false,
-crossDomain: true,
-contentType: "application/json; charset=utf-8",
-dataType: 'json',
-error: function (xhr, err) {
-},
-success: function (result, status) {
-$('#id_source_version').val(result.current_version);
-}
-});
-});
-});
-    </script>
 {% endblock %}
