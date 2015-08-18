@@ -132,15 +132,17 @@ class PublishRequestForm(forms.ModelForm):
             lang = self.instance.language
             if lang:
                 self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
+                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
         elif self.data.get("language", None):
             try:
                 lang = Language.objects.get(pk=self.data["language"])
                 self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
+                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
+                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
+                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
             except:
                 pass
@@ -153,7 +155,7 @@ class PublishRequestForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(PublishRequestForm, self).clean()
         lang = cleaned_data["language"]
-        obs = OBSTranslation(base_path=settings.PAGES_ROOT, lang_code=lang.langcode)
+        obs = OBSTranslation(base_path="", lang_code=lang.code)
         if not obs.qa_check():
             error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
             raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))

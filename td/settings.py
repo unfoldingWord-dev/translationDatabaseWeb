@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     "kaleo",
     "djcelery",
     "reversion",
+    "absoluteuri",
 
     # project
     "td",
@@ -161,6 +162,7 @@ OPBEAT = {
 }
 
 DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -207,7 +209,13 @@ FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
 ]
 
+# Email settings
+
+EMAIL_NOTIFY_LIST = ["someone@unfoldingword.org"]
+EMAIL_FROM = "uwadmin@unfoldingword.org"
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ACCOUNT_OPEN_SIGNUP = False
 ACCOUNT_EMAIL_UNIQUE = True
