@@ -18,7 +18,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
-    "default": dj_database_url.config(default="postgres://localhost/td"),
+    "default": dj_database_url.config(default="postgres://postgres:postgres@localhost/td"),
 }
 
 ALLOWED_HOSTS = []
