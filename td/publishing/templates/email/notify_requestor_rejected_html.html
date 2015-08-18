@@ -164,11 +164,11 @@ ul li, ol li {
 				<tr>
 					<td>
                         <h1>Rejected Publish Request #{{ publish_request.pk }}</h1>
-						<p>by: {{ publish_request.requestor }} for {{ publish_request.resource }} in {{ publish_request.language }}</p>
+						<p>by: {{ publish_request.requestor }} for {{ publish_request.resource_type }} in {{ publish_request.language }}</p>
 						<h2>Details</h2>
                         <table>
                             <tr><td>Requestor</td><td>{{ publish_request.requestor }}</td></tr>
-                            <tr><td>Resource</td><td>{{ publish_request.resource }}</td></tr>
+                            <tr><td>Resource</td><td>{{ publish_request.resource_type }}</td></tr>
                             <tr><td>Language</td><td>{{ publish_request.language }}</td></tr>
                             <tr><td>Checking Level</td><td>{{ publish_request.checking_level }}</td></tr>
                             <tr><td>Source Text</td><td>{{ publish_request.source_text }}</td></tr>

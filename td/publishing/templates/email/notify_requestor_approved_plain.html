@@ -1,12 +1,12 @@
 Approved Publish Request #{{ publish_request.pk }}
 ==================================================
 
-by: {{ publish_request.requestor }} for {{ publish_request.resource }} in {{ publish_request.language }}
+by: {{ publish_request.requestor }} for {{ publish_request.resource_type }} in {{ publish_request.language }}
 
 Details
 
 Requestor        {{ publish_request.requestor }}
-Resource         {{ publish_request.resource }}
+Resource         {{ publish_request.resource_type }}
 Language         {{ publish_request.language }}
 Checking Level   {{ publish_request.checking_level }}
 Source Text      {{ publish_request.source_text }}
