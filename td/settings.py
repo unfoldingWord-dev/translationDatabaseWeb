@@ -153,6 +153,7 @@ INSTALLED_APPS = [
     "td.imports",
     "td.resources",
     "td.publishing",
+    "td.tracking",
 ]
 
 OPBEAT = {
