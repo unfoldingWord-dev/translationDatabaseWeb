@@ -19,7 +19,7 @@
     <div class="panel-heading">
         <h2 class="panel-title">Languages</h2>
     </div>
-    {% include "uw/_language_list.html" with language_list=network.language_set.all %}
+    {% include "resources/_language_list.html" with language_list=network.language_set.all %}
 </div>
 
 
@@ -27,6 +27,6 @@
     <div class="panel-heading">
         <h2 class="panel-title">Countries</h2>
     </div>
-    {% include "uw/_country_list.html" with country_list=network.country_set.all %}
+    {% include "resources/_country_list.html" with country_list=network.country_set.all %}
 </div>
 {% endblock %}

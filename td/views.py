@@ -491,12 +491,14 @@ class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, 
 
 class NetworkDetailView(DetailView):
     model = Network
+    template_name = "resources/network_detail.html"
 
 
 class NetworkEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, UpdateView):
     model = Network
     form_class = NetworkForm
     action_kind = "EDIT"
+    template_name = "resources/network_form.html"
 
     def get_success_url(self):
         return reverse("network_detail", args=[self.object.pk])
@@ -504,6 +506,7 @@ class NetworkEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
 
 class NetworkListView(ListView):
     model = Network
+    template_name = "resources/network_list.html"
 
     def get_queryset(self):
         qs = super(NetworkListView, self).get_queryset()
