@@ -19,6 +19,9 @@ TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     "default": dj_database_url.config(default="postgres://postgres:postgres@localhost/td"),
+    # The above line provides username and password for the database.
+    # I had to use the above code to pass the authentication in linux ubuntu.
+    # "default": dj_database_url.config(default="postgres://localhost/td"),
 }
 
 ALLOWED_HOSTS = []
