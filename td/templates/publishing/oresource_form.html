@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}{% if lang %}Update{% else %}Create{% endif %} Open Bible Story{% endblock %}
+{% block head_title %}{% if lang %}Update{% else %}Create{% endif %} Official Resource{% endblock %}
 
 {% block body %}
     <ul class="breadcrumb">
         <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-        <li><a href="{% url "obs_list" %}">{% trans "Open Bible Stories" %}</a></li>
-        <li>{% if lang %}Update{% else %}Create{% endif %} Open Bible Story</li>
+        <li><a href="{% url "oresource_list" %}">{% trans "Official Resources" %}</a></li>
+        <li>{% if lang %}Update{% else %}Create{% endif %} Official Resource</li>
     </ul>
 
     <div class="row">
@@ -17,7 +17,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title">
-                        {% if lang %}Update{% else %}Create{% endif %} Open Bible Story{% if lang %} for {{ lang.langname }}{% endif %}
+                        {% if lang %}Update{% else %}Create{% endif %} Official Resource{% if lang %} for {{ lang.name }}{% endif %}
                     </h2>
                 </div>
                 <div class="panel-body">

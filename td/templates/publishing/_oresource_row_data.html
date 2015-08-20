@@ -1,0 +1,31 @@
+<td>
+    {% if not version %}
+        <a href="{% url "oresource_update" oresource.language.code %}" class="btn btn-xs btn-default">
+            <i class="fa fa-pencil"></i>
+            Edit
+        </a>
+    {% endif %}
+</td>
+<td class="language">
+    {% if not version %}
+        <a href="{% url "oresource_detail" oresource.pk %}">
+            {{ oresource.language.name }} ({{ oresource.language.code }})
+        </a>
+        <br />
+    {% endif %}
+    <small class="text-muted">
+        {% if version %}{{ version.revision.date_created }} / {{ version.revision.user }}{% else %}{{ oresource.created }} / {{ oresource.created_by }}{% endif %}
+    </small>
+</td>
+<td>{{ oresource.contqct }}</td>
+<td>{{ oresource.date_started }}</td>
+<td>{{ oresource.notes }}</td>
+<td>{% if oresource.offline %}<i class="fa fa-fw fa-check"></i>{% endif %}</td>
+<td>{{ oresource.publish_date|default:"" }}</td>
+<td>{{ oresource.version|default:"" }}</td>
+<td>
+    {% if oresource.source_text %}{{ oresource.source_text }}{% endif %}
+    {% if oresource.source_version %} v{{ oresource.source_version }}{% endif %}
+</td>
+<td>{% for c in oresource.checking_entity.all %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+<td>{{ oresource.checking_level|default:"" }}</td>

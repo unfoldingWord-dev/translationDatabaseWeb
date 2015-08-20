@@ -100,9 +100,10 @@ class ContactCreate(ContactMixin, CreateView):
 class OfficialResourceCreateView(LoginRequiredMixin, CreateView):
     form_class = OfficialResourceForm
     model = OfficialResource
+    template_name = "publishing/oresource_form.html"
 
     def get_success_url(self):
-        return reverse("obs_list")
+        return reverse("oresource_list")
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -115,63 +116,65 @@ class OfficialResourceCreateView(LoginRequiredMixin, CreateView):
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
         if self.object.publish_date is not None:
-            published.send(sender=self, obs=self.object)
+            published.send(sender=self, official_resource=self.object)
         return redirect(self.get_success_url())
 
 
 class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
     form_class = OfficialResourceForm
     model = OfficialResource
+    template_name = "publishing/oresource_form.html"
 
     @property
     def lang(self):
         if not hasattr(self, "_lang"):
             if self.kwargs.get("code"):
-                self._lang = get_object_or_404(Language, langcode=self.kwargs.get("code"))
+                self._lang = get_object_or_404(Language, code=self.kwargs.get("code"))
             else:
                 self._lang = None
         return self._lang
 
     def get_context_data(self, **kwargs):
-        context = super(OpenBibleStoryUpdateView, self).get_context_data(**kwargs)
+        context = super(OfficialResourceUpdateView, self).get_context_data(**kwargs)
         context.update(dict(lang=self.lang))
         return context
 
     def get_form(self, form_class):
-        form = super(OpenBibleStoryUpdateView, self).get_form(form_class)
+        form = super(OfficialResourceUpdateView, self).get_form(form_class)
         del form.fields["language"]
         return form
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        obs_published = False
+        published_flag = False
         if form.cleaned_data["publish"] and self.object.publish_date is None:
             self.object.publish_date = timezone.now().date()
-            obs_published = True
+            published_flag = True
         self.object.save()
         form.save_m2m()
         # @@@ Publish forms used to:
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
-        if obs_published:
-            published.send(sender=self, obs=self.object)
-        return redirect("obs_list")
+        if published_flag:
+            published.send(sender=self, official_resource=self.object)
+        return redirect("oresource_list")
 
     def get_object(self):
-        return get_object_or_404(OpenBibleStory, language=self.lang)
+        return get_object_or_404(OfficialResource, language=self.lang)
 
 
 class OfficialResourceListView(LoginRequiredMixin, ListView):
     model = OfficialResource
+    template_name = "publishing/oresource_list.html"
 
     def get_context_data(self, **kwargs):
         context = super(OfficialResourceListView, self).get_context_data(**kwargs)
-        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None, resource="obs")
+        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None)
         return context
 
     def get_queryset(self, **kwargs):
         qs = super(OfficialResourceListView, self).get_queryset(**kwargs)
-        qs = qs.order_by("language__langname", "-created")
+        qs = qs.order_by("language__name", "-created")
         return qs
 
 
@@ -204,12 +207,12 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         messages.info(self.request, "Publish Request Approved")
         approve_publish_request(self.object.pk, self.request.user.id)
-        return redirect("obs_update", code=self.object.language.langcode)
+        return redirect("oresource_update", code=self.object.language.langcode)
 
 
 class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
     model = PublishRequest
-    success_url = reverse_lazy("obs_list")
+    success_url = reverse_lazy("oresource_list")
 
     def delete(self, request, *args, **kwargs):
         messages.info(self.request, "Publish Request Rejected/Deleted")

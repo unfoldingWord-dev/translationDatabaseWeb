@@ -86,7 +86,7 @@ class OfficialResourceForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
                 self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
+        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(official_resources__checking_level=3)
         if self.instance.publish_date:
             self.fields["publish"].initial = True
         if not self.fields["publish"].initial:
@@ -98,6 +98,7 @@ class OfficialResourceForm(forms.ModelForm):
         model = OfficialResource
         fields = [
             "language",
+            "resource_type",
             "contact",
             "date_started",
             "notes",
