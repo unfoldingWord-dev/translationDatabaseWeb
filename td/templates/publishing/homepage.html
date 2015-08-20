@@ -18,12 +18,12 @@
                 {% endblocktrans %}
             </p>
             {% url "contact_list" as contacts_url %}
-            {% url "obs_list" as obs_list %}
-            {% url "obs_create" as obs_create %}
+            {% url "oresource_list" as oresource_list %}
+            {% url "oresource_create" as oresource_create %}
             {% blocktrans %}
                 <a href="{{ contacts_url }}" class="btn btn-primary large">Contacts</a>
-                <a href="{{ obs_list }}" class="btn btn-primary large">View OBS Records</a>
-                <a href="{{ obs_create }}" class="btn btn-primary large">Create OBS Records</a>
+                <a href="{{ oresource_list }}" class="btn btn-primary large">View Resource Records</a>
+                <a href="{{ oresource_create }}" class="btn btn-primary large">Create Resource Records</a>
             {% endblocktrans %}
             {% else %}
             <p>

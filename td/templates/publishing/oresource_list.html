@@ -3,12 +3,12 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}{% trans "Open Bible Stories" %}{% endblock %}
+{% block head_title %}{% trans "Official Resources" %}{% endblock %}
 
 {% block body %}
     <ul class="breadcrumb">
         <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-        <li>{% trans "Open Bible Stories" %}</li>
+        <li>{% trans "Official Resources" %}</li>
     </ul>
 
     <div class="panel panel-default">
@@ -31,7 +31,7 @@
                 <tbody>
                     {% for pr in publish_requests %}
                         <tr>
-                            {% include "uwadmin/_pr_row_data.html" with pr=pr %}
+                            {% include "publishing/_pr_row_data.html" with pr=pr %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -40,11 +40,11 @@
             <div class="panel-body">None</div>
         {% endif %}
         <div class="panel-heading panel-heading-with-table">
-            <a href="{% url "obs_create" %}" class="btn btn-xs btn-primary pull-right">
+            <a href="{% url "oresource_create" %}" class="btn btn-xs btn-primary pull-right">
                 <i class="fa fa-plus"></i>
                 Add
             </a>
-            <h2 class="panel-title">{% trans "Open Bible Stories" %}</h2>
+            <h2 class="panel-title">{% trans "Official Resources" %}</h2>
         </div>
         {% if object_list %}
             <table class="table table-condensed">
@@ -64,20 +64,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for obs in object_list %}
+                    {% for oresource in object_list %}
                         <tr>
-                            {% include "uwadmin/_obs_row_data.html" %}
+                            {% include "publishing/_oresource_row_data.html" %}
                         </tr>
-                        {% for version in obs.versions %}
+                        {% for version in oresource.versions %}
                             <tr class="version">
-                                {% include "uwadmin/_obs_row_data.html" with obs=version.object_version.object %}
+                                {% include "publishing/_oresource_row_data.html" with oresource=version.object_version.object %}
                             </tr>
                         {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <div class="panel-body">None, <a href="{% url "obs_create" %}">add one</a>!</div>
+            <div class="panel-body">None, <a href="{% url "oresource_create" %}">add one</a>!</div>
         {% endif %}
     </div>
 
