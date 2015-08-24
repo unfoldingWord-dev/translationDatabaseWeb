@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, Http404
 
 from .models import Charter, Event
 
@@ -17,21 +17,18 @@ def index(request):
 
 
 def charter(request, proj_num):
-	try:
-		charter = Charter.objects.get(proj_num = proj_num)
-		context = {'charter': charter}
-	except Charter.DoesNotExist:
-		raise Http404('Charter record not found')
-	return render(request, 'tracking/charter.html', context)
+	charter = get_object_or_404(Charter, proj_num = proj_num)
+	context = {'charter': charter}
+	return render(request, 'tracking/charter_detail.html', context)
 
 
 def event(request, event_id):
 	try:
-		event = Charter.objects.get(id = event_id)
+		event = Event.objects.get(id = event_id)
 		context = {'event': event}
 	except Event.DoesNotExist:
 		raise Http404('Event record not found')
-	return render(request, 'tracking/event.html', context)
+	return render(request, 'tracking/event_detail.html', context)
 
 
 def charter_add(request):
