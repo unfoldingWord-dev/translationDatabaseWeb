@@ -1,0 +1,47 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+
+    {% include "resources/_breadcrumbs.html" with region=country.region %}
+
+<h1>
+  {{ country.name }}
+    {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-xs" href="{% url "country_edit" country.pk %}">Edit</a>
+    {% endif %}
+</h1>
+
+
+
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead><tr><th>Gateway Language</th></tr></thead>
+            <tbody><tr><td>{% if country.gateway_language %}{{ country.gateway_language.name }} ({{ country.gateway_language.code }}){% else %}None{% endif %}</td></tr></tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <table class="table">
+            <thead><tr><th>Population</th></tr></thead>
+            <tbody><tr><td>{{ country.population|default:""|intcomma }}</td></tr></tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        {% include "resources/_short_list.html" with title="Top Networks" data=country.primary_networks.all %}
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-xs pull-right" href="{% url "language_create" country.pk %}"><i class="fa fa-plus"></i> Add</a>
+        {% endif %}
+        <h2 class="panel-title">Languages</h2>
+    </div>
+    {% include "resources/_language_list.html" with language_list=country.language_set.all %}
+</div>
+
+{% endblock %}

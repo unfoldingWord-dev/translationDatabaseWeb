@@ -34,8 +34,10 @@ urlpatterns = patterns(
     url(r"^exports/langnames.json$", "td.views.names_json_export", name="names_json_export"),
     url(r"^exports/gatewaylanguages-map/$", "td.views.export_svg", name="gateway_languages_map_export"),
 
-    url(r"^uw/", include("td.uw.urls")),
-    url(r"^admin/", include("td.uwadmin.urls")),
+    url(r"^uw/", include("td.resources.urls")),
+    url(r"^uw/", include("td.urls_languages")),
+
+    url(r"^publishing/", include("td.publishing.urls")),
 
     url(r"^data-sources/additional-languages/$", AdditionalLanguageListView.as_view(), name="ds_additional_languages"),
     url(r"^data-sources/ethnologue/country-codes/$", EthnologueCountryCodeListView.as_view(), name="ds_ethnologue_country_codes"),

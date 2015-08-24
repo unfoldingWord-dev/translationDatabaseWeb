@@ -1,0 +1,10 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">Countries</h1></div>
+        {% include "resources/_country_list.html" %}
+    </div>
+{% endblock %}

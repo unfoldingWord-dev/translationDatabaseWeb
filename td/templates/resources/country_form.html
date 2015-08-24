@@ -1,0 +1,28 @@
+{% extends "site_base.html" %}
+
+{% load humanize bootstrap %}
+
+{% block body %}
+{% include "resources/_breadcrumbs.html" with region=country.region country_form=form %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">{% if form.instance.pk %}Edit {{ country.country.name }}{% else %}Add Country{% endif %}</h1>
+            </div>
+            <div class="panel-body">
+                <form class="form" action="." method="POST">
+                    {% csrf_token %}
+                    {{ form|bootstrap }}
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="{% url "country_detail" country.pk %}">Cancel</a>
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+         </div>
+    </div>
+</div>
+
+{% endblock %}

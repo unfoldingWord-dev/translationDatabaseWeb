@@ -14,7 +14,8 @@ from td.imports.models import (
     IMBPeopleGroup
 )
 
-from td.uw.models import Language, Country, Region, Title, Resource, Media
+from td.resources.models import Title, Resource, Media
+from td.models import Region, Country, Language
 
 from .models import AdditionalLanguage
 from .signals import languages_integrated

@@ -5,6 +5,7 @@ billiard==3.3.0.20
 celery==3.1.18
 dj-database-url==0.3.0
 Django==1.8.3
+django-absoluteuri==1.1.0
 django-appconf==1.0.1
 django-bootstrap-form==3.2
 django-celery==3.1.16
@@ -13,7 +14,7 @@ django-model-utils==2.3.1
 django-multiupload==0.5
 django-redis-cache==1.5.3  # 0.13.0 - @@@ check for backwards incompatibilities
 django-reversion==1.9.1
-django-user-accounts==1.1
+django-user-accounts==1.2
 docutils==0.12
 pinax-eventlog==1.0.0
 gondor==1.2.5

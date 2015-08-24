@@ -32,13 +32,12 @@ var glmap = require("./glmap");
                   return {q: term}
                 },
                 results: function (data, page) {
-                  console.log(data.results);
                   return {results: data.results}
                 },
                 cache: true
               },
               initSelection: function (element, callback) {
-                data = {
+                var data = {
                   "pk": element.data("lang-pk"),
                   "ln": element.data("lang-ln"),
                   "lc": element.data("lang-lc"),

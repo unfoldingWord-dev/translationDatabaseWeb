@@ -1,0 +1,21 @@
+<td>
+    <a href="{% url "publish_request_update" pr.pk %}" class="btn btn-xs btn-primary">Review</a>
+</td>
+<td>
+    {{ pr.requestor }}
+</td>
+<td>
+    {{ pr.resource_type }}
+</td>
+<td>
+    {{ pr.language }}
+</td>
+<td>
+    {{ pr.checking_level }}
+</td>
+<td>
+    {{ pr.contributors }}
+</td>
+<td>
+    {{ pr.created_at }}
+</td>

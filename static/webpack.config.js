@@ -20,7 +20,8 @@ module.exports = {
                 test: /\.(gif|png|ico|jpg|svg)$/,
                 include: [
                     path.resolve(__dirname, "src/images"),
-                    path.resolve(__dirname, "../node_modules/datatables/media")
+                    path.resolve(__dirname, "../node_modules/datatables/media"),
+                    path.resolve(__dirname, "../node_modules/select2")
                 ],
                 loader: "file-loader?name=/images/[name].[ext]"
             },
