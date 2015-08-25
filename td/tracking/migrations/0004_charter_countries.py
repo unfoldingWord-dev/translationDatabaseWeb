@@ -7,14 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tracking', '0006_auto_20150819_1955'),
+        ('tracking', '0003_auto_20150825_1449'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='lead_dept',
-            field=models.CharField(default='', max_length=100),
-            preserve_default=False,
+            model_name='charter',
+            name='countries',
+            field=models.ManyToManyField(to='tracking.Country'),
         ),
     ]

@@ -1,0 +1,22 @@
+<h1>
+	{% if charter.name %}
+		{{ charter.name }}
+	{% else %}
+		{{ charter.target_lang_name }}
+	{%  %}
+	Project
+</h1>
+
+<ul>
+	{% for name, value in charter.get_fields %}
+		<li>{{ name }}: {{ value }}</li>
+	{% endfor %}
+</ul>
+
+<h3>Events:</h3>
+
+<ul>
+	{% for event in charter.event_set.all %}
+	<li><a href="{% url 'tracking:event' event.id %}">{{ event.id }}</a></li>
+	{% endfor %}
+</ul>

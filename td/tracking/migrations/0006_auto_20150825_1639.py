@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tracking', '0005_department_facilitator_network_translator'),
+        ('tracking', '0005_auto_20150825_1638'),
     ]
 
     operations = [
         migrations.RenameField(
             model_name='charter',
-            old_name='gw_lag_ietf',
-            new_name='gw_lang_ietf',
+            old_name='username',
+            new_name='created_by',
         ),
     ]

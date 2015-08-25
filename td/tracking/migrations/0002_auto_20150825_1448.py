@@ -12,12 +12,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name='projectcharter',
+            model_name='charter',
             name='id',
         ),
         migrations.AlterField(
-            model_name='projectcharter',
-            name='proj_num',
-            field=models.SlugField(serialize=False, primary_key=True),
+            model_name='charter',
+            name='target_lang_ietf',
+            field=models.CharField(max_length=200, serialize=False, primary_key=True, choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')]),
         ),
     ]

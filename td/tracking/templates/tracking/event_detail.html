@@ -1,0 +1,7 @@
+<h1>Event {{ event.id }} for <a href="{% url 'tracking:charter' event.charter.proj_num %}">{{ event.charter.proj_num }}</a></h1>
+
+<ul>
+	{% for name, value in event.get_fields %}
+		<li>{{ name }}: {{ value }}</li>
+	{% endfor %}
+</ul>
