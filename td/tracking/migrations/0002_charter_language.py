@@ -7,13 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tracking', '0009_auto_20150826_1502'),
+        ('td', '0001_initial'),
+        ('tracking', '0001_initial'),
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.AddField(
             model_name='charter',
-            name='created_by',
-            field=models.CharField(default=b'unknown', max_length=200),
+            name='language',
+            field=models.ForeignKey(blank=True, to='td.Language', null=True),
         ),
     ]

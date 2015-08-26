@@ -6,12 +6,14 @@ from .models import Charter, Event, Material, Translator, Facilitator, Network, 
 
 class CharterAdmin(admin.ModelAdmin):
 	fieldsets = [
-		('Language Info', {'fields': ['target_lang_name', 'target_lang_ietf', 'gw_lang_name', 'gw_lang_ietf', 'countries']}),
+		('Language Info', {'fields': ['language', 'target_lang_name', 'target_lang_ietf', 'gw_lang_name', 'gw_lang_ietf', 'countries']}),
 		('Timing Info', {'fields': ['start_date', 'end_date']}),
 		(None, {'fields': ['name', 'number']}),
 		(None, {'fields': ['lead_dept']}),
 	]
 	list_display = ('name', 'gw_lang_name', 'start_date', 'end_date')
+
+
 
 class EventAdmin(admin.ModelAdmin):
 	fieldsets = [

@@ -14,18 +14,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Charter',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=100)),
-                ('number', models.CharField(unique=True, max_length=50, blank=True)),
-                ('target_lang_ietf', models.CharField(max_length=200, choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
-                ('target_lang_name', models.CharField(max_length=100, choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),
-                ('gw_lang_ietf', models.SlugField(choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
-                ('gw_lang_name', models.CharField(max_length=100, choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),
-                ('start_date', models.DateField(default=django.utils.timezone.now)),
-                ('end_date', models.DateField(blank=True)),
-                ('lead_dept', models.CharField(max_length=200, blank=True)),
-                ('entry_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('username', models.CharField(max_length=200)),
+                ('target_lang_ietf', models.CharField(max_length=200, serialize=False, verbose_name=b'Target Language IETF Tag', primary_key=True, choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
+                ('target_lang_name', models.CharField(max_length=100, verbose_name=b'Target Language Name', choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),
+                ('gw_lang_ietf', models.SlugField(verbose_name=b'Gateway Language Tag', choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
+                ('gw_lang_name', models.CharField(max_length=100, verbose_name=b'Gateway Language Name', choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),
+                ('start_date', models.DateField(verbose_name=b'Start Date')),
+                ('end_date', models.DateField(null=True, verbose_name=b'Projected Completion Date', blank=True)),
+                ('name', models.CharField(unique=True, max_length=100, verbose_name=b'Name for this project')),
+                ('number', models.CharField(max_length=50, verbose_name=b'Project Accounting Number', blank=True)),
+                ('lead_dept', models.CharField(max_length=200, verbose_name=b'Lead Department', blank=True)),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('created_by', models.CharField(default=b'unknown', max_length=200)),
             ],
         ),
         migrations.CreateModel(
@@ -57,6 +56,7 @@ class Migration(migrations.Migration):
                 ('pub_process', models.TextField(max_length=1500, blank=True)),
                 ('follow_up', models.CharField(max_length=200, blank=True)),
                 ('charter', models.ForeignKey(to='tracking.Charter')),
+                ('departments', models.ManyToManyField(to='tracking.Department')),
             ],
         ),
         migrations.CreateModel(
@@ -66,14 +66,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=200)),
                 ('is_lead', models.BooleanField(default=False)),
                 ('speaks_gl', models.BooleanField(default=False)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Language',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=200)),
-                ('ietf', models.SlugField()),
             ],
         ),
         migrations.CreateModel(
@@ -97,5 +89,30 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=200)),
             ],
+        ),
+        migrations.AddField(
+            model_name='event',
+            name='facilitators',
+            field=models.ManyToManyField(to='tracking.Facilitator'),
+        ),
+        migrations.AddField(
+            model_name='event',
+            name='materials',
+            field=models.ManyToManyField(to='tracking.Material'),
+        ),
+        migrations.AddField(
+            model_name='event',
+            name='networks',
+            field=models.ManyToManyField(to='tracking.Network'),
+        ),
+        migrations.AddField(
+            model_name='event',
+            name='translators',
+            field=models.ManyToManyField(to='tracking.Translator'),
+        ),
+        migrations.AddField(
+            model_name='charter',
+            name='countries',
+            field=models.ManyToManyField(to='tracking.Country', verbose_name=b'Countries that speak this language', blank=True),
         ),
     ]

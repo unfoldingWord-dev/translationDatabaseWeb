@@ -1,6 +1,7 @@
 from django.db import models
-
 from django.utils import timezone
+
+from td.models import Language
 
 
 # Choices
@@ -39,8 +40,8 @@ TECHNOLOGIES = (
 # Models
 class Charter(models.Model):
 
-	# language = models.ForeignKey(Language, related_name="project_charter")
-
+	language = models.ForeignKey(Language, blank=True, null=True)
+	
 	# target_lang_name and target_lang_ietf should be pre-populated
 	target_lang_ietf = models.CharField(
 		max_length = 200,
@@ -235,7 +236,7 @@ class Country(models.Model):
 	name = models.CharField(max_length=200)
 
 
-class Language(models.Model):
+# class Language(models.Model):
 
-	name = models.CharField(max_length=200)
-	ietf = models.SlugField()
+# 	name = models.CharField(max_length=200)
+# 	ietf = models.SlugField()
