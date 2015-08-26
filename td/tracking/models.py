@@ -39,53 +39,65 @@ TECHNOLOGIES = (
 # Models
 class Charter(models.Model):
 
+	# language = models.ForeignKey(Language, related_name="project_charter")
+
 	# target_lang_name and target_lang_ietf should be pre-populated
 	target_lang_ietf = models.CharField(
 		max_length = 200,
 		primary_key = True,
 		choices = LANG_TAGS,
+		verbose_name = "Target Language IETF Tag",
 	)
 	# target_lang name will be automatically selected based on target_lang_ietf
 	target_lang_name = models.CharField(
 		max_length = 100,
 		choices = LANG_NAMES,
+		verbose_name = "Target Language Name",
 	)
 
 	# gw_lang_ietf and gw_lang_name should be automatically filled based on the target_lang_ietf
 	gw_lang_ietf = models.SlugField(
 		choices = LANG_TAGS,
+		verbose_name = "Gateway Language Tag",
 	)
 	gw_lang_name = models.CharField(
 		max_length = 100,
 		choices = LANG_NAMES,
+		verbose_name = "Gateway Language Name"
 	)
 
 	# Relationship field
 	countries = models.ManyToManyField(
 		'Country',
 		blank = True,
+		verbose_name = "Countries that speak this language",
 	)
 
 	start_date = models.DateField(
-		# default = timezone.now
+		verbose_name = "Start Date",
 	)
 	end_date = models.DateField(
+		null = True,
 		blank = True,
+		verbose_name = "Projected Completion Date",
 	)
 
 	# name should be made the same as the target language 
 	name = models.CharField(
 		max_length = 100,
 		unique = True,
+		verbose_name = "Name for this project",
 	)
 	number = models.CharField(
 		max_length = 50,
 		blank = True,
+		verbose_name = "Project Accounting Number",
 	)
 
 	lead_dept = models.CharField(
 		max_length = 200,
 		blank = True,
+		verbose_name = "Lead Department",
 	)
 
 	# 
