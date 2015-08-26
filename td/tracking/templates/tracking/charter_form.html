@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>tD | Tracking</title>
+</head>
+<body>
+	<h1>Translation Project Charter</h1>
+
+	<form action="{% url 'tracking:charter_add' %}" method="POST">
+		{% csrf_token %}
+		<!-- {{ form.as_p }} -->
+		{{ form.non_field_errors }}
+		{% for field in form.visible_fields %}
+			<div class="fieldWrapper">
+				{{ field.errors }}
+				{{ field.label_tag }}
+				{{ field }}
+			</div>
+		{% endfor %}
+		{% for field in form_countries.visible_fields %}
+			<div class="fieldWrapper">
+				{{ field.errors }}
+				{{ field.label_tag }}
+				{{ field }}
+			</div>
+		{% endfor %}
+		<input type="submit" value="Add Charter" />
+</form>
+</body>
+</html>

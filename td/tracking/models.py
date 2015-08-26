@@ -39,17 +39,6 @@ TECHNOLOGIES = (
 # Models
 class Charter(models.Model):
 
-	# name should be made the same as the target language 
-	name = models.CharField(
-		max_length = 100,
-		unique = True,
-	)
-	number = models.CharField(
-		max_length = 50,
-		unique = True,
-		blank = True,
-	)
-
 	# target_lang_name and target_lang_ietf should be pre-populated
 	target_lang_ietf = models.CharField(
 		max_length = 200,
@@ -71,10 +60,26 @@ class Charter(models.Model):
 		choices = LANG_NAMES,
 	)
 
+	# Relationship field
+	countries = models.ManyToManyField(
+		'Country',
+		blank = True,
+	)
+
 	start_date = models.DateField(
-		# default = now
+		# default = timezone.now
 	)
 	end_date = models.DateField(
+		blank = True,
+	)
+
+	# name should be made the same as the target language 
+	name = models.CharField(
+		max_length = 100,
+		unique = True,
+	)
+	number = models.CharField(
+		max_length = 50,
 		blank = True,
 	)
 
@@ -83,19 +88,14 @@ class Charter(models.Model):
 		blank = True,
 	)
 
-	# Relationship field
-	countries = models.ManyToManyField(
-		'Country',
-		blank = True,
-	)
-
 	# 
 	created_at = models.DateTimeField(
-		default = timezone.now
+		default = timezone.now,
 	)
 
 	created_by = models.CharField(
-		max_length = 200
+		max_length = 200,
+		default = "unknown",
 	)
 
 	def __unicode__(self):

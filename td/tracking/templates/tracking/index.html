@@ -1,9 +1,10 @@
+
 <h1>Tracking Dashboard</h1>
 
 {% if charter_list %}
 	<ul>
 	{% for charter in charter_list %}
-		<li><a href="{% url tracking:charter charter.target_lang_name %}">{{ charter.target_lang_name }}</a></li>
+		<li><a href="{% url 'tracking:charter' charter.target_lang_name %}">{{ charter.target_lang_name }}</a></li>
 	{% endfor %}
 	</ul>
 {% else %}
@@ -11,10 +12,14 @@
 {% endif %}
 
 {% if event_list %}
-	<p>{{ event_list }}</p>
+	<ul>
+	{% for event in event_list %}
+		<li><a href="{% url 'tracking:event' event.charter %}">{{ event.charter }}</a></li>
+	{% endfor %}
+	</ul>
 {% else %}
 	<p>Unfortunately, there is no event to see at the moment.</p>
 {% endif %}
 
-<a href="#"><button>Add a Translation Project Charter</button></a>
-<a href="#"><button>Add a Translation Project Event</button></a>
+<a href="{% url 'tracking:charter_add' %}"><button>Add a Translation Project Charter</button></a>
+<a href="{% url 'tracking:event_add' %}"><button>Add a Translation Project Event</button></a>

@@ -1,22 +1,21 @@
 from django import forms
-from .models import Charter, Event, Country
+from django.forms.extras.widgets import SelectDateWidget
+from django.utils import timezone
+
+from .models import Charter, Event
+
 
 
 class CharterForm(forms.ModelForm):
 	class Meta:
 		model = Charter
-		fields = [
-			'target_lang_name',
-			'target_lang_ietf',
-			'gw_lang_name',
-			'gw_lang_ietf',
-			'countries',
-			'name',
-			'number',
-			'start_date',
-			'end_date',
-			'lead_dept'
-		]
+		exclude = ['created_at', 'created_by']
+		widgets = {
+			'countries': forms.TextInput(),
+			'start_date': SelectDateWidget(),
+			'end_date': SelectDateWidget(),
+		}
+		
 
 
 class EventForm(forms.ModelForm):
