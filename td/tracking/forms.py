@@ -1,23 +1,29 @@
 from django import forms
-from django.forms.extras.widgets import SelectDateWidget
-from django.utils import timezone
-from django.utils.formats import mark_safe
 from django.core.urlresolvers import reverse
+from django.utils.formats import mark_safe
+from django.utils import timezone
+from django.forms.extras.widgets import SelectDateWidget
 
 from td.models import Language
-from td.publishing.translations import OBSTranslation
 from .models import Charter, Event
+from td.publishing.translations import OBSTranslation
 
 
 
 class CharterForm(forms.ModelForm):
 
+    # Modifying ModelForm's __init__()
     def __init__(self, *args, **kwargs):
+        # Prevent ModelForm's __init__() from being thrown out completely
         super(CharterForm, self).__init__(*args, **kwargs)
+        # The following will only ammend ModelForm's __init__() instead of replacing it
+        # Overriding how 'language' shold be rendered
         self.fields['language'] = forms.CharField(
             widget = forms.TextInput(
                 attrs = {
+                    # Adding CSS class to the field
                     "class": "language-selector",
+                    # 
                     "data-source-url": reverse("names_autocomplete")
                 }
             ),
@@ -61,9 +67,13 @@ class CharterForm(forms.ModelForm):
         model = Charter
         exclude = ['created_at', 'created_by']
         widgets = {
-            'countries': forms.TextInput(),
-            'start_date': SelectDateWidget(),
-            'end_date': SelectDateWidget(),
+            # 'countries': forms.TextInput(),
+            'start_date': SelectDateWidget(
+                attrs = {'class': 'date-input'}
+            ),
+            'end_date': SelectDateWidget(
+                attrs = {'class': 'date-input'}
+            ),
         }
         
 

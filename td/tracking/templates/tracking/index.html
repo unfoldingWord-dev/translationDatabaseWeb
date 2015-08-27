@@ -1,15 +1,13 @@
 
 <h1>Tracking Dashboard</h1>
 
-{% if charter_list %}
-	<ul>
-	{% for charter in charter_list %}
-		<li><a href="{% url 'tracking:charter' charter.target_lang_name %}">{{ charter.target_lang_name }}</a></li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>Unfortunately, there is no charter to see at the moment.</p>
-{% endif %}
+<ul>
+{% for charter in charter_list %}
+	<li><a href="{% url 'tracking:charter' charter.language %}">{{ charter.language }}</a></li>
+{% empty %}
+	<li>Unfortunately, there is no charter to see at the moment.</li>
+{% endfor %}
+</ul>
 
 {% if event_list %}
 	<ul>

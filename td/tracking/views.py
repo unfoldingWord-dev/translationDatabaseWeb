@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 #dashboard
 def index(request):
-	charter_list = Charter.objects.order_by('target_lang_name')
+	charter_list = Charter.objects.order_by('language')
 	event_list = Event.objects.order_by('charter')
 	context = {
 		'charter_list': charter_list,

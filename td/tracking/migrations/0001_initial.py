@@ -8,13 +8,15 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('td', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Charter',
             fields=[
-                ('target_lang_ietf', models.CharField(max_length=200, serialize=False, verbose_name=b'Target Language IETF Tag', primary_key=True, choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
+                ('language', models.OneToOneField(primary_key=True, serialize=False, to='td.Language')),
+                ('target_lang_ietf', models.CharField(max_length=200, verbose_name=b'Target Language IETF Tag', choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
                 ('target_lang_name', models.CharField(max_length=100, verbose_name=b'Target Language Name', choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),
                 ('gw_lang_ietf', models.SlugField(verbose_name=b'Gateway Language Tag', choices=[(b'ina', b'ina'), (b'eng', b'eng'), (b'bri', b'bri'), (b'deu', b'deu')])),
                 ('gw_lang_name', models.CharField(max_length=100, verbose_name=b'Gateway Language Name', choices=[(b'indonesian', b'Bahasa Indonesia'), (b'english', b'English (American)'), (b'british', b'English (British)'), (b'german', b'German')])),

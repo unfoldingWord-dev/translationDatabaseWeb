@@ -5,20 +5,6 @@ from td.models import Language
 
 
 # Choices
-LANG_NAMES = (
-	('indonesian', 'Bahasa Indonesia'),
-	('english', 'English (American)'),
-	('british', 'English (British)'),
-	('german', 'German'),
-)
-
-LANG_TAGS = (
-	('ina', 'ina'),
-	('eng', 'eng'),
-	('bri', 'bri'),
-	('deu', 'deu'),
-)
-
 OUTPUT_TARGETS = (
 	('print', 'print'),
 	('audio', 'audio'),
@@ -40,32 +26,35 @@ TECHNOLOGIES = (
 # Models
 class Charter(models.Model):
 
-	language = models.ForeignKey(Language, blank=True, null=True)
+	language = models.OneToOneField(
+		Language,
+		primary_key=True,
+		verbose_name='Target Language'
+	)
 	
-	# target_lang_name and target_lang_ietf should be pre-populated
-	target_lang_ietf = models.CharField(
-		max_length = 200,
-		primary_key = True,
-		choices = LANG_TAGS,
-		verbose_name = "Target Language IETF Tag",
-	)
-	# target_lang name will be automatically selected based on target_lang_ietf
-	target_lang_name = models.CharField(
-		max_length = 100,
-		choices = LANG_NAMES,
-		verbose_name = "Target Language Name",
-	)
+	# # target_lang_name and target_lang_ietf should be pre-populated
+	# target_lang_ietf = models.CharField(
+	# 	max_length = 200,
+	# 	choices = LANG_TAGS,
+	# 	verbose_name = "Target Language IETF Tag",
+	# )
+	# # target_lang name will be automatically selected based on target_lang_ietf
+	# target_lang_name = models.CharField(
+	# 	max_length = 100,
+	# 	choices = LANG_NAMES,
+	# 	verbose_name = "Target Language Name",
+	# )
 
-	# gw_lang_ietf and gw_lang_name should be automatically filled based on the target_lang_ietf
-	gw_lang_ietf = models.SlugField(
-		choices = LANG_TAGS,
-		verbose_name = "Gateway Language Tag",
-	)
-	gw_lang_name = models.CharField(
-		max_length = 100,
-		choices = LANG_NAMES,
-		verbose_name = "Gateway Language Name"
-	)
+	# # gw_lang_ietf and gw_lang_name should be automatically filled based on the target_lang_ietf
+	# gw_lang_ietf = models.SlugField(
+	# 	choices = LANG_TAGS,
+	# 	verbose_name = "Gateway Language Tag",
+	# )
+	# gw_lang_name = models.CharField(
+	# 	max_length = 100,
+	# 	choices = LANG_NAMES,
+	# 	verbose_name = "Gateway Language Name"
+	# )
 
 	# Relationship field
 	countries = models.ManyToManyField(
