@@ -4,7 +4,7 @@ from django.utils.formats import mark_safe
 from django.utils import timezone
 from django.forms.extras.widgets import SelectDateWidget
 
-from td.models import Language
+from td.models import Language, Country
 from .models import Charter, Event
 from td.publishing.translations import OBSTranslation
 
@@ -29,6 +29,7 @@ class CharterForm(forms.ModelForm):
             ),
             required = True
         )
+        self.fields['countries'].queryset = Country.objects.order_by('name')
 
         if self.instance.pk:
             lang = self.instance.language
@@ -56,11 +57,15 @@ class CharterForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(CharterForm, self).clean()
-        lang = cleaned_data["language"]
-        obs = OBSTranslation(base_path="", lang_code=lang.code)
-        if not obs.qa_check():
-            error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
-            raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
+        if 'language' in cleaned_data:
+            lang = cleaned_data['language']
+            obs = OBSTranslation(base_path="", lang_code=lang.code)
+            if not obs.qa_check():
+                error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
+                raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
+        else:
+            raise forms.ValidationError("You must select the target language")
+        
         return cleaned_data
 
     class Meta:

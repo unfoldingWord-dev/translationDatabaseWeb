@@ -9,6 +9,7 @@ class CharterAdmin(admin.ModelAdmin):
 		('Info', {'fields': ['language', 'countries']}),
 		('Timing', {'fields': ['start_date', 'end_date']}),
 		('Internal', {'fields': ['name', 'number', 'lead_dept']}),
+		(None, {'fields': ['created_at', 'created_by']}),
 	]
 	list_display = ('language', 'start_date', 'end_date')
 

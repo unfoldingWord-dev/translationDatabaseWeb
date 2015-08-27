@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from td.models import Language
+from td.models import Language, Country
 
 
 # Choices
@@ -28,7 +28,7 @@ class Charter(models.Model):
 
 	language = models.OneToOneField(
 		Language,
-		primary_key=True,
+		unique=True,
 		verbose_name='Target Language'
 	)
 	
@@ -56,11 +56,11 @@ class Charter(models.Model):
 	# 	verbose_name = "Gateway Language Name"
 	# )
 
-	# Relationship field
 	countries = models.ManyToManyField(
-		'Country',
+		Country,
 		blank = True,
 		verbose_name = "Countries that speak this language",
+		help_text = "Hold Ctrl while clicking to select multiple countries",
 	)
 
 	start_date = models.DateField(
@@ -101,7 +101,7 @@ class Charter(models.Model):
 	)
 
 	def __unicode__(self):
-		return self.target_lang_name
+		return str(self.language.name)
 
 	def get_fields(self):
 		return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
@@ -217,15 +217,3 @@ class Department(models.Model):
 	name = models.CharField(
 		max_length = 200
 	)
-
-
-# Dummy models
-class Country(models.Model):
-
-	name = models.CharField(max_length=200)
-
-
-# class Language(models.Model):
-
-# 	name = models.CharField(max_length=200)
-# 	ietf = models.SlugField()

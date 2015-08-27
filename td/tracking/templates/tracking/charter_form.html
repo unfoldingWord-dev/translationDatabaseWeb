@@ -1,31 +1,30 @@
 {% extends "site_base.html" %}
 
+
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}Translation Project Charter | Add{% endblock %}
+{% block head_title %}Translation Project Charter | Add{% endblock head_title %}
 
-	{% block extra_style %}
-
-		<style>
-			form .form-group::after {
-				content: '';
-				display: block;
-				clear: both;
-			}
-			.date-input {
-				width: calc(33.33% - 3px);
-				display: inline-block;
-				float: left;
-				margin-right: 3px;
-			}
-			.date-input:last-child {
-				width: 33.33%;
-				margin-right: 0;
-			}
-		</style>
-
-	{% endblock %}	
+{% block extra_style %}
+	<style>
+		form .form-group::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
+		.date-input {
+			width: calc(33.33% - 3px);
+			display: inline-block;
+			float: left;
+			margin-right: 3px;
+		}
+		.date-input:last-child {
+			width: 33.33%;
+			margin-right: 0;
+		}
+	</style>
+{% endblock extra_style %}	
 
 {% block body %}
 
@@ -52,7 +51,7 @@
 		</div>
 	</div>
 
-{% endblock %}
+{% endblock body%}
 
 {% block extra_script %}
-{% endblock %}
+{% endblock extra_script %}
