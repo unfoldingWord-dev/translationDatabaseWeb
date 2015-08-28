@@ -73,11 +73,12 @@ class Charter(models.Model):
 	)
 
 	# name should be made the same as the target language 
-	name = models.CharField(
-		max_length = 100,
-		unique = True,
-		verbose_name = "Name for this project",
-	)
+	# name = models.CharField(
+	# 	max_length = 100,
+	# 	# unique = True,
+	# 	blank = True,
+	# 	verbose_name = "Name for this project",
+	# )
 	number = models.CharField(
 		max_length = 50,
 		blank = True,
@@ -97,7 +98,7 @@ class Charter(models.Model):
 
 	created_by = models.CharField(
 		max_length = 200,
-		default = "unknown",
+		# default = "unknown",
 	)
 
 	def __unicode__(self):

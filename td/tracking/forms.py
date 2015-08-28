@@ -70,9 +70,9 @@ class CharterForm(forms.ModelForm):
 
     class Meta:
         model = Charter
-        exclude = ['created_at', 'created_by']
+        exclude = ['created_at']
         widgets = {
-            # 'countries': forms.TextInput(),
+            'created_by': forms.HiddenInput(),
             'start_date': SelectDateWidget(
                 attrs = {'class': 'date-input'}
             ),

@@ -42,7 +42,8 @@ class charter_add(CreateView):
 
 	def get_initial(self):
 		return {
-			'start_date': timezone.now()
+			'start_date': timezone.now(),
+			'created_by': self.request.user.username
 		}
 
 	def form_valid(self, form):
