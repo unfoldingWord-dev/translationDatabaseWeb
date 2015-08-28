@@ -54,13 +54,13 @@ class CharterForm(forms.ModelForm):
                 pass
 
     # Overriding automatic cleaning function for language field
-    def clean_language(self):
-        lang_id = self.cleaned_data['language']
-        c = Charter.objects.filter(language_id=lang_id)
-        if c:
-            raise forms.ValidationError(mark_safe('Language already exists. Click <a href="' + urlReverse('tracking:charter', kwargs={'target_lang_name': c[0].id}) + '">here</a> to edit the charter, or <a href="">here</a> to add events to it.'))
+    # def clean_language(self):
+    #     lang_id = self.cleaned_data['language']
+    #     c = Charter.objects.filter(language_id=lang_id)
+    #     if c:
+    #         raise forms.ValidationError(mark_safe('Language already exists. Click <a href="' + urlReverse('tracking:charter', kwargs={'target_lang_name': c[0].id}) + '">here</a> to edit the charter, or <a href="">here</a> to add events to it.'))
 
-        return lang_id
+    #     return lang_id
 
     class Meta:
         model = Charter

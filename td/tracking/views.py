@@ -5,6 +5,8 @@ from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
 from django.contrib import messages
 
+from account.mixins import LoginRequiredMixin
+
 from .models import Charter, Event
 from .forms import CharterForm, EventForm
 
@@ -51,6 +53,15 @@ class charter_add(CreateView):
 		messages.info(self.request, "Project charter has been added")
 		return redirect('tracking:charter_add')
 
+class charter_update(LoginRequiredMixin, UpdateView):
+	model = Charter
+	form_class = CharterForm
+	template_name_suffix = "_update_form"
+
+	def form_valid(self, form):
+		self.object = form.save()
+		messages.info(self.request, "Project charter has been updated")
+		return redirect('tracking:charter_add_success')
 
 
 def charter_add_success(request):
