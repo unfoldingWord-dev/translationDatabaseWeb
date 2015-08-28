@@ -65,11 +65,11 @@ class CharterForm(forms.ModelForm):
     #     return cleaned_data
     
     # Overriding automatic cleaning function for language field
-    def clean_language(self):
-        # ????? Returning the language object instead of a string ?????
-        lang_id = self.cleaned_data["language"]
-        if lang_id:
-            return Language.objects.get(pk=lang_id)
+    # def clean_language(self):
+    #     # ????? Returning the language object instead of a string ?????
+    #     lang_id = self.cleaned_data["language"]
+    #     if lang_id:
+    #         return Language.objects.get(pk=lang_id)
 
     class Meta:
         model = Charter
