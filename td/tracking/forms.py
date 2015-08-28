@@ -1,5 +1,5 @@
 from django import forms
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse as urlReverse
 from django.utils.formats import mark_safe
 from django.utils import timezone
 from django.forms.extras.widgets import SelectDateWidget
@@ -24,7 +24,7 @@ class CharterForm(forms.ModelForm):
                     # Adding CSS class to the field
                     "class": "language-selector",
                     # 
-                    "data-source-url": reverse("names_autocomplete")
+                    "data-source-url": urlReverse("names_autocomplete")
                 }
             ),
             required = True
@@ -53,25 +53,14 @@ class CharterForm(forms.ModelForm):
             except:
                 pass
 
-    # def clean(self):
-    #     cleaned_data = super(CharterForm, self).clean()
-    #     if 'language' in cleaned_data:
-    #         lang = cleaned_data['language']
-    #         obs = OBSTranslation(base_path="", lang_code=lang.code)
-    #         if not obs.qa_check():
-    #             error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
-    #             raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
-    #     else:
-    #         raise forms.ValidationError("You must select the target language")
-        
-    #     return cleaned_data
-    
     # Overriding automatic cleaning function for language field
-    # def clean_language(self):
-    #     # ????? Returning the language object instead of a string ?????
-    #     lang_id = self.cleaned_data["language"]
-    #     if lang_id:
-    #         return Language.objects.get(pk=lang_id)
+    def clean_language(self):
+        lang_id = self.cleaned_data['language']
+        c = Charter.objects.filter(language_id=lang_id)
+        if c:
+            raise forms.ValidationError(mark_safe('Language already exists. Click <a href="' + urlReverse('tracking:charter', kwargs={'target_lang_name': c[0].id}) + '">here</a> to edit the charter, or <a href="">here</a> to add events to it.'))
+
+        return lang_id
 
     class Meta:
         model = Charter
