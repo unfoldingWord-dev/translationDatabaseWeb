@@ -31,6 +31,7 @@ class CharterForm(forms.ModelForm):
         )
         self.fields['countries'].queryset = Country.objects.order_by('name')
 
+        # Checking what?
         if self.instance.pk:
             lang = self.instance.language
             if lang:
@@ -50,23 +51,25 @@ class CharterForm(forms.ModelForm):
             except:
                 pass
 
+    # def clean(self):
+    #     cleaned_data = super(CharterForm, self).clean()
+    #     if 'language' in cleaned_data:
+    #         lang = cleaned_data['language']
+    #         obs = OBSTranslation(base_path="", lang_code=lang.code)
+    #         if not obs.qa_check():
+    #             error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
+    #             raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
+    #     else:
+    #         raise forms.ValidationError("You must select the target language")
+        
+    #     return cleaned_data
+    
+    # Overriding automatic cleaning function for language field
     def clean_language(self):
+        # ????? Returning the language object instead of a string ?????
         lang_id = self.cleaned_data["language"]
         if lang_id:
             return Language.objects.get(pk=lang_id)
-
-    def clean(self):
-        cleaned_data = super(CharterForm, self).clean()
-        if 'language' in cleaned_data:
-            lang = cleaned_data['language']
-            obs = OBSTranslation(base_path="", lang_code=lang.code)
-            if not obs.qa_check():
-                error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
-                raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
-        else:
-            raise forms.ValidationError("You must select the target language")
-        
-        return cleaned_data
 
     class Meta:
         model = Charter
