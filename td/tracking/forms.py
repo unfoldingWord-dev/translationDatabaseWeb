@@ -32,24 +32,24 @@ class CharterForm(forms.ModelForm):
         self.fields['countries'].queryset = Country.objects.order_by('name')
 
         # Checking what?
-        if self.instance.pk:
-            lang = self.instance.language
-            if lang:
-                self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
-        elif self.data.get("language", None):
-            try:
-                lang = Language.objects.get(pk=self.data["language"])
-                self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
-            except:
-                pass
+        # if self.instance.pk:
+        #     lang = self.instance.language
+        #     if lang:
+        #         self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
+        #         self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
+        #         self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
+        #         self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
+        #         self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+        # elif self.data.get("language", None):
+        #     try:
+        #         lang = Language.objects.get(pk=self.data["language"])
+        #         self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
+        #         self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
+        #         self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
+        #         self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
+        #         self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+        #     except:
+        #         pass
 
     # def clean(self):
     #     cleaned_data = super(CharterForm, self).clean()
