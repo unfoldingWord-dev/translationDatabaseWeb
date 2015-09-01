@@ -3,7 +3,7 @@
 
 <ul>
 {% for charter in charter_list %}
-	<li><a href="{% url 'tracking:charter' charter.language %}">{{ charter.language }}</a></li>
+	<li><a href="{% url 'tracking:charter' charter.id %}">{{ charter.language }}</a></li>
 {% empty %}
 	<li>Unfortunately, there is no charter to see at the moment.</li>
 {% endfor %}

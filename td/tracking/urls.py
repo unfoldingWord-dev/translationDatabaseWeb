@@ -15,7 +15,7 @@ urlpatterns = [
 
 	url(r'^$', index, name = 'index'),
 	
-	url(r'^charter/detail/(?P<target_lang_name>[0-9a-zA-Z]+)/$', charter, name = 'charter'),
+	url(r'^charter/detail/(?P<pk>[0-9a-zA-Z]+)/$', charter, name = 'charter'),
 	url(r'^charter/add/$', charter_add.as_view(), name = 'charter_add'),
 	url(r'^charter/update/(?P<pk>[0-9a-zA-Z]+)$', charter_update.as_view(), name = 'charter_update'),
 	url(r'^charter/add/success/$', charter_add_success, name = 'charter_add_success'),

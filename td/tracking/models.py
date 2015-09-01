@@ -31,30 +31,6 @@ class Charter(models.Model):
 		unique=True,
 		verbose_name='Target Language'
 	)
-	
-	# # target_lang_name and target_lang_ietf should be pre-populated
-	# target_lang_ietf = models.CharField(
-	# 	max_length = 200,
-	# 	choices = LANG_TAGS,
-	# 	verbose_name = "Target Language IETF Tag",
-	# )
-	# # target_lang name will be automatically selected based on target_lang_ietf
-	# target_lang_name = models.CharField(
-	# 	max_length = 100,
-	# 	choices = LANG_NAMES,
-	# 	verbose_name = "Target Language Name",
-	# )
-
-	# # gw_lang_ietf and gw_lang_name should be automatically filled based on the target_lang_ietf
-	# gw_lang_ietf = models.SlugField(
-	# 	choices = LANG_TAGS,
-	# 	verbose_name = "Gateway Language Tag",
-	# )
-	# gw_lang_name = models.CharField(
-	# 	max_length = 100,
-	# 	choices = LANG_NAMES,
-	# 	verbose_name = "Gateway Language Name"
-	# )
 
 	countries = models.ManyToManyField(
 		Country,
@@ -72,13 +48,6 @@ class Charter(models.Model):
 		verbose_name = "Projected Completion Date",
 	)
 
-	# name should be made the same as the target language 
-	# name = models.CharField(
-	# 	max_length = 100,
-	# 	# unique = True,
-	# 	blank = True,
-	# 	verbose_name = "Name for this project",
-	# )
 	number = models.CharField(
 		max_length = 50,
 		blank = True,
@@ -98,7 +67,6 @@ class Charter(models.Model):
 
 	created_by = models.CharField(
 		max_length = 200,
-		# default = "unknown",
 	)
 
 	def __unicode__(self):

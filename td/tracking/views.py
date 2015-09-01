@@ -31,8 +31,8 @@ def index(request):
 #           CHARTER VIEWS          #
 #----------------------------------#
 
-def charter(request, target_lang_name):
-	charter = get_object_or_404(Charter, target_lang_name = target_lang_name)
+def charter(request, pk):
+	charter = get_object_or_404(Charter, pk = pk)
 	context = {'charter': charter}
 
 	return render(request, 'tracking/charter_detail.html', context)
