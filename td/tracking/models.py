@@ -34,7 +34,6 @@ class Charter(models.Model):
 
 	countries = models.ManyToManyField(
 		Country,
-		blank = True,
 		verbose_name = "Countries that speak this language",
 		help_text = "Hold Ctrl while clicking to select multiple countries",
 	)
@@ -44,27 +43,28 @@ class Charter(models.Model):
 	)
 	end_date = models.DateField(
 		null = True,
-		blank = True,
 		verbose_name = "Projected Completion Date",
 	)
 
 	number = models.CharField(
 		max_length = 50,
-		blank = True,
 		verbose_name = "Project Accounting Number",
 	)
 
 	lead_dept = models.CharField(
 		max_length = 200,
-		blank = True,
 		verbose_name = "Lead Department",
+	)
+	contact_person = models.CharField(
+		null = True,
+		max_length = 200,
+		verbose_name = "Follow-up Person",
 	)
 
 	# 
 	created_at = models.DateTimeField(
 		default = timezone.now,
 	)
-
 	created_by = models.CharField(
 		max_length = 200,
 	)

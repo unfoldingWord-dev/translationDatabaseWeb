@@ -8,7 +8,7 @@ class CharterAdmin(admin.ModelAdmin):
 	fieldsets = [
 		('Info', {'fields': ['language', 'countries']}),
 		('Timing', {'fields': ['start_date', 'end_date']}),
-		('Internal', {'fields': ['number', 'lead_dept']}),
+		('Internal', {'fields': ['number', 'lead_dept', 'contact_person']}),
 		(None, {'fields': ['created_at', 'created_by']}),
 	]
 	list_display = ('language', 'start_date', 'end_date')
