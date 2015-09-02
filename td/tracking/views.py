@@ -45,13 +45,14 @@ class charter_add(CreateView):
 	def get_initial(self):
 		return {
 			'start_date': timezone.now(),
+			'end_date': timezone.now(),
 			'created_by': self.request.user.username
 		}
 
 	def form_valid(self, form):
 		self.object = form.save()
 		messages.info(self.request, "Project charter has been added")
-		return redirect('tracking:charter_add')
+		return redirect('tracking:charter_add_success')
 
 class charter_update(LoginRequiredMixin, UpdateView):
 	model = Charter
@@ -65,7 +66,7 @@ class charter_update(LoginRequiredMixin, UpdateView):
 
 
 def charter_add_success(request):
-	return HttpResponse()
+	return HttpResponse('Project has been successfully created')
 
 
 #--------------------------------#

@@ -2,28 +2,25 @@ from django import forms
 from django.core.urlresolvers import reverse as urlReverse
 from django.utils.formats import mark_safe
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.forms.extras.widgets import SelectDateWidget
 
 from td.models import Language, Country
 from .models import Charter, Event
 from td.publishing.translations import OBSTranslation
 
+import re
+
 
 
 class CharterForm(forms.ModelForm):
 
-    # Modifying ModelForm's __init__()
     def __init__(self, *args, **kwargs):
-        # Prevent ModelForm's __init__() from being thrown out completely
         super(CharterForm, self).__init__(*args, **kwargs)
-        # The following will only ammend ModelForm's __init__() instead of replacing it
-        # Overriding how 'language' shold be rendered
         self.fields['language'] = forms.CharField(
             widget = forms.TextInput(
                 attrs = {
-                    # Adding CSS class to the field
                     "class": "language-selector",
-                    # 
                     "data-source-url": urlReverse("names_autocomplete")
                 }
             ),
@@ -53,14 +50,20 @@ class CharterForm(forms.ModelForm):
             except:
                 pass
 
-    # Overriding automatic cleaning function for language field
-    # def clean_language(self):
-    #     lang_id = self.cleaned_data['language']
-    #     c = Charter.objects.filter(language_id=lang_id)
-    #     if c:
-    #         raise forms.ValidationError(mark_safe('Language already exists. Click <a href="' + urlReverse('tracking:charter', kwargs={'target_lang_name': c[0].id}) + '">here</a> to edit the charter, or <a href="">here</a> to add events to it.'))
+    def clean_contact_person(self):
+        number = self.cleaned_data['number'].strip()
+        v = re.compile('[0-9a-z.-]+', re.IGNORECASE)
+        if not v.match(number):
+            raise forms.ValidationError(_('Use only letters, numbers, hyphens, or periods'), 'invalid_input')
+        return number
 
-    #     return lang_id
+    def clean_contact_person(self):
+        name = self.cleaned_data['contact_person']
+        name = name.strip()
+        v = re.compile('[a-z ]+', re.IGNORECASE)
+        if not v.match(name):
+            raise forms.ValidationError(_('Use only letters and spaces'), 'invalid_input')
+        return name
 
     class Meta:
         model = Charter
