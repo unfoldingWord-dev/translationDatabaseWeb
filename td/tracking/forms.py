@@ -11,7 +11,15 @@ from td.publishing.translations import OBSTranslation
 
 import re
 
+class MySelectDateWidget(SelectDateWidget):
 
+    # Put Required=True on hold so the widget will include empty_label upon render
+    def create_select(self, *args, **kwargs):
+        old_state = self.is_required
+        self.is_required = False
+        result = super(MySelectDateWidget, self).create_select(*args, **kwargs)
+        self.is_required = old_state
+        return result
 
 class CharterForm(forms.ModelForm):
 
@@ -50,20 +58,17 @@ class CharterForm(forms.ModelForm):
             except:
                 pass
 
-    def clean_contact_person(self):
-        number = self.cleaned_data['number'].strip()
-        v = re.compile('[0-9a-z.-]+', re.IGNORECASE)
-        if not v.match(number):
-            raise forms.ValidationError(_('Use only letters, numbers, hyphens, or periods'), 'invalid_input')
-        return number
+    # def clean_number(self):
+        # Validate the format of project (accounting) number
 
+    # Since a name can have unexpected characters, only check against empty
     def clean_contact_person(self):
         name = self.cleaned_data['contact_person']
         name = name.strip()
-        v = re.compile('[a-z ]+', re.IGNORECASE)
-        if not v.match(name):
-            raise forms.ValidationError(_('Use only letters and spaces'), 'invalid_input')
-        return name
+        if not name:
+            raise forms.ValidationError(_('This field is required'), 'invalid_input')
+        else:
+            return name
 
     class Meta:
         model = Charter
@@ -71,9 +76,9 @@ class CharterForm(forms.ModelForm):
         widgets = {
             'created_by': forms.HiddenInput(),
             'start_date': SelectDateWidget(
-                attrs = {'class': 'date-input'}
+                attrs={'class': 'date-input'}
             ),
-            'end_date': SelectDateWidget(
+            'end_date': MySelectDateWidget(
                 attrs = {'class': 'date-input'}
             ),
         }

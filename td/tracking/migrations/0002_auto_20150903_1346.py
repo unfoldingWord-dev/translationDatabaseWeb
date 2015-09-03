@@ -11,13 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.AlterField(
             model_name='charter',
-            name='lead_dept',
-        ),
-        migrations.AddField(
-            model_name='charter',
-            name='lead_dept',
-            field=models.ManyToManyField(to='tracking.Department', verbose_name=b'Lead Department'),
+            name='number',
+            field=models.CharField(max_length=10, verbose_name=b'Project Accounting Number'),
         ),
     ]

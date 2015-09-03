@@ -32,7 +32,6 @@ class Charter(models.Model):
         unique=True,
         verbose_name='Target Language',
     )
-
     countries = models.ManyToManyField(
         Country,
         verbose_name="Countries that speak this language",
@@ -43,22 +42,19 @@ class Charter(models.Model):
         verbose_name="Start Date",
     )
     end_date = models.DateField(
-        null=True,
         verbose_name="Projected Completion Date",
     )
 
     number = models.CharField(
-        max_length=50,
+        max_length=10,
         verbose_name="Project Accounting Number",
     )
 
     lead_dept = models.ForeignKey(
         'Department',
-        null=True,
         verbose_name="Lead Department",
     )
     contact_person = models.CharField(
-        null=True,
         max_length=200,
         verbose_name="Follow-up Person",
     )

@@ -17,10 +17,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start_date', models.DateField(verbose_name=b'Start Date')),
-                ('end_date', models.DateField(null=True, verbose_name=b'Projected Completion Date')),
+                ('end_date', models.DateField(verbose_name=b'Projected Completion Date')),
                 ('number', models.CharField(max_length=50, verbose_name=b'Project Accounting Number')),
-                ('lead_dept', models.CharField(max_length=200, verbose_name=b'Lead Department')),
-                ('contact_person', models.CharField(max_length=200, null=True, verbose_name=b'Follow-up Person')),
+                ('contact_person', models.CharField(max_length=200, verbose_name=b'Follow-up Person')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('created_by', models.CharField(max_length=200)),
                 ('countries', models.ManyToManyField(help_text=b'Hold Ctrl while clicking to select multiple countries', to='td.Country', verbose_name=b'Countries that speak this language')),
@@ -102,5 +101,10 @@ class Migration(migrations.Migration):
             model_name='event',
             name='translators',
             field=models.ManyToManyField(to='tracking.Translator'),
+        ),
+        migrations.AddField(
+            model_name='charter',
+            name='lead_dept',
+            field=models.ForeignKey(verbose_name=b'Lead Department', to='tracking.Department'),
         ),
     ]

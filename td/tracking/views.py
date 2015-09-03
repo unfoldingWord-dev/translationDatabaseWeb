@@ -45,7 +45,7 @@ class charter_add(CreateView):
 	def get_initial(self):
 		return {
 			'start_date': timezone.now(),
-			'end_date': timezone.now(),
+			'end_date': None,
 			'created_by': self.request.user.username
 		}
 
