@@ -11,6 +11,7 @@ from td.publishing.translations import OBSTranslation
 
 import re
 
+
 class MySelectDateWidget(SelectDateWidget):
 
     # Put Required=True on hold so the widget will include empty_label upon render

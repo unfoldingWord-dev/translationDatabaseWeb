@@ -1,0 +1,39 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}Tracking | Add Charter{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}Success{% endblocktrans %}</h1>
+            {% if user.is_authenticated %}
+            <p>
+                {% blocktrans %}
+                {{ message }}
+                {% endblocktrans %}
+            </p>
+            {% url "tracking:event_add_specific" charter_id as url_add_event %}
+            {% url "tracking:charter_add" as url_add_more %}
+            {% url "tracking:index" as url_home %}
+            {% blocktrans %}
+                <a href="{{ url_add_event }}" class="btn btn-primary large">Add Events</a>
+                <a href="{{ url_add_more }}" class="btn btn-primary large">Add Another Project</a>
+                <a href="{{ url_home }}" class="btn btn-primary large">All Projects</a>
+            {% endblocktrans %}
+            {% else %}
+            <p>
+                {% url "account_login" as login_url %}
+                {% blocktrans %}
+                    Login to get started.
+                    <a href="{{ login_url }}" class="btn btn-default">Log In</a>
+                {% endblocktrans %}
+            </p>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

@@ -59,7 +59,6 @@ class Charter(models.Model):
         verbose_name="Follow-up Person",
     )
 
-    #
     created_at = models.DateTimeField(
         default=timezone.now,
     )
