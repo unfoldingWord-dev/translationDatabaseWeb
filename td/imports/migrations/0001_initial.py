@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Ethnologue Country Code',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='EthnologueLanguageCode',
@@ -38,7 +37,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Ethnologue Language Code',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='EthnologueLanguageIndex',
@@ -54,7 +52,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Ethnologue Language Index',
                 'verbose_name_plural': 'Ethnologue Language Index',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='IMBPeopleGroup',
@@ -104,7 +101,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'IMB People Group',
                 'verbose_name_plural': 'IMB People Groups',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SIL_ISO_639_3',
@@ -123,7 +119,21 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'SIL ISO Code Set',
             },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='WikipediaISOCountry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('english_short_name', models.CharField(max_length=100)),
+                ('alpha_2', models.CharField(max_length=2)),
+                ('alpha_3', models.CharField(max_length=3)),
+                ('numeric_code', models.CharField(max_length=3)),
+                ('iso_3166_2_code', models.CharField(max_length=20)),
+            ],
+            options={
+                'verbose_name': 'Wikipedia ISO 3166-1 Country',
+                'verbose_name_plural': 'Wikipedia ISO 3166-1 Countries',
+            },
         ),
         migrations.CreateModel(
             name='WikipediaISOLanguage',
@@ -143,6 +153,5 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Wikipedia ISO Language',
             },
-            bases=(models.Model,),
         ),
     ]

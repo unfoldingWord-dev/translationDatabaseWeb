@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='OpenBibleStory',
+            name='OfficialResource',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date_started', models.DateField()),
@@ -82,6 +82,15 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['language', 'contact'],
             },
+        ),
+        migrations.CreateModel(
+            name='OfficialResourceType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('short_name', models.CharField(help_text=b'a 5 character identification code', max_length=5)),
+                ('long_name', models.CharField(help_text=b'a more descriptive name', max_length=50)),
+                ('description', models.TextField(blank=True)),
+            ],
         ),
         migrations.CreateModel(
             name='Organization',
@@ -104,15 +113,15 @@ class Migration(migrations.Migration):
             name='PublishRequest',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('requestor', models.CharField(max_length=100)),
-                ('resource', models.CharField(default=b'obs', max_length=20, choices=[(b'obs', b'Open Bible Stories')])),
-                ('checking_level', models.IntegerField(choices=[(1, b'1'), (2, b'2'), (3, b'3')])),
+                ('requestor', models.CharField(max_length=100, verbose_name=b'Requester name')),
+                ('checking_level', models.IntegerField(verbose_name=b'Requested checking level', choices=[(1, b'1'), (2, b'2'), (3, b'3')])),
                 ('source_version', models.CharField(max_length=10, blank=True)),
-                ('contributors', models.TextField(blank=True)),
+                ('contributors', models.TextField(help_text=b'Names or Pseudonyms', blank=True)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('approved_at', models.DateTimeField(default=None, null=True, db_index=True, blank=True)),
-                ('requestor_email', models.EmailField(default=b'', help_text=b'email address to be notified of request status', max_length=254, blank=True)),
+                ('requestor_email', models.EmailField(default=b'', help_text=b'email address to be notified of request status', max_length=254, verbose_name=b'Requester email', blank=True)),
                 ('language', models.ForeignKey(related_name='publish_requests', to='td.Language')),
+                ('resource_type', models.ForeignKey(to='publishing.OfficialResourceType', null=True)),
                 ('source_text', models.ForeignKey(related_name='source_publish_requests', to='td.Language', null=True)),
             ],
         ),
@@ -130,32 +139,37 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
             name='checking_entity',
             field=models.ManyToManyField(related_name='resource_publications', to='publishing.Organization', blank=True),
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
             name='contact',
-            field=models.ForeignKey(related_name='open_bible_stories', blank=True, to='publishing.Contact', null=True),
+            field=models.ForeignKey(related_name='official_resources', blank=True, to='publishing.Contact', null=True),
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
             name='contributors',
             field=models.ManyToManyField(related_name='+', to='publishing.Contact', blank=True),
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
             name='created_by',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
             name='language',
-            field=models.OneToOneField(related_name='open_bible_story', verbose_name=b'Language', to='td.Language'),
+            field=models.ForeignKey(related_name='official_resources', verbose_name=b'Language', to='td.Language'),
         ),
         migrations.AddField(
-            model_name='openbiblestory',
+            model_name='officialresource',
+            name='resource_type',
+            field=models.ForeignKey(verbose_name=b'official_resources', to='publishing.OfficialResourceType'),
+        ),
+        migrations.AddField(
+            model_name='officialresource',
             name='source_text',
             field=models.ForeignKey(related_name='+', blank=True, to='td.Language', null=True),
         ),
@@ -186,7 +200,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='comment',
-            name='open_bible_story',
-            field=models.ForeignKey(related_name='comments', to='publishing.OpenBibleStory'),
+            name='official_resource',
+            field=models.ForeignKey(related_name='comments', to='publishing.OfficialResource', null=True),
         ),
     ]
