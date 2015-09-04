@@ -180,6 +180,7 @@ class OfficialResourceListView(LoginRequiredMixin, ListView):
 
 class OfficialResourceDetailView(LoginRequiredMixin, DetailView):
     model = OfficialResource
+    template_name = "publishing/oresource_detail.html"
 
 
 class PublishRequestCreateView(CreateView):
