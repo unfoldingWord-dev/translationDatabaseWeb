@@ -258,13 +258,14 @@ def country_map_data(request):
 
 @login_required
 def upload_gateway_flag_file(request):
+    """ Flag each language matching the language code in a newline-delimited list of codes as "gateway" languages.
+    Unflag any languages which were previously marked as "gateway" languages but are not submitted in the form.
+    """
     if request.method == "POST":
         form = UploadGatewayForm(request.POST, request.FILES)
         if form.is_valid():
-            for lang in Language.objects.filter(code__in=form.cleaned_data["languages"]):
-                lang.gateway_flag = True
-                lang.source = request.user
-                lang.save()
+            Language.objects.filter(gateway_flag=True).update(gateway_flag=False)
+            Language.objects.filter(code__in=form.cleaned_data["languages"]).update(gateway_flag=True)
             messages.add_message(request, messages.SUCCESS, "Gateway languages updated")
             return redirect("gateway_flag_update")
     else:
