@@ -134,16 +134,19 @@ class Comment(models.Model):
 
 @python_2_unicode_compatible
 class PublishRequest(models.Model):
-    requestor = models.CharField(max_length=100)
+    requestor = models.CharField(max_length=100, verbose_name="Requester name")
     resource_type = models.ForeignKey(OfficialResourceType, null=True)
     language = models.ForeignKey(Language, related_name="publish_requests")
-    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
+    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, verbose_name="Requested checking level")
     source_text = models.ForeignKey(Language, related_name="source_publish_requests", null=True)
     source_version = models.CharField(max_length=10, blank=True)
-    contributors = models.TextField(blank=True)
+    contributors = models.TextField(blank=True, help_text="Names or Pseudonyms")
     created_at = models.DateTimeField(default=timezone.now)
     approved_at = models.DateTimeField(default=None, blank=True, null=True, db_index=True)
-    requestor_email = models.EmailField(blank=True, default="", help_text="email address to be notified of request status")
+    requestor_email = models.EmailField(blank=True,
+                                        default="",
+                                        verbose_name="Requester email",
+                                        help_text="email address to be notified of request status")
 
     def __str__(self):
         return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.get_resource_display()), self.language)
