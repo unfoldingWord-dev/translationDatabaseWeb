@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}{{ openbiblestory.language.langname }} Open Bible Story{% endblock %}
+{% block head_title %}{{ officialresource.language }} Official Resource {{ officialresource.resource_type }}{% endblock %}
 
 {% block body %}
     <ul class="breadcrumb">
         <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-        <li><a href="{% url "obs_list" %}">{% trans "Open Bible Stories" %}</a></li>
-        <li>{{ openbiblestory.language.langname }}</li>
+        <li><a href="{% url "oresource_list" %}">{% trans "Official Resources" %}</a></li>
+        <li>{{ officialresource.language }}</li>
     </ul>
 
     <div class="row">
@@ -17,11 +17,11 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title">
-                        {{ openbiblestory.language.langname }}
+                        {{ officialresource.language }}
                     </h2>
                 </div>
                 <div class="panel-body">
-                    @@@
+                    {{ officialresource.resource_type }}
                 </div>
             </div>
         </div>

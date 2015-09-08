@@ -94,6 +94,11 @@ class OfficialResourceForm(forms.ModelForm):
             self.fields["checking_entity"].widget.attrs["disabled"] = "disabled"
             self.fields["checking_level"].widget.attrs["disabled"] = "disabled"
 
+    def clean_language(self):
+        lang_id = self.cleaned_data["language"]
+        if lang_id:
+            return Language.objects.get(pk=lang_id)
+
     class Meta:
         model = OfficialResource
         fields = [
