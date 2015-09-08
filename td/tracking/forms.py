@@ -1,13 +1,12 @@
 from django import forms
 from django.core.urlresolvers import reverse as urlReverse
-from django.utils.formats import mark_safe
-from django.utils import timezone
-from django.utils.translation import gettext as _
 from django.forms.extras.widgets import SelectDateWidget
+from django.utils.translation import gettext as _
+# from django.utils.formats import mark_safe
+# from django.utils import timezone
 
-from td.models import Language, Country
-from .models import Charter, Event
-from td.publishing.translations import OBSTranslation
+from td.models import Country, Language
+from .models import Charter, Department, Event
 
 import re
 
@@ -26,6 +25,8 @@ class CharterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
+        self.fields['countries'].queryset = Country.objects.order_by('name')
+        self.fields['lead_dept'].queryset = Department.objects.order_by('name')
         self.fields['language'] = forms.CharField(
             widget = forms.TextInput(
                 attrs = {
@@ -35,7 +36,6 @@ class CharterForm(forms.ModelForm):
             ),
             required = True
         )
-        self.fields['countries'].queryset = Country.objects.order_by('name')
 
         # Checking what?
         # Something to do with trying to create a duplicate charter.
