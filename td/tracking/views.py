@@ -45,7 +45,7 @@ class charter_add(CreateView):
 
 	def form_valid(self, form):
 		self.object = form.save()
-		messages.info(self.request, "Project charter has been added")
+		# messages.info(self.request, "Project charter has been added")
 		return redirect('tracking:charter_add_success', pk=self.object.id)
 
 class charter_update(LoginRequiredMixin, UpdateView):
@@ -64,7 +64,7 @@ def charter_add_success(request, pk):
 	context = {
 		'status': 'Success',
 		'charter_id': charter.id,
-		'message': 'Project'+charter.language.name+' has been successfully added.',
+		'message': 'Project '+charter.language.name+' has been successfully added.',
 	}
 	return render(request, 'tracking/charter_add_success.html', context)
 
