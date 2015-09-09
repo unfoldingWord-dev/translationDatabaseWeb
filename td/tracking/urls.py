@@ -2,7 +2,8 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 
 from .views import (
-    index,
+    AjaxCharterListView,
+    CharterListView,
     charter,
     charter_add,
     charter_add_success,
@@ -13,12 +14,13 @@ from .views import (
 
 urlpatterns = [
 
-    url(r'^$', index, name='index'),
+    url(r'^$', CharterListView.as_view(), name='project_list'),
+    url(r'ajax/charters/$', AjaxCharterListView.as_view(), name='ajax_ds_charter_list'),
 
-    url(r'^charter/detail/(?P<pk>[0-9]+)/$', charter, name='charter'),
+    url(r'^charter/detail/(?P<pk>\d+)/$', charter, name='charter'),
     url(r'^charter/add/$', charter_add.as_view(), name='charter_add'),
-    url(r'^charter/update/(?P<pk>[0-9]+)/$', charter_update.as_view(), name='charter_update'),
-    url(r'^charter/add/success/(?P<pk>[0-9]+)/$', charter_add_success, name='charter_add_success'),
+    url(r'^charter/update/(?P<pk>\d+)/$', charter_update.as_view(), name='charter_update'),
+    url(r'^charter/add/success/(?P<pk>\d+)/$', charter_add_success, name='charter_add_success'),
 
     url(r'^event/detail/(?P<event_id>[0-9a-zA-Z])+/$', event, name='event'),
     url(r'^event/add/$', event_add, name='event_add'),

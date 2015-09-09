@@ -1,29 +1,72 @@
 from django.contrib import messages
+from django.db.models import Q
 # from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView
 
 from account.mixins import LoginRequiredMixin
 
 from .models import Charter, Event
 from .forms import CharterForm, EventForm
+from td.utils import DataTableSourceView
 
-import logging
+import logging, operator
 logger = logging.getLogger(__name__)
 
 
-def index(request):
-    charter_list = Charter.objects.order_by('language')
-    event_list = Event.objects.order_by('charter')
-    context = {
-        'charter_list': charter_list,
-        'event_list': event_list
-    }
+    
 
-    return render(request, 'tracking/index.html', context)
+class CharterListView(TemplateView):
+    template_name = 'tracking/project_list.html'
 
+
+class CharterTableSourceView(DataTableSourceView):
+
+    def __init__(self, **kwargs):
+        super(CharterTableSourceView, self).__init__(**kwargs)
+
+    @property
+    def queryset(self):
+        if 'pk' in self.kwargs:
+            return Charter.objects.filter(language=self.kwargs['pk'])
+        else:
+            return self.model._default_manager.all()
+
+    @property
+    def filtered_data(self):
+        if len(self.search_term) and len(self.search_term) <= 3:
+            qs = self.queryset.filter(
+                reduce(
+                    operator.or_,
+                    [Q(language__name__istartswith=self.search_term)]
+                )
+            ).order_by('start_date')
+            if qs.count():
+                return qs
+        return self.queryset.filter(
+            reduce(
+                operator.or_,
+                [Q(x) for x in self.filter_predicates]
+            )
+        ).order_by(
+            self.order_by
+        )
+
+
+class AjaxCharterListView(CharterTableSourceView):
+    model = Charter
+    fields = [
+        'language__name',
+        'language__code',
+        'start_date',
+        'end_date',
+        'contact_person'
+    ]
+    link_column = 'language__name'
+    link_url_name = 'tracking:charter'
+    link_url_field = 'pk'
 
 # ---------------------------------- #
 #            CHARTER VIEWS           #

@@ -1,0 +1,50 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block head_title %}Tracking | Home{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}Tracking Dashboard{% endblocktrans %}</h1>
+            <p>
+                {% blocktrans %}
+                Every verse. Every tongue. Every heart.
+                {% endblocktrans %}
+            </p>
+            {% url "tracking:event_add" as url_add_event %}
+            {% url "tracking:charter_add" as url_add_charter %}
+            {% blocktrans %}
+                <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
+                <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>
+            {% endblocktrans %}
+        </div>
+    </section>
+
+    <section id="content_body">
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h1 class="panel-title">Projects</h1></div>
+                <table class="table table-bordered" data-source="{% url 'tracking:ajax_ds_charter_list' %}">
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>Code</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Contact Person</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
