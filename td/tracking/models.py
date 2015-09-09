@@ -5,22 +5,38 @@ from td.models import Language, Country, Network
 
 
 # Choices
-OUTPUT_TARGETS = (
-    ('print', 'print'),
-    ('audio', 'audio'),
-    ('other', 'other'),
+
+DUMMY_CHOICES = {
+    ('1', '1'),
+    ('2', '2')
+}
+
+TRANSLATION_METHODOLOGIES_CHOICES = (
+    ('church', 'Church group'),
+    ('door43web', 'Door43 Website'),
+    ('mast', 'MAST'),
+    ('seedco', 'Seed Co.'),
+    ('sovee-memoq', 'Sovee/MemoQ'),
+    ('translator', 'Translator'),
+    ('ts', 'translationStudio'),
+    ('other', 'Other'),
 )
 
-TRANSLATION_METHODS = (
-    ('lit', 'literal'),
-    ('dyn', 'dynamic'),
-    ('other', 'other'),
+SOFTWARE_CHOICES = (
+    ('door43web', 'Door43 Website'),
+    ('msword', 'Microsoft Word'),
+    ('paratext', 'ParaText'),
+    ('sovee-memoq', 'Sovee/MemoQ'),
+    ('ts', 'translationStudio'),
+    ('other', 'Other'),
 )
 
-TECHNOLOGIES = (
-    ('btak', 'btak'),
-    ('tk', 'trasnlation keyboard'),
-    ('other', 'other'),
+EQUIPMENT_CHOICES = (
+    ('tablet', 'Tablet'),
+    ('laptop', 'Laptop'),
+    ('keyboard-layout', 'Keyboard Layout'),
+    ('fonts', 'Fonts'),
+    ('word-template', 'Word Template'),
 )
 
 
@@ -92,30 +108,29 @@ class Event(models.Model):
         verbose_name="Projected Completion Date",
     )
 
-    old_lead_dept = models.CharField(
-        max_length=200,
-        # 'Department',
-        # related_name='event_lead_dept',
-        verbose_name='Lead Department',
+    lead_dept = models.ForeignKey(
+        'Department',
+        verbose_name="Lead Department",
+        related_name='event_lead_dept',
     )
 
-    output_target = models.SlugField(
-        choices=OUTPUT_TARGETS,
+    output_target = models.TextField(
+        max_length=1500,
         blank=True,
     )
 
     translation_method = models.SlugField(
-        choices=TRANSLATION_METHODS,
+        choices=TRANSLATION_METHODOLOGIES_CHOICES,
         blank=True,
     )
 
     tech_used = models.SlugField(
-        choices=TECHNOLOGIES,
+        choices=SOFTWARE_CHOICES,
         blank=True,
     )
 
     comp_tech_used = models.SlugField(
-        choices=TECHNOLOGIES,
+        choices=EQUIPMENT_CHOICES,
         blank=True,
     )
 
@@ -130,11 +145,23 @@ class Event(models.Model):
     )
 
     # Relationship fields
-    materials = models.ManyToManyField('Material')
-    translators = models.ManyToManyField('Translator')
-    facilitators = models.ManyToManyField('Facilitator')
-    networks = models.ManyToManyField(Network)
-    departments = models.ManyToManyField('Department')
+    materials = models.ManyToManyField(
+        'Material'
+    )
+    translators = models.ManyToManyField(
+        'Translator'
+    )
+    facilitators = models.ManyToManyField(
+        'Facilitator'
+    )
+    networks = models.ManyToManyField(
+        Network,
+    )
+    departments = models.ManyToManyField(
+        'Department',
+        help_text='Supporting Departments',
+        related_name='event_supporting_dept'
+    )
 
     # Functions
     def __unicode__(self):

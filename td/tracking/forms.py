@@ -94,7 +94,7 @@ class EventForm(forms.ModelForm):
             'location',
             'start_date',
             'end_date',
-            'old_lead_dept',
+            'lead_dept',
             'materials',
             'translators',
             'facilitators',

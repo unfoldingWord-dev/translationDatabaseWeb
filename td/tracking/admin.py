@@ -18,10 +18,10 @@ class EventAdmin(admin.ModelAdmin):
         (None, {'fields': ['location', 'start_date', 'end_date']}),
         (None, {'fields': ['translation_method', 'output_target']}),
         (None, {'fields': ['materials', 'tech_used', 'comp_tech_used']}),
-        (None, {'fields': ['translators', 'facilitators', 'departments']}),
+        (None, {'fields': ['translators', 'facilitators', 'lead_dept', 'departments']}),
         (None, {'fields': ['pub_process', 'follow_up']}),
     ]
-    list_display = ('charter', 'old_lead_dept', 'start_date', 'end_date')
+    list_display = ('charter', 'lead_dept', 'start_date', 'end_date')
 
 
 admin.site.register(Charter, CharterAdmin)

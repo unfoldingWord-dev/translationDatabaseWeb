@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start_date', models.DateField(verbose_name=b'Start Date')),
                 ('end_date', models.DateField(verbose_name=b'Projected Completion Date')),
-                ('number', models.CharField(max_length=50, verbose_name=b'Project Accounting Number')),
+                ('number', models.CharField(max_length=10, verbose_name=b'Project Accounting Number')),
                 ('contact_person', models.CharField(max_length=200, verbose_name=b'Follow-up Person')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('created_by', models.CharField(max_length=200)),
@@ -37,18 +37,17 @@ class Migration(migrations.Migration):
             name='Event',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('location', models.CharField(max_length=200, blank=True)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField(blank=True)),
-                ('lead_dept', models.CharField(max_length=200, blank=True)),
-                ('output_target', models.SlugField(blank=True, choices=[(b'print', b'print'), (b'audio', b'audio'), (b'other', b'other')])),
-                ('translation_method', models.SlugField(blank=True, choices=[(b'lit', b'literal'), (b'dyn', b'dynamic'), (b'other', b'other')])),
-                ('tech_used', models.SlugField(blank=True, choices=[(b'btak', b'btak'), (b'tk', b'trasnlation keyboard'), (b'other', b'other')])),
-                ('comp_tech_used', models.SlugField(blank=True, choices=[(b'btak', b'btak'), (b'tk', b'trasnlation keyboard'), (b'other', b'other')])),
+                ('location', models.CharField(max_length=200)),
+                ('start_date', models.DateField(verbose_name=b'Start Date')),
+                ('end_date', models.DateField(verbose_name=b'Projected Completion Date')),
+                ('output_target', models.CharField(max_length=200, blank=True)),
+                ('translation_method', models.SlugField(blank=True, choices=[(b'church', b'Church group'), (b'door43web', b'Door43 Website'), (b'mast', b'MAST'), (b'seedco', b'Seed Co.'), (b'sovee-memoq', b'Sovee/MemoQ'), (b'translator', b'Translator'), (b'ts', b'translationStudio'), (b'other', b'Other')])),
+                ('tech_used', models.SlugField(blank=True, choices=[(b'door43web', b'Door43 Website'), (b'msword', b'Microsoft Word'), (b'paratext', b'ParaText'), (b'sovee-memoq', b'Sovee/MemoQ'), (b'ts', b'translationStudio'), (b'other', b'Other')])),
+                ('comp_tech_used', models.SlugField(blank=True, choices=[(b'tablet', b'Tablet'), (b'laptop', b'Laptop'), (b'keyboard-layout', b'Keyboard Layout'), (b'fonts', b'Fonts'), (b'word-template', b'Word Template')])),
                 ('pub_process', models.TextField(max_length=1500, blank=True)),
                 ('follow_up', models.CharField(max_length=200, blank=True)),
                 ('charter', models.ForeignKey(to='tracking.Charter')),
-                ('departments', models.ManyToManyField(to='tracking.Department')),
+                ('departments', models.ManyToManyField(related_name='event_supporting_dept', to='tracking.Department')),
             ],
         ),
         migrations.CreateModel(
@@ -69,13 +68,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Network',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=200)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Translator',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -89,13 +81,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='event',
+            name='lead_dept',
+            field=models.ForeignKey(related_name='event_lead_dept', verbose_name=b'Lead Department', to='tracking.Department'),
+        ),
+        migrations.AddField(
+            model_name='event',
             name='materials',
             field=models.ManyToManyField(to='tracking.Material'),
         ),
         migrations.AddField(
             model_name='event',
             name='networks',
-            field=models.ManyToManyField(to='tracking.Network'),
+            field=models.ManyToManyField(to='td.Network'),
         ),
         migrations.AddField(
             model_name='event',
