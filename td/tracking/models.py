@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from td.models import Language, Country
+from td.models import Language, Country, Network
 
 
 # Choices
@@ -23,8 +23,8 @@ TECHNOLOGIES = (
     ('other', 'other'),
 )
 
-# Models
 
+# Models
 class Charter(models.Model):
 
     language = models.OneToOneField(
@@ -82,18 +82,21 @@ class Event(models.Model):
 
     location = models.CharField(
         max_length=200,
-        blank=True,
     )
 
     start_date = models.DateField(
-    )
-    end_date = models.DateField(
-        blank=True,
+        verbose_name="Start Date",
     )
 
-    lead_dept = models.CharField(
+    end_date = models.DateField(
+        verbose_name="Projected Completion Date",
+    )
+
+    old_lead_dept = models.CharField(
         max_length=200,
-        blank=True,
+        # 'Department',
+        # related_name='event_lead_dept',
+        verbose_name='Lead Department',
     )
 
     output_target = models.SlugField(
@@ -110,6 +113,7 @@ class Event(models.Model):
         choices=TECHNOLOGIES,
         blank=True,
     )
+
     comp_tech_used = models.SlugField(
         choices=TECHNOLOGIES,
         blank=True,
@@ -129,13 +133,13 @@ class Event(models.Model):
     materials = models.ManyToManyField('Material')
     translators = models.ManyToManyField('Translator')
     facilitators = models.ManyToManyField('Facilitator')
-    networks = models.ManyToManyField('Network')
+    networks = models.ManyToManyField(Network)
     departments = models.ManyToManyField('Department')
 
     # Functions
     def __unicode__(self):
         return str(self.id)
-    
+
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Event._meta.fields]
 
@@ -170,13 +174,6 @@ class Facilitator(models.Model):
 
     speaks_gl = models.BooleanField(
         default=False
-    )
-
-
-class Network(models.Model):
-
-    name = models.CharField(
-        max_length=200
     )
 
 

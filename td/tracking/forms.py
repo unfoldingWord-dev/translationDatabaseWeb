@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from td.models import Country, Language
 from .models import Charter, Department, Event
 
-import re
+# import re
 
 
 class MySelectDateWidget(SelectDateWidget):
@@ -21,6 +21,7 @@ class MySelectDateWidget(SelectDateWidget):
         self.is_required = old_state
         return result
 
+
 class CharterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -28,13 +29,13 @@ class CharterForm(forms.ModelForm):
         self.fields['countries'].queryset = Country.objects.order_by('name')
         self.fields['lead_dept'].queryset = Department.objects.order_by('name')
         self.fields['language'] = forms.CharField(
-            widget = forms.TextInput(
-                attrs = {
+            widget=forms.TextInput(
+                attrs={
                     "class": "language-selector",
                     "data-source-url": urlReverse("names_autocomplete")
                 }
             ),
-            required = True
+            required=True
         )
 
         # Checking what?
@@ -80,10 +81,9 @@ class CharterForm(forms.ModelForm):
                 attrs={'class': 'date-input'}
             ),
             'end_date': MySelectDateWidget(
-                attrs = {'class': 'date-input'}
+                attrs={'class': 'date-input'}
             ),
         }
-        
 
 
 class EventForm(forms.ModelForm):
@@ -94,7 +94,7 @@ class EventForm(forms.ModelForm):
             'location',
             'start_date',
             'end_date',
-            'lead_dept',
+            'old_lead_dept',
             'materials',
             'translators',
             'facilitators',
@@ -102,8 +102,8 @@ class EventForm(forms.ModelForm):
             'translation_method',
             'tech_used',
             'comp_tech_used',
-            'networks',
             'departments',
+            'networks',
             'pub_process',
             'follow_up'
         ]
