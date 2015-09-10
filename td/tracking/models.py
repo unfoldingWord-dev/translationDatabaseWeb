@@ -11,7 +11,7 @@ DUMMY_CHOICES = {
     ('2', '2')
 }
 
-TRANSLATION_METHODOLOGIES_CHOICES = (
+TRANSLATION_SERVICES_CHOICES = (
     ('church', 'Church group'),
     ('door43web', 'Door43 Website'),
     ('mast', 'MAST'),
@@ -92,9 +92,10 @@ class Charter(models.Model):
 
 class Event(models.Model):
 
-    # Primary key is default
-
-    charter = models.ForeignKey(Charter)
+    charter = models.ForeignKey(
+        Charter,
+        verbose_name='Project Charter',
+    )
 
     location = models.CharField(
         max_length=200,
@@ -105,7 +106,7 @@ class Event(models.Model):
     )
 
     end_date = models.DateField(
-        verbose_name="Projected Completion Date",
+        verbose_name="End Date",
     )
 
     lead_dept = models.ForeignKey(
@@ -119,46 +120,57 @@ class Event(models.Model):
         blank=True,
     )
 
-    translation_method = models.SlugField(
-        choices=TRANSLATION_METHODOLOGIES_CHOICES,
+    translation_services = models.ManyToManyField(
+        'TranslationService',
         blank=True,
+        verbose_name='Translation Services',
     )
 
-    tech_used = models.SlugField(
-        choices=SOFTWARE_CHOICES,
+    software = models.ManyToManyField(
+        'Software',
         blank=True,
+        verbose_name='Software/App Used',
     )
 
-    comp_tech_used = models.SlugField(
-        choices=EQUIPMENT_CHOICES,
+    hardware = models.ManyToManyField(
+        'Hardware',
         blank=True,
+        verbose_name='Hardware Used',
     )
 
-    pub_process = models.TextField(
+    publishing_process = models.TextField(
         max_length=1500,
         blank=True,
     )
 
-    follow_up = models.CharField(
+    contact_person = models.CharField(
         max_length=200,
         blank=True,
     )
 
-    # Relationship fields
     materials = models.ManyToManyField(
-        'Material'
+        'Material',
+        blank=True,
     )
+
     translators = models.ManyToManyField(
-        'Translator'
+        'Translator',
+        blank=True,
     )
+
     facilitators = models.ManyToManyField(
-        'Facilitator'
+        'Facilitator',
+        blank=True,
     )
+
     networks = models.ManyToManyField(
         Network,
+        blank=True,
     )
+
     departments = models.ManyToManyField(
         'Department',
+        blank=True,
         help_text='Supporting Departments',
         related_name='event_supporting_dept'
     )
@@ -171,6 +183,36 @@ class Event(models.Model):
         return [(field.name, field.value_to_string(self)) for field in Event._meta.fields]
 
 
+class TranslationService(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class Software(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class Hardware(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
 class Material(models.Model):
 
     name = models.CharField(
@@ -181,12 +223,18 @@ class Material(models.Model):
         default=False
     )
 
+    def __unicode__(self):
+        return self.name
+
 
 class Translator(models.Model):
 
     name = models.CharField(
         max_length=200
     )
+
+    def __unicode__(self):
+        return self.name
 
 
 class Facilitator(models.Model):
@@ -202,6 +250,9 @@ class Facilitator(models.Model):
     speaks_gl = models.BooleanField(
         default=False
     )
+
+    def __unicode__(self):
+        return self.name
 
 
 class Department(models.Model):

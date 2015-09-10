@@ -17,8 +17,8 @@
                 Every verse. Every tongue. Every heart.
                 {% endblocktrans %}
             </p>
-            {% url "tracking:event_add" as url_add_event %}
             {% url "tracking:charter_add" as url_add_charter %}
+            {% url "tracking:event_add" as url_add_event %}
             {% blocktrans %}
                 <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
                 <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>

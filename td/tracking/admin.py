@@ -1,5 +1,15 @@
 from django.contrib import admin
-from .models import Charter, Event, Material, Translator, Facilitator, Department
+from .models import (
+    Charter,
+    Event,
+    Material,
+    Translator,
+    Facilitator,
+    Department,
+    TranslationService,
+    Software,
+    Hardware,
+)
 
 
 class CharterAdmin(admin.ModelAdmin):
@@ -16,10 +26,10 @@ class EventAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['charter']}),
         (None, {'fields': ['location', 'start_date', 'end_date']}),
-        (None, {'fields': ['translation_method', 'output_target']}),
-        (None, {'fields': ['materials', 'tech_used', 'comp_tech_used']}),
+        (None, {'fields': ['translation_services', 'output_target']}),
+        (None, {'fields': ['materials', 'software', 'hardware']}),
         (None, {'fields': ['translators', 'facilitators', 'lead_dept', 'departments']}),
-        (None, {'fields': ['pub_process', 'follow_up']}),
+        (None, {'fields': ['publishing_process', 'contact_person']}),
     ]
     list_display = ('charter', 'lead_dept', 'start_date', 'end_date')
 
@@ -30,3 +40,6 @@ admin.site.register(Department)
 admin.site.register(Material)
 admin.site.register(Translator)
 admin.site.register(Facilitator)
+admin.site.register(TranslationService)
+admin.site.register(Software)
+admin.site.register(Hardware)

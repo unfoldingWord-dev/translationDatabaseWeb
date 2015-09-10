@@ -19,11 +19,11 @@
             </p>
             {% url "tracking:event_add_specific" charter_id as url_add_event %}
             {% url "tracking:charter_add" as url_add_more %}
-            {% url "tracking:index" as url_home %}
+            {% url "tracking:project_list" as url_tracking_home %}
             {% blocktrans %}
                 <a href="{{ url_add_event }}" class="btn btn-primary large">Add Events</a>
                 <a href="{{ url_add_more }}" class="btn btn-primary large">Add Another Project</a>
-                <a href="{{ url_home }}" class="btn btn-primary large">All Projects</a>
+                <a href="{{ url_tracking_home }}" class="btn btn-primary large">All Projects</a>
             {% endblocktrans %}
             {% else %}
             <p>

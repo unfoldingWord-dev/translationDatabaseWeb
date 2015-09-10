@@ -12,11 +12,10 @@ from .models import Charter, Event
 from .forms import CharterForm, EventForm
 from td.utils import DataTableSourceView
 
-import logging, operator
+import operator
+import logging
 logger = logging.getLogger(__name__)
 
-
-    
 
 class CharterListView(TemplateView):
     template_name = 'tracking/project_list.html'
@@ -68,6 +67,7 @@ class AjaxCharterListView(CharterTableSourceView):
     link_url_name = 'tracking:charter'
     link_url_field = 'pk'
 
+
 # ---------------------------------- #
 #            CHARTER VIEWS           #
 # ---------------------------------- #
@@ -80,7 +80,7 @@ def charter(request, pk):
     return render(request, 'tracking/charter_detail.html', context)
 
 
-class charter_add(CreateView):
+class CharterAdd(CreateView):
     model = Charter
     form_class = CharterForm
 
@@ -96,7 +96,7 @@ class charter_add(CreateView):
         return redirect('tracking:charter_add_success', pk=self.object.id)
 
 
-class charter_update(LoginRequiredMixin, UpdateView):
+class CharterUpdate(LoginRequiredMixin, UpdateView):
     model = Charter
     form_class = CharterForm
     template_name_suffix = "_update_form"
@@ -104,7 +104,7 @@ class charter_update(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
         messages.info(self.request, "Project charter has been updated")
-        return redirect('tracking:charter_add_success')
+        return redirect('tracking:charter_add_success', pk=self.object.id)
 
 
 def charter_add_success(request, pk):

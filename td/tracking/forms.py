@@ -99,11 +99,11 @@ class EventForm(forms.ModelForm):
             'translators',
             'facilitators',
             'output_target',
-            'translation_method',
-            'tech_used',
-            'comp_tech_used',
+            'translation_services',
+            'software',
+            'hardware',
             'departments',
             'networks',
-            'pub_process',
-            'follow_up'
+            'publishing_process',
+            'contact_person'
         ]
