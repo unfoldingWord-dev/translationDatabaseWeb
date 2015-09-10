@@ -145,7 +145,6 @@ class Event(models.Model):
 
     contact_person = models.CharField(
         max_length=200,
-        blank=True,
     )
 
     materials = models.ManyToManyField(
