@@ -2,11 +2,22 @@ from django import forms
 from django.core.urlresolvers import reverse as urlReverse
 from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import gettext as _
+from django.utils.html import escape
 # from django.utils.formats import mark_safe
 # from django.utils import timezone
 
 from td.models import Country, Language
-from .models import Charter, Department, Event
+from .models import (
+    Charter,
+    Department,
+    Event,
+    TranslationService,
+    Hardware,
+    Software,
+    Material,
+    Translator,
+    Facilitator
+)
 
 # import re
 
@@ -37,7 +48,6 @@ class CharterForm(forms.ModelForm):
             ),
             required=True
         )
-
         # Checking what?
         # Something to do with trying to create a duplicate charter.
         # Form says "undefined" if this is commented out.
@@ -70,7 +80,7 @@ class CharterForm(forms.ModelForm):
         if not name:
             raise forms.ValidationError(_('This field is required'), 'invalid_input')
         else:
-            return name
+            return escape(name)
 
     class Meta:
         model = Charter
@@ -87,23 +97,46 @@ class CharterForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.fields['departments'].queryset = Department.objects.order_by('name')
+        self.fields['hardware'].queryset = Hardware.objects.order_by('name')
+        self.fields['software'].queryset = Software.objects.order_by('name')
+        self.fields['translation_services'].queryset = TranslationService.objects.order_by('name')
+        self.fields['charter'] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": urlReverse("names_autocomplete")
+                }
+            ),
+            required=True
+        )
+
+    def clean_contact_person(self):
+        name = self.cleaned_data['contact_person']
+        name = name.strip()
+        if not name:
+            raise forms.ValidationError(_('This field is required'), 'invalid_input')
+        else:
+            return name
+
     class Meta:
         model = Event
-        fields = [
-            'charter',
-            'location',
-            'start_date',
-            'end_date',
-            'lead_dept',
-            'materials',
-            'translators',
-            'facilitators',
-            'output_target',
-            'translation_services',
-            'software',
-            'hardware',
-            'departments',
-            'networks',
-            'publishing_process',
-            'contact_person'
-        ]
+        exclude = ['created_at']
+        widgets = {
+            'created_by': forms.HiddenInput(),
+            'start_date': SelectDateWidget(
+                attrs={'class': 'date-input'}
+            ),
+            'end_date': MySelectDateWidget(
+                attrs={'class': 'date-input'}
+            ),
+            'output_target': forms.Textarea(
+                attrs={'rows': '3'}
+            ),
+            'publishing_process': forms.Textarea(
+                attrs={'rows': '3'}
+            ),
+        }

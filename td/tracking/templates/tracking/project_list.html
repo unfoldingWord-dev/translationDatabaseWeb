@@ -8,6 +8,7 @@
 {% block body_class %}home{% endblock %}
 
 {% block body_base %}
+                            {% autoescape off %}
     <section class="jumbotron">
         <div class="container">
             {% include "_messages.html" %}
@@ -17,12 +18,21 @@
                 Every verse. Every tongue. Every heart.
                 {% endblocktrans %}
             </p>
-            {% url "tracking:charter_add" as url_add_charter %}
-            {% url "tracking:event_add" as url_add_event %}
-            {% blocktrans %}
-                <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
-                <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>
-            {% endblocktrans %}
+            {% if user.is_authenticated %}
+                {% url "tracking:charter_add" as url_add_charter %}
+                {% url "tracking:event_add" as url_add_event %}
+                {% blocktrans %}
+                    <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
+                    <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>
+                {% endblocktrans %}
+            {% else %}
+            <p>
+                {% url "account_login" as login_url %}
+                {% blocktrans %}
+                    <a href="{{ login_url }}" class="btn btn-default">Log In to Enter Project or Event</a>
+                {% endblocktrans %}
+            </p>
+            {% endif %}
         </div>
     </section>
 
@@ -33,11 +43,12 @@
                 <table class="table table-bordered" data-source="{% url 'tracking:ajax_ds_charter_list' %}">
                     <thead>
                         <tr>
-                            <th>Language</th>
-                            <th>Code</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Contact Person</th>
+                                <th>Language</th>
+                                <th>Code</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Contact Person</th>
+                            {% endautoescape %}
                         </tr>
                     </thead>
                     <tbody>

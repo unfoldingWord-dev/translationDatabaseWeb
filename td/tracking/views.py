@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView
+# from django.views.decorators.http import require_http_methods
 
 from account.mixins import LoginRequiredMixin
 
@@ -16,6 +17,19 @@ import operator
 import logging
 logger = logging.getLogger(__name__)
 
+
+# ------------------------------- #
+#         DEFAULT VIEWS           #
+# ------------------------------- #
+
+
+class UnderConstructionView(TemplateView):
+    template_name = 'tracking/under_construction.html'
+
+
+# ------------------------------- #
+#            HOME VIEWS           #
+# ------------------------------- #
 
 class CharterListView(TemplateView):
     template_name = 'tracking/project_list.html'
@@ -73,13 +87,6 @@ class AjaxCharterListView(CharterTableSourceView):
 # ---------------------------------- #
 
 
-def charter(request, pk):
-    charter = get_object_or_404(Charter, pk=pk)
-    context = {'charter': charter}
-
-    return render(request, 'tracking/charter_detail.html', context)
-
-
 class CharterAdd(CreateView):
     model = Charter
     form_class = CharterForm
@@ -92,7 +99,6 @@ class CharterAdd(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        # messages.info(self.request, "Project charter has been added")
         return redirect('tracking:charter_add_success', pk=self.object.id)
 
 
@@ -117,16 +123,31 @@ def charter_add_success(request, pk):
     return render(request, 'tracking/charter_add_success.html', context)
 
 
+def charter(request, pk):
+    charter = get_object_or_404(Charter, pk=pk)
+    context = {'charter': charter}
+
+    return render(request, 'tracking/charter_detail.html', context)
+
+
 # -------------------------------- #
 #            EVENT VIEWS           #
 # -------------------------------- #
 
 
-def event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    context = {'event': event}
+class EventAdd(CreateView):
+    model = Event
+    form_class = EventForm
 
-    return render(request, 'tracking/event_detail.html', context)
+    def get_initial(self):
+        return {
+            'start_date': timezone.now(),
+            'created_by': self.request.user.username
+        }
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect('tracking:event_add_success', pk=self.object.id)
 
 
 def event_add(request, **kwargs):

@@ -8,8 +8,9 @@ from .views import (
     CharterAdd,
     CharterUpdate,
     charter_add_success,
-    event,
-    event_add,
+    # event,
+    EventAdd,
+    UnderConstructionView,
 )
 
 urlpatterns = [
@@ -22,9 +23,9 @@ urlpatterns = [
     url(r'^charter/update/(?P<pk>\d+)/$', CharterUpdate.as_view(), name='charter_update'),
     url(r'^charter/new/success/(?P<pk>\d+)/$', charter_add_success, name='charter_add_success'),
 
-    url(r'^event/detail/(?P<event_id>[0-9a-zA-Z])+/$', event, name='event'),
-    url(r'^event/new/$', event_add, name='event_add'),
-    url(r'^event/new/(?P<pk>[0-9]+)/$', event_add, name='event_add_specific'),
+    # url(r'^event/detail/(?P<event_id>[0-9a-zA-Z])+/$', event, name='event'),
+    url(r'^event/new/$', UnderConstructionView.as_view(), name='event_add'),
+    url(r'^event/new/(?P<pk>\d+)/$', UnderConstructionView.as_view(), name='event_add_specific'),
     # url(r'^event/add/success/$', views.event_add_success, name = 'event_add_success'),
     # url(r'^event/add/fail/$', views.event_add_fail, name = 'event_add_fail'),
 

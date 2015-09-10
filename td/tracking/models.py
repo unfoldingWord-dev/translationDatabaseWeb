@@ -78,6 +78,7 @@ class Charter(models.Model):
     created_at = models.DateTimeField(
         default=timezone.now,
     )
+
     created_by = models.CharField(
         max_length=200,
     )
@@ -124,18 +125,21 @@ class Event(models.Model):
         'TranslationService',
         blank=True,
         verbose_name='Translation Services',
+        help_text='Hold Ctrl while clicking to select multiple items',
     )
 
     software = models.ManyToManyField(
         'Software',
         blank=True,
         verbose_name='Software/App Used',
+        help_text='Hold Ctrl while clicking to select multiple items',
     )
 
     hardware = models.ManyToManyField(
         'Hardware',
         blank=True,
         verbose_name='Hardware Used',
+        help_text='Hold Ctrl while clicking to select multiple items',
     )
 
     publishing_process = models.TextField(
@@ -165,13 +169,25 @@ class Event(models.Model):
     networks = models.ManyToManyField(
         Network,
         blank=True,
+        help_text='Hold Ctrl while clicking to select multiple items',
     )
 
     departments = models.ManyToManyField(
         'Department',
+        related_name='event_supporting_dept',
         blank=True,
-        help_text='Supporting Departments',
-        related_name='event_supporting_dept'
+        verbose_name='Supporting Departments',
+        help_text='Hold Ctrl while clicking to select multiple items',
+    )
+
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        null=True,
+    )
+
+    created_by = models.CharField(
+        max_length=200,
+        default='unknown',
     )
 
     # Functions
