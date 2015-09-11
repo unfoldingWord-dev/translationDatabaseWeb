@@ -8,7 +8,6 @@
 {% block body_class %}home{% endblock %}
 
 {% block body_base %}
-                            {% autoescape off %}
     <section class="jumbotron">
         <div class="container">
             {% include "_messages.html" %}
@@ -43,12 +42,11 @@
                 <table class="table table-bordered" data-source="{% url 'tracking:ajax_ds_charter_list' %}">
                     <thead>
                         <tr>
-                                <th>Language</th>
-                                <th>Code</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Contact Person</th>
-                            {% endautoescape %}
+                            <th>Language</th>
+                            <th>Code</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Contact Person</th>
                         </tr>
                     </thead>
                     <tbody>
