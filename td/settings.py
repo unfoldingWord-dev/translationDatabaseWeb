@@ -141,6 +141,7 @@ INSTALLED_APPS = [
     # external
     "account",
     "pinax.eventlog",
+    "pinax.invitations",
     "metron",
     "opbeat.contrib.django",
     "djcelery",
