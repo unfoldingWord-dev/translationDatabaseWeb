@@ -73,6 +73,14 @@ class CharterForm(forms.ModelForm):
     # def clean_number(self):
         # Validate the format of project (accounting) number
 
+    def clean_end_date(self):
+        end_date = self.cleaned_data['end_date']
+        start_date = self.cleaned_data['start_date']
+        if end_date <= start_date:
+            raise forms.ValidationError(_('End date must be later than start date'), 'invalid_input')
+        else:
+            return end_date
+
     # Since a name can have unexpected characters, only check against empty
     def clean_contact_person(self):
         name = self.cleaned_data['contact_person']
