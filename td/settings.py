@@ -143,7 +143,6 @@ INSTALLED_APPS = [
     "pinax.eventlog",
     "metron",
     "opbeat.contrib.django",
-    "kaleo",
     "djcelery",
     "reversion",
     "absoluteuri",
