@@ -1,5 +1,4 @@
 from django.conf.urls import url
-from django.views.generic import TemplateView
 
 from .views import (
     AjaxCharterListView,
@@ -9,7 +8,7 @@ from .views import (
     CharterUpdate,
     charter_add_success,
     # event,
-    EventAdd,
+    # EventAdd,
     UnderConstructionView,
 )
 
