@@ -4,7 +4,7 @@
       "name": "Americas",
       "slug": "americas"
     },
-    "model": "uw.region",
+    "model": "td.region",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "name": "Africa",
       "slug": "africa"
     },
-    "model": "uw.region",
+    "model": "td.region",
     "pk": 2
   },
   {
@@ -20,7 +20,7 @@
       "name": "Asia",
       "slug": "asia"
     },
-    "model": "uw.region",
+    "model": "td.region",
     "pk": 3
   },
   {
@@ -28,7 +28,7 @@
       "name": "Europe",
       "slug": "europe"
     },
-    "model": "uw.region",
+    "model": "td.region",
     "pk": 4
   },
   {
@@ -36,7 +36,7 @@
       "name": "Pacific",
       "slug": "pacific"
     },
-    "model": "uw.region",
+    "model": "td.region",
     "pk": 5
   }
 ]

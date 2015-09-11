@@ -55,7 +55,6 @@ class RegionAdmin(EntryTrackingAdmin):
     prepopulated_fields = {"slug": ["name"]}
 
 
-
 admin.site.register(
     Network,
     NetworkAdmin

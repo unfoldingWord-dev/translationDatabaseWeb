@@ -36,6 +36,7 @@ class LanguageIntegrationTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(LanguageIntegrationTests, cls).setUpClass()
         wikipedia = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/wikipedia.html")).read()  # noqa
         ethno = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/LanguageCodes.tab")).read()  # noqa
         country = open(os.path.join(os.path.dirname(__file__), "../imports/tests/data/CountryCodes.tab")).read()  # noqa
