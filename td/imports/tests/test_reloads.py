@@ -17,7 +17,6 @@ from ..models import (
 
 
 class BaseReloadTestMixin(object):
-
     ModelClass = None
     filename = ""
     expected_success_count = 0
@@ -32,6 +31,7 @@ class BaseReloadTestMixin(object):
         else:
             cls.data = fp.readline()
             cls.data += fp.readline()
+        super(BaseReloadTestMixin, cls).setUpClass()
 
     def test_reload(self):
         with patch("requests.Session", create=True) as mock_requests:

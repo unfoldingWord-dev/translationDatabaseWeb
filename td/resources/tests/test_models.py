@@ -24,6 +24,7 @@ class PublisherTestCase(TestCase):
 class ResourceTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(ResourceTestCase, cls).setUpClass()
         cls.publisher = Publisher(name="Test Publisher 1")
         cls.publisher.save()
         cls.publisher2 = Publisher(name="Test Publisher 2")

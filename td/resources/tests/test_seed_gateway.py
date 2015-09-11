@@ -6,6 +6,7 @@ from ..tasks import seed_languages_gateway_language
 class SeedGatewayTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SeedGatewayTestCase, cls).setUpClass()
         country1 = Country(code="c1", name="Country 1")
         country1.extra_data = {"gateway_language": "gz1"}
         country1.save()
