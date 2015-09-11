@@ -6,13 +6,14 @@ from account.signals import user_login_attempt, user_logged_in
 
 from pinax.eventlog.models import log
 
-from .tasks import publish
+# from .tasks import publish
 from .signals import published
 
 
 @receiver(published)
-def handle_published(sender, obs, **kwargs):
-    publish.delay(obs.language.langcode)
+def handle_published(sender, official_resource, **kwargs):
+    # publish.delay(official_resource)
+    pass
 
 
 @receiver(user_logged_in)

@@ -38,6 +38,7 @@ GOOD_JSON_DATA = [{"date_modified": "20141208",
 class OBSTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(OBSTestCase, cls).setUpClass()
         lang1 = Language(code="z1", name="Z Test 1")
         lang1.save()
         lang2 = Language(code="z2", name="Z Test 2")

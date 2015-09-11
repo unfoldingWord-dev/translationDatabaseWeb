@@ -534,5 +534,3 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
             "language": self.language
         })
         return context
-
-
