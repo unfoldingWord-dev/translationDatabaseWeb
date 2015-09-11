@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.formats import mark_safe
 

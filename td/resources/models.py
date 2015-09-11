@@ -111,5 +111,3 @@ class Resource(models.Model):
     class Meta:
         db_table = 'uw_resource'
         unique_together = ("title", "language")
-
-

@@ -1,7 +1,6 @@
 import os
-import glob
 import re
-import codecs
+# import codecs
 import datetime
 from docutils.utils.smartquotes import smartyPants
 import requests
@@ -34,7 +33,7 @@ RAW_BASE_URL = "https://door43.org/{lang_code}/obs?do=export_raw"
 BASE_URL = "https://door43.org/{lang_code}/obs"
 
 
-CHAPTER_LIST = ["{0:02}".format(x) for x in range(1,51)]
+CHAPTER_LIST = ["{0:02}".format(x) for x in range(1, 51)]
 
 # OBS Frameset Definition
 OBS_FRAMESET = {"01-01", "01-02", "01-03", "01-04", "01-05", "01-06", "01-07", "01-08", "01-09", "01-10", "01-11",

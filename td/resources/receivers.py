@@ -4,11 +4,8 @@ from django.dispatch import receiver
 
 from django.contrib.contenttypes.models import ContentType
 
-
-from .models import (
-    Language
-)
 from td.models import Country, Language
+
 
 ENTITIES = [
     Country,
