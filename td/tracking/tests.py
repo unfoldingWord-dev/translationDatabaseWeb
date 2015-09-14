@@ -2,21 +2,28 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse, resolve
 
 from td.tracking.models import (
-    # Charter,
-    # Language,
-    # Country,
+    Charter,
+    Language,
     Department,
     Hardware,
     Software,
     TranslationService,
 )
 
-# import datetime
-import logging
-logger = logging.getLogger(__name__)
+import datetime
+# import logging
+# logger = logging.getLogger(__name__)
 
 
 class ModelTestCase(TestCase):
+    fixtures = ['td_tracking_seed']
+
+    def test_charter_string_representation(self):
+        now = datetime.datetime.now()
+        department = Department.objects.get(pk=1)
+        language = Language.objects.create(code='wa')
+        charter = Charter.objects.create(language=language, start_date=now, end_date=now, lead_dept=department)
+        self.assertEqual(str(charter), 'wa')
 
     def test_department_string_representation(self):
         department = Department.objects.create(name='Testing Services')
@@ -36,7 +43,6 @@ class ModelTestCase(TestCase):
 
 
 class ViewsTestCase(TestCase):
-    fixtures = ['td_tracking_seed']
 
     def test_request_home_page(self):
         response = self.client.get('/tracking/')
