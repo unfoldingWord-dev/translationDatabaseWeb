@@ -1,0 +1,57 @@
+{% extends "site_base.html" %}
+
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}Translation Project Event | New{% endblock head_title %}
+
+{% block extra_style %}
+	<style>
+		form .form-group::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
+		.date-input {
+			width: calc(33.33% - 3px);
+			display: inline-block;
+			float: left;
+			margin-right: 3px;
+		}
+		.date-input:last-child {
+			width: 33.33%;
+			margin-right: 0;
+		}
+	</style>
+{% endblock extra_style %}	
+
+{% block body %}
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">New Translation Workshop/Event</h2>
+				</div>
+				<div class="panel-body">
+					<form action="" method="POST" class="form">
+						{% csrf_token %}
+						{{ form | bootstrap }}
+						<button type="submit" class="btn btn-primary pull-right">
+							{% if form.errors %}
+								Try again
+							{% else %}
+								Add Event
+							{% endif %}
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock body%}
+
+{% block extra_script %}
+{% endblock extra_script %}

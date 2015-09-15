@@ -1,0 +1,59 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block head_title %}Tracking | Home{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}Tracking Dashboard{% endblocktrans %}</h1>
+            <p>
+                {% blocktrans %}
+                Every verse. Every tongue. Every heart.
+                {% endblocktrans %}
+            </p>
+            {% if user.is_authenticated %}
+                {% url "tracking:charter_add" as url_add_charter %}
+                {% url "tracking:event_add" as url_add_event %}
+                {% blocktrans %}
+                    <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
+                    <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>
+                {% endblocktrans %}
+            {% else %}
+            <p>
+                {% url "account_login" as login_url %}
+                {% blocktrans %}
+                    <a href="{{ login_url }}" class="btn btn-default">Log In to Enter Project or Event</a>
+                {% endblocktrans %}
+            </p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section id="content_body">
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h1 class="panel-title">Projects</h1></div>
+                <table class="table table-bordered" data-source="{% url 'tracking:ajax_ds_charter_list' %}">
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>Code</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Contact Person</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

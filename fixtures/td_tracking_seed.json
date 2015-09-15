@@ -1,0 +1,156 @@
+[
+{
+    "fields": {
+        "name": "MAST"
+    },
+    "model": "tracking.translationservice",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Sovee/MemoQ"
+    },
+    "model": "tracking.translationservice",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Translator"
+    },
+    "model": "tracking.translationservice",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Church group"
+    },
+    "model": "tracking.translationservice",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Seed Co."
+    },
+    "model": "tracking.translationservice",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "translationStudio"
+    },
+    "model": "tracking.translationservice",
+    "pk": 6
+},
+{
+    "fields": {
+        "name": "Door43 Website"
+    },
+    "model": "tracking.translationservice",
+    "pk": 7
+},
+{
+    "fields": {
+        "name": "Microsoft Word"
+    },
+    "model": "tracking.software",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "ParaText"
+    },
+    "model": "tracking.software",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "translationStudio"
+    },
+    "model": "tracking.software",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Door43 website"
+    },
+    "model": "tracking.software",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Sovee/MemoQ"
+    },
+    "model": "tracking.software",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Laptop"
+    },
+    "model": "tracking.hardware",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Tablet"
+    },
+    "model": "tracking.hardware",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Keyboard Layout"
+    },
+    "model": "tracking.hardware",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Fonts"
+    },
+    "model": "tracking.hardware",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Word Template"
+    },
+    "model": "tracking.hardware",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Translation Services"
+    },
+    "model": "tracking.department",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Education Services"
+    },
+    "model": "tracking.department",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Field Services"
+    },
+    "model": "tracking.department",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Tech Advance"
+    },
+    "model": "tracking.department",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Global South Services"
+    },
+    "model": "tracking.department",
+    "pk": 5
+}
+]
