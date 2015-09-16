@@ -87,7 +87,7 @@ class AjaxCharterListView(CharterTableSourceView):
 # ---------------------------------- #
 
 
-class CharterAdd(CreateView):
+class CharterAdd(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
 
@@ -114,13 +114,18 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
 
 
 def charter_add_success(request, pk):
-    charter = get_object_or_404(Charter, pk=pk)
-    context = {
-        'status': 'Success',
-        'charter_id': charter.id,
-        'message': 'Project ' + charter.language.name + ' has been successfully added.',
-    }
-    return render(request, 'tracking/charter_add_success.html', context)
+    if request.user.is_authenticated():
+        logger.info('authenticated')
+        charter = get_object_or_404(Charter, pk=pk)
+        context = {
+            'status': 'Success',
+            'charter_id': charter.id,
+            'message': 'Project ' + charter.language.name + ' has been successfully added.',
+        }
+        return render(request, 'tracking/charter_add_success.html', context)
+    else:
+        logger.info('redirecting')
+        return redirect('tracking:project_list')
 
 
 def charter(request, pk):
