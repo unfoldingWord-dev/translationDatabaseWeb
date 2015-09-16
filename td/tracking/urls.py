@@ -8,7 +8,7 @@ from .views import (
     CharterUpdate,
     charter_add_success,
     # event,
-    EventAddView,
+    # EventAddView,
     charters_autocomplete,
     UnderConstructionView,
 )

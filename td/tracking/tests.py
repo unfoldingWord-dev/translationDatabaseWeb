@@ -53,14 +53,19 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
         response = self.client.get('/tracking/charter/new/')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+
+        # Test: if user is logged in, status should be 200
 
     def test_request_update_charter_page(self):
+        # Why is this passing? Should be 302?
         response = self.client.get('/tracking/charter/update/99')
         self.assertEqual(response.status_code, 301)
 
         response = self.client.get('/tracking/charter/update/')
         self.assertEqual(response.status_code, 404)
+
+        # Test: if user is logged in, status should be 301
 
     def test_request_charter_detail_page(self):
         response = self.client.get('/tracking/charter/detail/99')
@@ -70,11 +75,14 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_request_charter_add_success_page(self):
+        # Why is this passing? Should be 302?
         response = self.client.get('/tracking/charter/new/success/99')
         self.assertEqual(response.status_code, 301)
 
         response = self.client.get('/tracking/charter/new/sucess/')
         self.assertEqual(response.status_code, 404)
+
+        # Test: If user is logged in, status should be 301
 
 
 class UrlsTestCase(TestCase):

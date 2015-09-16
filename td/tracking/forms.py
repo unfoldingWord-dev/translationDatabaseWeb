@@ -106,7 +106,6 @@ class CharterForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
 
-
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['departments'].queryset = Department.objects.order_by('name')
