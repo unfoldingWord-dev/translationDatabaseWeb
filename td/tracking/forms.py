@@ -16,7 +16,7 @@ from .models import (
     Software,
     # Material,
     # Translator,
-    # Facilitator
+    # Facilitator,
 )
 
 # import re
@@ -106,6 +106,7 @@ class CharterForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
 
+
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['departments'].queryset = Department.objects.order_by('name')
@@ -116,11 +117,19 @@ class EventForm(forms.ModelForm):
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
-                    "data-source-url": urlReverse("names_autocomplete")
+                    "data-source-url": urlReverse("tracking:charters_autocomplete")
                 }
             ),
             required=True
         )
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data['end_date']
+        start_date = self.cleaned_data['start_date']
+        if end_date <= start_date:
+            raise forms.ValidationError(_('End date must be later than start date'), 'invalid_input')
+        else:
+            return end_date
 
     def clean_contact_person(self):
         name = self.cleaned_data['contact_person']

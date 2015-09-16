@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.db.models import Q
 # from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, TemplateView
@@ -135,9 +135,26 @@ def charter(request, pk):
 # -------------------------------- #
 
 
-class EventAdd(CreateView):
+def charters_autocomplete(request):
+    term = request.GET.get('q').lower().encode('utf-8')
+    charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
+    data = [
+        {
+            'pk': charter.id,
+            'ln': charter.language.ln,
+            'lc': charter.language.lc,
+            'lr': charter.language.lr,
+            'gl': charter.language.gateway_flag
+        }
+        for charter in charters
+    ]
+    return JsonResponse({'results': data, 'count': len(data), 'term': term})
+
+
+class EventAddView(CreateView):
     model = Event
     form_class = EventForm
+    # success_url = ''
 
     def get_initial(self):
         return {
