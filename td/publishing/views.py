@@ -208,7 +208,7 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         messages.info(self.request, "Publish Request Approved")
         approve_publish_request(self.object.pk, self.request.user.id)
-        return redirect("oresource_update", code=self.object.language.langcode)
+        return redirect("oresource_update", code=self.object.language.code)
 
 
 class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
