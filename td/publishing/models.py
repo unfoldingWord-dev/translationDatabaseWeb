@@ -7,6 +7,8 @@ import reversion
 
 from td.models import Language
 
+from .resources import RESOURCE_TYPES
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=255, verbose_name="Name of Organization")
@@ -91,6 +93,25 @@ class OfficialResourceType(models.Model):
     long_name = models.CharField(max_length=50, help_text="a more descriptive name")
     description = models.TextField(blank=True)
 
+    def ingest(self, language):
+        ResourceIngestor = RESOURCE_TYPES.get(self.short_name)
+        if ResourceIngestor:
+            resource_ingestor = ResourceIngestor(language.code)
+            chapters = resource_ingestor.fetch_chapters()
+            for chapter in chapters:
+                ch, _ = self.chapter_set.get_or_create(
+                    language=language,
+                    ref=chapter["ref"],
+                    title=chapter["title"],
+                    number=chapter["number"]
+                )
+                for frame in chapter["frames"]:
+                    ch.frame_set.get_or_create(
+                        identifier=frame["id"],
+                        img=frame["img"],
+                        text=frame["text"]
+                    )
+
     def __str__(self):
         return "({0}) {1}".format(self.short_name, self.long_name)
 
@@ -155,3 +176,18 @@ class PublishRequest(models.Model):
 class LicenseAgreement(models.Model):
     publish_request = models.ForeignKey(PublishRequest)
     document = models.FileField(upload_to="agreements/")
+
+
+class Chapter(models.Model):
+    resource_type = models.ForeignKey(OfficialResourceType)
+    language = models.ForeignKey(Language)
+    number = models.IntegerField()
+    ref = models.CharField(max_length=300)
+    title = models.CharField(max_length=300)
+
+
+class Frame(models.Model):
+    chapter = models.ForeignKey(Chapter)
+    identifier = models.CharField(max_length=10)
+    img = models.URLField(max_length=300)
+    text = models.TextField()
