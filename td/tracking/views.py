@@ -19,20 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 # ------------------------------- #
-#         DEFAULT VIEWS           #
-# ------------------------------- #
-
-
-class UnderConstructionView(TemplateView):
-    template_name = 'tracking/under_construction.html'
-
-
-# ------------------------------- #
 #            HOME VIEWS           #
 # ------------------------------- #
-
-class CharterListView(TemplateView):
-    template_name = 'tracking/project_list.html'
 
 
 class CharterTableSourceView(DataTableSourceView):
@@ -88,6 +76,7 @@ class AjaxCharterListView(CharterTableSourceView):
 
 
 class CharterAdd(LoginRequiredMixin, CreateView):
+
     model = Charter
     form_class = CharterForm
 
@@ -99,7 +88,7 @@ class CharterAdd(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        return redirect('tracking:charter_add_success', pk=self.object.id)
+        return redirect('tracking:charter_add_success', obj_type='charter', pk=self.object.id)
 
 
 class CharterUpdate(LoginRequiredMixin, UpdateView):
@@ -113,19 +102,40 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
         return redirect('tracking:charter_add_success', pk=self.object.id)
 
 
-def charter_add_success(request, pk):
-    if request.user.is_authenticated():
-        logger.info('authenticated')
-        charter = get_object_or_404(Charter, pk=pk)
-        context = {
-            'status': 'Success',
-            'charter_id': charter.id,
-            'message': 'Project ' + charter.language.name + ' has been successfully added.',
-        }
-        return render(request, 'tracking/charter_add_success.html', context)
-    else:
-        logger.info('redirecting')
-        return redirect('tracking:project_list')
+class SuccessView(LoginRequiredMixin, TemplateView):
+    template_name = 'tracking/charter_add_success.html'
+
+    def get(self, request, *args, **kwargs):
+        # Redirects user to tracking home page if he doesn't get here from new
+        #    charter or event forms
+        try:
+            referer = request.META['HTTP_REFERER']
+        except KeyError:
+            return redirect('tracking:project_list')
+
+        allowed_urls = [
+            'http://localhost:8000/tracking/charter/new/',
+            'http://td.unfoldingword.org/tracking/charter/new/',
+        ]
+
+        if referer in allowed_urls:
+            return super(SuccessView, self).get(self, *args, **kwargs)
+        else:
+            return redirect('tracking:project_list')
+
+    def get_context_data(self, *args, **kwargs):
+        # Append additional context to display custom message
+        # NOTE: Maybe the logic for custom message should go in the template?
+        charter = Charter.objects.get(pk=kwargs['pk'])
+        context = super(SuccessView, self).get_context_data(**kwargs)
+        context['link_id'] = kwargs['pk']
+        if kwargs['obj_type'] == 'charter':
+            context['status'] = 'Success'
+            context['message'] = 'Project ' + charter.language.name + ' has been successfully added.'
+        else:
+            context['status'] = 'Sorry :('
+            context['message'] = 'It seems like you got here by accident'
+        return context
 
 
 def charter(request, pk):

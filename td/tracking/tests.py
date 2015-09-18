@@ -76,10 +76,10 @@ class ViewsTestCase(TestCase):
 
     def test_request_charter_add_success_page(self):
         # Why is this passing? Should be 302?
-        response = self.client.get('/tracking/charter/new/success/99')
+        response = self.client.get('/tracking/success/charter/99')
         self.assertEqual(response.status_code, 301)
 
-        response = self.client.get('/tracking/charter/new/sucess/')
+        response = self.client.get('/tracking/success/charter/')
         self.assertEqual(response.status_code, 404)
 
         # Test: If user is logged in, status should be 301
@@ -103,8 +103,8 @@ class UrlsTestCase(TestCase):
         url = reverse('tracking:charter_update', args=[999])
         self.assertEqual(url, '/tracking/charter/update/999/')
 
-        url = reverse('tracking:charter_add_success', args=[999])
-        self.assertEqual(url, '/tracking/charter/new/success/999/')
+        url = reverse('tracking:charter_add_success', kwargs={'obj_type': 'charter', 'pk': '999'})
+        self.assertEqual(url, '/tracking/success/charter/999/')
 
     def test_url_resolve_home(self):
         resolver = resolve('/tracking/')
@@ -125,9 +125,11 @@ class UrlsTestCase(TestCase):
         self.assertEqual(resolver.url_name, 'charter_add')
 
     def test_url_resolve_charter_add_success(self):
-        resolver = resolve('/tracking/charter/new/success/999/')
+        resolver = resolve('/tracking/success/charter/999/')
         self.assertIn('pk', resolver.kwargs)
+        self.assertIn('obj_type', resolver.kwargs)
         self.assertEqual(resolver.kwargs['pk'], '999')
+        self.assertEqual(resolver.kwargs['obj_type'], 'charter')
         self.assertEqual(resolver.namespace, 'tracking')
         self.assertEqual(resolver.view_name, 'tracking:charter_add_success')
         self.assertEqual(resolver.url_name, 'charter_add_success')
