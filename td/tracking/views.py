@@ -65,7 +65,8 @@ class AjaxCharterListView(CharterTableSourceView):
         'end_date',
         'contact_person'
     ]
-    link_column = 'language__name'
+    # link is on column because name can't handle non-roman characters
+    link_column = 'language__code'
     link_url_name = 'tracking:charter'
     link_url_field = 'pk'
 
