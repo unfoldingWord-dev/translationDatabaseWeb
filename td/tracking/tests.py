@@ -276,8 +276,14 @@ class UrlsTestCase(TestCase):
 
 class CharterFormTestCase(TestCase):
 
-    # def setUp(self):
+    def setUp(self):
 
+        self.language = Language(code='py')
+        self.language.save()
+        self.country = Country(code='uw', name='Unfolding Word')
+        self.country.save()
+        self.department = Department(name='translationDatabase')
+        self.department.save()
 
     @unittest.skipIf(DEBUG, 'DEBUG')
     def test_charter_form_incomplete(self):
@@ -344,16 +350,9 @@ class CharterFormTestCase(TestCase):
         Complete charter form passess validation
         """
 
-        language = Language(code='py')
-        language.save()
-        country = Country(code='uw', name='Unfolding Word')
-        country.save()
-        department = Department(name='translationDatabase')
-        department.save()
-
         data = {
-            'language': language.id,
-            'countries': [country.id],
+            'language': self.language.id,
+            'countries': [self.country.id],
             'start_date_month': '1',
             'start_date_day': '1',
             'start_date_year': '2015',
@@ -367,7 +366,6 @@ class CharterFormTestCase(TestCase):
         }
         charter_form = CharterForm(data=data)
         result = charter_form.is_valid()
-        print "errors %s" % charter_form.errors
         self.assertTrue(result)
 
     @unittest.skipIf(DEBUG, 'DEBUG')
