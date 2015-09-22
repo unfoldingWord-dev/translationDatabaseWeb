@@ -8,11 +8,6 @@
 
 {% block extra_style %}
 	<style>
-		form .form-group::after {
-			content: '';
-			display: block;
-			clear: both;
-		}
 		.date-input {
 			width: calc(33.33% - 3px);
 			display: inline-block;
@@ -22,6 +17,27 @@
 		.date-input:last-child {
 			width: 33.33%;
 			margin-right: 0;
+		}
+		.inline div, .inline label {
+			display: inline;
+			float: left;
+		}
+		.half-width {
+			width: 50%;
+		}
+		.quarter-width {
+			width: 25%;
+		}
+		.inline input[type="checkbox"].form-control {
+			width: 20px;
+			height: 20px;
+			margin: 7px auto 0 auto;
+		}
+		.facilitator-text {
+			width: 60%;
+		}
+		.facilitator-checkboxes {
+			width: 40%;
 		}
 	</style>
 {% endblock extra_style %}	
@@ -37,11 +53,22 @@
 				<div class="panel-body">
 					<form action="" method="POST" class="form">
 						{% csrf_token %}
-<!-- 						<div class="form-group">
-							<div class="">
-								<input type="text" class="form-control" />
+						<div class="form-group clearfix">
+							<div class="inline inline-label">
+								<div class="facilitator-text">
+									<label class="control-label">Facilitator</label>
+									<a id="add-facilitator" class="btn btn-default btn-xs" href="" style="margin-left: 1rem;">
+										<i class="fa fa-plus"></i>
+									</a>
+								</div>
+								<div class="facilitator-checkboxes">
+									<label class="control-label half-width text-center">Lead</label>
+									<label class="control-label half-width text-center">Speaks GL</label>
+								</div>
 							</div>
-						</div> -->
+							<div id="facilitator-list">
+							</div>
+						</div>
 						{{ form | bootstrap }}
 						<button type="submit" class="btn btn-primary pull-right">
 							{% if form.errors %}
@@ -56,7 +83,64 @@
 		</div>
 	</div>
 
+<!-- 
+	<template class="facilitator">
+		<div class="inline inline-input clearfix">
+			<div class="half-width clearfix">
+				<input name="facilitator" type="text" class="form-control" />
+			</div>
+			<div class="checkboxes">
+				<div class="half-width"><input name="is_lead" type="checkbox" class="form-control" /></div>
+				<div class="half-width"><input name="speaks_gl" type="checkbox" class="form-control" /></div>
+			</div>
+		</div>
+	</template>
+ -->
+
 {% endblock body%}
 
-{% block extra_script %}
-{% endblock extra_script %}
+{% block custom_bottom_script %}
+<script>
+
+	document.addEventListener('DOMContentLoaded', function (event) {
+		// Initial rows
+		addInline('facilitator');
+
+		// Attach listeners
+		var facilitator_button = document.querySelector('#add-facilitator');
+		facilitator_button.addEventListener('click', function(event) {
+			event.preventDefault();
+			addInline('facilitator');
+		});
+	});
+
+	function addInline(label) {
+		var list = $('#' + label + '-list');
+		var length = list.children().length;
+		switch(label) {
+			case 'facilitator':
+				var elem = '<div class="inline inline-input clearfix">' +
+					'<div class="facilitator-text clearfix">' +
+						'<input name="facilitator' + length + '" type="text" class="form-control" />' +
+					'</div>' +
+					'<div class="facilitator-checkboxes">' +
+						'<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' +
+						'<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' +
+					'</div>' +
+				'</div>';
+				break;
+			case 'translator':
+				console.log('label is', label);
+				break;
+			case 'material':
+				console.log('label is', label);
+				break;
+			default:
+				console.log('switch default');
+				break;
+
+		}
+		list.append(elem);
+	}
+</script>
+{% endblock custom_bottom_script %}

@@ -9,7 +9,7 @@ from .views import (
     CharterUpdate,
     SuccessView,
     # event,
-    # EventAddView,
+    EventAddView,
     charters_autocomplete,
 )
 
@@ -28,9 +28,9 @@ urlpatterns = [
     # Under Construction
     url(r'^charter/detail/(?P<pk>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='charter'),
     url(r'^event/detail/(?P<event_id>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event'),
-    url(r'^event/new/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add'),
+    # url(r'^event/new/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add'),
     url(r'^event/new/(?P<pk>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add_specific'),
-    # url(r'^event/new/$', EventAddView.as_view(), name='event_add'),
+    url(r'^event/new/$', EventAddView.as_view(), name='event_add'),
     # url(r'^event/add/success/$', views.event_add_success, name = 'event_add_success'),
     # url(r'^event/add/fail/$', views.event_add_fail, name = 'event_add_fail'),
 
