@@ -185,9 +185,26 @@ class Chapter(models.Model):
     ref = models.CharField(max_length=300)
     title = models.CharField(max_length=300)
 
+    @property
+    def data(self):
+        return {
+            "frames": [frame.data for frame in self.frame_set.order_by("identifier")],
+            "number": self.number,
+            "ref": self.ref,
+            "title": self.title
+        }
+
 
 class Frame(models.Model):
     chapter = models.ForeignKey(Chapter)
     identifier = models.CharField(max_length=10)
     img = models.URLField(max_length=300)
     text = models.TextField()
+
+    @property
+    def data(self):
+        return {
+            "id": self.identifier,
+            "img": self.img,
+            "text": self.text
+        }
