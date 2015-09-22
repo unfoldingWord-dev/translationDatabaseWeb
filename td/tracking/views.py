@@ -141,7 +141,10 @@ class SuccessView(LoginRequiredMixin, TemplateView):
 
 def charter(request, pk):
     charter = get_object_or_404(Charter, pk=pk)
-    context = {'charter': charter}
+    messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
+    context = {
+        'charter': charter,
+    }
 
     return render(request, 'tracking/charter_detail.html', context)
 

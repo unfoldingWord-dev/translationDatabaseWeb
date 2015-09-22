@@ -19,7 +19,7 @@ class CharterAdmin(admin.ModelAdmin):
         ('Internal', {'fields': ['number', 'lead_dept', 'contact_person']}),
         (None, {'fields': ['created_at', 'created_by']}),
     ]
-    list_display = ('language', 'start_date', 'end_date')
+    list_display = ('language', '__unicode__', 'start_date', 'end_date', 'number', 'contact_person')
 
 
 class EventAdmin(admin.ModelAdmin):
