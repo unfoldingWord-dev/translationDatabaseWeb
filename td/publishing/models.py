@@ -112,6 +112,13 @@ class OfficialResourceType(models.Model):
                         text=frame["text"]
                     )
 
+    @property
+    def data(self):
+        return [
+            resource.data
+            for resource in self.officialresource_set.order_by("language__code")
+        ]
+
     def __str__(self):
         return "({0}) {1}".format(self.short_name, self.long_name)
 
@@ -135,6 +142,49 @@ class OfficialResource(models.Model):
     checking_entity = models.ManyToManyField(Organization, related_name="resource_publications", blank=True)
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
+
+    @property
+    def data(self):
+        """
+        {
+            "date_modified": "20150826",
+            "direction": "ltr",
+            "language": "en",
+            "status": {
+                "checking_entity": "Distant Shores Media; Wycliffe Associates",
+                "checking_level": "3",
+                "comments": "Original source text.",
+                "contributors": "Distant Shores Media",
+                "publish_date": "2015-08-26",
+                "source_text": "en",
+                "source_text_version": "4",
+                "version": "4"
+            },
+            "string": "English"
+        }
+        """
+        return {
+            "date_modified": "",  # @@@ what is this?
+            "direction": self.language.get_direction_display(),
+            "language": self.language.code,
+            "string": self.language.name,
+            "status": {
+                "checking_entity": self.checking_entity.name if self.checking_entity else "",
+                "checking_level": self.checking_level,
+                "comments": "\n\n".join([
+                    comment.comment
+                    for comment in self.comments.order_by("created_at")
+                ]),
+                "contributors": ", ".join([
+                    contact.name
+                    for contact in self.contributors.order_by("name")
+                ]),
+                "publish_date": self.publish_date.strftime("%Y-%m-%d") if self.publish_date else "",
+                "source_text": self.source_text.code if self.source_text else "",
+                "source_text_version": self.source_version,
+                "version": self.version
+            }
+        }
 
     def versions(self):
         return reversion.get_for_object(self)

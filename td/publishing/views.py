@@ -28,6 +28,11 @@ def resource_language_json(request, kind, lang):
     return JsonResponse(data)
 
 
+def resource_catalog_json(request, kind):
+    resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
+    return JsonResponse(resource_type.data, safe=False)
+
+
 @login_required
 def api_contact(request):
     q = request.GET.get("term", "")
