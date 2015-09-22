@@ -4,7 +4,7 @@ from .views import (
     TemplateView,
     AjaxCharterListView,
     # CharterListView,
-    # charter,
+    charter,
     CharterAdd,
     CharterUpdate,
     SuccessView,
@@ -25,8 +25,9 @@ urlpatterns = [
 
     url(r'^ac/charters$', charters_autocomplete, name="charters_autocomplete"),
 
+    url(r'^charter/detail/(?P<pk>\d+)/$', charter, name='charter'),
+
     # Under Construction
-    url(r'^charter/detail/(?P<pk>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='charter'),
     url(r'^event/detail/(?P<event_id>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event'),
     url(r'^event/new/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add'),
     url(r'^event/new/(?P<pk>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add_specific'),

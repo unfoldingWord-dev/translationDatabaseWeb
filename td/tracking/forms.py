@@ -19,7 +19,7 @@ from .models import (
     # Facilitator,
 )
 
-# import re
+import datetime
 
 
 class MySelectDateWidget(SelectDateWidget):
@@ -96,7 +96,8 @@ class CharterForm(forms.ModelForm):
         widgets = {
             'created_by': forms.HiddenInput(),
             'start_date': SelectDateWidget(
-                attrs={'class': 'date-input'}
+                attrs={'class': 'date-input'},
+                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
             ),
             'end_date': MySelectDateWidget(
                 attrs={'class': 'date-input'}

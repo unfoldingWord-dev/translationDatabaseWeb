@@ -85,7 +85,10 @@ class Charter(models.Model):
 
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
-        return str(self.language.code)
+        return self.language.code.encode("utf-8")
+
+    __unicode__.allow_tags = True
+    __unicode__.admin_order_field = 'language'
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
