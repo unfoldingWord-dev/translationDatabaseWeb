@@ -143,6 +143,9 @@ class OfficialResource(models.Model):
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
 
+    def ingest(self):
+        self.resource_type.ingest(self.language)
+
     @property
     def data(self):
         """
@@ -219,8 +222,32 @@ class PublishRequest(models.Model):
                                         verbose_name="Requester email",
                                         help_text="email address to be notified of request status")
 
+    @property
+    def version(self):
+        parts = self.source_version.split(".")
+        if len(parts) == 3:
+            return ".".join([parts[0], str(int(parts[1]) + 1), parts[2]])
+        else:
+            return "invalid"
+
+    def publish(self, by_user):
+        resource = self.resource_type.officialresource_set.create(
+            created_by=by_user,
+            language=self.language,
+            checking_level=self.checking_level,
+            source_text=self.source_text,
+            source_version=self.source_version,
+            version=self.version,
+            notes="requestor: {0}\ncontributors: {1}".format(self.requestor, self.contributors),
+            date_started=self.created_at.date()
+        )
+        self.approved_at = timezone.now()
+        self.save()
+        resource.ingest()
+        return resource
+
     def __str__(self):
-        return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.get_resource_display()), self.language)
+        return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.resource_type), self.language)
 
 
 class LicenseAgreement(models.Model):
