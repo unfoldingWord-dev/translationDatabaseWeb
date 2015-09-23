@@ -8,6 +8,11 @@
 
 {% block extra_style %}
 	<style>
+		form .form-group::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
 		.date-input {
 			width: calc(33.33% - 3px);
 			display: inline-block;
@@ -34,10 +39,10 @@
 			margin: 7px auto 0 auto;
 		}
 		.facilitator-text {
-			width: 60%;
+			width: 67.5%;
 		}
 		.facilitator-checkboxes {
-			width: 40%;
+			width: 32.5%;
 		}
 	</style>
 {% endblock extra_style %}	
@@ -49,10 +54,19 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h2 class="panel-title">New Translation Workshop/Event</h2>
+					{{form.errors}}
 				</div>
 				<div class="panel-body">
-					<form action="" method="POST" class="form">
+					<form action="{% url 'tracking:event_add' %}" method="POST" class="form">
 						{% csrf_token %}
+						{{ form.created_by | bootstrap }}
+						{{ form.lead_dept | bootstrap }}
+						{{ form.charter | bootstrap }}
+						{{ form.start_date | bootstrap }}
+						{{ form.end_date | bootstrap }}
+						{{ form.location | bootstrap }}
+						{{ form.networks | bootstrap }}
+
 						<div class="form-group clearfix">
 							<div class="inline inline-label">
 								<div class="facilitator-text">
@@ -67,9 +81,21 @@
 								</div>
 							</div>
 							<div id="facilitator-list">
+								{% for facilitator in facilitators %}
+									<div class="inline inline-input clearfix">
+										<div class="facilitator-text clearfix">
+										<input name="facilitator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ facilitator.name }}"/>
+									</div>
+									<div class="facilitator-checkboxes">
+										<div class="half-width"><input name="is_lead{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if facilitator.is_lead %}checked{% endif %} /></div>
+										<div class="half-width"><input name="speaks_gl{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if facilitator.speaks_gl %}checked{% endif %} /></div>
+									</div>
+								</div>
+								{% endfor %}
 							</div>
 						</div>
-						{{ form | bootstrap }}
+						{{ form.contact_person | bootstrap }}
+						<!-- {{ form | bootstrap }} -->
 						<button type="submit" class="btn btn-primary pull-right">
 							{% if form.errors %}
 								Try again
@@ -77,25 +103,13 @@
 								Add Event
 							{% endif %}
 						</button>
+
+						<input type="hidden" name="facilitator-count" value="0" />
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-
-<!-- 
-	<template class="facilitator">
-		<div class="inline inline-input clearfix">
-			<div class="half-width clearfix">
-				<input name="facilitator" type="text" class="form-control" />
-			</div>
-			<div class="checkboxes">
-				<div class="half-width"><input name="is_lead" type="checkbox" class="form-control" /></div>
-				<div class="half-width"><input name="speaks_gl" type="checkbox" class="form-control" /></div>
-			</div>
-		</div>
-	</template>
- -->
 
 {% endblock body%}
 
@@ -104,7 +118,8 @@
 
 	document.addEventListener('DOMContentLoaded', function (event) {
 		// Initial rows
-		addInline('facilitator');
+		if (!$('[name="facilitator0"]').length)
+			addInline('facilitator');
 
 		// Attach listeners
 		var facilitator_button = document.querySelector('#add-facilitator');
@@ -117,9 +132,10 @@
 	function addInline(label) {
 		var list = $('#' + label + '-list');
 		var length = list.children().length;
+		var elem = '';
 		switch(label) {
 			case 'facilitator':
-				var elem = '<div class="inline inline-input clearfix">' +
+				elem = '<div class="inline inline-input clearfix">' +
 					'<div class="facilitator-text clearfix">' +
 						'<input name="facilitator' + length + '" type="text" class="form-control" />' +
 					'</div>' +
@@ -138,9 +154,14 @@
 			default:
 				console.log('switch default');
 				break;
-
 		}
 		list.append(elem);
+		addCount(label);
+	}
+
+	function addCount(label) {
+		var elem = document.getElementsByName(label + '-count');
+		elem[0].value = parseInt(elem[0].value) + 1;
 	}
 </script>
 {% endblock custom_bottom_script %}

@@ -100,7 +100,8 @@ class CharterForm(forms.ModelForm):
                 years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
             ),
             'end_date': MySelectDateWidget(
-                attrs={'class': 'date-input'}
+                attrs={'class': 'date-input'},
+                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
             ),
         }
 
@@ -122,6 +123,24 @@ class EventForm(forms.ModelForm):
             ),
             required=True
         )
+        if self.instance.pk:
+            charter = self.instance.charter
+            if charter:
+                self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
+                self.fields["charter"].widget.attrs["data-lang-ln"] = charter.language.ln
+                self.fields["charter"].widget.attrs["data-lang-lc"] = charter.language.lc
+                self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
+                self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
+        elif self.data.get("charter", None):
+            try:
+                charter = Charter.objects.get(pk=self.data["charter"])
+                self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
+                self.fields["charter"].widget.attrs["data-lang-ln"] = charter.language.ln
+                self.fields["charter"].widget.attrs["data-lang-lc"] = charter.language.lc
+                self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
+                self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
+            except:
+                pass
 
     def clean_end_date(self):
         end_date = self.cleaned_data['end_date']
@@ -139,16 +158,38 @@ class EventForm(forms.ModelForm):
         else:
             return name
 
+    def clean_charter(self):
+        number = int(self.cleaned_data['charter'])
+        charter = Charter.objects.get(pk=number)
+        return charter
+    
+    def process_facilitators(self, form_content):
+        data = self.data
+        for key in data:
+            if key.startswith('facilitator') and key != 'facilitator-count':
+                name = data[key]
+                data[key] = name.strip()
+
+    def _clean_fields(self):
+        original_state = self.data._mutable
+        self.data._mutable = True
+        self.process_facilitators(self)
+        self.data._mutable = original_state
+        return super(EventForm, self)._clean_fields()
+
     class Meta:
         model = Event
         exclude = ['created_at']
         widgets = {
+            'facilitators': forms.HiddenInput(),
             'created_by': forms.HiddenInput(),
             'start_date': SelectDateWidget(
-                attrs={'class': 'date-input'}
+                attrs={'class': 'date-input'},
+                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
             ),
             'end_date': MySelectDateWidget(
-                attrs={'class': 'date-input'}
+                attrs={'class': 'date-input'},
+                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
             ),
             'output_target': forms.Textarea(
                 attrs={'rows': '3'}

@@ -9,7 +9,7 @@ from django.views.generic import CreateView, UpdateView, TemplateView
 
 from account.mixins import LoginRequiredMixin
 
-from .models import Charter, Event
+from .models import Charter, Event, Facilitator
 from .forms import CharterForm, EventForm
 from td.utils import DataTableSourceView
 
@@ -116,7 +116,9 @@ class SuccessView(LoginRequiredMixin, TemplateView):
 
         allowed_urls = [
             'http://localhost:8000/tracking/charter/new/',
+            'http://localhost:8000/tracking/event/new/',
             'http://td.unfoldingword.org/tracking/charter/new/',
+            'http://td.unfoldingword.org/tracking/event/new/',
         ]
 
         if referer in allowed_urls:
@@ -127,12 +129,15 @@ class SuccessView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         # Append additional context to display custom message
         # NOTE: Maybe the logic for custom message should go in the template?
-        charter = Charter.objects.get(pk=kwargs['pk'])
         context = super(SuccessView, self).get_context_data(**kwargs)
         context['link_id'] = kwargs['pk']
+        context['status'] = 'Success'
         if kwargs['obj_type'] == 'charter':
-            context['status'] = 'Success'
+            charter = Charter.objects.get(pk=kwargs['pk'])
             context['message'] = 'Project ' + charter.language.name + ' has been successfully added.'
+        elif kwargs['obj_type'] == 'event':
+            event = Event.objects.get(pk=kwargs['pk'])
+            context['message'] = 'Your event for ' + event.charter.language.name + ' has been successfully added.'
         else:
             context['status'] = 'Sorry :('
             context['message'] = 'It seems like you got here by accident'
@@ -178,12 +183,54 @@ class EventAddView(CreateView):
     def get_initial(self):
         return {
             'start_date': timezone.now(),
-            'created_by': self.request.user.username
+            'created_by': self.request.user.username,
         }
+
+    def get_facilitator_data(self, form):
+        facilitators = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith('facilitator') and key != 'facilitator-count':
+                    name = post[key] if post[key] else ''
+                    if name:
+                        number = key[11:]
+                        is_lead = True if 'is_lead' + number in post else False
+                        speaks_gl = True if 'speaks_gl' + number in post else False
+                        facilitators.append({'name': name, 'is_lead': is_lead, 'speaks_gl': speaks_gl})
+        return facilitators
+
+    def get_context_data(self, **kwargs):
+        context = super(EventAddView, self).get_context_data(**kwargs)
+        context['facilitators'] = self.get_facilitator_data(self)
+        return context
+
+    def save_or_get(self, array):
+        ids = []
+        for facilitator in array:
+            try:
+                person = Facilitator.objects.get(name=facilitator['name'])
+            except Facilitator.DoesNotExist:
+                person = Facilitator.objects.create(
+                    name=facilitator['name'],
+                    is_lead=facilitator['is_lead'],
+                    speaks_gl=facilitator['speaks_gl'],
+                )
+            ids.append(person.id)
+
+        return ids
 
     def form_valid(self, form):
         self.object = form.save()
-        return redirect('tracking:event_add_success', pk=self.object.id)
+
+        facilitators = self.get_facilitator_data(self)
+        facilitator_ids = self.save_or_get(facilitators)
+        if facilitator_ids:
+            event = Event.objects.get(pk=self.object.id)
+            for id in facilitator_ids:
+                event.facilitators.add(Facilitator.objects.get(id=id))
+
+        return redirect('tracking:charter_add_success', obj_type='event', pk=self.object.id)
 
 
 def event_add(request, **kwargs):

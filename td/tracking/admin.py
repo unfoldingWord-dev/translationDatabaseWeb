@@ -28,8 +28,9 @@ class EventAdmin(admin.ModelAdmin):
         (None, {'fields': ['location', 'start_date', 'end_date']}),
         (None, {'fields': ['translation_services', 'output_target']}),
         (None, {'fields': ['materials', 'software', 'hardware']}),
-        (None, {'fields': ['translators', 'facilitators', 'lead_dept', 'departments']}),
+        (None, {'fields': ['translators', 'facilitators', 'lead_dept', 'departments', 'networks']}),
         (None, {'fields': ['publishing_process', 'contact_person']}),
+        (None, {'fields': ['created_at', 'created_by']}),
     ]
     list_display = ('charter', 'lead_dept', 'start_date', 'end_date')
 
