@@ -1,14 +1,14 @@
 from django.contrib import admin
 from .models import (
     Charter,
-    Event,
-    Material,
-    Translator,
-    Facilitator,
     Department,
-    TranslationService,
-    Software,
+    Event,
+    Facilitator,
     Hardware,
+    Material,
+    Software,
+    Translator,
+    TranslationService,
 )
 
 
@@ -24,7 +24,7 @@ class CharterAdmin(admin.ModelAdmin):
 
 class EventAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['charter']}),
+        (None, {'fields': ['charter', 'number']}),
         (None, {'fields': ['location', 'start_date', 'end_date']}),
         (None, {'fields': ['translation_services', 'output_target']}),
         (None, {'fields': ['materials', 'software', 'hardware']}),

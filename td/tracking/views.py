@@ -9,7 +9,7 @@ from django.views.generic import CreateView, UpdateView, TemplateView
 
 from account.mixins import LoginRequiredMixin
 
-from .models import Charter, Event, Facilitator
+from .models import Charter, Event, Facilitator, Material
 from .forms import CharterForm, EventForm
 from td.utils import DataTableSourceView
 
@@ -175,17 +175,50 @@ def charters_autocomplete(request):
     return JsonResponse({'results': data, 'count': len(data), 'term': term})
 
 
-class EventAddView(CreateView):
+class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
     # success_url = ''
 
+    # Overwritten to include initial values
     def get_initial(self):
         return {
             'start_date': timezone.now(),
             'created_by': self.request.user.username,
         }
 
+    # Overwritten to include facilitators data
+    def get_context_data(self, **kwargs):
+        context = super(EventAddView, self).get_context_data(**kwargs)
+        context['facilitators'] = self.get_facilitator_data(self)
+        context['materials'] = self.get_material_data(self)
+        return context
+
+    # 
+    def form_valid(self, form):
+        self.object = form.save()
+
+        # Add facilitators info
+        facilitators = self.get_facilitator_data(self)
+        facilitator_ids = self.get_facilitator_ids(facilitators)
+        if facilitator_ids:
+            event = Event.objects.get(pk=self.object.id)
+            for id in facilitator_ids:
+                event.facilitators.add(Facilitator.objects.get(id=id))
+
+        # Add materials info
+        materials = self.get_material_data(self)
+        material_ids = self.get_material_ids(materials)
+        if material_ids:
+            event = Event.objects.get(pk=self.object.id)
+            for id in material_ids:
+                event.materials.add(Material.objects.get(id=id))
+
+        self.set_event_number()
+
+        return redirect('tracking:charter_add_success', obj_type='event', pk=self.object.id)
+    
+    # Function: Returns an array of Facilitator objects' properties
     def get_facilitator_data(self, form):
         facilitators = []
         if self.request.POST:
@@ -200,12 +233,22 @@ class EventAddView(CreateView):
                         facilitators.append({'name': name, 'is_lead': is_lead, 'speaks_gl': speaks_gl})
         return facilitators
 
-    def get_context_data(self, **kwargs):
-        context = super(EventAddView, self).get_context_data(**kwargs)
-        context['facilitators'] = self.get_facilitator_data(self)
-        return context
+    # 
+    def get_material_data(self, form):
+        materials = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith('material') and key != 'material-count':
+                    name = post[key] if post[key] else ''
+                    if name:
+                        number = key[8:]
+                        licensed = True if 'licensed' + number in post else False
+                        materials.append({'name': name, 'licensed': licensed})
+        return materials
 
-    def save_or_get(self, array):
+    # Function: Takes an array of facilitator properties and returns an array of their ids
+    def get_facilitator_ids(self, array):
         ids = []
         for facilitator in array:
             try:
@@ -220,17 +263,33 @@ class EventAddView(CreateView):
 
         return ids
 
-    def form_valid(self, form):
-        self.object = form.save()
+    # Function: Takes an array of material properties and returns an array of their ids
+    def get_material_ids(self, array):
+        ids = []
+        for material in array:
+            try:
+                object = Material.objects.get(name=material['name'])
+            except Material.DoesNotExist:
+                object = Material.objects.create(
+                    name=material['name'],
+                    licensed=material['licensed'],
+                )
+            ids.append(object.id)
 
-        facilitators = self.get_facilitator_data(self)
-        facilitator_ids = self.save_or_get(facilitators)
-        if facilitator_ids:
-            event = Event.objects.get(pk=self.object.id)
-            for id in facilitator_ids:
-                event.facilitators.add(Facilitator.objects.get(id=id))
+        return ids
 
-        return redirect('tracking:charter_add_success', obj_type='event', pk=self.object.id)
+    # Function: Sets property:number in event
+    def set_event_number(self):
+        events = Event.objects.filter(charter=self.object.charter)
+        event_numbers = []
+        for event in events:
+            event_numbers.append(event.number)
+        latest = 0
+        for number in event_numbers:
+            print latest
+            if number > latest:
+                latest = number
+        Event.objects.filter(pk=self.object.id).update(number=(latest + 1))
 
 
 def event_add(request, **kwargs):

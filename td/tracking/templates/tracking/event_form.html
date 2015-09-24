@@ -1,6 +1,5 @@
 {% extends "site_base.html" %}
 
-
 {% load i18n %}
 {% load bootstrap %}
 
@@ -13,6 +12,21 @@
 			display: block;
 			clear: both;
 		}
+		.control-label-sub {
+			font-size: 90%;
+			font-weight: 300;
+			color: #444;
+		}
+		.full-width {
+			width: 100%;
+		}
+		.half-width {
+			width: 50%;
+		}
+		.quarter-width {
+			width: 25%;
+		}
+
 		.date-input {
 			width: calc(33.33% - 3px);
 			display: inline-block;
@@ -23,15 +37,10 @@
 			width: 33.33%;
 			margin-right: 0;
 		}
+
 		.inline div, .inline label {
 			display: inline;
 			float: left;
-		}
-		.half-width {
-			width: 50%;
-		}
-		.quarter-width {
-			width: 25%;
 		}
 		.inline input[type="checkbox"].form-control {
 			width: 20px;
@@ -39,10 +48,19 @@
 			margin: 7px auto 0 auto;
 		}
 		.facilitator-text {
-			width: 67.5%;
+			width: calc(100% - 140px);
 		}
 		.facilitator-checkboxes {
-			width: 32.5%;
+			width: 140px;
+		}
+		.material-text {
+			width: calc(100% - 70px);
+		}
+		.material-checkboxes {
+			width: 70px;
+		}
+		.btn-add {
+			margin-left: 1rem;
 		}
 	</style>
 {% endblock extra_style %}	
@@ -59,25 +77,25 @@
 				<div class="panel-body">
 					<form action="{% url 'tracking:event_add' %}" method="POST" class="form">
 						{% csrf_token %}
-						{{ form.created_by | bootstrap }}
-						{{ form.lead_dept | bootstrap }}
+
 						{{ form.charter | bootstrap }}
 						{{ form.start_date | bootstrap }}
 						{{ form.end_date | bootstrap }}
 						{{ form.location | bootstrap }}
-						{{ form.networks | bootstrap }}
+						{{ form.lead_dept | bootstrap }}
+						{{ form.departments | bootstrap }}
+						{{ form.software | bootstrap }}
+						{{ form.hardware | bootstrap }}
 
 						<div class="form-group clearfix">
 							<div class="inline inline-label">
 								<div class="facilitator-text">
 									<label class="control-label">Facilitator</label>
-									<a id="add-facilitator" class="btn btn-default btn-xs" href="" style="margin-left: 1rem;">
-										<i class="fa fa-plus"></i>
-									</a>
+									<a id="add-facilitator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
 								</div>
 								<div class="facilitator-checkboxes">
-									<label class="control-label half-width text-center">Lead</label>
-									<label class="control-label half-width text-center">Speaks GL</label>
+									<label class="control-label control-label-sub half-width text-center">Lead</label>
+									<label class="control-label control-label-sub half-width text-center">Speaks GL</label>
 								</div>
 							</div>
 							<div id="facilitator-list">
@@ -94,8 +112,34 @@
 								{% endfor %}
 							</div>
 						</div>
+
+						<div class="form-group clearfix">
+							<div class="inline inline-label">
+								<div class="material-text">
+									<label class="control-label">Material</label>
+									<a id="add-material" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+								</div>
+								<div class="material-checkboxes">
+									<label class="control-label control-label-sub full-width text-center">Licensed</label>
+								</div>
+							</div>
+							<div id="material-list">
+								{% for material in materials %}
+									<div class="inline inline-input clearfix">
+										<div class="material-text clearfix">
+										<input name="material{{ forloop.counter0 }}" type="text" class="form-control" value="{{ material.name }}"/>
+									</div>
+									<div class="material-checkboxes">
+										<div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if material.licensed %}checked{% endif %} /></div>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+						
+						{{ form.networks | bootstrap }}
 						{{ form.contact_person | bootstrap }}
-						<!-- {{ form | bootstrap }} -->
+
 						<button type="submit" class="btn btn-primary pull-right">
 							{% if form.errors %}
 								Try again
@@ -104,7 +148,12 @@
 							{% endif %}
 						</button>
 
+						{% for hidden in form.hidden_fields %}
+							{{ hidden }}
+						{% endfor %}
+
 						<input type="hidden" name="facilitator-count" value="0" />
+						<input type="hidden" name="material-count" value="0" />
 					</form>
 				</div>
 			</div>
@@ -120,12 +169,19 @@
 		// Initial rows
 		if (!$('[name="facilitator0"]').length)
 			addInline('facilitator');
+		if (!$('[name="material0"]').length)
+			addInline('material');
 
 		// Attach listeners
 		var facilitator_button = document.querySelector('#add-facilitator');
 		facilitator_button.addEventListener('click', function(event) {
 			event.preventDefault();
 			addInline('facilitator');
+		});
+		var material_button = document.querySelector('#add-material');
+		material_button.addEventListener('click', function(event) {
+			event.preventDefault();
+			addInline('material');
 		});
 	});
 
@@ -145,10 +201,17 @@
 					'</div>' +
 				'</div>';
 				break;
-			case 'translator':
-				console.log('label is', label);
-				break;
 			case 'material':
+				elem = '<div class="inline inline-input clearfix">' +
+					'<div class="material-text clearfix">' +
+						'<input name="material' + length + '" type="text" class="form-control" />' +
+					'</div>' +
+					'<div class="material-checkboxes">' +
+						'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" /></div>' +
+					'</div>' +
+				'</div>';
+				break;
+			case 'translator':
 				console.log('label is', label);
 				break;
 			default:

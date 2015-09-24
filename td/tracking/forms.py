@@ -14,7 +14,7 @@ from .models import (
     TranslationService,
     Hardware,
     Software,
-    # Material,
+    Material,
     # Translator,
     # Facilitator,
 )
@@ -108,6 +108,7 @@ class CharterForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
 
+    # Overwritten to customize the form
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['departments'].queryset = Department.objects.order_by('name')
@@ -131,7 +132,8 @@ class EventForm(forms.ModelForm):
                 self.fields["charter"].widget.attrs["data-lang-lc"] = charter.language.lc
                 self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
                 self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
-        elif self.data.get("charter", None):
+        elif self.data.get("charter"):
+            print self.data.get("charter")
             try:
                 charter = Charter.objects.get(pk=self.data["charter"])
                 self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
@@ -142,6 +144,7 @@ class EventForm(forms.ModelForm):
             except:
                 pass
 
+    # Overwritten to enforce date logic
     def clean_end_date(self):
         end_date = self.cleaned_data['end_date']
         start_date = self.cleaned_data['start_date']
@@ -150,6 +153,7 @@ class EventForm(forms.ModelForm):
         else:
             return end_date
 
+    # Overwritten to trime space
     def clean_contact_person(self):
         name = self.cleaned_data['contact_person']
         name = name.strip()
@@ -158,29 +162,34 @@ class EventForm(forms.ModelForm):
         else:
             return name
 
+    # Overwritten to return an object instance
     def clean_charter(self):
         number = int(self.cleaned_data['charter'])
         charter = Charter.objects.get(pk=number)
         return charter
-    
-    def process_facilitators(self, form_content):
-        data = self.data
-        for key in data:
-            if key.startswith('facilitator') and key != 'facilitator-count':
-                name = data[key]
-                data[key] = name.strip()
 
+    # Overwritten to strip all custom fields
     def _clean_fields(self):
         original_state = self.data._mutable
         self.data._mutable = True
-        self.process_facilitators(self)
+        self.strip_custom_fields(self, 'facilitator')
+        self.strip_custom_fields(self, 'material')
         self.data._mutable = original_state
         return super(EventForm, self)._clean_fields()
+    
+    # Function: Set stripped strings for specified custom fields
+    def strip_custom_fields(self, form, name):
+        data = self.data
+        for key in data:
+            if key.startswith(name) and key != name + '-count':
+                input = data[key]
+                data[key] = input.strip()
 
     class Meta:
         model = Event
         exclude = ['created_at']
         widgets = {
+            'materials': forms.HiddenInput(),
             'facilitators': forms.HiddenInput(),
             'created_by': forms.HiddenInput(),
             'start_date': SelectDateWidget(
