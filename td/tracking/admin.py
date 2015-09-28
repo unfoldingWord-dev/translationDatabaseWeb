@@ -14,12 +14,12 @@ from .models import (
 
 class CharterAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Info', {'fields': ['language', 'countries']}),
-        ('Timing', {'fields': ['start_date', 'end_date']}),
-        ('Internal', {'fields': ['number', 'lead_dept', 'contact_person']}),
-        (None, {'fields': ['created_at', 'created_by']}),
+        ("Info", {"fields": ["language", "countries"]}),
+        ("Timing", {"fields": ["start_date", "end_date"]}),
+        ("Internal", {"fields": ["number", "lead_dept", "contact_person"]}),
+        (None, {"fields": ["created_at", "created_by"]}),
     ]
-    list_display = ('language', '__unicode__', 'start_date', 'end_date', 'number', 'contact_person')
+    list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
 
 class EventAdmin(admin.ModelAdmin):
     fieldsets = [

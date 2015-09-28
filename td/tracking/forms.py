@@ -37,9 +37,9 @@ class CharterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
-        self.fields['countries'].queryset = Country.objects.order_by('name')
-        self.fields['lead_dept'].queryset = Department.objects.order_by('name')
-        self.fields['language'] = forms.CharField(
+        self.fields["countries"].queryset = Country.objects.order_by("name")
+        self.fields["lead_dept"].queryset = Department.objects.order_by("name")
+        self.fields["language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
@@ -47,6 +47,19 @@ class CharterForm(forms.ModelForm):
                 }
             ),
             required=True
+        )
+        year = datetime.datetime.now().year
+        self.fields["start_date"] = forms.DateField(
+            widget=SelectDateWidget(
+                years=range(year - 2, year + 10),
+                attrs={"class": "date-input"}
+            )
+        )
+        self.fields["end_date"] = forms.DateField(
+            widget=MySelectDateWidget(
+                years=range(year - 2, year + 10),
+                attrs={"class": "date-input"}
+            )
         )
         # Checking what?
         # Something to do with trying to create a duplicate charter.
@@ -74,35 +87,27 @@ class CharterForm(forms.ModelForm):
         # Validate the format of project (accounting) number
 
     def clean_end_date(self):
-        end_date = self.cleaned_data['end_date']
-        start_date = self.cleaned_data['start_date']
+        end_date = self.cleaned_data["end_date"]
+        start_date = self.cleaned_data["start_date"]
         if end_date <= start_date:
-            raise forms.ValidationError(_('End date must be later than start date'), 'invalid_input')
+            raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
         else:
             return end_date
 
     # Since a name can have unexpected characters, only check against empty
     def clean_contact_person(self):
-        name = self.cleaned_data['contact_person']
+        name = self.cleaned_data["contact_person"]
         name = name.strip()
         if not name:
-            raise forms.ValidationError(_('This field is required'), 'invalid_input')
+            raise forms.ValidationError(_("This field is required"), "invalid_input")
         else:
             return escape(name)
 
     class Meta:
         model = Charter
-        exclude = ['created_at']
+        exclude = ["created_at"]
         widgets = {
-            'created_by': forms.HiddenInput(),
-            'start_date': SelectDateWidget(
-                attrs={'class': 'date-input'},
-                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
-            ),
-            'end_date': MySelectDateWidget(
-                attrs={'class': 'date-input'},
-                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
-            ),
+            "created_by": forms.HiddenInput(),
         }
 
 
@@ -111,11 +116,11 @@ class EventForm(forms.ModelForm):
     # Overwritten to customize the form
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.fields['departments'].queryset = Department.objects.order_by('name')
-        self.fields['hardware'].queryset = Hardware.objects.order_by('name')
-        self.fields['software'].queryset = Software.objects.order_by('name')
-        self.fields['translation_services'].queryset = TranslationService.objects.order_by('name')
-        self.fields['charter'] = forms.CharField(
+        self.fields["departments"].queryset = Department.objects.order_by("name")
+        self.fields["hardware"].queryset = Hardware.objects.order_by("name")
+        self.fields["software"].queryset = Software.objects.order_by("name")
+        self.fields["translation_services"].queryset = TranslationService.objects.order_by("name")
+        self.fields["charter"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
@@ -123,6 +128,19 @@ class EventForm(forms.ModelForm):
                 }
             ),
             required=True
+        )
+        year = datetime.datetime.now().year
+        self.fields["start_date"] = forms.DateField(
+            widget=SelectDateWidget(
+                years=range(year - 2, year + 10),
+                attrs={"class": "date-input"}
+            )
+        )
+        self.fields["end_date"] = forms.DateField(
+            widget=MySelectDateWidget(
+                years=range(year - 2, year + 10),
+                attrs={"class": "date-input"}
+            )
         )
         if self.instance.pk:
             charter = self.instance.charter
@@ -145,19 +163,19 @@ class EventForm(forms.ModelForm):
 
     # Overwritten to enforce date logic
     def clean_end_date(self):
-        end_date = self.cleaned_data['end_date']
-        start_date = self.cleaned_data['start_date']
+        end_date = self.cleaned_data["end_date"]
+        start_date = self.cleaned_data["start_date"]
         if end_date <= start_date:
-            raise forms.ValidationError(_('End date must be later than start date'), 'invalid_input')
+            raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
         else:
             return end_date
 
     # Overwritten to trime space
     def clean_contact_person(self):
-        name = self.cleaned_data['contact_person']
+        name = self.cleaned_data["contact_person"]
         name = name.strip()
         if not name:
-            raise forms.ValidationError(_('This field is required'), 'invalid_input')
+            raise forms.ValidationError(_("This field is required"), "invalid_input")
         else:
             return name
 
@@ -187,23 +205,11 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        exclude = ['created_at']
+        exclude = ["created_at"]
         widgets = {
             'materials': forms.HiddenInput(),
             'facilitators': forms.HiddenInput(),
             'created_by': forms.HiddenInput(),
-            'start_date': SelectDateWidget(
-                attrs={'class': 'date-input'},
-                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
-            ),
-            'end_date': MySelectDateWidget(
-                attrs={'class': 'date-input'},
-                years=range(datetime.datetime.now().year - 2, datetime.datetime.now().year + 11),
-            ),
-            'output_target': forms.Textarea(
-                attrs={'rows': '3'}
-            ),
-            'publishing_process': forms.Textarea(
-                attrs={'rows': '3'}
-            ),
+            "output_target": forms.Textarea(attrs={"rows": "3"}),
+            "publishing_process": forms.Textarea(attrs={"rows": "3"}),
         }
