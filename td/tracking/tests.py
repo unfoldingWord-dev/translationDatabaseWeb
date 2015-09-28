@@ -44,8 +44,8 @@ class ModelTestCase(TestCase):
         self.assertEqual(str(software), "Testing Software")
 
     def test_translationService_string_representation(self):
-        translationService = TranslationService.objects.create(name="Translation Service")
-        self.assertEqual(str(translationService), "Translation Service")
+        translation_service = TranslationService.objects.create(name="Translation Service")
+        self.assertEqual(str(translation_service), "Translation Service")
 
 
 class ViewsTestCase(TestCase):
