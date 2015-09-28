@@ -9,7 +9,7 @@ from django.views.generic import CreateView, UpdateView, TemplateView
 
 from account.mixins import LoginRequiredMixin
 
-from .models import Charter, Event, Facilitator, Material
+from .models import Charter, Event, Facilitator, Material, Translator
 from .forms import CharterForm, EventForm
 from td.utils import DataTableSourceView
 
@@ -100,7 +100,7 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
         messages.info(self.request, "Project charter has been updated")
-        return redirect('tracking:charter_add_success', pk=self.object.id)
+        return redirect('tracking:charter_add_success', obj_type='charter', pk=self.object.id)
 
 
 class SuccessView(LoginRequiredMixin, TemplateView):
@@ -131,6 +131,7 @@ class SuccessView(LoginRequiredMixin, TemplateView):
         # NOTE: Maybe the logic for custom message should go in the template?
         context = super(SuccessView, self).get_context_data(**kwargs)
         context['link_id'] = kwargs['pk']
+        context['obj_type'] = kwargs['obj_type']
         context['status'] = 'Success'
         if kwargs['obj_type'] == 'charter':
             charter = Charter.objects.get(pk=kwargs['pk'])
@@ -178,7 +179,6 @@ def charters_autocomplete(request):
 class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
-    # success_url = ''
 
     # Overwritten to include initial values
     def get_initial(self):
@@ -190,6 +190,7 @@ class EventAddView(LoginRequiredMixin, CreateView):
     # Overwritten to include facilitators data
     def get_context_data(self, **kwargs):
         context = super(EventAddView, self).get_context_data(**kwargs)
+        context['translators'] = self.get_translator_data(self)
         context['facilitators'] = self.get_facilitator_data(self)
         context['materials'] = self.get_material_data(self)
         return context
@@ -197,6 +198,14 @@ class EventAddView(LoginRequiredMixin, CreateView):
     # 
     def form_valid(self, form):
         self.object = form.save()
+
+        # Add translators info
+        translators = self.get_translator_data(self)
+        translator_ids = self.get_translator_ids(translators)
+        if translator_ids:
+            event = Event.objects.get(pk=self.object.id)
+            for id in translator_ids:
+                event.translators.add(Translator.objects.get(id=id))
 
         # Add facilitators info
         facilitators = self.get_facilitator_data(self)
@@ -233,6 +242,17 @@ class EventAddView(LoginRequiredMixin, CreateView):
                         facilitators.append({'name': name, 'is_lead': is_lead, 'speaks_gl': speaks_gl})
         return facilitators
 
+    # Function: Returns an array of Translator objects' properties
+    def get_translator_data(self, form):
+        translators = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith('translator') and key != 'translator-count':
+                    name = post[key] if post[key] else ''
+                    translators.append({'name': name})
+        return translators
+
     # 
     def get_material_data(self, form):
         materials = []
@@ -246,6 +266,18 @@ class EventAddView(LoginRequiredMixin, CreateView):
                         licensed = True if 'licensed' + number in post else False
                         materials.append({'name': name, 'licensed': licensed})
         return materials
+
+    # Function: Takes an array of translator properties and returns an array of their ids
+    def get_translator_ids(self, array):
+        ids = []
+        for translator in array:
+            try:
+                person = Translator.objects.get(name=translator['name'])
+            except Translator.DoesNotExist:
+                person = Translator.objects.create(name=translator['name'])
+            ids.append(person.id)
+
+        return ids
 
     # Function: Takes an array of facilitator properties and returns an array of their ids
     def get_facilitator_ids(self, array):
@@ -286,7 +318,6 @@ class EventAddView(LoginRequiredMixin, CreateView):
             event_numbers.append(event.number)
         latest = 0
         for number in event_numbers:
-            print latest
             if number > latest:
                 latest = number
         Event.objects.filter(pk=self.object.id).update(number=(latest + 1))

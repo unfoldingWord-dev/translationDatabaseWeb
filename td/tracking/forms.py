@@ -133,7 +133,6 @@ class EventForm(forms.ModelForm):
                 self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
                 self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
         elif self.data.get("charter"):
-            print self.data.get("charter")
             try:
                 charter = Charter.objects.get(pk=self.data["charter"])
                 self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
@@ -172,6 +171,7 @@ class EventForm(forms.ModelForm):
     def _clean_fields(self):
         original_state = self.data._mutable
         self.data._mutable = True
+        self.strip_custom_fields(self, 'translator')
         self.strip_custom_fields(self, 'facilitator')
         self.strip_custom_fields(self, 'material')
         self.data._mutable = original_state
