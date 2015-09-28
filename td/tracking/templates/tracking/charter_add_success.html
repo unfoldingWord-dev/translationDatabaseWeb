@@ -17,7 +17,7 @@
                 {{ message }}
                 {% endblocktrans %}
             </p>
-            {% url "tracking:event_add_specific" charter_id as url_add_event %}
+            {% url "tracking:event_add_specific" link_id as url_add_event %}
             {% url "tracking:charter_add" as url_add_more %}
             {% url "tracking:project_list" as url_tracking_home %}
             {% blocktrans %}

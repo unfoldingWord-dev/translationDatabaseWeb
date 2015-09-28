@@ -4,42 +4,6 @@ from django.utils import timezone
 from td.models import Language, Country, Network
 
 
-# Choices
-
-DUMMY_CHOICES = {
-    ('1', '1'),
-    ('2', '2')
-}
-
-TRANSLATION_SERVICES_CHOICES = (
-    ('church', 'Church group'),
-    ('door43web', 'Door43 Website'),
-    ('mast', 'MAST'),
-    ('seedco', 'Seed Co.'),
-    ('sovee-memoq', 'Sovee/MemoQ'),
-    ('translator', 'Translator'),
-    ('ts', 'translationStudio'),
-    ('other', 'Other'),
-)
-
-SOFTWARE_CHOICES = (
-    ('door43web', 'Door43 Website'),
-    ('msword', 'Microsoft Word'),
-    ('paratext', 'ParaText'),
-    ('sovee-memoq', 'Sovee/MemoQ'),
-    ('ts', 'translationStudio'),
-    ('other', 'Other'),
-)
-
-EQUIPMENT_CHOICES = (
-    ('tablet', 'Tablet'),
-    ('laptop', 'Laptop'),
-    ('keyboard-layout', 'Keyboard Layout'),
-    ('fonts', 'Fonts'),
-    ('word-template', 'Word Template'),
-)
-
-
 # Models
 class Charter(models.Model):
 
@@ -85,7 +49,10 @@ class Charter(models.Model):
 
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
-        return str(self.language.code)
+        return self.language.code.encode("utf-8")
+
+    __unicode__.allow_tags = True
+    __unicode__.admin_order_field = 'language'
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
