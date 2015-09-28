@@ -26,8 +26,10 @@
                 {% endblocktrans %}
             {% else %}
             <p>
+                {% url "account_login" as login_url %}
+                {% url "tracking:project_list" as this_url %}
                 {% blocktrans %}
-                    <a href="/account/login/?next=/tracking/" class="btn btn-default">Log In to Enter Project or Event</a>
+                    <a href="{{ login_url }}?next={{ this_url }}" class="btn btn-default">Log In to Enter Project or Event</a>
                 {% endblocktrans %}
             </p>
             {% endif %}

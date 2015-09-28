@@ -37,11 +37,6 @@
 				<div class="panel-body">
 					<form action="" method="POST" class="form">
 						{% csrf_token %}
-<!-- 						<div class="form-group">
-							<div class="">
-								<input type="text" class="form-control" />
-							</div>
-						</div> -->
 						{{ form | bootstrap }}
 						<button type="submit" class="btn btn-primary pull-right">
 							{% if form.errors %}
