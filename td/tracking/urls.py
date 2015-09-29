@@ -28,7 +28,6 @@ urlpatterns = [
     url(r"^charter/detail/(?P<pk>\d+)/$", charter, name="charter"),
 
     # Under Construction
-<<<<<<< HEAD
     url(r'^event/detail/(?P<event_id>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event'),
     url(r'^event/new/(?P<pk>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event_add_specific'),
     url(r'^event/new/$', EventAddView.as_view(), name='event_add'),
