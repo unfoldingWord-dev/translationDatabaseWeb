@@ -101,6 +101,48 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
         return redirect('tracking:charter_add_success', obj_type='charter', pk=self.object.id)
 
 
+class SuccessView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/charter_add_success.html"
+
+    def get(self, request, *args, **kwargs):
+        # Redirects user to tracking home page if he doesn't get here from new
+        #    charter or event forms
+        try:
+            referer = request.META["HTTP_REFERER"]
+        except KeyError:
+            return redirect("tracking:project_list")
+
+        allowed_urls = [
+            'http://localhost:8000/tracking/charter/new/',
+            'http://localhost:8000/tracking/event/new/',
+            'http://td.unfoldingword.org/tracking/charter/new/',
+            'http://td.unfoldingword.org/tracking/event/new/',
+        ]
+
+        if referer in allowed_urls:
+            return super(SuccessView, self).get(self, *args, **kwargs)
+        else:
+            return redirect("tracking:project_list")
+
+    def get_context_data(self, *args, **kwargs):
+        # Append additional context to display custom message
+        # NOTE: Maybe the logic for custom message should go in the template?
+        context = super(SuccessView, self).get_context_data(**kwargs)
+        context['link_id'] = kwargs['pk']
+        context['obj_type'] = kwargs['obj_type']
+        context['status'] = 'Success'
+        if kwargs['obj_type'] == 'charter':
+            charter = Charter.objects.get(pk=kwargs['pk'])
+            context['message'] = 'Project ' + charter.language.name + ' has been successfully added.'
+        elif kwargs['obj_type'] == 'event':
+            event = Event.objects.get(pk=kwargs['pk'])
+            context['message'] = 'Your event for ' + event.charter.language.name + ' has been successfully added.'
+        else:
+            context["status"] = "Sorry :("
+            context["message"] = "It seems like you got here by accident"
+        return context
+
+
 def charter(request, pk):
     charter = get_object_or_404(Charter, pk=pk)
     messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
