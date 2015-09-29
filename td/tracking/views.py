@@ -14,8 +14,6 @@ from .forms import CharterForm, EventForm
 from td.utils import DataTableSourceView
 
 import operator
-import logging
-logger = logging.getLogger(__name__)
 
 
 # ------------------------------- #
@@ -30,8 +28,8 @@ class CharterTableSourceView(DataTableSourceView):
 
     @property
     def queryset(self):
-        if 'pk' in self.kwargs:
-            return Charter.objects.filter(language=self.kwargs['pk'])
+        if "pk" in self.kwargs:
+            return Charter.objects.filter(language=self.kwargs["pk"])
         else:
             return self.model._default_manager.all()
 
@@ -43,7 +41,7 @@ class CharterTableSourceView(DataTableSourceView):
                     operator.or_,
                     [Q(language__name__istartswith=self.search_term)]
                 )
-            ).order_by('start_date')
+            ).order_by("start_date")
             if qs.count():
                 return qs
         return self.queryset.filter(
@@ -59,16 +57,16 @@ class CharterTableSourceView(DataTableSourceView):
 class AjaxCharterListView(CharterTableSourceView):
     model = Charter
     fields = [
-        'language__name',
-        'language__code',
-        'start_date',
-        'end_date',
-        'contact_person'
+        "language__name",
+        "language__code",
+        "start_date",
+        "end_date",
+        "contact_person"
     ]
     # link is on column because name can't handle non-roman characters
-    link_column = 'language__code'
-    link_url_name = 'tracking:charter'
-    link_url_field = 'pk'
+    link_column = "language__code"
+    link_url_name = "tracking:charter"
+    link_url_field = "pk"
 
 
 # ---------------------------------- #
@@ -83,13 +81,13 @@ class CharterAdd(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         return {
-            'start_date': timezone.now(),
-            'created_by': self.request.user.username
+            "start_date": timezone.now(),
+            "created_by": self.request.user.username
         }
 
     def form_valid(self, form):
         self.object = form.save()
-        return redirect('tracking:charter_add_success', obj_type='charter', pk=self.object.id)
+        return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
 class CharterUpdate(LoginRequiredMixin, UpdateView):
@@ -104,15 +102,15 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
 
 
 class SuccessView(LoginRequiredMixin, TemplateView):
-    template_name = 'tracking/charter_add_success.html'
+    template_name = "tracking/charter_add_success.html"
 
     def get(self, request, *args, **kwargs):
         # Redirects user to tracking home page if he doesn't get here from new
         #    charter or event forms
         try:
-            referer = request.META['HTTP_REFERER']
+            referer = request.META["HTTP_REFERER"]
         except KeyError:
-            return redirect('tracking:project_list')
+            return redirect("tracking:project_list")
 
         allowed_urls = [
             'http://localhost:8000/tracking/charter/new/',
@@ -124,7 +122,7 @@ class SuccessView(LoginRequiredMixin, TemplateView):
         if referer in allowed_urls:
             return super(SuccessView, self).get(self, *args, **kwargs)
         else:
-            return redirect('tracking:project_list')
+            return redirect("tracking:project_list")
 
     def get_context_data(self, *args, **kwargs):
         # Append additional context to display custom message
@@ -140,8 +138,8 @@ class SuccessView(LoginRequiredMixin, TemplateView):
             event = Event.objects.get(pk=kwargs['pk'])
             context['message'] = 'Your event for ' + event.charter.language.name + ' has been successfully added.'
         else:
-            context['status'] = 'Sorry :('
-            context['message'] = 'It seems like you got here by accident'
+            context["status"] = "Sorry :("
+            context["message"] = "It seems like you got here by accident"
         return context
 
 
@@ -149,10 +147,10 @@ def charter(request, pk):
     charter = get_object_or_404(Charter, pk=pk)
     messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
     context = {
-        'charter': charter,
+        "charter": charter,
     }
 
-    return render(request, 'tracking/charter_detail.html', context)
+    return render(request, "tracking/charter_detail.html", context)
 
 
 # -------------------------------- #
@@ -161,19 +159,19 @@ def charter(request, pk):
 
 
 def charters_autocomplete(request):
-    term = request.GET.get('q').lower().encode('utf-8')
+    term = request.GET.get("q").lower().encode("utf-8")
     charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
     data = [
         {
-            'pk': charter.id,
-            'ln': charter.language.ln,
-            'lc': charter.language.lc,
-            'lr': charter.language.lr,
-            'gl': charter.language.gateway_flag
+            "pk": charter.id,
+            "ln": charter.language.ln,
+            "lc": charter.language.lc,
+            "lr": charter.language.lr,
+            "gl": charter.language.gateway_flag
         }
         for charter in charters
     ]
-    return JsonResponse({'results': data, 'count': len(data), 'term': term})
+    return JsonResponse({"results": data, "count": len(data), "term": term})
 
 
 class EventAddView(LoginRequiredMixin, CreateView):
@@ -324,13 +322,13 @@ class EventAddView(LoginRequiredMixin, CreateView):
 
 
 def event_add(request, **kwargs):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = EventForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect('/tracking/event/add/success/')
+            return HttpResponseRedirect("/tracking/event/add/success/")
     else:
         form = EventForm()
 
-    context = {'form': form}
+    context = {"form": form}
 
-    return render(request, 'tracking/event_add.html', context)
+    return render(request, "tracking/event_add.html", context)
