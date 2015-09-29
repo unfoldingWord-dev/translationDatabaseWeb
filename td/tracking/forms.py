@@ -208,7 +208,6 @@ class EventForm(forms.ModelForm):
         exclude = ["created_at"]
         widgets = {
             "created_by": forms.HiddenInput(),
-            ),
             "output_target": forms.Textarea(
                 attrs={"rows": "3"}
             ),
