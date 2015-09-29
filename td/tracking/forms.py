@@ -14,7 +14,7 @@ from .models import (
     TranslationService,
     Hardware,
     Software,
-    Material,
+    # Material,
     # Translator,
     # Facilitator,
 )
@@ -114,8 +114,9 @@ class CharterForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
 
     # Overwritten to customize the form
-    def __init__(self, *args, **kwargs):
+    def __init__(self, pk="-1", *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
+        print pk
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
@@ -151,6 +152,7 @@ class EventForm(forms.ModelForm):
                 self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
                 self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
         elif self.data.get("charter"):
+            self.data.get("charter")
             try:
                 charter = Charter.objects.get(pk=self.data["charter"])
                 self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
@@ -194,7 +196,7 @@ class EventForm(forms.ModelForm):
         self.strip_custom_fields(self, 'material')
         self.data._mutable = original_state
         return super(EventForm, self)._clean_fields()
-    
+
     # Function: Set stripped strings for specified custom fields
     def strip_custom_fields(self, form, name):
         data = self.data

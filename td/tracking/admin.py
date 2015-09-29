@@ -21,6 +21,7 @@ class CharterAdmin(admin.ModelAdmin):
     ]
     list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
 
+
 class EventAdmin(admin.ModelAdmin):
     fieldsets = [
         ('General Info', {'fields': (('charter', 'number'), 'location', ('start_date', 'end_date'), 'lead_dept', 'contact_person')}),
