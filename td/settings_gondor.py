@@ -12,36 +12,32 @@ TEMPLATE_DEBUG = DEBUG
 SITE_ID = 2
 
 ALLOWED_HOSTS = [
-    "vd725.gondor.co",
+    os.environ.get("GONDOR_INSTANCE_DOMAIN"),
     "td.unfoldingword.org"
 ]
 
 DATABASES = {
-    "default": dj_database_url.config(env="GONDOR_DATABASE_URL"),
+    "default": dj_database_url.config(),
 }
 
-if "GONDOR_REDIS_URL" in os.environ:
-    urlparse.uses_netloc.append("redis")
-    url = urlparse.urlparse(os.environ["GONDOR_REDIS_URL"])
-    CACHES = {
-        "default": {
-            "BACKEND": "redis_cache.RedisCache",
-            "LOCATION": "{}:{}".format(url.hostname, url.port),
-            "OPTIONS": {
-                "DB": 0,
-                "PASSWORD": url.password,
-            },
+urlparse.uses_netloc.append("redis")
+url = urlparse.urlparse(os.environ["REDIS_URL"])
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": "{}:{}".format(url.hostname, url.port),
+        "OPTIONS": {
+            "DB": 0,
+            "PASSWORD": url.password,
         },
-    }
-    BROKER_URL = os.environ["GONDOR_REDIS_URL"]  # celery config
-    CELERY_RESULT_BACKEND = os.environ["GONDOR_REDIS_URL"]  # celery results config
-
-MEDIA_ROOT = os.path.join(os.environ["GONDOR_DATA_DIR"], "site_media", "media")
-STATIC_ROOT = os.path.join(os.environ["GONDOR_DATA_DIR"], "site_media", "static")
+    },
+}
+BROKER_URL = os.environ["REDIS_URL"]  # celery config
+CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]  # celery results config
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
+EMAIL_PORT = os.environ.get("EMAIL_PORT", 2525)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
