@@ -1,15 +1,4 @@
-key: 4MRYMUBM79N
-vcs: git
-runtime: python-2.7.3
-requirements_file: requirements/base.txt
-on_deploy:
-    - manage.py migrate --fake-initial
-    - manage.py collectstatic --noinput
-static_urls:
-    - /site_media:
-        root: site_media/
-wsgi:
-    entry_point: td.wsgi:application
-    gunicorn:
-        worker_class: sync
-    use_environment_cache: true
+site: eldarion-clients-uw/td
+exec:
+    web: gunicorn --bind=0.0.0.0 --log-file - td.wsgi
+    worker: celery worker --app=td --concurrency=4 --loglevel=WARNING --pool=prefork --no-color
