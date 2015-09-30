@@ -9,11 +9,12 @@ from .settings import *  # noqa
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-SITE_ID = 2
+SITE_ID = int(os.environ.get("SITE_ID", "2"))
 
 ALLOWED_HOSTS = [
     os.environ.get("GONDOR_INSTANCE_DOMAIN"),
-    "td.unfoldingword.org"
+    "td.unfoldingword.org",
+    "td-demo.unfoldingword.org"
 ]
 
 DATABASES = {

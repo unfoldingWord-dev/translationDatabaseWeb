@@ -14,5 +14,13 @@
             "domain": "td.unfoldingword.org",
             "name": "translationDatabase"
         }
+    },
+    {
+        "pk": 3,
+        "model": "sites.site",
+        "fields": {
+            "domain": "td-demo.unfoldingword.org",
+            "name": "translationDatabase"
+        }
     }
 ]
