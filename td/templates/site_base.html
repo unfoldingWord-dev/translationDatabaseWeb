@@ -171,16 +171,6 @@
     {% invite_form request.user %}
 {% endblock %}
 
-{% block body_base %}
-    <section id="content_body">
-        <div class="container">
-            {% if SITE_READ_ONLY %}<div class="alert alert-warning">Site is in maintenance. During this time there are no "writes" to the database.</div>{% endif %}
-            {% include "_messages.html" %}
-            {% block body %}
-            {% endblock %}
-        </div>
-    </section>
-{% endblock %}
 
 {% block scripts %}
     {% include "_scripts.html" %}

@@ -103,7 +103,6 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.messages.context_processors.messages",
     "account.context_processors.account",
     "pinax_theme_bootstrap.context_processors.theme",
-    "readonly.context_processors.readonly"
 ]
 
 
@@ -117,7 +116,6 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "readonly.middleware.DatabaseReadOnlyMiddleware"
 ]
 
 ROOT_URLCONF = "td.urls"
@@ -159,13 +157,7 @@ INSTALLED_APPS = [
     "td.resources",
     "td.publishing",
     "td.tracking",
-
-    # temp
-    "readonly"
 ]
-
-SITE_READ_ONLY = True
-DB_READ_ONLY_MIDDLEWARE_MESSAGE = True
 
 OPBEAT = {
     "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
