@@ -1,2 +1,3 @@
 -r requirements/base.txt
 -r requirements/test.txt
+django-db-readonly==0.3.3
