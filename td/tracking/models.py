@@ -10,7 +10,7 @@ class Charter(models.Model):
     language = models.OneToOneField(
         Language,
         unique=True,
-        verbose_name='Target Language',
+        verbose_name="Target Language",
     )
     countries = models.ManyToManyField(
         Country,
@@ -31,7 +31,7 @@ class Charter(models.Model):
     )
 
     lead_dept = models.ForeignKey(
-        'Department',
+        "Department",
         verbose_name="Lead Department",
     )
     contact_person = models.CharField(
@@ -52,7 +52,7 @@ class Charter(models.Model):
         return self.language.code.encode("utf-8")
 
     __unicode__.allow_tags = True
-    __unicode__.admin_order_field = 'language'
+    __unicode__.admin_order_field = "language"
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
@@ -62,7 +62,7 @@ class Event(models.Model):
 
     charter = models.ForeignKey(
         Charter,
-        verbose_name='Project Charter',
+        verbose_name="Project Charter",
     )
 
     number = models.PositiveSmallIntegerField(
@@ -83,9 +83,9 @@ class Event(models.Model):
     )
 
     lead_dept = models.ForeignKey(
-        'Department',
+        "Department",
         verbose_name="Lead Department",
-        related_name='event_lead_dept',
+        related_name="event_lead_dept",
     )
 
     output_target = models.TextField(
@@ -94,24 +94,24 @@ class Event(models.Model):
     )
 
     translation_services = models.ManyToManyField(
-        'TranslationService',
+        "TranslationService",
         blank=True,
-        verbose_name='Translation Services',
-        help_text='Hold Ctrl while clicking to select multiple items',
+        verbose_name="Translation Services",
+        help_text="Hold Ctrl while clicking to select multiple items",
     )
 
     software = models.ManyToManyField(
-        'Software',
+        "Software",
         blank=True,
-        verbose_name='Software/App Used',
-        help_text='Hold Ctrl while clicking to select multiple items',
+        verbose_name="Software/App Used",
+        help_text="Hold Ctrl while clicking to select multiple items",
     )
 
     hardware = models.ManyToManyField(
-        'Hardware',
+        "Hardware",
         blank=True,
-        verbose_name='Hardware Used',
-        help_text='Hold Ctrl while clicking to select multiple items',
+        verbose_name="Hardware Used",
+        help_text="Hold Ctrl while clicking to select multiple items",
     )
 
     publishing_process = models.TextField(
@@ -124,32 +124,32 @@ class Event(models.Model):
     )
 
     materials = models.ManyToManyField(
-        'Material',
+        "Material",
         blank=True,
     )
 
     translators = models.ManyToManyField(
-        'Translator',
+        "Translator",
         blank=True,
     )
 
     facilitators = models.ManyToManyField(
-        'Facilitator',
+        "Facilitator",
         blank=True,
     )
 
     networks = models.ManyToManyField(
         Network,
         blank=True,
-        help_text='Hold Ctrl while clicking to select multiple items',
+        help_text="Hold Ctrl while clicking to select multiple items",
     )
 
     departments = models.ManyToManyField(
-        'Department',
-        related_name='event_supporting_dept',
+        "Department",
+        related_name="event_supporting_dept",
         blank=True,
-        verbose_name='Supporting Departments',
-        help_text='Hold Ctrl while clicking to select multiple items',
+        verbose_name="Supporting Departments",
+        help_text="Hold Ctrl while clicking to select multiple items",
     )
 
     created_at = models.DateTimeField(
@@ -159,7 +159,7 @@ class Event(models.Model):
 
     created_by = models.CharField(
         max_length=200,
-        default='unknown',
+        default="unknown",
     )
 
     # Functions

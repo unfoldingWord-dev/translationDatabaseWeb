@@ -22,8 +22,8 @@ urlpatterns = [
     url(r"^charter/detail/(?P<pk>\d+)/$", charter, name="charter"),
 
     # Event
-    url(r'^event/new/$', EventAddView.as_view(), name='event_add'),
-    url(r'^event/new/(?P<pk>\d+)/$', EventAddView.as_view(), name='event_add_specific'),
+    url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
+    url(r"^event/new/(?P<pk>\d+)/$", EventAddView.as_view(), name="event_add_specific"),
 
     # Others
     url(r"^ajax/charters/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
@@ -31,5 +31,5 @@ urlpatterns = [
     url(r"^success/(?P<obj_type>[A-Za-z]+)/(?P<pk>\d+)/$", SuccessView.as_view(), name="charter_add_success"),
 
     # Under Construction
-    url(r'^event/detail/(?P<event_id>\d+)/$', TemplateView.as_view(template_name='tracking/under_construction.html'), name='event'),
+    url(r"^event/detail/(?P<event_id>\d+)/$", TemplateView.as_view(template_name="tracking/under_construction.html"), name="event"),
 ]
