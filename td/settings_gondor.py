@@ -22,13 +22,13 @@ DATABASES = {
 
 urlparse.uses_netloc.append("redis")
 url = urlparse.urlparse(os.environ["REDIS_URL"])
+port = 6379 if url.port is None else url.port
 CACHES = {
     "default": {
         "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "{}:{}".format(url.hostname, url.port),
+        "LOCATION": "{}:{}".format(url.hostname, port),
         "OPTIONS": {
-            "DB": 0,
-            "PASSWORD": url.password,
+            "DB": 0
         },
     },
 }
