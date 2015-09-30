@@ -1,3 +1,4 @@
 site: eldarion-clients-uw/td
 exec:
     web: gunicorn --bind=0.0.0.0 --log-file - td.wsgi
+    worker: celery worker --app=td --concurrency=4 --loglevel=WARNING --pool=prefork --no-color
