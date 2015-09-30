@@ -1,10 +1,10 @@
+import datetime
+
 from django import forms
 from django.core.urlresolvers import reverse as urlReverse
 from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import gettext as _
 from django.utils.html import escape
-# from django.utils.formats import mark_safe
-# from django.utils import timezone
 
 from td.models import Country, Language
 from .models import (
@@ -14,27 +14,17 @@ from .models import (
     TranslationService,
     Hardware,
     Software,
-    # Material,
-    # Translator,
-    # Facilitator,
 )
 
-import datetime
 
-
-class MySelectDateWidget(SelectDateWidget):
-
-    # Put Required=True on hold so the widget will include empty_label upon render
-    def create_select(self, *args, **kwargs):
-        old_state = self.is_required
-        self.is_required = False
-        result = super(MySelectDateWidget, self).create_select(*args, **kwargs)
-        self.is_required = old_state
-        return result
+# ----------------- #
+#    CHARTERFORM    #
+# ----------------- #
 
 
 class CharterForm(forms.ModelForm):
 
+    # Overwritten to customize the form
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
         self.fields["countries"].queryset = Country.objects.order_by("name")
@@ -67,41 +57,23 @@ class CharterForm(forms.ModelForm):
         if self.instance.pk:
             lang = self.instance.language
             if lang:
-                self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+                fill_search_language(self, "language", lang)
         elif self.data.get("language", None):
             try:
                 lang = Language.objects.get(pk=self.data["language"])
-                self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
-                self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
-                self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
-                self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+                fill_search_language(self, "language", lang)
             except:
                 pass
 
-    # def clean_number(self):
-        # Validate the format of project (accounting) number
-
+    # Overwritten to enforce date logic
     def clean_end_date(self):
-        end_date = self.cleaned_data["end_date"]
-        start_date = self.cleaned_data["start_date"]
-        if end_date <= start_date:
-            raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
-        else:
-            return end_date
+        end_date = check_end_date(self)
+        return end_date
 
-    # Since a name can have unexpected characters, only check against empty
+    # Overwritten to trim spaces
     def clean_contact_person(self):
-        name = self.cleaned_data["contact_person"]
-        name = name.strip()
-        if not name:
-            raise forms.ValidationError(_("This field is required"), "invalid_input")
-        else:
-            return escape(name)
+        name = check_text_input(self, "contact_person")
+        return name
 
     class Meta:
         model = Charter
@@ -111,12 +83,16 @@ class CharterForm(forms.ModelForm):
         }
 
 
+# --------------- #
+#    EVENTFORM    #
+# --------------- #
+
+
 class EventForm(forms.ModelForm):
 
     # Overwritten to customize the form
     def __init__(self, pk="-1", *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        print pk
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
@@ -146,72 +122,126 @@ class EventForm(forms.ModelForm):
         if self.instance.pk:
             charter = self.instance.charter
             if charter:
-                self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
-                self.fields["charter"].widget.attrs["data-lang-ln"] = charter.language.ln
-                self.fields["charter"].widget.attrs["data-lang-lc"] = charter.language.lc
-                self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
-                self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
+                fill_search_charter(self, "charter", charter)
         elif self.data.get("charter"):
             self.data.get("charter")
             try:
                 charter = Charter.objects.get(pk=self.data["charter"])
-                self.fields["charter"].widget.attrs["data-lang-pk"] = charter.id
-                self.fields["charter"].widget.attrs["data-lang-ln"] = charter.language.ln
-                self.fields["charter"].widget.attrs["data-lang-lc"] = charter.language.lc
-                self.fields["charter"].widget.attrs["data-lang-lr"] = charter.language.lr
-                self.fields["charter"].widget.attrs["data-lang-gl"] = charter.language.gateway_flag
+                fill_search_charter(self, "charter", charter)
             except:
                 pass
-
-    # Overwritten to enforce date logic
-    def clean_end_date(self):
-        end_date = self.cleaned_data["end_date"]
-        start_date = self.cleaned_data["start_date"]
-        if end_date <= start_date:
-            raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
-        else:
-            return end_date
-
-    # Overwritten to trime space
-    def clean_contact_person(self):
-        name = self.cleaned_data["contact_person"]
-        name = name.strip()
-        if not name:
-            raise forms.ValidationError(_("This field is required"), "invalid_input")
-        else:
-            return name
-
-    # Overwritten to return an object instance
-    def clean_charter(self):
-        number = int(self.cleaned_data['charter'])
-        charter = Charter.objects.get(pk=number)
-        return charter
+        elif int(pk) >= 0:
+            try:
+                charter = Charter.objects.get(id=pk)
+                fill_search_charter(self, "charter", charter)
+            except Charter.DoesNotExist:
+                pass
 
     # Overwritten to strip all custom fields
     def _clean_fields(self):
         original_state = self.data._mutable
         self.data._mutable = True
-        self.strip_custom_fields(self, 'translator')
-        self.strip_custom_fields(self, 'facilitator')
-        self.strip_custom_fields(self, 'material')
+        self.strip_custom_fields(self, "translator")
+        self.strip_custom_fields(self, "facilitator")
+        self.strip_custom_fields(self, "material")
         self.data._mutable = original_state
         return super(EventForm, self)._clean_fields()
 
-    # Function: Set stripped strings for specified custom fields
-    def strip_custom_fields(self, form, name):
-        data = self.data
-        for key in data:
-            if key.startswith(name) and key != name + '-count':
-                input = data[key]
-                data[key] = input.strip()
+    # Overwritten to return an object instance
+    def clean_charter(self):
+        number = int(self.cleaned_data["charter"])
+        charter = Charter.objects.get(language__id=number)
+        return charter
+
+    # Overwritten to enforce date logic
+    def clean_end_date(self):
+        end_date = check_end_date(self)
+        return end_date
+
+    # Overwritten to trim spaces
+    def clean_contact_person(self):
+        name = check_text_input(self, "contact_person")
+        return name
 
     class Meta:
         model = Event
         exclude = ["created_at"]
         widgets = {
-            'materials': forms.HiddenInput(),
-            'facilitators': forms.HiddenInput(),
-            'created_by': forms.HiddenInput(),
+            "materials": forms.HiddenInput(),
+            "facilitators": forms.HiddenInput(),
+            "created_by": forms.HiddenInput(),
             "output_target": forms.Textarea(attrs={"rows": "3"}),
             "publishing_process": forms.Textarea(attrs={"rows": "3"}),
         }
+
+    # -------------------------------- #
+    #    CUSTOM EVENTFORM FUNCTIONS    #
+    # -------------------------------- #
+
+    # Function: Set stripped strings for specified custom fields
+    def strip_custom_fields(self, form, name):
+        data = self.data
+        for key in data:
+            if key.startswith(name) and key != name + "-count":
+                input = data[key]
+                data[key] = input.strip()
+
+
+# ---------------------- #
+#    COMMON FUNCTIONS    #
+# ---------------------- #
+
+
+# Function: Assign attributes for charter selector
+def fill_search_charter(form, field_name, object):
+    form.fields[field_name].widget.attrs["value"] = object.language.id
+    form.fields[field_name].widget.attrs["data-lang-pk"] = object.language.id
+    form.fields[field_name].widget.attrs["data-lang-ln"] = object.language.ln
+    form.fields[field_name].widget.attrs["data-lang-lc"] = object.language.lc
+    form.fields[field_name].widget.attrs["data-lang-lr"] = object.language.lr
+    form.fields[field_name].widget.attrs["data-lang-gl"] = object.language.gateway_flag
+
+
+# Function: Assign attributes for language selector
+def fill_search_language(form, field_name, object):
+    form.fields["language"].widget.attrs["data-lang-pk"] = object.id
+    form.fields["language"].widget.attrs["data-lang-ln"] = object.ln
+    form.fields["language"].widget.attrs["data-lang-lc"] = object.lc
+    form.fields["language"].widget.attrs["data-lang-lr"] = object.lr
+    form.fields["language"].widget.attrs["data-lang-gl"] = object.gateway_flag
+
+
+# Function: Raise error if start date is later than end date. Returns the end date.
+def check_end_date(form):
+    end_date = form.cleaned_data["end_date"]
+    start_date = form.cleaned_data["start_date"]
+    if end_date <= start_date:
+        raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
+    else:
+        return end_date
+
+
+# Function: Raise error if required fields contain empty string
+def check_text_input(form, field_name):
+    text = form.cleaned_data[field_name]
+    text = text.strip()
+    if not text:
+        raise forms.ValidationError(_("This field is required"), "invalid_input")
+    else:
+        return escape(text)
+
+
+# ------------------- #
+#    CUSTOM WIDGET    #
+# ------------------- #
+
+
+# Let the form render empty value for required DateField
+class MySelectDateWidget(SelectDateWidget):
+
+    def create_select(self, *args, **kwargs):
+        old_state = self.is_required
+        self.is_required = False
+        result = super(MySelectDateWidget, self).create_select(*args, **kwargs)
+        self.is_required = old_state
+        return result

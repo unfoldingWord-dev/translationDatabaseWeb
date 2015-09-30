@@ -210,6 +210,12 @@
 		});
 	});
 
+	// ================
+	// CUSTOM FUNCTIONS
+	// ================
+
+	//    addInline
+	//    ---------
 	function addInline(label) {
 		var list = $('#' + label + '-list');
 		var length = list.children().length;
@@ -252,6 +258,8 @@
 		addCount(label);
 	}
 
+	//    addCount
+	//    --------
 	function addCount(label) {
 		var elem = document.getElementsByName(label + '-count');
 		elem[0].value = parseInt(elem[0].value) + 1;

@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import (
     Charter,
     Department,
@@ -17,7 +18,7 @@ class CharterAdmin(admin.ModelAdmin):
         ("Info", {"fields": ["language", "countries"]}),
         ("Timing", {"fields": ["start_date", "end_date"]}),
         ("Internal", {"fields": ["number", "lead_dept", "contact_person"]}),
-        (None, {"fields": ["created_at", "created_by"]}),
+        ('Submission Info', {"fields": ["created_at", "created_by"]}),
     ]
     list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
 

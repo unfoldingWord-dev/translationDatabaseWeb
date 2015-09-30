@@ -1,19 +1,24 @@
+import operator
+
 from django.contrib import messages
 from django.db.models import Q
-# from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, TemplateView
-# from django.views.decorators.http import require_http_methods
 
 from account.mixins import LoginRequiredMixin
 
-from .models import Charter, Event, Facilitator, Material, Translator
 from .forms import CharterForm, EventForm
-from td.utils import DataTableSourceView
+from .models import (
+    Charter,
+    Event,
+    Facilitator,
+    Material,
+    Translator,
+)
 
-import operator
+from td.utils import DataTableSourceView
 
 
 # ------------------------------- #
@@ -22,9 +27,6 @@ import operator
 
 
 class CharterTableSourceView(DataTableSourceView):
-
-    def __init__(self, **kwargs):
-        super(CharterTableSourceView, self).__init__(**kwargs)
 
     @property
     def queryset(self):
@@ -63,7 +65,7 @@ class AjaxCharterListView(CharterTableSourceView):
         "end_date",
         "contact_person"
     ]
-    # link is on column because name can't handle non-roman characters
+    # link is on column because name can"t handle non-roman characters
     link_column = "language__code"
     link_url_name = "tracking:charter"
     link_url_field = "pk"
@@ -75,16 +77,17 @@ class AjaxCharterListView(CharterTableSourceView):
 
 
 class CharterAdd(LoginRequiredMixin, CreateView):
-
     model = Charter
     form_class = CharterForm
 
+    # Overwritten to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now(),
             "created_by": self.request.user.username
         }
 
+    # Overwritten to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
@@ -95,54 +98,16 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
     form_class = CharterForm
     template_name_suffix = "_update_form"
 
+    # Overwritten to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         messages.info(self.request, "Project charter has been updated")
-        return redirect('tracking:charter_add_success', obj_type='charter', pk=self.object.id)
+        return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
-class SuccessView(LoginRequiredMixin, TemplateView):
-    template_name = "tracking/charter_add_success.html"
-
-    def get(self, request, *args, **kwargs):
-        # Redirects user to tracking home page if he doesn't get here from new
-        #    charter or event forms
-        try:
-            referer = request.META["HTTP_REFERER"]
-        except KeyError:
-            return redirect("tracking:project_list")
-
-        allowed_urls = [
-            'http://localhost:8000/tracking/charter/new/',
-            'http://localhost:8000/tracking/event/new/',
-            'http://td.unfoldingword.org/tracking/charter/new/',
-            'http://td.unfoldingword.org/tracking/event/new/',
-        ]
-
-        if referer in allowed_urls:
-            return super(SuccessView, self).get(self, *args, **kwargs)
-        else:
-            return redirect("tracking:project_list")
-
-    def get_context_data(self, *args, **kwargs):
-        # Append additional context to display custom message
-        # NOTE: Maybe the logic for custom message should go in the template?
-        context = super(SuccessView, self).get_context_data(**kwargs)
-        context['link_id'] = kwargs['pk']
-        context['obj_type'] = kwargs['obj_type']
-        context['status'] = 'Success'
-        if kwargs['obj_type'] == 'charter':
-            charter = Charter.objects.get(pk=kwargs['pk'])
-            context['message'] = 'Project ' + charter.language.name + ' has been successfully added.'
-        elif kwargs['obj_type'] == 'event':
-            event = Event.objects.get(pk=kwargs['pk'])
-            context['message'] = 'Your event for ' + event.charter.language.name + ' has been successfully added.'
-        else:
-            context["status"] = "Sorry :("
-            context["message"] = "It seems like you got here by accident"
-        return context
-
-
+# -------------------------------------------------------------------
+# NOTE: Charter detail will be integrated to the language detail page
+# -------------------------------------------------------------------
 def charter(request, pk):
     charter = get_object_or_404(Charter, pk=pk)
     messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
@@ -158,22 +123,6 @@ def charter(request, pk):
 # -------------------------------- #
 
 
-def charters_autocomplete(request):
-    term = request.GET.get("q").lower().encode("utf-8")
-    charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
-    data = [
-        {
-            "pk": charter.id,
-            "ln": charter.language.ln,
-            "lc": charter.language.lc,
-            "lr": charter.language.lr,
-            "gl": charter.language.gateway_flag
-        }
-        for charter in charters
-    ]
-    return JsonResponse({"results": data, "count": len(data), "term": term})
-
-
 class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
@@ -181,16 +130,18 @@ class EventAddView(LoginRequiredMixin, CreateView):
     # Overwritten to include initial values
     def get_initial(self):
         return {
-            'start_date': timezone.now(),
-            'created_by': self.request.user.username,
+            "start_date": timezone.now(),
+            "created_by": self.request.user.username,
         }
 
+    # Overwritten to pass URL argument to forms.py
     def get_form_kwargs(self, **kwargs):
+        keywords = super(EventAddView, self).get_form_kwargs(**kwargs)
         if "pk" in self.kwargs:
-            kwargs["pk"] = self.kwargs["pk"]
-        return kwargs
+            keywords["pk"] = self.kwargs["pk"]
+        return keywords
 
-    # Overwritten to include facilitators data
+    # Overwritten to include custom data
     def get_context_data(self, *args, **kwargs):
         context = super(EventAddView, self).get_context_data(**kwargs)
         context["translators"] = self.get_translator_data(self)
@@ -198,7 +149,7 @@ class EventAddView(LoginRequiredMixin, CreateView):
         context["materials"] = self.get_material_data(self)
         return context
 
-    #
+    # Overwritten to execute custom save and redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
 
@@ -228,22 +179,11 @@ class EventAddView(LoginRequiredMixin, CreateView):
 
         self.set_event_number()
 
-        return redirect('tracking:charter_add_success', obj_type='event', pk=self.object.id)
+        return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
 
-    # Function: Returns an array of Facilitator objects' properties
-    def get_facilitator_data(self, form):
-        facilitators = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith('facilitator') and key != 'facilitator-count':
-                    name = post[key] if post[key] else ''
-                    if name:
-                        number = key[11:]
-                        is_lead = True if 'is_lead' + number in post else False
-                        speaks_gl = True if 'speaks_gl' + number in post else False
-                        facilitators.append({'name': name, 'is_lead': is_lead, 'speaks_gl': speaks_gl})
-        return facilitators
+    # ----------------------------------- #
+    #    EVENTADDVIEW CUSTOM FUNCTIONS    #
+    # ----------------------------------- #
 
     # Function: Returns an array of Translator objects' properties
     def get_translator_data(self, form):
@@ -251,10 +191,26 @@ class EventAddView(LoginRequiredMixin, CreateView):
         if self.request.POST:
             post = self.request.POST
             for key in sorted(post):
-                if key.startswith('translator') and key != 'translator-count':
-                    name = post[key] if post[key] else ''
-                    translators.append({'name': name})
+                if key.startswith("translator") and key != "translator-count":
+                    name = post[key] if post[key] else ""
+                    if name:
+                        translators.append({"name": name})
         return translators
+
+    # Function: Returns an array of Facilitator objects' properties
+    def get_facilitator_data(self, form):
+        facilitators = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith("facilitator") and key != "facilitator-count":
+                    name = post[key] if post[key] else ""
+                    if name:
+                        number = key[11:]
+                        is_lead = True if "is_lead" + number in post else False
+                        speaks_gl = True if "speaks_gl" + number in post else False
+                        facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
+        return facilitators
 
     # Function: Returns an array of Material objects' properties
     def get_material_data(self, form):
@@ -262,12 +218,12 @@ class EventAddView(LoginRequiredMixin, CreateView):
         if self.request.POST:
             post = self.request.POST
             for key in sorted(post):
-                if key.startswith('material') and key != 'material-count':
-                    name = post[key] if post[key] else ''
+                if key.startswith("material") and key != "material-count":
+                    name = post[key] if post[key] else ""
                     if name:
                         number = key[8:]
-                        licensed = True if 'licensed' + number in post else False
-                        materials.append({'name': name, 'licensed': licensed})
+                        licensed = True if "licensed" + number in post else False
+                        materials.append({"name": name, "licensed": licensed})
         return materials
 
     # Function: Takes an array of translator properties and returns an array of their ids
@@ -275,9 +231,9 @@ class EventAddView(LoginRequiredMixin, CreateView):
         ids = []
         for translator in array:
             try:
-                person = Translator.objects.get(name=translator['name'])
+                person = Translator.objects.get(name=translator["name"])
             except Translator.DoesNotExist:
-                person = Translator.objects.create(name=translator['name'])
+                person = Translator.objects.create(name=translator["name"])
             ids.append(person.id)
 
         return ids
@@ -287,12 +243,12 @@ class EventAddView(LoginRequiredMixin, CreateView):
         ids = []
         for facilitator in array:
             try:
-                person = Facilitator.objects.get(name=facilitator['name'])
+                person = Facilitator.objects.get(name=facilitator["name"])
             except Facilitator.DoesNotExist:
                 person = Facilitator.objects.create(
-                    name=facilitator['name'],
-                    is_lead=facilitator['is_lead'],
-                    speaks_gl=facilitator['speaks_gl'],
+                    name=facilitator["name"],
+                    is_lead=facilitator["is_lead"],
+                    speaks_gl=facilitator["speaks_gl"],
                 )
             ids.append(person.id)
 
@@ -303,11 +259,11 @@ class EventAddView(LoginRequiredMixin, CreateView):
         ids = []
         for material in array:
             try:
-                object = Material.objects.get(name=material['name'])
+                object = Material.objects.get(name=material["name"])
             except Material.DoesNotExist:
                 object = Material.objects.create(
-                    name=material['name'],
-                    licensed=material['licensed'],
+                    name=material["name"],
+                    licensed=material["licensed"],
                 )
             ids.append(object.id)
 
@@ -324,19 +280,6 @@ class EventAddView(LoginRequiredMixin, CreateView):
             if number > latest:
                 latest = number
         Event.objects.filter(pk=self.object.id).update(number=(latest + 1))
-
-
-# def event_add(request, **kwargs):
-#     if request.method == "POST":
-#         form = EventForm(request.POST)
-#         if form.is_valid():
-#             return HttpResponseRedirect("/tracking/event/add/success/")
-#     else:
-#         form = EventForm()
-
-#     context = {"form": form}
-
-#     return render(request, "tracking/event_add.html", context)
 
 
 # -------------------------------- #
@@ -356,10 +299,10 @@ class SuccessView(LoginRequiredMixin, TemplateView):
             return redirect("tracking:project_list")
 
         allowed_urls = [
-            'http://localhost:8000/tracking/charter/new/',
-            'http://localhost:8000/tracking/event/new/',
-            'http://td.unfoldingword.org/tracking/charter/new/',
-            'http://td.unfoldingword.org/tracking/event/new/',
+            "http://localhost:8000/tracking/charter/new/",
+            "http://localhost:8000/tracking/event/new/",
+            "http://td.unfoldingword.org/tracking/charter/new/",
+            "http://td.unfoldingword.org/tracking/event/new/",
         ]
 
         if referer in allowed_urls:
@@ -371,16 +314,37 @@ class SuccessView(LoginRequiredMixin, TemplateView):
         # Append additional context to display custom message
         # NOTE: Maybe the logic for custom message should go in the template?
         context = super(SuccessView, self).get_context_data(**kwargs)
-        context['link_id'] = kwargs['pk']
-        context['obj_type'] = kwargs['obj_type']
-        context['status'] = 'Success'
-        if kwargs['obj_type'] == 'charter':
-            charter = Charter.objects.get(pk=kwargs['pk'])
-            context['message'] = 'Project ' + charter.language.name + ' has been successfully added.'
-        elif kwargs['obj_type'] == 'event':
-            event = Event.objects.get(pk=kwargs['pk'])
-            context['message'] = 'Your event for ' + event.charter.language.name + ' has been successfully added.'
+        context["link_id"] = kwargs["pk"]
+        context["obj_type"] = kwargs["obj_type"]
+        context["status"] = "Success"
+        if kwargs["obj_type"] == "charter":
+            charter = Charter.objects.get(pk=kwargs["pk"])
+            context["message"] = "Project " + charter.language.name + " has been successfully added."
+        elif kwargs["obj_type"] == "event":
+            event = Event.objects.get(pk=kwargs["pk"])
+            context["message"] = "Your event for " + event.charter.language.name + " has been successfully added."
         else:
             context["status"] = "Sorry :("
             context["message"] = "It seems like you got here by accident"
         return context
+
+
+# -------------------- #
+#    VIEW FUNCTIONS    #
+# -------------------- #
+
+
+def charters_autocomplete(request):
+    term = request.GET.get("q").lower().encode("utf-8")
+    charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
+    data = [
+        {
+            "pk": charter.id,
+            "ln": charter.language.ln,
+            "lc": charter.language.lc,
+            "lr": charter.language.lr,
+            "gl": charter.language.gateway_flag
+        }
+        for charter in charters
+    ]
+    return JsonResponse({"results": data, "count": len(data), "term": term})
