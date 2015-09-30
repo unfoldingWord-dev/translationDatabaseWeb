@@ -38,7 +38,7 @@ class WikipediaISOCountry(models.Model):
         content = fetch.WikipediaCountryFetcher(session).fetch()
         if not content:
             return
-        soup = bs4.BeautifulSoup(content)
+        soup = bs4.BeautifulSoup(content, "html.parser")
         records = []
         for tr in soup.select("table.sortable tr"):
             row = [td.text for td in tr.find_all("td")]
@@ -83,7 +83,7 @@ class WikipediaISOLanguage(models.Model):
         content = fetch.WikipediaFetcher(session).fetch()
         if not content:
             return
-        soup = bs4.BeautifulSoup(content)
+        soup = bs4.BeautifulSoup(content, "html.parser")
         records = []
         for tr in soup.select("table.wikitable tr"):
             row = [td.text for td in tr.find_all("td")]
