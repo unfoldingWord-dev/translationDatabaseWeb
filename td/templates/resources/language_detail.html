@@ -3,6 +3,7 @@
 
 {% load humanize %}
 
+
 {% block body %}
 
     {% include "resources/_breadcrumbs.html" with region=country.region %}
@@ -18,21 +19,41 @@
     <div class="col-md-6">
         <table class="table">
             <tbody>
-                <tr><th>Language</th><td>{{ language.name }}</td></tr>
-                <tr><th>Direction</th><td><span class="label label-default">{{ language.get_direction_display }}</span></td></tr>
+                <!-- <tr><th>Language</th><td>{{ language.name }}</td></tr> -->
                 <tr><th>Code</th><td>{{ language.code }}</td></tr>
                 <tr><th>ISO 639-3</th><td>{{ language.iso_639_3 }}</td></tr>
+                <tr><th>Direction</th><td><span class="label label-default">{{ language.get_direction_display }}</span></td></tr>
                 <tr><th>Gateway Language</th><td>{{ language.gateway_language }}</td></tr>
-                <tr><th>Gateway Flag</th><td>{% if language.gateway_flag %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %} </td></tr>
+                <!-- <tr><th>Gateway Flag</th><td>{% if language.gateway_flag %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %} </td></tr> -->
                 <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
             </tbody>
         </table>
     </div>
     <div class="col-md-6">
-        {% include "resources/_short_list.html" with title="Networks Translating" data=language.networks_translating.all %}
+        <!-- {% include "resources/_short_list.html" with title="Networks Translating" data=language.networks_translating.all %} -->
+        {% include "resources/_project_detail.html" with data=charter %}
     </div>
 </div>
 
+{% if events.count %}
+<div class="panel panel-default">
+    <div class="panel-heading"><h1 class="panel-title">Translation Events/Workshops</h1></div>
+    <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Location</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Lead Department</th>
+                <th>Contact Person</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+{% endif %}
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -63,25 +84,24 @@
     </table>
 </div>
     {% if language.gateway_to.count %}
-<div class="panel panel-default">
-    <div class="panel-heading"><h1 class="panel-title">Gateway To:</h1></div>
-    <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages_gateway" language.pk %}">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>ISO-639-3</th>
-                <th>Name</th>
-                <th>Direction</th>
-                <th>Country</th>
-                <th># Native Speakers</th>
-                <th>Gateway Flag</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">Gateway To:</h1></div>
+        <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages_gateway" language.pk %}">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>ISO-639-3</th>
+                    <th>Name</th>
+                    <th>Direction</th>
+                    <th>Country</th>
+                    <th># Native Speakers</th>
+                    <th>Gateway Flag</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
     {% endif %}
-
 
 {% endblock %}

@@ -56,6 +56,39 @@ class CharterTableSourceView(DataTableSourceView):
         )
 
 
+class EventTableSourceView(DataTableSourceView):
+
+    def __init__(self, **kwargs):
+        super(EventTableSourceView, self).__init__(**kwargs)
+
+    @property
+    def queryset(self):
+        if "pk" in self.kwargs:
+            return Event.objects.filter(charter=self.kwargs["pk"])
+        else:
+            return self.model._default_manager.all()
+
+    @property
+    def filtered_data(self):
+        if len(self.search_term) and len(self.search_term) <= 3:
+            qs = self.queryset.filter(
+                reduce(
+                    operator.or_,
+                    [Q(number__icontains=self.search_term)]
+                )
+            ).order_by("start_date")
+            if qs.count():
+                return qs
+        return self.queryset.filter(
+            reduce(
+                operator.or_,
+                [Q(x) for x in self.filter_predicates]
+            )
+        ).order_by(
+            self.order_by
+        )
+
+
 class AjaxCharterListView(CharterTableSourceView):
     model = Charter
     fields = [
@@ -68,6 +101,21 @@ class AjaxCharterListView(CharterTableSourceView):
     # link is on column because name can"t handle non-roman characters
     link_column = "language__code"
     link_url_name = "tracking:charter"
+    link_url_field = "pk"
+
+
+class AjaxCharterEventsListView(EventTableSourceView):
+    model = Event
+    fields = [
+        "number",
+        "location",
+        "start_date",
+        "end_date",
+        "lead_dept__name",
+        "contact_person",
+    ]
+    link_column = "number"
+    link_url_name = "tracking:event"
     link_url_field = "pk"
 
 

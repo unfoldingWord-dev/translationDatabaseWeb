@@ -5,6 +5,7 @@ from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
 from django.contrib import messages
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +21,7 @@ from td.imports.models import (
     WikipediaISOLanguage,
     IMBPeopleGroup
 )
+from td.tracking.models import Event
 from td.models import Language, Country, Region, Network
 from .models import AdditionalLanguage
 from td.forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
@@ -459,8 +461,17 @@ class LanguageDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
         context.update({
-            "country": self.object.country
+            "country": self.object.country,
         })
+        # For translation project integration
+        # ---------------------------------------------------------
+        try:
+            charter = self.object.charter
+            events = Event.objects.filter(charter=charter.id)
+            context.update({"charter": charter, "events": events})
+        except ObjectDoesNotExist:
+            pass
+        # ---------------------------------------------------------
         return context
 
 

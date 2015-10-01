@@ -1,0 +1,27 @@
+<table class="table">
+    <tbody>
+    	{% if data %}
+	    	<tr>
+	    		<th>Translation Project</th>
+	    		<td>
+	    			{% if user.is_authenticated %}
+	    				<a class="btn btn-primary btn-xs" href="{% url "tracking:charter_update" charter.id %}">Edit</a>
+	    			{% else %}
+	    				<i class="fa fa-check"></i>
+    				{% endif %}
+				</td>
+			</tr>
+	    	<tr><th>Start Date</th><td>{{ data.start_date }}</td></tr>
+	    	<tr><th>Completion Date</th><td>{{ data.end_date }}</td></tr>
+			{% if user.is_authenticated %}
+	    		<tr><th>Lead Department</th><td>{{ data.lead_dept }}</td></tr>
+				<tr><th>Contact Person</th><td>{{ data.contact_person }}</td></tr>
+				<tr><th>Accounting Number</th><td>{{ data.number }}</td></tr>
+				<tr><th>Created At</th><td>{{ data.created_at }}</td></tr>
+				<tr><th>Created By</th><td>{{ data.created_by }}</td></tr>
+			{% endif %}
+    	{% else %}
+    		<tr><th>Translation Project</th><td>Not Started</td></tr>
+    	{% endif %}
+    </tbody>
+</table>
