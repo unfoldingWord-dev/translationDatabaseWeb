@@ -4,7 +4,9 @@ from django.utils import timezone
 from td.models import Language, Country, Network
 
 
-# Models
+# ------------- #
+#    CHARTER    #
+# ------------- #
 class Charter(models.Model):
 
     language = models.OneToOneField(
@@ -58,6 +60,9 @@ class Charter(models.Model):
         return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
 
 
+# ----------- #
+#    EVENT    #
+# ----------- #
 class Event(models.Model):
 
     charter = models.ForeignKey(
@@ -93,10 +98,10 @@ class Event(models.Model):
         blank=True,
     )
 
-    translation_services = models.ManyToManyField(
-        "TranslationService",
+    translation_methods = models.ManyToManyField(
+        "TranslationMethod",
         blank=True,
-        verbose_name="Translation Services",
+        verbose_name="Translation Methodologies",
         help_text="Hold Ctrl while clicking to select multiple items",
     )
 
@@ -170,7 +175,10 @@ class Event(models.Model):
         return [(field.name, field.value_to_string(self)) for field in Event._meta.fields]
 
 
-class TranslationService(models.Model):
+# ------------------------ #
+#    TRANSLATIONSMETHOD    #
+# ------------------------ #
+class TranslationMethod(models.Model):
 
     name = models.CharField(
         max_length=200
@@ -180,6 +188,9 @@ class TranslationService(models.Model):
         return self.name
 
 
+# -------------- #
+#    SOFTWARE    #
+# -------------- #
 class Software(models.Model):
 
     name = models.CharField(
@@ -190,6 +201,9 @@ class Software(models.Model):
         return self.name
 
 
+# -------------- #
+#    HARDWARE    #
+# -------------- #
 class Hardware(models.Model):
 
     name = models.CharField(
@@ -200,6 +214,9 @@ class Hardware(models.Model):
         return self.name
 
 
+# -------------- #
+#    MATERIAL    #
+# -------------- #
 class Material(models.Model):
 
     name = models.CharField(
@@ -214,6 +231,9 @@ class Material(models.Model):
         return self.name
 
 
+# ---------------- #
+#    TRANSLATOR    #
+# ---------------- #
 class Translator(models.Model):
 
     name = models.CharField(
@@ -224,6 +244,9 @@ class Translator(models.Model):
         return self.name
 
 
+# ----------------- #
+#    FACILITATOR    #
+# ----------------- #
 class Facilitator(models.Model):
 
     name = models.CharField(
@@ -242,6 +265,9 @@ class Facilitator(models.Model):
         return self.name
 
 
+# ---------------- #
+#    DEPARTMENT    #
+# ---------------- #
 class Department(models.Model):
 
     name = models.CharField(

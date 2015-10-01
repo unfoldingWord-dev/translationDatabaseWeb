@@ -13,7 +13,7 @@ from td.tracking.models import (
     Department,
     Hardware,
     Software,
-    TranslationService,
+    TranslationMethod,
 )
 from td.tracking.forms import (
     CharterForm,
@@ -43,9 +43,9 @@ class ModelTestCase(TestCase):
         software = Software.objects.create(name="Testing Software")
         self.assertEqual(str(software), "Testing Software")
 
-    def test_translationService_string_representation(self):
-        translation_service = TranslationService.objects.create(name="Translation Service")
-        self.assertEqual(str(translation_service), "Translation Service")
+    def test_translationmethod_string_representation(self):
+        translation_methods = TranslationMethod.objects.create(name="Translation Service")
+        self.assertEqual(str(translation_methods), "Translation Service")
 
 
 class ViewsTestCase(TestCase):

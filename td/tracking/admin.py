@@ -9,7 +9,7 @@ from .models import (
     Material,
     Software,
     Translator,
-    TranslationService,
+    TranslationMethod,
 )
 
 
@@ -27,7 +27,7 @@ class EventAdmin(admin.ModelAdmin):
     fieldsets = [
         ("General Info", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
         ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
-        ("Resources", {"fields": ["software", "hardware", "translation_services", "materials"]}),
+        ("Resources", {"fields": ["software", "hardware", "translation_methods", "materials"]}),
         (None, {"fields": ["output_target", "publishing_process"]}),
         ("Submission Info", {"fields": ["created_at", "created_by"]}),
     ]
@@ -40,6 +40,6 @@ admin.site.register(Department)
 admin.site.register(Material)
 admin.site.register(Translator)
 admin.site.register(Facilitator)
-admin.site.register(TranslationService)
+admin.site.register(TranslationMethod)
 admin.site.register(Software)
 admin.site.register(Hardware)

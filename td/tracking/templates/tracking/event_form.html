@@ -77,7 +77,7 @@
 					<h2 class="panel-title">New Translation Workshop/Event</h2>
 				</div>
 				<div class="panel-body">
-					<form action="{% url 'tracking:event_add' %}" method="POST" class="form">
+					<form action="" method="POST" class="form">
 						{% csrf_token %}
 
 						{{ form.charter | bootstrap }}
@@ -160,7 +160,7 @@
 
 						{{ form.departments | bootstrap }}
 						{{ form.networks | bootstrap }}
-						{{ form.translation_services | bootstrap }}
+						{{ form.translation_methods | bootstrap }}
 						{{ form.software | bootstrap }}
 						{{ form.hardware | bootstrap }}
 						{{ form.output_target | bootstrap }}

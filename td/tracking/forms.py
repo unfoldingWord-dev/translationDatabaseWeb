@@ -11,7 +11,7 @@ from .models import (
     Charter,
     Department,
     Event,
-    TranslationService,
+    TranslationMethod,
     Hardware,
     Software,
 )
@@ -96,12 +96,13 @@ class EventForm(forms.ModelForm):
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
-        self.fields["translation_services"].queryset = TranslationService.objects.order_by("name")
+        self.fields["translation_methods"].queryset = TranslationMethod.objects.order_by("name")
         self.fields["charter"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
-                    "data-source-url": urlReverse("tracking:charters_autocomplete")
+                    "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                    "data-charter-pk": pk if pk != "-1" else ""
                 }
             ),
             required=True
@@ -119,17 +120,23 @@ class EventForm(forms.ModelForm):
                 attrs={"class": "date-input"}
             )
         )
+        # Still not sure what this check does
         if self.instance.pk:
             charter = self.instance.charter
             if charter:
                 fill_search_charter(self, "charter", charter)
+        # If form is posted back...
         elif self.data.get("charter"):
-            self.data.get("charter")
+            # Prioritize getting data from widget attribute
+            pk = self.fields["charter"].widget.attrs["data-charter-pk"]
+            if pk == "":
+                pk = self.data.get("charter")
             try:
-                charter = Charter.objects.get(pk=self.data["charter"])
+                charter = Charter.objects.get(pk=int(pk))
                 fill_search_charter(self, "charter", charter)
-            except:
+            except Charter.DoesNotExist:
                 pass
+        # If the URL provides pk argument...
         elif int(pk) >= 0:
             try:
                 charter = Charter.objects.get(id=pk)
@@ -149,8 +156,10 @@ class EventForm(forms.ModelForm):
 
     # Overwritten to return an object instance
     def clean_charter(self):
-        number = int(self.cleaned_data["charter"])
-        charter = Charter.objects.get(language__id=number)
+        pk = self.fields["charter"].widget.attrs["data-charter-pk"]
+        if pk == "":
+            pk = self.cleaned_data["charter"]
+        charter = Charter.objects.get(pk=int(pk))
         return charter
 
     # Overwritten to enforce date logic
@@ -194,12 +203,13 @@ class EventForm(forms.ModelForm):
 
 # Function: Assign attributes for charter selector
 def fill_search_charter(form, field_name, object):
-    form.fields[field_name].widget.attrs["value"] = object.language.id
+    form.fields[field_name].widget.attrs["data-charter-pk"] = object.id
     form.fields[field_name].widget.attrs["data-lang-pk"] = object.language.id
     form.fields[field_name].widget.attrs["data-lang-ln"] = object.language.ln
     form.fields[field_name].widget.attrs["data-lang-lc"] = object.language.lc
     form.fields[field_name].widget.attrs["data-lang-lr"] = object.language.lr
     form.fields[field_name].widget.attrs["data-lang-gl"] = object.language.gateway_flag
+    form.fields[field_name].widget.attrs["value"] = object.language.id
 
 
 # Function: Assign attributes for language selector
