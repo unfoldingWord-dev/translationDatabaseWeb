@@ -92,10 +92,20 @@ class Event(models.Model):
         verbose_name="Lead Department",
         related_name="event_lead_dept",
     )
-    output_target = models.TextField(
-        max_length=1500,
+    output_target = models.ManyToManyField(
+        "Output",
         blank=True,
+        verbose_name="Output Target"
     )
+    publication = models.ManyToManyField(
+        "Publication",
+        blank=True,
+        verbose_name="Publishing Medium"
+    )
+    # output_target = models.TextField(
+    #     max_length=1500,
+    #     blank=True,
+    # )
     current_check_level = models.SlugField(
         choices=CHECKING_LEVEL,
         verbose_name="Current Checking Level",
@@ -126,10 +136,10 @@ class Event(models.Model):
         verbose_name="Hardware Used",
         help_text="Hold Ctrl while clicking to select multiple items",
     )
-    publishing_process = models.TextField(
-        max_length=1500,
-        blank=True,
-    )
+    # publishing_process = models.TextField(
+    #     max_length=1500,
+    #     blank=True,
+    # )
     contact_person = models.CharField(
         max_length=200,
     )
@@ -268,6 +278,32 @@ class Facilitator(models.Model):
 #    DEPARTMENT    #
 # ---------------- #
 class Department(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+# ------------------- #
+#    OUTPUT TARGET    #
+# ------------------- #
+class Output(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+# ----------------- #
+#    PUBLICATION    #
+# ----------------- #
+class Publication(models.Model):
 
     name = models.CharField(
         max_length=200
