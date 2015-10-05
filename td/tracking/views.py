@@ -157,25 +157,16 @@ class EventAddView(LoginRequiredMixin, CreateView):
         translators = self.get_translator_data(self)
         translator_ids = self.get_translator_ids(translators)
         event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
-        # if translator_ids:
-        #    for id in translator_ids:
-        #       self.object.translators.add(Translator.objects.get(id=id))
 
         # Add facilitators info
         facilitators = self.get_facilitator_data(self)
         facilitator_ids = self.get_facilitator_ids(facilitators)
         event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
-        # if facilitator_ids:
-        #     for id in facilitator_ids:
-        #         self.object.facilitators.add(Facilitator.objects.get(id=id))
 
         # Add materials info
         materials = self.get_material_data(self)
         material_ids = self.get_material_ids(materials)
         event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
-        # if material_ids:
-        #     for id in material_ids:
-        #         self.object.materials.add(Material.objects.get(id=id))
 
         self.set_event_number()
 
