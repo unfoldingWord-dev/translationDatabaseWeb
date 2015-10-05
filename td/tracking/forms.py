@@ -178,7 +178,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        exclude = ["created_at"]
+        exclude = ["created_at", "translators", "facilitators", "materials"]
         widgets = {
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
@@ -233,7 +233,7 @@ def check_end_date(form):
         return end_date
 
 
-# Function: Raise error if required fields contain empty string
+# Function: Raise error if required fields contain empty string; Returns cleaned text
 def check_text_input(form, field_name):
     text = form.cleaned_data[field_name]
     text = text.strip()

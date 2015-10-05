@@ -2,6 +2,8 @@ require("../less/site.less");
 
 window.jQuery = window.$ = require("jquery");
 
+require("./event_form.js");
+
 require("bootstrap");
 require("imports?define=>false!bootstrap-daterangepicker");
 require("eldarion-ajax");
