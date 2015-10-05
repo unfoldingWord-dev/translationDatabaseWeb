@@ -83,7 +83,7 @@ class CharterAdd(LoginRequiredMixin, CreateView):
     # Overwritten to set initial values
     def get_initial(self):
         return {
-            "start_date": timezone.now(),
+            "start_date": timezone.now().date(),
             "created_by": self.request.user.username
         }
 
@@ -130,7 +130,7 @@ class EventAddView(LoginRequiredMixin, CreateView):
     # Overwritten to include initial values
     def get_initial(self):
         return {
-            "start_date": timezone.now(),
+            "start_date": timezone.now().date(),
             "created_by": self.request.user.username,
         }
 
@@ -151,31 +151,31 @@ class EventAddView(LoginRequiredMixin, CreateView):
 
     # Overwritten to execute custom save and redirect upon valid submission
     def form_valid(self, form):
-        self.object = form.save()
+        event = self.object = form.save()
 
         # Add translators info
         translators = self.get_translator_data(self)
         translator_ids = self.get_translator_ids(translators)
-        if translator_ids:
-            event = Event.objects.get(pk=self.object.id)
-            for id in translator_ids:
-                event.translators.add(Translator.objects.get(id=id))
+        event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
+        # if translator_ids:
+            # for id in translator_ids:
+                # self.object.translators.add(Translator.objects.get(id=id))
 
         # Add facilitators info
         facilitators = self.get_facilitator_data(self)
         facilitator_ids = self.get_facilitator_ids(facilitators)
-        if facilitator_ids:
-            event = Event.objects.get(pk=self.object.id)
-            for id in facilitator_ids:
-                event.facilitators.add(Facilitator.objects.get(id=id))
+        event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
+        # if facilitator_ids:
+        #     for id in facilitator_ids:
+        #         self.object.facilitators.add(Facilitator.objects.get(id=id))
 
         # Add materials info
         materials = self.get_material_data(self)
         material_ids = self.get_material_ids(materials)
-        if material_ids:
-            event = Event.objects.get(pk=self.object.id)
-            for id in material_ids:
-                event.materials.add(Material.objects.get(id=id))
+        event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
+        # if material_ids:
+        #     for id in material_ids:
+        #         self.object.materials.add(Material.objects.get(id=id))
 
         self.set_event_number()
 
