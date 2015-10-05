@@ -158,8 +158,8 @@ class EventAddView(LoginRequiredMixin, CreateView):
         translator_ids = self.get_translator_ids(translators)
         event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
         # if translator_ids:
-            # for id in translator_ids:
-                # self.object.translators.add(Translator.objects.get(id=id))
+        #    for id in translator_ids:
+        #       self.object.translators.add(Translator.objects.get(id=id))
 
         # Add facilitators info
         facilitators = self.get_facilitator_data(self)

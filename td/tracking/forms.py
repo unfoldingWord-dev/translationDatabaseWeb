@@ -12,8 +12,6 @@ from .models import (
     Department,
     Event,
     Hardware,
-    Output,
-    Publication,
     TranslationMethod,
     Software,
 )
@@ -99,8 +97,6 @@ class EventForm(forms.ModelForm):
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
         self.fields["translation_methods"].queryset = TranslationMethod.objects.order_by("name")
-        self.fields["output_target"].queryset = Output.objects.order_by("name")
-        self.fields["publication"].queryset = Publication.objects.order_by("name")
         self.fields["charter"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
