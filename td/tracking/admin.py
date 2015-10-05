@@ -30,7 +30,7 @@ class EventAdmin(admin.ModelAdmin):
         ("General Info", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
         ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
         ("Resources", {"fields": ["software", "hardware", "translation_methods", "materials"]}),
-        (None, {"fields": ["output_target", "publishing_process", "current_check_level", "target_check_level"]}),
+        (None, {"fields": ["output_target", "publication", "current_check_level", "target_check_level"]}),
         ("Submission Info", {"fields": ["created_at", "created_by"]}),
     ]
     list_display = ("charter", "number", "location", "start_date", "end_date", "contact_person")

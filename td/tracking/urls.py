@@ -8,6 +8,7 @@ from .views import (
     CharterAdd,
     CharterUpdate,
     EventAddView,
+    EventUpdateView,
     SuccessView,
     TemplateView,
 )
@@ -25,6 +26,7 @@ urlpatterns = [
     # Event
     url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
     url(r"^event/new/(?P<pk>\d+)/$", EventAddView.as_view(), name="event_add_specific"),
+    url(r"^event/update/(?P<pk>\d+)/$", EventUpdateView.as_view(), name="event_update"),
 
     # Others
     url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
