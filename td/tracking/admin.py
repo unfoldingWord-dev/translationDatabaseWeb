@@ -7,6 +7,8 @@ from .models import (
     Facilitator,
     Hardware,
     Material,
+    Output,
+    Publication,
     Software,
     Translator,
     TranslationMethod,
@@ -43,3 +45,5 @@ admin.site.register(Facilitator)
 admin.site.register(TranslationMethod)
 admin.site.register(Software)
 admin.site.register(Hardware)
+admin.site.register(Output)
+admin.site.register(Publication)
