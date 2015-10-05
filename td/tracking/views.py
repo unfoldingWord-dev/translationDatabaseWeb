@@ -336,24 +336,22 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
 
     # Overwritten to execute custom save and redirect upon valid submission
     def form_valid(self, form):
-        # self.object = form.save()
+        event = self.object = form.save()
 
         # Update translators info
         current_translators = self.get_translator_data(self)
         init_translators = [{"name": translator.name} for translator in self.object.translators.all()]
-        new_translators = [translator for translator in current_translators if not translator in init_translators]
-        del_translators = [translator for translator in init_translators if not translator in current_translators]
+        new_translators = [translator for translator in current_translators if translator not in init_translators]
+        del_translators = [translator for translator in init_translators if translator not in current_translators]
         for translator in del_translators:
             person = Translator.objects.get(name=translator["name"])
-            self.object.translators.remove(person)
+            event.translators.remove(person)
         for translator in new_translators:
             try:
-                self.object.translators.add(Translator.objects.get(name=translator["name"]))
+                event.translators.add(Translator.objects.get(name=translator["name"]))
             except Translator.DoesNotExist:
                 person = Translator.objects.create(name=translator["name"])
-                self.object.translators.add(person)
-
-        # init_facilitator_ids = self.get_translator_ids(init_facilitators)
+                event.translators.add(person)
 
         # # Update facilitators info
         # facilitators = self.get_facilitator_data(self)
