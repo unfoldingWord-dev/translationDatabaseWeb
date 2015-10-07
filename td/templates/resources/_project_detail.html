@@ -21,7 +21,11 @@
 				<tr><th>Created By</th><td>{{ data.created_by }}</td></tr>
 			{% endif %}
     	{% else %}
-    		<tr><th>Translation Project</th><td>Not Started</td></tr>
+    		{% if user.is_authenticated %}
+    			<tr><th>Translation Project</th><td><a class="btn btn-primary btn-xs" href="{% url "tracking:charter_add" %}">Add</a></td></tr>
+    		{% else %}
+    			<tr><th>Translation Project</th><td>Not Started</td></tr>
+    		{% endif %}
     	{% endif %}
     </tbody>
 </table>
