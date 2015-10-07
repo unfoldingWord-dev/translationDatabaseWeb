@@ -1,19 +1,24 @@
+import operator
+
 from django.contrib import messages
 from django.db.models import Q
-# from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, TemplateView
-# from django.views.decorators.http import require_http_methods
 
 from account.mixins import LoginRequiredMixin
 
-from .models import Charter, Event
 from .forms import CharterForm, EventForm
-from td.utils import DataTableSourceView
+from .models import (
+    Charter,
+    Event,
+    Facilitator,
+    Material,
+    Translator,
+)
 
-import operator
+from td.utils import DataTableSourceView
 
 
 # ------------------------------- #
@@ -22,9 +27,6 @@ import operator
 
 
 class CharterTableSourceView(DataTableSourceView):
-
-    def __init__(self, **kwargs):
-        super(CharterTableSourceView, self).__init__(**kwargs)
 
     @property
     def queryset(self):
@@ -63,7 +65,7 @@ class AjaxCharterListView(CharterTableSourceView):
         "end_date",
         "contact_person"
     ]
-    # link is on column because name can't handle non-roman characters
+    # link is on column because name can"t handle non-roman characters
     link_column = "language__code"
     link_url_name = "tracking:charter"
     link_url_field = "pk"
@@ -75,16 +77,17 @@ class AjaxCharterListView(CharterTableSourceView):
 
 
 class CharterAdd(LoginRequiredMixin, CreateView):
-
     model = Charter
     form_class = CharterForm
 
+    # Overwritten to set initial values
     def get_initial(self):
         return {
-            "start_date": timezone.now(),
+            "start_date": timezone.now().date(),
             "created_by": self.request.user.username
         }
 
+    # Overwritten to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
@@ -95,10 +98,184 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
     form_class = CharterForm
     template_name_suffix = "_update_form"
 
+    # Overwritten to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         messages.info(self.request, "Project charter has been updated")
-        return redirect("tracking:charter_add_success", pk=self.object.id)
+        return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
+
+
+# -------------------------------------------------------------------
+# NOTE: Charter detail will be integrated to the language detail page
+# -------------------------------------------------------------------
+def charter(request, pk):
+    charter = get_object_or_404(Charter, pk=pk)
+    messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
+    context = {
+        "charter": charter,
+    }
+
+    return render(request, "tracking/charter_detail.html", context)
+
+
+# -------------------------------- #
+#            EVENT VIEWS           #
+# -------------------------------- #
+
+
+class EventAddView(LoginRequiredMixin, CreateView):
+    model = Event
+    form_class = EventForm
+
+    # Overwritten to include initial values
+    def get_initial(self):
+        return {
+            "start_date": timezone.now().date(),
+            "created_by": self.request.user.username,
+        }
+
+    # Overwritten to pass URL argument to forms.py
+    def get_form_kwargs(self, **kwargs):
+        keywords = super(EventAddView, self).get_form_kwargs(**kwargs)
+        if "pk" in self.kwargs:
+            keywords["pk"] = self.kwargs["pk"]
+        return keywords
+
+    # Overwritten to include custom data
+    def get_context_data(self, *args, **kwargs):
+        context = super(EventAddView, self).get_context_data(**kwargs)
+        context["translators"] = self.get_translator_data(self)
+        context["facilitators"] = self.get_facilitator_data(self)
+        context["materials"] = self.get_material_data(self)
+        return context
+
+    # Overwritten to execute custom save and redirect upon valid submission
+    def form_valid(self, form):
+        event = self.object = form.save()
+
+        # Add translators info
+        translators = self.get_translator_data(self)
+        translator_ids = self.get_translator_ids(translators)
+        event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
+
+        # Add facilitators info
+        facilitators = self.get_facilitator_data(self)
+        facilitator_ids = self.get_facilitator_ids(facilitators)
+        event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
+
+        # Add materials info
+        materials = self.get_material_data(self)
+        material_ids = self.get_material_ids(materials)
+        event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
+
+        self.set_event_number()
+
+        return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
+
+    # ----------------------------------- #
+    #    EVENTADDVIEW CUSTOM FUNCTIONS    #
+    # ----------------------------------- #
+
+    # Function: Returns an array of Translator objects' properties
+    def get_translator_data(self, form):
+        translators = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith("translator") and key != "translator-count":
+                    name = post[key] if post[key] else ""
+                    if name:
+                        translators.append({"name": name})
+        return translators
+
+    # Function: Returns an array of Facilitator objects' properties
+    def get_facilitator_data(self, form):
+        facilitators = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith("facilitator") and key != "facilitator-count":
+                    name = post[key] if post[key] else ""
+                    if name:
+                        number = key[11:]
+                        is_lead = True if "is_lead" + number in post else False
+                        speaks_gl = True if "speaks_gl" + number in post else False
+                        facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
+        return facilitators
+
+    # Function: Returns an array of Material objects' properties
+    def get_material_data(self, form):
+        materials = []
+        if self.request.POST:
+            post = self.request.POST
+            for key in sorted(post):
+                if key.startswith("material") and key != "material-count":
+                    name = post[key] if post[key] else ""
+                    if name:
+                        number = key[8:]
+                        licensed = True if "licensed" + number in post else False
+                        materials.append({"name": name, "licensed": licensed})
+        return materials
+
+    # Function: Takes an array of translator properties and returns an array of their ids
+    def get_translator_ids(self, array):
+        ids = []
+        for translator in array:
+            try:
+                person = Translator.objects.get(name=translator["name"])
+            except Translator.DoesNotExist:
+                person = Translator.objects.create(name=translator["name"])
+            ids.append(person.id)
+
+        return ids
+
+    # Function: Takes an array of facilitator properties and returns an array of their ids
+    def get_facilitator_ids(self, array):
+        ids = []
+        for facilitator in array:
+            try:
+                person = Facilitator.objects.get(name=facilitator["name"])
+            except Facilitator.DoesNotExist:
+                person = Facilitator.objects.create(
+                    name=facilitator["name"],
+                    is_lead=facilitator["is_lead"],
+                    speaks_gl=facilitator["speaks_gl"],
+                )
+            ids.append(person.id)
+
+        return ids
+
+    # Function: Takes an array of material properties and returns an array of their ids
+    def get_material_ids(self, array):
+        ids = []
+        for material in array:
+            try:
+                object = Material.objects.get(name=material["name"])
+            except Material.DoesNotExist:
+                object = Material.objects.create(
+                    name=material["name"],
+                    licensed=material["licensed"],
+                )
+            ids.append(object.id)
+
+        return ids
+
+    # Function: Sets property:number in event
+    def set_event_number(self):
+        events = Event.objects.filter(charter=self.object.charter)
+        event_numbers = []
+        for event in events:
+            event_numbers.append(event.number)
+        latest = 0
+        for number in event_numbers:
+            if number > latest:
+                latest = number
+        Event.objects.filter(pk=self.object.id).update(number=(latest + 1))
+
+
+# -------------------------------- #
+#            OTHER VIEWS           #
+# -------------------------------- #
 
 
 class SuccessView(LoginRequiredMixin, TemplateView):
@@ -114,7 +291,9 @@ class SuccessView(LoginRequiredMixin, TemplateView):
 
         allowed_urls = [
             "http://localhost:8000/tracking/charter/new/",
+            "http://localhost:8000/tracking/event/new/",
             "http://td.unfoldingword.org/tracking/charter/new/",
+            "http://td.unfoldingword.org/tracking/event/new/",
         ]
 
         if referer in allowed_urls:
@@ -125,31 +304,25 @@ class SuccessView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         # Append additional context to display custom message
         # NOTE: Maybe the logic for custom message should go in the template?
-        charter = Charter.objects.get(pk=kwargs["pk"])
         context = super(SuccessView, self).get_context_data(**kwargs)
         context["link_id"] = kwargs["pk"]
+        context["obj_type"] = kwargs["obj_type"]
+        context["status"] = "Success"
         if kwargs["obj_type"] == "charter":
-            context["status"] = "Success"
+            charter = Charter.objects.get(pk=kwargs["pk"])
             context["message"] = "Project " + charter.language.name + " has been successfully added."
+        elif kwargs["obj_type"] == "event":
+            event = Event.objects.get(pk=kwargs["pk"])
+            context["message"] = "Your event for " + event.charter.language.name + " has been successfully added."
         else:
             context["status"] = "Sorry :("
             context["message"] = "It seems like you got here by accident"
         return context
 
 
-def charter(request, pk):
-    charter = get_object_or_404(Charter, pk=pk)
-    messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
-    context = {
-        "charter": charter,
-    }
-
-    return render(request, "tracking/charter_detail.html", context)
-
-
-# -------------------------------- #
-#            EVENT VIEWS           #
-# -------------------------------- #
+# -------------------- #
+#    VIEW FUNCTIONS    #
+# -------------------- #
 
 
 def charters_autocomplete(request):
@@ -166,32 +339,3 @@ def charters_autocomplete(request):
         for charter in charters
     ]
     return JsonResponse({"results": data, "count": len(data), "term": term})
-
-
-class EventAddView(CreateView):
-    model = Event
-    form_class = EventForm
-    # success_url = ""
-
-    def get_initial(self):
-        return {
-            "start_date": timezone.now(),
-            "created_by": self.request.user.username
-        }
-
-    def form_valid(self, form):
-        self.object = form.save()
-        return redirect("tracking:event_add_success", pk=self.object.id)
-
-
-def event_add(request, **kwargs):
-    if request.method == "POST":
-        form = EventForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect("/tracking/event/add/success/")
-    else:
-        form = EventForm()
-
-    context = {"form": form}
-
-    return render(request, "tracking/event_add.html", context)

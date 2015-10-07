@@ -3,49 +3,49 @@
     "fields": {
         "name": "MAST"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 1
 },
 {
     "fields": {
         "name": "Sovee/MemoQ"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 2
 },
 {
     "fields": {
         "name": "Translator"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 3
 },
 {
     "fields": {
         "name": "Church group"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 4
 },
 {
     "fields": {
         "name": "Seed Co."
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 5
 },
 {
     "fields": {
         "name": "translationStudio"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 6
 },
 {
     "fields": {
         "name": "Door43 Website"
     },
-    "model": "tracking.translationservice",
+    "model": "tracking.translationmethod",
     "pk": 7
 },
 {

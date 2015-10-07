@@ -1,14 +1,15 @@
 from django.contrib import admin
+
 from .models import (
     Charter,
-    Event,
-    Material,
-    Translator,
-    Facilitator,
     Department,
-    TranslationService,
-    Software,
+    Event,
+    Facilitator,
     Hardware,
+    Material,
+    Software,
+    Translator,
+    TranslationMethod,
 )
 
 
@@ -17,21 +18,20 @@ class CharterAdmin(admin.ModelAdmin):
         ("Info", {"fields": ["language", "countries"]}),
         ("Timing", {"fields": ["start_date", "end_date"]}),
         ("Internal", {"fields": ["number", "lead_dept", "contact_person"]}),
-        (None, {"fields": ["created_at", "created_by"]}),
+        ("Submission Info", {"fields": ["created_at", "created_by"]}),
     ]
     list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
 
 
 class EventAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {"fields": ["charter"]}),
-        (None, {"fields": ["location", "start_date", "end_date"]}),
-        (None, {"fields": ["translation_services", "output_target"]}),
-        (None, {"fields": ["materials", "software", "hardware"]}),
-        (None, {"fields": ["translators", "facilitators", "lead_dept", "departments"]}),
-        (None, {"fields": ["publishing_process", "contact_person"]}),
+        ("General Info", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
+        ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
+        ("Resources", {"fields": ["software", "hardware", "translation_methods", "materials"]}),
+        (None, {"fields": ["output_target", "publishing_process"]}),
+        ("Submission Info", {"fields": ["created_at", "created_by"]}),
     ]
-    list_display = ("charter", "lead_dept", "start_date", "end_date")
+    list_display = ("charter", "number", "location", "start_date", "end_date", "contact_person")
 
 
 admin.site.register(Charter, CharterAdmin)
@@ -40,6 +40,6 @@ admin.site.register(Department)
 admin.site.register(Material)
 admin.site.register(Translator)
 admin.site.register(Facilitator)
-admin.site.register(TranslationService)
+admin.site.register(TranslationMethod)
 admin.site.register(Software)
 admin.site.register(Hardware)
