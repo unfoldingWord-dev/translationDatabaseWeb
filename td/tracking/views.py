@@ -1,5 +1,6 @@
 import operator
 import re
+import urlparse
 
 from django.contrib import messages
 from django.db.models import Q
@@ -477,28 +478,18 @@ class SuccessView(LoginRequiredMixin, TemplateView):
             return redirect("tracking:project_list")
 
         allowed_urls = [
-            "http://localhost:8000/tracking/charter/new/",
-            "http://localhost:8000/tracking/event/new/",
-            "http://td.unfoldingword.org/tracking/charter/new/",
-            "http://td.unfoldingword.org/tracking/event/new/",
+            re.compile(r"^/tracking/charter/new/$"),
+            re.compile(r"^/tracking/charter/update/\d+/$"),
+            re.compile(r"^/tracking/event/new/$"),
+            re.compile(r"^/tracking/event/update/\d+/$"),
         ]
 
-        if referer in allowed_urls:
+        path = urlparse.urlparse(referer).path
+
+        if any(url.match(path) for url in allowed_urls):
             return super(SuccessView, self).get(self, *args, **kwargs)
-        else:
+        else:            
             return redirect("tracking:project_list")
-
-        # allowed_urls = [
-        #     re.compile(r"tracking/charter/new/$"),
-        #     re.compile(r"tracking/charter/update/(\d+)/$"),
-        #     re.compile(r"tracking/event/new/$"),
-        #     re.compile(r"tracking/event/update/(\d+)/$"),
-        # ]
-
-        # if any(url.match(referer) for url in allowed_urls):
-        #     return super(SuccessView, self).get(self, *args, **kwargs)
-        # else:            
-        #     return redirect("tracking:project_list")
 
     def get_context_data(self, *args, **kwargs):
         # Append additional context to display custom message
