@@ -340,35 +340,22 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         event = self.object = form.save()
 
         # Update translators info
-        current_translators = self.get_translator_data(self)
-        init_translators = [{"name": translator.name} for translator in self.object.translators.all()]
-        new_translators = [translator for translator in current_translators if translator not in init_translators]
-        del_translators = [translator for translator in init_translators if translator not in current_translators]
-        for translator in del_translators:
-            person = Translator.objects.get(name=translator["name"])
-            event.translators.remove(person)
-        for translator in new_translators:
-            try:
-                event.translators.add(Translator.objects.get(name=translator["name"]))
-            except Translator.DoesNotExist:
-                person = Translator.objects.create(name=translator["name"])
-                event.translators.add(person)
+        translators = self.get_translator_data(self)
+        translator_ids = self.get_translator_ids(translators)
+        event.translators.clear()
+        event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
 
-        # # Update facilitators info
-        # facilitators = self.get_facilitator_data(self)
-        # facilitator_ids = self.get_facilitator_ids(facilitators)
-        # if facilitator_ids:
-        #     event = Event.objects.get(pk=self.object.id)
-        #     for id in facilitator_ids:
-        #         event.facilitators.add(Facilitator.objects.get(id=id))
+        # Add facilitators info
+        facilitators = self.get_facilitator_data(self)
+        facilitator_ids = self.get_facilitator_ids(facilitators)
+        event.facilitators.clear()
+        event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
 
-        # # Update materials info
-        # materials = self.get_material_data(self)
-        # material_ids = self.get_material_ids(materials)
-        # if material_ids:
-        #     event = Event.objects.get(pk=self.object.id)
-        #     for id in material_ids:
-        #         event.materials.add(Material.objects.get(id=id))
+        # Add materials info
+        materials = self.get_material_data(self)
+        material_ids = self.get_material_ids(materials)
+        event.materials.clear()
+        event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
 
         return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
 
