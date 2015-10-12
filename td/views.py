@@ -373,7 +373,7 @@ class LanguageTableSourceView(DataTableSourceView):
 
     @property
     def filtered_data(self):
-        if len(self.search_term) and len(self.search_term) <= 3:
+        if self.search_term and len(self.search_term) <= 3:
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,

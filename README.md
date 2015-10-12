@@ -55,6 +55,7 @@ To setup a new working environment of this project, several items are needed:
 After installing requirements (via pip) within your environment or virtualenv:
 
 * `python manage.py migrate`
+* `python manage.py loaddata sites`
 * `python manage.py loaddata uw_network_seed`
 * `python manage.py loaddata uw_region_seed`
 * `python manage.py loaddata uw_title_seed`
