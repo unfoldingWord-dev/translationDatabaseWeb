@@ -101,8 +101,8 @@ class AjaxCharterListView(CharterTableSourceView):
     ]
     # link is on column because name can"t handle non-roman characters
     link_column = "language__code"
-    link_url_name = "tracking:charter"
-    link_url_field = "pk"
+    link_url_name = "language_detail"
+    link_url_field = "lang_id"
 
 
 class AjaxCharterEventsListView(EventTableSourceView):

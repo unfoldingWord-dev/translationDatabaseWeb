@@ -54,6 +54,10 @@ class Charter(models.Model):
         max_length=200,
     )
 
+    @property
+    def lang_id(self):
+        return self.language.id
+
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
         return self.language.code.encode("utf-8")
