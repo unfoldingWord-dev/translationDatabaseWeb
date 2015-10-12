@@ -488,7 +488,7 @@ class SuccessView(LoginRequiredMixin, TemplateView):
 
         if any(url.match(path) for url in allowed_urls):
             return super(SuccessView, self).get(self, *args, **kwargs)
-        else:            
+        else:       
             return redirect("tracking:project_list")
 
     def get_context_data(self, *args, **kwargs):
