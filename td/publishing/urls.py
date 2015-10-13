@@ -18,6 +18,8 @@ from .views import (
     PublishRequestUpdateView,
     PublishRequestDeleteView,
     source_languages_autocomplete,
+    resource_language_json,
+    resource_catalog_json
 )
 
 
@@ -38,5 +40,7 @@ urlpatterns = patterns(
     url(r"^publish/request-reject/(?P<pk>\d+)", PublishRequestDeleteView.as_view(), name="publish_request_delete"),
     url(r"^ac/langnames/", languages_autocomplete, name="names_autocomplete"),
     url(r"^ac/src-langnames/", source_languages_autocomplete, name="source_names_autocomplete"),
-    url(r"^ajax/langversion/", ajax_language_version, name="ajax_language_version")
+    url(r"^ajax/langversion/", ajax_language_version, name="ajax_language_version"),
+    url(r"^(?P<kind>\w+)-catalog.json$", resource_catalog_json, name="resource_catalog_json"),
+    url(r"^(?P<kind>\w+)-(?P<lang>\w+).json$", resource_language_json, name="resource_language_json"),
 )

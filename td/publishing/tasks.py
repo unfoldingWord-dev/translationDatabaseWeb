@@ -1,12 +1,14 @@
 from __future__ import absolute_import
 
 import subprocess
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+
 from celery import task
-from .models import PublishRequest, OfficialResource
-from django.utils.datetime_safe import datetime
+
+from .models import PublishRequest
 
 
 @task()
@@ -62,28 +64,8 @@ def notify_requestor_rejected(request_id):
               html_message=html_contents)
 
 
-def _compute_version(source_version):
-    parts = source_version.split(".")
-    if len(parts) == 3:
-        return ".".join([parts[0], str(int(parts[1]) + 1), parts[2]])
-    else:
-        return "invalid"
-
-
 def approve_publish_request(request_id, user_id):
     pr = PublishRequest.objects.get(pk=request_id)
-    oresource = OfficialResource()
-    oresource.resource_type = pr.resource_type
-    oresource.created_by_id = user_id
-    oresource.language = pr.language
-    oresource.checking_level = pr.checking_level
-    oresource.source_text = pr.source_text
-    oresource.source_version = pr.source_version
-    oresource.version = _compute_version(pr.source_version)
-    oresource.notes = "requestor: {0}\ncontributors: {1}".format(pr.requestor, pr.contributors)
-    oresource.date_started = pr.created_at.date()
-    oresource.save()
-    pr.approved_at = datetime.now()
-    pr.save()
+    oresource = pr.publish(by_user=user_id)
     notify_requestor_approved.delay(pr.pk)
     return oresource.pk
