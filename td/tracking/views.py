@@ -22,6 +22,8 @@ from .models import (
 
 from td.utils import DataTableSourceView
 
+from django.core.urlresolvers import reverse as urlReverse
+
 
 # ------------------------------- #
 #            HOME VIEWS           #
@@ -59,9 +61,6 @@ class CharterTableSourceView(DataTableSourceView):
 
 
 class EventTableSourceView(DataTableSourceView):
-
-    def __init__(self, **kwargs):
-        super(EventTableSourceView, self).__init__(**kwargs)
 
     @property
     def queryset(self):
@@ -478,10 +477,11 @@ class SuccessView(LoginRequiredMixin, TemplateView):
             return redirect("tracking:project_list")
 
         allowed_urls = [
-            re.compile(r"^/tracking/charter/new/$"),
-            re.compile(r"^/tracking/charter/update/\d+/$"),
-            re.compile(r"^/tracking/event/new/$"),
-            re.compile(r"^/tracking/event/update/\d+/$"),
+            re.compile(r"^{}$".format(urlReverse("tracking:charter_add"))),
+            re.compile(r"^{}$".format(urlReverse("tracking:charter_update", kwargs={'pk': kwargs["pk"]}))),
+            re.compile(r"^{}$".format(urlReverse("tracking:event_add"))),
+            re.compile(r"^{}$".format(urlReverse("tracking:event_add_specific", kwargs={'pk': kwargs["pk"]}))),
+            re.compile(r"^{}$".format(urlReverse("tracking:event_update", kwargs={'pk': kwargs["pk"]}))),
         ]
 
         path = urlparse.urlparse(referer).path
