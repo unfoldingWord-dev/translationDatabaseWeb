@@ -2,11 +2,13 @@ from django.conf.urls import url
 
 from .views import (
     AjaxCharterListView,
+    AjaxCharterEventsListView,
     charter,
     charters_autocomplete,
     CharterAdd,
     CharterUpdate,
     EventAddView,
+    EventUpdateView,
     SuccessView,
     TemplateView,
 )
@@ -24,12 +26,14 @@ urlpatterns = [
     # Event
     url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
     url(r"^event/new/(?P<pk>\d+)/$", EventAddView.as_view(), name="event_add_specific"),
+    url(r"^event/update/(?P<pk>\d+)/$", EventUpdateView.as_view(), name="event_update"),
 
     # Others
+    url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
     url(r"^ajax/charters/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),
     url(r"^success/(?P<obj_type>[A-Za-z]+)/(?P<pk>\d+)/$", SuccessView.as_view(), name="charter_add_success"),
 
     # Under Construction
-    url(r"^event/detail/(?P<event_id>\d+)/$", TemplateView.as_view(template_name="tracking/under_construction.html"), name="event"),
+    url(r"^event/detail/(?P<pk>\d+)/$", TemplateView.as_view(template_name="tracking/under_construction.html"), name="event"),
 ]
