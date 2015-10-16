@@ -38,7 +38,7 @@
             <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
             <h1 class="panel-title">Translation Events/Workshops</h1>
         </div>
-        <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" language.pk %}">
+        <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
             <thead>
                 <tr>
                     <th>Number</th>

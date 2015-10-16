@@ -126,19 +126,16 @@ class Event(models.Model):
         "TranslationMethod",
         blank=True,
         verbose_name="Translation Methodologies",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     software = models.ManyToManyField(
         "Software",
         blank=True,
         verbose_name="Software/App Used",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     hardware = models.ManyToManyField(
         "Hardware",
         blank=True,
         verbose_name="Hardware Used",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     # publishing_process = models.TextField(
     #     max_length=1500,
@@ -169,7 +166,6 @@ class Event(models.Model):
         related_name="event_supporting_dept",
         blank=True,
         verbose_name="Supporting Departments",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     created_at = models.DateTimeField(
         default=timezone.now,

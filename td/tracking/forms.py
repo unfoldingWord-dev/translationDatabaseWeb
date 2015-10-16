@@ -183,6 +183,12 @@ class EventForm(forms.ModelForm):
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
             "created_by": forms.HiddenInput(),
+            "departments": forms.CheckboxSelectMultiple(),
+            "publication": forms.CheckboxSelectMultiple(),
+            "output_target": forms.CheckboxSelectMultiple(),
+            "hardware": forms.CheckboxSelectMultiple(),
+            "software": forms.CheckboxSelectMultiple(),
+            "translation_methods": forms.CheckboxSelectMultiple(),
         }
 
     # -------------------------------- #
