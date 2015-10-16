@@ -13,9 +13,24 @@ from account.mixins import LoginRequiredMixin
 from td.models import Language
 
 from .forms import RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm
-from .models import Contact, OfficialResource, PublishRequest
+from .models import Contact, OfficialResource, PublishRequest, OfficialResourceType
 from .signals import published
 from .tasks import send_request_email, approve_publish_request
+
+
+def resource_language_json(request, kind, lang):
+    resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
+    language = get_object_or_404(Language, code=lang)
+    chapters = resource_type.chapter_set.filter(language=language).order_by("number")
+    data = {
+        "chapters": [chapter.data for chapter in chapters]
+    }
+    return JsonResponse(data)
+
+
+def resource_catalog_json(request, kind):
+    resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
+    return JsonResponse(resource_type.data, safe=False)
 
 
 @login_required
