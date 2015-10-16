@@ -39,25 +39,26 @@
 </div>
 
 {% if user.is_authenticated %}
-{% if events.count %}
-<div class="panel panel-default">
-    <div class="panel-heading"><h1 class="panel-title">Translation Events/Workshops</h1></div>
-    <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
-        <thead>
-            <tr>
-                <th>Number</th>
-                <th>Location</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Lead Department</th>
-                <th>Contact Person</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-{% endif %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">Translation Events/Workshops</h1>
+            <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" language.pk %}"><i class="fa fa-plus"></i> Add</a>
+        </div>
+        <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Lead Department</th>
+                    <th>Contact Person</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 {% endif %}
 
 <div class="panel panel-default">

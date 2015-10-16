@@ -24,14 +24,83 @@
                 <tr><th>End Date</th><td>{{ event.end_date }}</td></tr>
                 <tr><th>Lead Department</th><td>{{ event.lead_dept }}</td></tr>
                 <tr><th>Contact Person</th><td>{{ event.contact_person }}</td></tr>
-                <tr><th>Checking Level (start, end)</th><td>{{ event.current_checking_level | default: "--" }} ==> {{ event.target_checking_level | default: "--" }}</td></tr>
+                <tr><th>Checking Level (start, end)</th><td>{{ event.current_checking_level | default:"n/a" }}, {{ event.target_checking_level | default:"n/a" }}</td></tr>
+                <tr><th>Created By</th><td>{{ event.created_by }}</td></tr>
+                <tr><th>Created At</th><td>{{ event.created_at }}</td></tr>
             </tbody>
         </table>
     </div>
     <div class="col-md-6">
-        <!-- NOTE: Include _project_detail.html instead that can also display "Networks Translating" info -->
-        <!-- {% include "resources/_short_list.html" with title="Networks Translating" data=language.networks_translating.all %} -->
-        <!-- {% include "resources/_project_detail.html" with data=charter %} -->
+        <table class="table">
+            <tbody>
+                <tr><th>Translation Method</th>
+                    <td>
+                        {% for method in event.translation_methods.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ method.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Translators</th>
+                    <td>
+                        {% for person in event.translators.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Supporting Departments</th>
+                    <td>
+                        {% for dept in event.departments.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ dept.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Networks Translating</th>
+                    <td>
+                        {% for network in event.networks.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ network.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Output Target</th>
+                    <td>
+                        {% for output in event.output_target.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ output.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Publication Process</th>
+                    <td>
+                        {% for publ in event.publication.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ publ.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr><th>Facilitators</th>
+                    <td>
+                        {% for person in event.facilitators.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}{% if person.is_lead %}   <i class="fa fa-user" title="Lead facilitator"></i>{% endif %}{% if person.speaks_gl %}   <i class="fa fa-commenting-o" title="This person speaks GL"></i>{% endif %} 
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Materials/Resources</th>
+                    <td>
+                        {% for item in event.materials.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
+                            {% if item.licensed %}   <i class="fa fa-copyright" title="Material is copyrighted"></i>{% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
