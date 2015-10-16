@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.views.generic import CreateView, UpdateView, TemplateView
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
 
 from account.mixins import LoginRequiredMixin
 
@@ -116,7 +116,7 @@ class AjaxCharterEventsListView(EventTableSourceView):
         "contact_person",
     ]
     link_column = "number"
-    link_url_name = "tracking:event"
+    link_url_name = "tracking:event_detail"
     link_url_field = "pk"
 
 
@@ -458,6 +458,15 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
             ids.append(object.id)
 
         return ids
+
+
+class EventDetailView(LoginRequiredMixin, DetailView):
+    model = Event
+
+    def get_context_data(self, **kwargs):
+        context = super(EventDetailView, self).get_context_data(**kwargs)
+        context["event"] = self.object
+        return context
 
 
 # -------------------------------- #
