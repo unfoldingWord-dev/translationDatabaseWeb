@@ -32,7 +32,7 @@
     </div>
 </div>
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and charter%}
     <div class="panel panel-default">
         <div class="panel-heading">
             <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
