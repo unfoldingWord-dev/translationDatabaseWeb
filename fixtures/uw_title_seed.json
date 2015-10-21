@@ -4,7 +4,7 @@
       "name": "Full Bible",
       "slug": "full-bible"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "name": "New Testament Bible",
       "slug": "new-testament-bible"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 2
   },
   {
@@ -20,7 +20,7 @@
       "name": "New Testament + Psalms Bible",
       "slug": "new-testament-psalms-bible"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 3
   },
   {
@@ -28,7 +28,7 @@
       "name": "OneStory Bible Stories",
       "slug": "onestory-bible-stories"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 4
   },
   {
@@ -36,7 +36,7 @@
       "name": "Open Bible Stories",
       "slug": "open-bible-stories"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 5
   },
   {
@@ -44,7 +44,7 @@
       "name": "The Jesus Film",
       "slug": "jesus-film"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 6
   },
   {
@@ -52,7 +52,7 @@
       "name": "Radio Broadcast (TWR/FEBC)",
       "slug": "radio-broadcast-twr-febc"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 7
   },
   {
@@ -60,7 +60,7 @@
       "name": "Gospel Recording (GRN)",
       "slug": "gospel-recording-grn"
     },
-    "model": "uw.title",
+    "model": "resources.title",
     "pk": 8
   }
 ]
