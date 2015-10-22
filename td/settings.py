@@ -150,6 +150,7 @@ INSTALLED_APPS = [
     "djcelery",
     "reversion",
     "absoluteuri",
+    "storages",
 
     # project
     "td",
@@ -158,6 +159,12 @@ INSTALLED_APPS = [
     "td.publishing",
     "td.tracking",
 ]
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 OPBEAT = {
     "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
