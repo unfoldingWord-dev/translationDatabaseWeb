@@ -247,7 +247,7 @@ class PublishRequest(models.Model):
         return resource
 
     def __str__(self):
-        return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.resource_type), self.language)
+        return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.resource_type), self.language.code)
 
 
 class LicenseAgreement(models.Model):

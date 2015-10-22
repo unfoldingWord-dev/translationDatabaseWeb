@@ -84,7 +84,7 @@ STATICFILES_FINDERS = [
 ]
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = "b%)gb-x(1%^qd@mpp!p&_1hkx(l^5(76$9#d2gs4kqt!h=-1^b"
+SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = [
@@ -150,6 +150,7 @@ INSTALLED_APPS = [
     "djcelery",
     "reversion",
     "absoluteuri",
+    "storages",
 
     # project
     "td",
@@ -158,6 +159,14 @@ INSTALLED_APPS = [
     "td.publishing",
     "td.tracking",
 ]
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
+
+AWS_S3_USE_SSL = False
+AWS_S3_SECURE_URLS = False
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 OPBEAT = {
     "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
