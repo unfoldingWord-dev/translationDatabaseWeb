@@ -157,7 +157,6 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
     # Overwritten to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
-        messages.info(self.request, "Project charter has been updated")
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
@@ -522,26 +521,16 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         print 'FORM LIST', form_list
         print 'FORM DICT', form_dict
         print 'KWARGS', kwargs
-        print 'DONE'
         return HttpResponseRedirect('/success/')
 
 
-class NewCharterModalView(CreateView):
+class NewCharterModalView(CharterAdd):
 
-    model = Charter
-    form_class = CharterForm
     template_name = 'tracking/new_charter_modal.html'
-
-    # Overwritten to set initial values
-    def get_initial(self):
-        return {
-            "start_date": timezone.now().date(),
-            "created_by": self.request.user.username
-        }
 
     def form_valid(self, form):
         self.object = form.save()
-        return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
+        return render(self.request, "tracking/new_charter_modal.html", {"success": True})
 
 
 # -------------------- #

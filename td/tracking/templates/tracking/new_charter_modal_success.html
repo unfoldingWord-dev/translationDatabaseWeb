@@ -1,0 +1,41 @@
+{% load i18n %}
+{% load bootstrap %}
+
+{% if success %}
+	<p>Project charter has been created. Close this and try again.</p>
+{% endif %}
+<!-- <p>{% blocktrans %}{{ message }}{% endblocktrans %}</p> -->
+
+<form id="new_charter_modal" action="{% url 'tracking:new_charter_modal' %}" method="POST" class="form" role="form">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+		<h4 class="modal-title" id="charterModalLabel">New Charter</h4>
+	</div>
+	<div class="modal-body">
+		{% csrf_token %}
+		{{ form | bootstrap}}
+	</div>
+	<div class="modal-footer">
+		<input name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal" value="Cancel">
+		<button type="submit" class="btn btn-primary pull-right">
+			{% if form.errors %}Try again{% else %}Add Project{% endif %}
+		</button>
+	</div>
+</form>
+<script>
+	$(document).ready(function() {
+		var form_options = {
+			target: '.modal-content',
+			success: function() { }
+		}
+		$('#new_charter_modal').ajaxForm(form_options);
+		$('.language-selector').languageSelector();
+		$('input[name="cancel"]').on('click', function() {
+			setTimeout(function() {jQuery('.modal.content').modal('hide');}, 1000);
+			$('body').on('hidden.bs.modal', '.modal', function() {
+				console.log('removing data');
+				$(this).removeData('bs.modal');
+			});
+		});
+	});
+</script>

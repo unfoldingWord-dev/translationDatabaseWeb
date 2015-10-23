@@ -89,30 +89,39 @@
 			</div>
 		</div>
 	</div>
-
 	<!-- Modal end -->
-
-	<a href="{% url 'tracking:new_charter_modal' %}" class="fa fa-pencil" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip></a>
 
 	<div class="row">
 		<div class="col-md-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h2 class="panel-title">{{ wizard.form.media }}</h2>
+					<h2 class="panel-title">Multiple Charter Event Form | Step <span>{{ wizard.steps.step1 }}</span> of <span>{{ wizard.steps.count }}</span></h2>
 				</div>
 				<div class="panel-body">
 					<form action="" method="POST" class="form">
 						{% csrf_token %}
 						{{ wizard.management_form }}
-						{{ wizard.form | bootstrap }}
+						
+						<div id="charter-list" class="charter-list">
+							{{ wizard.form | bootstrap }}
+						</div>
 
-						{% for hidden in form.hidden_fields %}
-							{{ hidden }}
-						{% endfor %}
+						<a href="" class="add-charter-link" style="display: block; margin: 1rem 0;">Add</a>
 
-						<input type="submit" value="{% trans 'submit' %}">
+						<p style="clear: both; padding: 1rem 0; font-weight: lighter;">
+							Can't find your charter? It probably has not been created. Why not 
+							<a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
+							right now and try again?
+						</p>
+						
+						<input type="hidden" name="language-count" value="1" />
+						{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 
+						<button type="submit" class="btn btn-primary pull-right">
+							{% if form.errors %}Try again{% else %}Add Charter{% endif %}
+						</button>
 					</form>
+
 				</div>
 			</div>
 		</div>
@@ -122,4 +131,32 @@
 
 {% block custom_bottom_script %}
 	<script src="http://malsup.github.com/jquery.form.js"></script>
+	<script>
+		$(document).ready(function() {
+			var number = 0;
+
+			$('.add-charter-link').on('click', function(e) {
+				e.preventDefault();
+				addCharter();
+			});
+
+			$('.charter-list').on('click', '.remove-charter-link', function(e) {
+				e.preventDefault();
+				$(this.parentElement).detach();
+			});
+
+			$('.language-selector').languageSelector();
+
+			function addCharter() {
+				number += 1;
+				var el = '<div class=" " style="display: flex; align-items: center;">' +
+				         '   <input class="language-selector form-control" data-source-url="/tracking/ac/charters" id="id_0-language_' + number + '" maxlength="200" name="0-language_0" type="text">' +
+				         '   <a href="" class="remove-charter-link" style="margin-left: 1rem;">Remove</a>'
+						 '</div>';
+				$('#charter-list .form-group').append(el);
+				$('#id_0-language_' + number).languageSelector();
+			}
+		});
+
+	</script>
 {% endblock custom_bottom_script %}

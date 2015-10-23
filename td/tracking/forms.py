@@ -210,11 +210,20 @@ class EventForm(forms.ModelForm):
 
 
 class MultiCharterEventForm1(forms.Form):
-    language_0 = forms.CharField(
-        label="Char",
-        max_length=200,
-        required=True
-    )
+    
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterEventForm1, self).__init__(*args, **kwargs)
+        self.fields["language_0"] = forms.CharField(
+            label="Charter",
+            max_length=200,
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                }
+            ),
+            required=True,
+        )
 
 class MultiCharterEventForm2(forms.Form):
     event = forms.CharField(
