@@ -4,14 +4,19 @@ import urlparse
 
 from django.contrib import messages
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
 
 from account.mixins import LoginRequiredMixin
 
-from .forms import CharterForm, EventForm
+from .forms import (
+    CharterForm,
+    EventForm,
+    MultiCharterEventForm1,
+    MultiCharterEventForm2,
+)
 from .models import (
     Charter,
     Event,
@@ -23,6 +28,8 @@ from .models import (
 from td.utils import DataTableSourceView
 
 from django.core.urlresolvers import reverse as urlReverse
+
+from formtools.wizard.views import SessionWizardView
 
 
 # ------------------------------- #
@@ -152,19 +159,6 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         messages.info(self.request, "Project charter has been updated")
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
-
-
-# -------------------------------------------------------------------
-# NOTE: Charter detail will be integrated to the language detail page
-# -------------------------------------------------------------------
-def charter(request, pk):
-    charter = get_object_or_404(Charter, pk=pk)
-    messages.info(request, "This page provides a link to edit a charter, but is still being worked on.")
-    context = {
-        "charter": charter,
-    }
-
-    return render(request, "tracking/charter_detail.html", context)
 
 
 # -------------------------------- #
@@ -517,6 +511,37 @@ class SuccessView(LoginRequiredMixin, TemplateView):
             context["status"] = "Sorry :("
             context["message"] = "It seems like you got here by accident"
         return context
+
+
+class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
+    template_name = 'tracking/multi_charter_event_form.html'
+    form_list = [MultiCharterEventForm1, MultiCharterEventForm2]
+    success_url = '/success/'
+
+    def done(self, form_list, form_dict, **kwargs):
+        print 'FORM LIST', form_list
+        print 'FORM DICT', form_dict
+        print 'KWARGS', kwargs
+        print 'DONE'
+        return HttpResponseRedirect('/success/')
+
+
+class NewCharterModalView(CreateView):
+
+    model = Charter
+    form_class = CharterForm
+    template_name = 'tracking/new_charter_modal.html'
+
+    # Overwritten to set initial values
+    def get_initial(self):
+        return {
+            "start_date": timezone.now().date(),
+            "created_by": self.request.user.username
+        }
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
 # -------------------- #

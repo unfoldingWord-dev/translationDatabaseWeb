@@ -3,7 +3,6 @@ from django.conf.urls import url
 from .views import (
     AjaxCharterListView,
     AjaxCharterEventsListView,
-    charter,
     charters_autocomplete,
     CharterAdd,
     CharterUpdate,
@@ -12,6 +11,8 @@ from .views import (
     EventDetailView,
     SuccessView,
     TemplateView,
+    MultiCharterEventView,
+    NewCharterModalView,
 )
 
 urlpatterns = [
@@ -22,7 +23,7 @@ urlpatterns = [
     # Charter
     url(r"^charter/new/$", CharterAdd.as_view(), name="charter_add"),
     url(r"^charter/update/(?P<pk>\d+)/$", CharterUpdate.as_view(), name="charter_update"),
-    url(r"^charter/detail/(?P<pk>\d+)/$", charter, name="charter"),
+    # url(r"^charter/detail/(?P<pk>\d+)/$", charter, name="charter"),
 
     # Event
     url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
@@ -37,5 +38,6 @@ urlpatterns = [
     url(r"^success/(?P<obj_type>[A-Za-z]+)/(?P<pk>\d+)/$", SuccessView.as_view(), name="charter_add_success"),
 
     # Under Construction
-    url(r"^event/detail/(?P<pk>\d+)/$", TemplateView.as_view(template_name="tracking/under_construction.html"), name="event"),
+    url(r"^wizard/$", MultiCharterEventView.as_view(), name="wizard"),
+    url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
 ]

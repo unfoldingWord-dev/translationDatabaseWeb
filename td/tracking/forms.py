@@ -204,6 +204,25 @@ class EventForm(forms.ModelForm):
                 data[key] = input.strip()
 
 
+# --------------------------- #
+#    MULTICHARTEREVENTFORM    #
+# --------------------------- #
+
+
+class MultiCharterEventForm1(forms.Form):
+    language_0 = forms.CharField(
+        label="Char",
+        max_length=200,
+        required=True
+    )
+
+class MultiCharterEventForm2(forms.Form):
+    event = forms.CharField(
+        label="Event",
+        max_length=3
+    )
+
+
 # ---------------------- #
 #    COMMON FUNCTIONS    #
 # ---------------------- #
