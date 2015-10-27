@@ -1,5 +1,6 @@
 import re
 
+from bs4 import element, BeautifulSoup
 import requests
 
 from docutils.utils.smartquotes import smartyPants
@@ -86,6 +87,120 @@ class OpenBibleStory(object):
         ]
 
 
+class TranslationAcademy(object):
+    """
+    Traverse translationAcademy on door43.org, fetching the table of contents
+    and then each topic and contents.
+    """
+
+    source_url = "https://door43.org{uri}"
+    chapters_uri = "/{lang_code}/ta/vol{vol_no}/toc"
+
+    def __init__(self, lang_code, volume_number=1):
+        self.lang_code = lang_code
+        self.session = requests.session()
+        self.session.params = {"do": "export_xhtmlbody"}
+        self.volume_number = str(volume_number)
+
+    def _parse_table_of_contents(self, soup):
+        """
+        Traverse HTML results via BeautifulSoup, returning the table of
+        contents
+
+        :param soup: HTML results of the TOC listing via BeautifulSoup
+        :type soup: object
+
+        :returns: dict
+        """
+        page_header_el = soup.find("h2")
+        toc = {
+            "title": page_header_el.text,
+            "id": page_header_el.get("id"),
+            "sections": [],
+        }
+
+        section = {"title": None, "pages": []}
+        # Iterate over links on the page, finding the previous header element
+        # to grab the section's title for each resulting link until the title
+        # changes. Skip the last link, which is a self-referencing footer link.
+        for a_el in soup.find_all("a")[:-1]:
+            section_title = a_el.find_previous(("h3", "h2", "h1")).text
+            if section_title != section["title"]:
+                toc["sections"].append(section)
+                section["title"] = section_title
+                section["pages"] = []
+
+            section["pages"].append({
+                "name": a_el.text,
+                "url": a_el.get("href"),
+            })
+        return toc
+
+    def fetch_chapter(self, chapter_uri):
+        """
+        Fetch the content from the `chapter_uri`, parsing and formatting the
+        input into one expected by the publishing module.
+
+        :param chapter_uri: URI for chapter of translationAcademy
+        :type chapter_uri: string
+
+        :returns: dict
+        """
+        chapter_data = {}
+        chapter_url = self.source_url.format(uri=chapter_uri)
+        response = self.session.get(chapter_url)
+
+        if response.ok:
+            soup = BeautifulSoup(response.text, "html.parser")
+            # Remove HTML comments coming from dokuwiki plugins
+            is_html_comment = lambda text: isinstance(text, element.Comment)
+            for html_comment in soup.find_all(text=is_html_comment):
+                html_comment.extract()
+
+            # Find the page title header
+            title_el = soup.find(("h1", "h2", "h3"))
+            # 'Table of Contents - Introduction'
+            chapter_data["title"] = title_el.text
+            # 'https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody'
+            chapter_data["ref"] = chapter_url
+            # 'table-of-contents-introduction'
+            chapter_data["number"] = title_el.get("id")
+            chapter_data["frames"] = [{
+                "id": title_el.get("id"),
+                "img": None,
+                "text": soup.prettify(formatter="html"),
+            }]
+
+        return chapter_data
+
+    def fetch_chapters(self):
+        """
+        Fetch and return all contents of each chapter
+        """
+        toc_soup = self.fetch_table_of_contents()
+        toc = self._parse_table_of_contents(toc_soup)
+        for section in toc["sections"]:
+            for page in section["pages"]:
+                yield self.fetch_chapter(page["url"])
+
+    def fetch_table_of_contents(self):
+        """
+        Fetch the table of contents page for translationAcademy
+
+        :returns: object - BeautifulSoup HTML parser
+        """
+        chapters_uri = self.chapters_uri.format(
+            lang_code=self.lang_code,
+            vol_no=self.volume_number
+        )
+        chapters_url = self.source_url.format(uri=chapters_uri)
+        response = self.session.get(chapters_url)
+        if not response.ok:
+            response.raise_for_status()
+        return BeautifulSoup(response.text, "html.parser")
+
+
 RESOURCE_TYPES = {
-    "obs": OpenBibleStory
+    "obs": OpenBibleStory,
+    "ta": TranslationAcademy,
 }
