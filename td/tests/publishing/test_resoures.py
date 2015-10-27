@@ -1,7 +1,40 @@
 from django.test import TestCase
 import requests_mock
 
-from td.publishing.resources import TranslationAcademy
+from td.publishing.resources import OpenBibleStory, TranslationAcademy
+
+
+class OpenBibleStoryTestCase(TestCase):
+
+    def setUp(self):
+        self.resource = OpenBibleStory('en')
+
+    @requests_mock.mock()
+    def test_fetch_chapter(self, mock_requests):
+        expected = {
+            'number': '01',
+            'title': u'1. The Creation',
+            'ref': u'A Bible story from: Genesis 1-2',
+            'frames': [
+                {
+                    'id': u'01-01',
+                    'img': u'https://example.com/obs/jpg/1/en/360px/obs-en-01-01.jpg',
+                    'text': u'This is how the beginning of everything happened.',
+                }
+            ],
+        }
+        content = (
+            "====== 1. The Creation ======\n\n{{"
+            "https://example.com/obs/jpg/1/en/360px/obs-en-01-01.jpg"
+            "}}\n\nThis is how the beginning of everything happened."
+            "\n\n//A Bible story from: Genesis 1-2//"
+        )
+        mock_requests.get(
+            'https://door43.org/en/obs/01?do=export_raw',
+            text=content
+        )
+        chapter = self.resource.fetch_chapter('01')
+        self.assertEquals(chapter, expected)
 
 
 class TranslationAcademyTestCase(TestCase):
