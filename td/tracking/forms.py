@@ -225,11 +225,41 @@ class MultiCharterEventForm1(forms.Form):
             required=True,
         )
 
+    def form_valid(self):
+        print 'valid'
+
+    def form_invalid(self):
+        print 'invalid'
+
+    # def _clean_fields(self):
+    #     self.check_all_languages(self)
+    #     return super(MultiCharterEventForm1, self)._clean_fields()
+
+    # def check_all_languages(self, form):
+    #     print 'CHECKING ALL LANGUAGES'
+    #     error = []
+    #     for key in self.data:
+    #         if key.startswith("0-language_") and self.data[key] == "":
+    #             error.append(forms.ValidationError(_('Required field'), code="required"))
+    #     if len(error):
+    #         print 'Raising validation error'
+    #         raise forms.ValidationError(error)
+
 class MultiCharterEventForm2(forms.Form):
-    event = forms.CharField(
-        label="Event",
-        max_length=3
-    )
+
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterEventForm2, self).__init__(*args, **kwargs)
+        self.fields["lang_0"] = forms.CharField(
+            label="EVENTEVENTEVENTEVENT",
+            max_length=200,
+            widget=forms.TextInput(
+                attrs={
+                    "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                }
+            ),
+            required=True,
+        )
+
 
 
 # ---------------------- #

@@ -2,6 +2,7 @@ import operator
 import re
 import urlparse
 
+from django import forms
 from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseRedirect
@@ -518,10 +519,55 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     success_url = '/success/'
 
     def done(self, form_list, form_dict, **kwargs):
-        print 'FORM LIST', form_list
-        print 'FORM DICT', form_dict
-        print 'KWARGS', kwargs
+        print 'DONE: FORM LIST', form_list
+        print 'DONE: FORM DICT', form_dict['0'], form_dict['1']
+        print 'DONE: KWARGS', kwargs
         return HttpResponseRedirect('/success/')
+
+    def get_form(self, step=None, data=None, files=None):
+        if step == None:
+            step = self.steps.current
+
+        print '\n---STEP---', self.steps.current
+        print '\nDATA', data
+
+        if step == '0' and self.request.POST:
+            # create array container for field names
+            charter_fields = []
+            # iterate through post data
+            for key in data:
+                # look for our language fields and add them to the array
+                if key.startswith("0-language"):
+                    charter_fields.append(key)
+            attrs = dict((field, forms.CharField(
+                label="Charter",
+                max_length=200,
+                widget=forms.TextInput(
+                    attrs={
+                        "class": "language-selector",
+                        "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                    }
+                ),
+                required=True,
+            )) for field in charter_fields)
+            NewForm = type("NewForm", (forms.Form,), attrs)
+            form = NewForm(data)
+
+            print '\nNEWFORM', form.fields
+            print '\nRETURNING NEW FORM WITH', data
+        else:
+            form = super(MultiCharterEventView, self).get_form(step, data, files)
+
+            print '\nRETURNING NORMAL FORM', form
+
+        print '\nFORM LIST', self.form_list
+        return form
+
+    # def render_revalidation_failure(self, step, form, **kwargs):
+    #     print '\nFAILURE: LIST', self.form_list
+    #     print '\nFAILURE: DICT', self.wizard
+    #     self.storage.current_step = step
+    #     return self.render(form, **kwargs)
 
 
 class NewCharterModalView(CharterAdd):
