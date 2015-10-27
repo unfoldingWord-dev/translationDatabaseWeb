@@ -4,6 +4,7 @@ from .views import (
     AjaxCharterListView,
     AjaxCharterEventsListView,
     charters_autocomplete,
+    charters_autocomplete_lid,
     CharterAdd,
     CharterUpdate,
     EventAddView,
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
     url(r"^ajax/charters/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),
+    url(r"^ac/charters/lid$", charters_autocomplete_lid, name="charters_autocomplete_lid"),
     url(r"^success/(?P<obj_type>[A-Za-z]+)/(?P<pk>\d+)/$", SuccessView.as_view(), name="charter_add_success"),
 
     # Under Construction

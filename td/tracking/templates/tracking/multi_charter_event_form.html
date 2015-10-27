@@ -112,10 +112,22 @@
                         
                         <!-- TODO: Break down the form template so that we can display properly after POST -->
                         <div id="charter-list" class="charter-list">
-                            <div class="entry">
+                            {% if wizard.steps.step0 == 0 %}
+                                {% for field in wizard.form %}
+                                    <div class="entry">
+                                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                            <label class="control-label required" for="id_0-language_{{ forloop.counter0 }}">{{ field.label}}</label>
+                                            <div class="">
+                                                <!-- <input class="language-selector form-control" data-source-url="/tracking/ac/charters/lid" id="id_0-language_{{ forloop.counter0 }}" maxlength="200" name="0-language_{{ forloop.counter0 }}" type="text" value="{{ field.value | default:''}}"> -->
+                                                {{field}}
+                                            </div>
+                                        </div>
+                                        <a href="" class="remove-charter-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
                                 {{ wizard.form | bootstrap }}
-                                <a href="" class="remove-charter-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>
-                            </div>
+                            {% endif %}
                         </div>
 
                         <a href="" class="add-charter-link" style="display: block; margin: 1rem 0; font-weight: lighter;">Add</a>
@@ -148,8 +160,10 @@
             // Initial scripts
             // 
             var l = document.querySelectorAll('input.language-selector');
-            var i = l[0].id;  // The first one should be the last in DOM
+            var i = l[l.length-1].id;
+            console.log(i);
             var number = parseInt(i[i.length-1]);
+            console.log('number', number);
             // 
             var count = parseInt($('input[name="language-count"]').val());
             // 
@@ -171,6 +185,7 @@
             function addCharter() {
                 // Incrememnt number to get unique id
                 number += 1;
+                console.log('number', number);
                 // Define element
                 var el = '<div class="entry">' +
                          '    <div class="form-group">' +

@@ -15,6 +15,7 @@ from account.mixins import LoginRequiredMixin
 from .forms import (
     CharterForm,
     EventForm,
+    MultiCharterStarter,
     MultiCharterEventForm1,
     MultiCharterEventForm2,
 )
@@ -515,12 +516,13 @@ class SuccessView(LoginRequiredMixin, TemplateView):
 
 class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     template_name = 'tracking/multi_charter_event_form.html'
-    form_list = [MultiCharterEventForm1, MultiCharterEventForm2]
+    form_list = [MultiCharterStarter, MultiCharterEventForm2]
     success_url = '/success/'
 
     def done(self, form_list, form_dict, **kwargs):
         print 'DONE: FORM LIST', form_list
-        print 'DONE: FORM DICT', form_dict['0'], form_dict['1']
+        print 'DONE: FORM DICT', form_dict['0'].fields
+        print 'DONE: FORM DICT', form_dict['1'].fields
         print 'DONE: KWARGS', kwargs
         return HttpResponseRedirect('/success/')
 
@@ -532,25 +534,32 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         print '\nDATA', data
 
         if step == '0' and self.request.POST:
-            # create array container for field names
+            # Create array container for field names
             charter_fields = []
-            # iterate through post data
-            for key in data:
-                # look for our language fields and add them to the array
+            # Iterate through post data...
+            for key in sorted(data):
+                # ... to look for our language fields and add them to the array
                 if key.startswith("0-language"):
                     charter_fields.append(key)
+            # Create a a dictionary of the field name and field definition for every language fields we have
             attrs = dict((field, forms.CharField(
                 label="Charter",
                 max_length=200,
                 widget=forms.TextInput(
                     attrs={
-                        "class": "language-selector",
+                        "class": "language-selector form-control",
                         "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                        "value": data[field],
                     }
                 ),
                 required=True,
             )) for field in charter_fields)
-            NewForm = type("NewForm", (forms.Form,), attrs)
+            # Dynamically create a new Form object with the field definitions
+            NewForm = type("NewForm", (MultiCharterEventForm1,), attrs)
+
+            new_data = self.charter_to_language(data)
+
+            # Bind modified posted data to the new form
             form = NewForm(data)
 
             print '\nNEWFORM', form.fields
@@ -560,14 +569,17 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
 
             print '\nRETURNING NORMAL FORM', form
 
-        print '\nFORM LIST', self.form_list
+        # print '\nFORM LIST', self.form_list
         return form
 
-    # def render_revalidation_failure(self, step, form, **kwargs):
-    #     print '\nFAILURE: LIST', self.form_list
-    #     print '\nFAILURE: DICT', self.wizard
-    #     self.storage.current_step = step
-    #     return self.render(form, **kwargs)
+    def process_step(self, form):
+        data =  super(MultiCharterEventView, self).process_step(form)
+        print '\nPROCESSING', data
+        return data
+
+    def charter_to_language(self, data):
+        print '\nCHARTER_TO_LANGUAGE'
+        return data
 
 
 class NewCharterModalView(CharterAdd):
@@ -590,6 +602,21 @@ def charters_autocomplete(request):
     data = [
         {
             "pk": charter.id,
+            "ln": charter.language.ln,
+            "lc": charter.language.lc,
+            "lr": charter.language.lr,
+            "gl": charter.language.gateway_flag
+        }
+        for charter in charters
+    ]
+    return JsonResponse({"results": data, "count": len(data), "term": term})
+
+def charters_autocomplete_lid(request):
+    term = request.GET.get("q").lower().encode("utf-8")
+    charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
+    data = [
+        {
+            "pk": charter.language.id,
             "ln": charter.language.ln,
             "lc": charter.language.lc,
             "lr": charter.language.lr,
