@@ -10,6 +10,7 @@ from td.models import Country, Language
 from .models import (
     Charter,
     Department,
+    Network,
     Event,
     Hardware,
     Output,
@@ -18,6 +19,12 @@ from .models import (
     Software,
 )
 
+CHECKING_LEVEL = (
+    ('', '---'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+)
 
 # ----------------- #
 #    CHARTERFORM    #
@@ -210,6 +217,7 @@ class EventForm(forms.ModelForm):
 
 
 class MultiCharterStarter(forms.Form):
+    template_name = 'tracking/multi_charter_event_form.html'
 
     def __init__(self, *args, **kwargs):
         super(MultiCharterStarter, self).__init__(*args, **kwargs)
@@ -227,6 +235,7 @@ class MultiCharterStarter(forms.Form):
 
 
 class MultiCharterEventForm1(forms.Form):
+    template_name = 'tracking/multi_charter_event_form.html'
 
     def __init__(self, *args, **kwargs):
         super(MultiCharterEventForm1, self).__init__(*args, **kwargs)
@@ -242,20 +251,35 @@ class MultiCharterEventForm1(forms.Form):
                 field.widget.attrs["data-lang-gl"] = language.gateway_flag
                 # print 'Attrs of', field, 'are now', field.widget.attrs
 
-class MultiCharterEventForm2(forms.Form):
+
+class MultiCharterEventForm2(EventForm):
 
     def __init__(self, *args, **kwargs):
         super(MultiCharterEventForm2, self).__init__(*args, **kwargs)
-        self.fields["lang_0"] = forms.CharField(
-            label="EVENTEVENTEVENTEVENT",
-            max_length=200,
-            widget=forms.TextInput(
-                attrs={
-                    "data-source-url": urlReverse("tracking:charters_autocomplete"),
-                }
-            ),
-            required=True,
-        )
+        self.fields["charter"] = forms.CharField(required=False)
+
+    def clean_charter(self):
+        pass
+
+    def _clean_fields(self):
+        self.data._mutable = True
+        self.strip_custom_fields(self, "translator")
+        self.strip_custom_fields(self, "facilitator")
+        self.strip_custom_fields(self, "material")
+        self.data._mutable = False
+        return super(EventForm, self)._clean_fields()
+
+    class Meta:
+        model = Event
+        exclude = ["created_at", "created_by", "charter", "translators", "facilitators", "materials"]
+        widgets = {
+            "departments": forms.CheckboxSelectMultiple(),
+            "publication": forms.CheckboxSelectMultiple(),
+            "output_target": forms.CheckboxSelectMultiple(),
+            "hardware": forms.CheckboxSelectMultiple(),
+            "software": forms.CheckboxSelectMultiple(),
+            "translation_methods": forms.CheckboxSelectMultiple(),
+        }
 
 
 # ---------------------- #

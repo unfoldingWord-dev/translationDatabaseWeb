@@ -13,6 +13,7 @@ from .views import (
     SuccessView,
     TemplateView,
     MultiCharterEventView,
+    MultiCharterSuccessView,
     NewCharterModalView,
 )
 
@@ -38,8 +39,9 @@ urlpatterns = [
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),
     url(r"^ac/charters/lid$", charters_autocomplete_lid, name="charters_autocomplete_lid"),
     url(r"^success/(?P<obj_type>[A-Za-z]+)/(?P<pk>\d+)/$", SuccessView.as_view(), name="charter_add_success"),
+    url(r"^mc-event/new/$", MultiCharterEventView.as_view(), name="multi_charter_event_add"),
+    url(r"^success/mc-event/$", MultiCharterSuccessView.as_view(), name="multi_charter_success"),
 
     # Under Construction
-    url(r"^wizard/$", MultiCharterEventView.as_view(), name="wizard"),
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
 ]

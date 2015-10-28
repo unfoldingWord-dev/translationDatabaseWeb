@@ -24,7 +24,7 @@
                     {% blocktrans %}
                         <a href="{{ url_add_event }}" class="btn btn-primary large">Add Event</a>
                         <a href="{{ url_add_more }}" class="btn btn-primary large">Add Another Project</a>
-                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">All Projects</a>
+                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">Tracking Dashboard</a>
                     {% endblocktrans %}
                 {% endif %}
                 {% if obj_type == 'event' %}
@@ -32,7 +32,7 @@
                     {% url "tracking:project_list" as url_tracking_home %}
                     {% blocktrans %}
                         <a href="{{ url_add_event }}" class="btn btn-primary large">Add Another Event</a>
-                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">All Projects</a>
+                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">Tracking Dashboard</a>
                     {% endblocktrans %}
                 {% endif %}
             {% else %}
