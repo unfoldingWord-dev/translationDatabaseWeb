@@ -4,7 +4,7 @@
       "name": "Print",
       "slug": "print"
     },
-    "model": "uw.media",
+    "model": "resources.media",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "name": "Audio",
       "slug": "audio"
     },
-    "model": "uw.media",
+    "model": "resources.media",
     "pk": 2
   },
   {
@@ -20,7 +20,7 @@
       "name": "Video",
       "slug": "video"
     },
-    "model": "uw.media",
+    "model": "resources.media",
     "pk": 3
   }
 ]
