@@ -522,9 +522,11 @@ class SuccessView(LoginRequiredMixin, TemplateView):
         context["status"] = "Success"
         if kwargs["obj_type"] == "charter":
             charter = Charter.objects.get(pk=kwargs["pk"])
+            context["language_id"] = charter.language.id
             context["message"] = "Project " + charter.language.name + " has been successfully added."
         elif kwargs["obj_type"] == "event":
             event = Event.objects.get(pk=kwargs["pk"])
+            context["language_id"] = event.charter.language.id
             context["message"] = "Your event for " + event.charter.language.name + " has been successfully added."
         else:
             context["status"] = "Sorry :("
