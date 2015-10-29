@@ -699,6 +699,23 @@ class NewCharterModalView(CharterAdd):
 
 class NewItemView(LoginRequiredMixin, FormView):
     template_name = "tracking/new_item_form.html"
+    field_model_map = {
+        "event": Event,
+        "hardware": Hardware,
+        "software": Software,
+        "translation_methods": TranslationMethod,
+        "output_target": Output,
+        "publication": Publication,
+        "networks": Network,
+    }
+    field_label_map = {
+        "translation_methods": "Translation Methodology",
+        "hardware": "Hardware Used",
+        "software": "Software/App used",
+        "networks": "Network",
+        "output_target": "Output Target",
+        "publication": "Publishing Means",
+    }
 
     def get_context_data(self, *args, **kwargs):
         context = super(NewItemView, self).get_context_data(**kwargs)
@@ -707,10 +724,11 @@ class NewItemView(LoginRequiredMixin, FormView):
 
     def get_form(self):
         object = self.get_context_data().get("new_item_info")
+        # Dynamically create a form class based on how many types of fields the user chose "Other" on
         attrs = {}
         for field in object["fields"]:
             attrs[field] = forms.CharField(
-                label=self.get_label(field),
+                label=self.field_label_map.get(field, "Unknown"),
                 max_length=None,
                 widget=forms.TextInput(
                     attrs={
@@ -721,6 +739,7 @@ class NewItemView(LoginRequiredMixin, FormView):
                 required=False,
             )
         NewItemForm = type("NewItemForm", (forms.Form,), attrs)
+        # Returns bound or unbound form. The form is remade at every POST or GET
         if self.request.POST:
             form = NewItemForm(self.request.POST)
         else:
@@ -739,124 +758,33 @@ class NewItemView(LoginRequiredMixin, FormView):
         messages.success(self.request, "Yes! Your submission info has been updated. If there's any problem with your submission, you'll be contacted via email by the admin.")
         return HttpResponseRedirect(urlReverse("tracking:project_list"))
 
-    def get_label(self, field):
-        if field == "translation_methods":
-            label = "Translation Methodology"
-        elif field == "hardware":
-            label = "Hardware Used"
-        elif field == "software":
-            label = "Software/App used"
-        elif field == "networks":
-            label = "Network"
-        elif field == "output_target":
-            label = "Output Target"
-        elif field == "publication":
-            label = "Publishing Means"
-        else:
-            label = "Unknown"
-        return label
-
     def create_new_item(self, info, post):
-        print '\nCREATING NEW ITEM', info["id"]
-        # Start by going through each fields
+        # For each type of fields that contain new item...
         for field in info["fields"]:
-            # Create a list of cleaned strings from the user input
+            # Break the input into list of values of cleaned string
             data = post[field].split(',')
             for index in range(len(data)):
                 data[index] = data[index].rstrip().lstrip().capitalize()
-            # Go through each cleaned string, which is the value to be added
+            # For each value that the user gives...
             for string in data:
-                # Check against empty string
                 if len(string):
-                    # Determine the field type
-                    if field == "translation_methods":
-                        # Check to see if item exists first
+                    model = self.field_model_map.get(field, None)
+                    # Assign item to be added to the answer. Don't create if it already exists.
+                    try:
+                        item = model.objects.get(name=string)
+                    except model.DoesNotExist:
+                        item = model.objects.create(name=string)
+                    # Add item to every events that were created earlier
+                    for id in info["id"]:
+                        related_objs = getattr(Event.objects.get(pk=id), field, None)
+                        related_objs.add(item)
                         try:
-                            new_item = TranslationMethod.objects.get(name=string)
-                        # Only create if item doesn't exist
-                        except TranslationMethod.DoesNotExist:
-                            # Create new item
-                            new_item = TranslationMethod.objects.create(name=string)
-                        # Go through each id in the list of event ids
-                        for id in info["id"]:
-                            # Get the event object
-                            event = Event.objects.get(pk=id)
-                            # Add the new item to the event object to the appropriate field
-                            event.translation_methods.add(new_item)
-                            # Try to remove the "Other" from the list
-                            try:
-                                other = event.translation_methods.get(name="Other")
-                                event.translation_methods.remove(other)
-                            # If no "Other", just pass because it's been deleted
-                            except:
-                                pass
-                    elif field == "hardware":
-                        try:
-                            new_item = Hardware.objects.get(name=string)
-                        except Hardware.DoesNotExist:
-                            new_item = Hardware.objects.create(name=string)
-                        for id in info["id"]:
-                            event = Event.objects.get(pk=id)
-                            event.hardware.add(new_item)
-                            try:
-                                other = event.hardware.get(name="Other")
-                                event.hardware.remove(other)
-                            except:
-                                pass
-                    elif field == "software":
-                        try:
-                            new_item = Software.objects.get(name=string)
-                        except Software.DoesNotExist:
-                            new_item = Software.objects.create(name=string)
-                        for id in info["id"]:
-                            event = Event.objects.get(pk=id)
-                            event.software.add(new_item)
-                            try:
-                                other = event.software.get(name="Other")
-                                event.software.remove(other)
-                            except:
-                                pass
-                    elif field == "networks":
-                        try:
-                            new_item = Network.objects.get(name=string)
-                        except Network.DoesNotExist:
-                            new_item = Network.objects.create(name=string)
-                        for id in info["id"]:
-                            event = Event.objects.get(pk=id)
-                            event.networks.add(new_item)
-                            try:
-                                other = event.networks.get(name="Other")
-                                event.networks.remove(other)
-                            except:
-                                pass
-                    elif field == "output_target":
-                        try:
-                            new_item = Output.objects.get(name=string)
-                        except Output.DoesNotExist:
-                            new_item = Output.objects.create(name=string)
-                        for id in info["id"]:
-                            event = Event.objects.get(pk=id)
-                            event.output_target.add(new_item)
-                            try:
-                                other = event.output_target.get(name="Other")
-                                event.output_target.remove(other)
-                            except:
-                                pass
-                    elif field == "publication":
-                        try:
-                            new_item = Publication.objects.get(name=string)
-                        except Publication.DoesNotExist:
-                            new_item = Publication.objects.create(name=string)
-                        for id in info["id"]:
-                            event = Event.objects.get(pk=id)
-                            event.publication.add(new_item)
-                            try:
-                                other = event.publication.get(name="Other")
-                                event.publication.remove(other)
-                            except:
-                                pass
-                    else:
-                        pass
+                            # Remove "Other" from the list of answer if it's still there
+                            other = related_objs.get(name="Other")
+                            related_objs.remove(other)
+                        except:
+                            # If "Other" is no longer a part of the answer, just skip through
+                            pass
 
 
 # -------------------- #
