@@ -41,6 +41,11 @@
 					<h2 class="panel-title">New Translation Project Charter</h2>
 				</div>
 				<div class="panel-body">
+					<div style="background: rgba(0,0,0,0.075); border-radius: 5px; padding: 1rem; margin-bottom: 2rem; font-weight: lighter;">
+						<p>Note: Searching for a languagefor the first time may take a while.</p>
+						<p>Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+					</div>
+
 					<form action="{% url 'tracking:charter_add' %}" method="POST" class="form">
 						{% csrf_token %}
 						{{ form | bootstrap }}

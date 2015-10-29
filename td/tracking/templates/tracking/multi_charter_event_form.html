@@ -114,13 +114,16 @@
                         {{ wizard.management_form }}
                         
                         {% if wizard.steps.step0 == 0 %}
+                            <div style="background: rgba(0,0,0,0.075); border-radius: 5px; padding: 1rem; margin-bottom: 2rem; font-weight: lighter;">
+                                <p>Note: Searching for a language for the first time may take a while.</p>
+                                <p>Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+                            </div>
                             <div id="charter-list" class="charter-list">
                                 {% for field in wizard.form %}
                                     <div class="entry">
                                         <div class="form-group {% if field.errors %}has-error{% endif %}">
                                             <label class="control-label required" for="id_0-language_{{ forloop.counter0 }}">{{ field.label}}</label>
                                             <div class="">
-                                                <!-- <input class="language-selector form-control" data-source-url="/tracking/ac/charters/lid" id="id_0-language_{{ forloop.counter0 }}" maxlength="200" name="0-language_{{ forloop.counter0 }}" type="text" value="{{ field.value | default:''}}"> -->
                                                 {{field}}
                                             </div>
                                         </div>
