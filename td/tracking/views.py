@@ -3,12 +3,13 @@ import re
 import urlparse
 
 from django import forms
+from django.core.mail import send_mail
 from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, FormView
 
 from account.mixins import LoginRequiredMixin
 
@@ -25,6 +26,12 @@ from .models import (
     Facilitator,
     Material,
     Translator,
+    TranslationMethod,
+    Hardware,
+    Software,
+    Network,
+    Output,
+    Publication,
 )
 
 from td.utils import DataTableSourceView
@@ -214,7 +221,18 @@ class EventAddView(LoginRequiredMixin, CreateView):
 
         self.set_event_number()
 
-        return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
+        new_items = check_for_new_items(event)
+        if len(new_items):
+            print '\nNEW ITEMS DETECTED IN', new_items
+            self.request.session["new_item_info"] = {
+                "object": "event",
+                "id": [event.id],
+                "fields": new_items,
+            }
+            messages.warning(self.request, "Almost done! Your event has been saved. But...")
+            return redirect("tracking:new_item")
+        else:
+            return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
 
     # ----------------------------------- #
     #    EVENTADDVIEW CUSTOM FUNCTIONS    #
@@ -563,6 +581,8 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
                 # No try..pass because the assumption is user can only select existing project charter
                 charters.append(Charter.objects.get(pk=data[key]))
 
+        new_items = []
+        ids = []
         for charter in charters:
             event = Event.objects.create(
                 charter=charter,
@@ -601,8 +621,21 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
 
             charter_info.append({"name": charter.language.name, "id": charter.language.id})
 
-        self.request.session["mc-event-succes-charters"] = charter_info
-        return redirect("tracking:multi_charter_success")
+            new_items = check_for_new_items(event)
+            if len(new_items):
+                ids.append(event.id)
+        
+        if len(new_items):
+            self.request.session["new_item_info"] = {
+                "object": "event",
+                "id": ids,
+                "fields": new_items,
+            }
+            messages.warning(self.request, "Almost done! Your event has been saved. But...")
+            return redirect("tracking:new_item")
+        else:
+            self.request.session["mc-event-succes-charters"] = charter_info
+            return redirect("tracking:multi_charter_success")
 
     def get_context_data(self, form, **kwargs):
         context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
@@ -664,6 +697,168 @@ class NewCharterModalView(CharterAdd):
         return render(self.request, "tracking/new_charter_modal.html", {"success": True})
 
 
+class NewItemView(LoginRequiredMixin, FormView):
+    template_name = "tracking/new_item_form.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(NewItemView, self).get_context_data(**kwargs)
+        context["new_item_info"] = self.request.session.get("new_item_info", [])
+        return context
+
+    def get_form(self):
+        object = self.get_context_data().get("new_item_info")
+        attrs = {}
+        for field in object["fields"]:
+            attrs[field] = forms.CharField(
+                label=self.get_label(field),
+                max_length=None,
+                widget=forms.TextInput(
+                    attrs={
+                        "class": "new-items form-control",
+                        "data-event": object["id"],
+                    }
+                ),
+                required=False,
+            )
+        NewItemForm = type("NewItemForm", (forms.Form,), attrs)
+        if self.request.POST:
+            form = NewItemForm(self.request.POST)
+        else:
+            form = NewItemForm()
+        return form
+
+    def form_valid(self, form):
+        self.create_new_item(self.request.session.get("new_item_info"), self.request.POST)
+        send_mail(
+            'tD New Item',
+            'Some new items needs to be added to the event.' + str(self.request.POST),
+            'vleong@gmail.com',
+            ['vleong2332@gmail.com'],
+            fail_silently=False
+        )
+        messages.success(self.request, "Yes! Your submission info has been updated. If there's any problem with your submission, you'll be contacted via email by the admin.")
+        return HttpResponseRedirect(urlReverse("tracking:project_list"))
+
+    def get_label(self, field):
+        if field == "translation_methods":
+            label = "Translation Methodology"
+        elif field == "hardware":
+            label = "Hardware Used"
+        elif field == "software":
+            label = "Software/App used"
+        elif field == "networks":
+            label = "Network"
+        elif field == "output_target":
+            label = "Output Target"
+        elif field == "publication":
+            label = "Publishing Means"
+        else:
+            label = "Unknown"
+        return label
+
+    def create_new_item(self, info, post):
+        print '\nCREATING NEW ITEM', info["id"]
+        # Start by going through each fields
+        for field in info["fields"]:
+            # Create a list of cleaned strings from the user input
+            data = post[field].split(',')
+            for index in range(len(data)):
+                data[index] = data[index].rstrip().lstrip().capitalize()
+            # Go through each cleaned string, which is the value to be added
+            for string in data:
+                # Check against empty string
+                if len(string):
+                    # Determine the field type
+                    if field == "translation_methods":
+                        # Check to see if item exists first
+                        try:
+                            new_item = TranslationMethod.objects.get(name=string)
+                        # Only create if item doesn't exist
+                        except TranslationMethod.DoesNotExist:
+                            # Create new item
+                            new_item = TranslationMethod.objects.create(name=string)
+                        # Go through each id in the list of event ids
+                        for id in info["id"]:
+                            # Get the event object
+                            event = Event.objects.get(pk=id)
+                            # Add the new item to the event object to the appropriate field
+                            event.translation_methods.add(new_item)
+                            # Try to remove the "Other" from the list
+                            try:
+                                other = event.translation_methods.get(name="Other")
+                                event.translation_methods.remove(other)
+                            # If no "Other", just pass because it's been deleted
+                            except:
+                                pass
+                    elif field == "hardware":
+                        try:
+                            new_item = Hardware.objects.get(name=string)
+                        except Hardware.DoesNotExist:
+                            new_item = Hardware.objects.create(name=string)
+                        for id in info["id"]:
+                            event = Event.objects.get(pk=id)
+                            event.hardware.add(new_item)
+                            try:
+                                other = event.hardware.get(name="Other")
+                                event.hardware.remove(other)
+                            except:
+                                pass
+                    elif field == "software":
+                        try:
+                            new_item = Software.objects.get(name=string)
+                        except Software.DoesNotExist:
+                            new_item = Software.objects.create(name=string)
+                        for id in info["id"]:
+                            event = Event.objects.get(pk=id)
+                            event.software.add(new_item)
+                            try:
+                                other = event.software.get(name="Other")
+                                event.software.remove(other)
+                            except:
+                                pass
+                    elif field == "networks":
+                        try:
+                            new_item = Network.objects.get(name=string)
+                        except Network.DoesNotExist:
+                            new_item = Network.objects.create(name=string)
+                        for id in info["id"]:
+                            event = Event.objects.get(pk=id)
+                            event.networks.add(new_item)
+                            try:
+                                other = event.networks.get(name="Other")
+                                event.networks.remove(other)
+                            except:
+                                pass
+                    elif field == "output_target":
+                        try:
+                            new_item = Output.objects.get(name=string)
+                        except Output.DoesNotExist:
+                            new_item = Output.objects.create(name=string)
+                        for id in info["id"]:
+                            event = Event.objects.get(pk=id)
+                            event.output_target.add(new_item)
+                            try:
+                                other = event.output_target.get(name="Other")
+                                event.output_target.remove(other)
+                            except:
+                                pass
+                    elif field == "publication":
+                        try:
+                            new_item = Publication.objects.get(name=string)
+                        except Publication.DoesNotExist:
+                            new_item = Publication.objects.create(name=string)
+                        for id in info["id"]:
+                            event = Event.objects.get(pk=id)
+                            event.publication.add(new_item)
+                            try:
+                                other = event.publication.get(name="Other")
+                                event.publication.remove(other)
+                            except:
+                                pass
+                    else:
+                        pass
+
+
 # -------------------- #
 #    VIEW FUNCTIONS    #
 # -------------------- #
@@ -683,6 +878,7 @@ def charters_autocomplete(request):
         for charter in charters
     ]
     return JsonResponse({"results": data, "count": len(data), "term": term})
+
 
 def charters_autocomplete_lid(request):
     term = request.GET.get("q").lower().encode("utf-8")
@@ -782,3 +978,18 @@ def get_material_ids(array):
         ids.append(object.id)
 
     return ids
+
+# 
+def check_for_new_items(event):
+    fields = []
+    if len(event.translation_methods.filter(name="Other")):
+        fields.append("translation_methods")
+    if len(event.software.filter(name="Other")):
+        fields.append("software")
+    if len(event.hardware.filter(name="Other")):
+        fields.append("hardware")
+    if len(event.output_target.filter(name="Other")):
+        fields.append("output_target")
+    if len(event.publication.filter(name="Other")):
+        fields.append("publication")
+    return fields
