@@ -9091,7 +9091,9 @@
 		// Add class:required to the following label
 		var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
 		required_fields.forEach(function (field) {
-			document.querySelector('label[for="id_' + field + '"]').classList.add('required');
+			if (document.querySelector('label[for="id_' + field + '"]')) {
+				document.querySelector('label[for="id_' + field + '"]').classList.add('required');
+			}
 		});
 	});
 

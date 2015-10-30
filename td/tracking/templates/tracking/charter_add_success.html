@@ -18,21 +18,27 @@
                     {% endblocktrans %}
                 </p>
                 {% if obj_type == 'charter' %}
+                    {% url "language_detail" language_id as url_project_detail %}
                     {% url "tracking:event_add_specific" link_id as url_add_event %}
                     {% url "tracking:charter_add" as url_add_more %}
                     {% url "tracking:project_list" as url_tracking_home %}
                     {% blocktrans %}
+                        <a href="{{ url_project_detail }}" class="btn btn-primary large">Project Detail</a>
                         <a href="{{ url_add_event }}" class="btn btn-primary large">Add Event</a>
                         <a href="{{ url_add_more }}" class="btn btn-primary large">Add Another Project</a>
-                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">All Projects</a>
+                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">Tracking Dashboard</a>
                     {% endblocktrans %}
                 {% endif %}
                 {% if obj_type == 'event' %}
+                    {% url "tracking:event_detail" link_id as url_event_detail %}
+                    {% url "language_detail" language_id as url_event_list %}
                     {% url "tracking:event_add" as url_add_event %}
                     {% url "tracking:project_list" as url_tracking_home %}
                     {% blocktrans %}
+                        <a href="{{ url_event_detail }}" class="btn btn-primary large">Event Detail</a>
+                        <a href="{{ url_event_list }}" class="btn btn-primary large">Event List</a>
                         <a href="{{ url_add_event }}" class="btn btn-primary large">Add Another Event</a>
-                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">All Projects</a>
+                        <a href="{{ url_tracking_home }}" class="btn btn-primary large">Tracking Dashboard</a>
                     {% endblocktrans %}
                 {% endif %}
             {% else %}

@@ -19,45 +19,40 @@
     <div class="col-md-6">
         <table class="table">
             <tbody>
-                <!-- NOTE: Isn't language name redundant here? -->
-                <tr><th>Language</th><td>{{ language.name }}</td></tr>
                 <tr><th>Code</th><td>{{ language.code }}</td></tr>
                 <tr><th>ISO 639-3</th><td>{{ language.iso_639_3 }}</td></tr>
                 <tr><th>Direction</th><td><span class="label label-default">{{ language.get_direction_display }}</span></td></tr>
                 <tr><th>Gateway Language</th><td>{{ language.gateway_language }}</td></tr>
-                <!-- NOTE: Isn't gateway flag redundant here, since it is implied by the gateway language info above? -->
-                <tr><th>Gateway Flag</th><td>{% if language.gateway_flag %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %} </td></tr>
                 <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
             </tbody>
         </table>
     </div>
     <div class="col-md-6">
-        <!-- NOTE: Include _project_detail.html instead that can also display "Networks Translating" info -->
-        <!-- {% include "resources/_short_list.html" with title="Networks Translating" data=language.networks_translating.all %} -->
         {% include "resources/_project_detail.html" with data=charter %}
     </div>
 </div>
 
-{% if user.is_authenticated %}
-{% if events.count %}
-<div class="panel panel-default">
-    <div class="panel-heading"><h1 class="panel-title">Translation Events/Workshops</h1></div>
-    <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
-        <thead>
-            <tr>
-                <th>Number</th>
-                <th>Location</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Lead Department</th>
-                <th>Contact Person</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-{% endif %}
+{% if user.is_authenticated and charter%}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
+            <h1 class="panel-title">Translation Events/Workshops</h1>
+        </div>
+        <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Lead Department</th>
+                    <th>Contact Person</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 {% endif %}
 
 <div class="panel panel-default">

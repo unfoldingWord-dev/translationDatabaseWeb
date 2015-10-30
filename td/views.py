@@ -470,6 +470,8 @@ class LanguageDetailView(DetailView):
             events = Event.objects.filter(charter=charter.id)
             context.update({"charter": charter, "events": events})
         except ObjectDoesNotExist:
+            # It shold be fine to let this pass because the template will not print anything
+            #    if no charter or event is passed.
             pass
         # ---------------------------------------------------------
         return context

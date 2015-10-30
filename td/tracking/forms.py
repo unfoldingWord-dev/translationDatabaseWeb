@@ -10,6 +10,7 @@ from td.models import Country, Language
 from .models import (
     Charter,
     Department,
+    Network,
     Event,
     Hardware,
     Output,
@@ -18,6 +19,12 @@ from .models import (
     Software,
 )
 
+CHECKING_LEVEL = (
+    ('', '---'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+)
 
 # ----------------- #
 #    CHARTERFORM    #
@@ -183,6 +190,12 @@ class EventForm(forms.ModelForm):
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
             "created_by": forms.HiddenInput(),
+            "departments": forms.CheckboxSelectMultiple(),
+            "publication": forms.CheckboxSelectMultiple(),
+            "output_target": forms.CheckboxSelectMultiple(),
+            "hardware": forms.CheckboxSelectMultiple(),
+            "software": forms.CheckboxSelectMultiple(),
+            "translation_methods": forms.CheckboxSelectMultiple(),
         }
 
     # -------------------------------- #
@@ -196,6 +209,77 @@ class EventForm(forms.ModelForm):
             if key.startswith(name) and key != name + "-count":
                 input = data[key]
                 data[key] = input.strip()
+
+
+# --------------------------- #
+#    MULTICHARTEREVENTFORM    #
+# --------------------------- #
+
+
+class MultiCharterStarter(forms.Form):
+    template_name = 'tracking/multi_charter_event_form.html'
+
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterStarter, self).__init__(*args, **kwargs)
+        self.fields["language_0"] = forms.CharField(
+            label="Charter",
+            max_length=200,
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector form-control",
+                    "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                }
+            ),
+            required=True,
+        )
+
+
+class MultiCharterEventForm1(forms.Form):
+    template_name = 'tracking/multi_charter_event_form.html'
+
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterEventForm1, self).__init__(*args, **kwargs)
+        # print '\nINIT MULTICHARTEREVENTFORM1'
+        for name, field in self.fields.iteritems():
+            if field.widget.attrs.get("value"):
+                # print 'Value of', field, 'is', field.widget.attrs.get("value")
+                language = Language.objects.get(charter__pk=field.widget.attrs["value"])
+                field.widget.attrs["data-lang-pk"] = language.id
+                field.widget.attrs["data-lang-ln"] = language.ln
+                field.widget.attrs["data-lang-lc"] = language.lc
+                field.widget.attrs["data-lang-lr"] = language.lr
+                field.widget.attrs["data-lang-gl"] = language.gateway_flag
+                # print 'Attrs of', field, 'are now', field.widget.attrs
+
+
+class MultiCharterEventForm2(EventForm):
+
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterEventForm2, self).__init__(*args, **kwargs)
+        self.fields["charter"] = forms.CharField(required=False)
+
+    def clean_charter(self):
+        pass
+
+    def _clean_fields(self):
+        self.data._mutable = True
+        self.strip_custom_fields(self, "translator")
+        self.strip_custom_fields(self, "facilitator")
+        self.strip_custom_fields(self, "material")
+        self.data._mutable = False
+        return super(EventForm, self)._clean_fields()
+
+    class Meta:
+        model = Event
+        exclude = ["created_at", "created_by", "charter", "translators", "facilitators", "materials"]
+        widgets = {
+            "departments": forms.CheckboxSelectMultiple(),
+            "publication": forms.CheckboxSelectMultiple(),
+            "output_target": forms.CheckboxSelectMultiple(),
+            "hardware": forms.CheckboxSelectMultiple(),
+            "software": forms.CheckboxSelectMultiple(),
+            "translation_methods": forms.CheckboxSelectMultiple(),
+        }
 
 
 # ---------------------- #
@@ -216,11 +300,11 @@ def fill_search_charter(form, field_name, object):
 
 # Function: Assign attributes for language selector
 def fill_search_language(form, field_name, object):
-    form.fields["language"].widget.attrs["data-lang-pk"] = object.id
-    form.fields["language"].widget.attrs["data-lang-ln"] = object.ln
-    form.fields["language"].widget.attrs["data-lang-lc"] = object.lc
-    form.fields["language"].widget.attrs["data-lang-lr"] = object.lr
-    form.fields["language"].widget.attrs["data-lang-gl"] = object.gateway_flag
+    form.fields[field_name].widget.attrs["data-lang-pk"] = object.id
+    form.fields[field_name].widget.attrs["data-lang-ln"] = object.ln
+    form.fields[field_name].widget.attrs["data-lang-lc"] = object.lc
+    form.fields[field_name].widget.attrs["data-lang-lr"] = object.lr
+    form.fields[field_name].widget.attrs["data-lang-gl"] = object.gateway_flag
 
 
 # Function: Raise error if start date is later than end date. Returns the end date.

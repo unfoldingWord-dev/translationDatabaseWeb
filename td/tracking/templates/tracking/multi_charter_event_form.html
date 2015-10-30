@@ -1,0 +1,322 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}Translation Project Event | New{% endblock head_title %}
+
+{% block extra_style %}
+    <style>
+        form .form-group::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        .entry .form-group {
+            margin-bottom: 0;
+        }
+        .entry {
+            margin-bottom: 15px;
+        }
+        .control-label-sub {
+            font-size: 90%;
+            font-weight: 300;
+            color: #444;
+        }
+        .full-width {
+            width: 100%;
+        }
+        .half-width {
+            width: 50%;
+        }
+        .quarter-width {
+            width: 25%;
+        }
+
+        .date-input {
+            width: calc(33.33% - 3px);
+            display: inline-block;
+            float: left;
+            margin-right: 3px;
+        }
+        .date-input:last-child {
+            width: 33.33%;
+            margin-right: 0;
+        }
+
+        .inline div, .inline label {
+            display: inline;
+            float: left;
+        }
+        .inline-input {
+            margin-top: 0.1rem;
+        }
+        .inline input[type="checkbox"].form-control {
+            width: 20px;
+            height: 20px;
+            margin: 7px auto 0 auto;
+        }
+        .facilitator-text {
+            width: calc(100% - 140px);
+        }
+        .facilitator-checkboxes {
+            width: 140px;
+        }
+        .material-text {
+            width: calc(100% - 70px);
+        }
+        .material-checkboxes {
+            width: 70px;
+        }
+        .btn-add {
+            margin-left: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0 1rem;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul > li > label {
+            font-weight: lighter;
+        }
+    </style>
+{% endblock extra_style %}  
+
+{% block body %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="charterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!-- Modal end -->
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Multiple Charter Event Form | Step <span>{{ wizard.steps.step1 }}</span> of <span>{{ wizard.steps.count }}</span></h2>
+                </div>
+                <div class="panel-body">
+                    
+                    <p style="clear: both; padding: 1rem 1rem; margin-bottom: 2.5rem; font-weight: lighter; background-color: rgba(0,0,0,0.075); border-radius: 5px;">
+                        Note: <strong>*</strong> indicates required fields
+                    </p>
+
+                    <form action="" method="POST" class="form">
+                        {% csrf_token %}
+                        {{ wizard.management_form }}
+                        
+                        {% if wizard.steps.step0 == 0 %}
+                            <div style="background: rgba(0,0,0,0.075); border-radius: 5px; padding: 1rem; margin-bottom: 2rem; font-weight: lighter;">
+                                <p>Note: Searching for a language for the first time may take a while.</p>
+                                <p>Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+                            </div>
+                            <div id="charter-list" class="charter-list">
+                                {% for field in wizard.form %}
+                                    <div class="entry">
+                                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                            <label class="control-label required" for="id_0-language_{{ forloop.counter0 }}">{{ field.label}}</label>
+                                            <div class="">
+                                                {{field}}
+                                            </div>
+                                        </div>
+                                        <a href="" class="remove-charter-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <a href="" class="add-charter-link" style="display: block; margin: 1rem 0; font-weight: lighter;">Add</a>
+
+                            <p style="clear: both; padding: 1rem 0; font-weight: lighter;">
+                                Can't find your charter? It probably has not been created. Why not 
+                                <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
+                                right now and try again?
+                            </p>
+                        {% elif wizard.steps.step0 == 1 %}
+                            {{ wizard.form.location | bootstrap }}
+                            {{ wizard.form.start_date | bootstrap }}
+                            {{ wizard.form.end_date | bootstrap }}
+                            {{ wizard.form.lead_dept | bootstrap }}
+                            {{ wizard.form.contact_person | bootstrap }}
+                            {{ wizard.form.current_check_level | bootstrap }}
+                            {{ wizard.form.target_check_level | bootstrap }}
+
+                            <!-- form.translators -->
+                            <div class="form-group clearfix">
+                                <div class="inline inline-label">
+                                    <div class="translator-text full-width">
+                                        <label class="control-label">Translator</label>
+                                        <a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+                                <div id="translator-list">
+                                    {% for translator in translators %}
+                                        <div class="inline inline-input clearfix">
+                                            <div class="translator-text clearfix full-width">
+                                                <input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- form.facilitators -->
+                            <div class="form-group clearfix">
+                                <div class="inline inline-label">
+                                    <div class="facilitator-text">
+                                        <label class="control-label">Facilitator</label>
+                                        <a id="add-facilitator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <div class="facilitator-checkboxes">
+                                        <label class="control-label control-label-sub half-width text-center">Lead</label>
+                                        <label class="control-label control-label-sub half-width text-center">Speaks GL</label>
+                                    </div>
+                                </div>
+                                <div id="facilitator-list">
+                                    {% for facilitator in facilitators %}
+                                        <div class="inline inline-input clearfix">
+                                            <div class="facilitator-text clearfix">
+                                                <input name="facilitator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ facilitator.name }}"/>
+                                            </div>
+                                            <div class="facilitator-checkboxes">
+                                                <div class="half-width"><input name="is_lead{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if facilitator.is_lead %}checked{% endif %} /></div>
+                                                <div class="half-width"><input name="speaks_gl{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if facilitator.speaks_gl %}checked{% endif %} /></div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- form.materials -->
+                            <div class="form-group clearfix">
+                                <div class="inline inline-label">
+                                    <div class="material-text">
+                                        <label class="control-label">Material</label>
+                                        <a id="add-material" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <div class="material-checkboxes">
+                                        <label class="control-label control-label-sub full-width text-center">Licensed</label>
+                                    </div>
+                                </div>
+                                <div id="material-list">
+                                    {% for material in materials %}
+                                        <div class="inline inline-input clearfix">
+                                            <div class="material-text clearfix">
+                                                <input name="material{{ forloop.counter0 }}" type="text" class="form-control" value="{{ material.name }}"/>
+                                            </div>
+                                            <div class="material-checkboxes">
+                                                <div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if material.licensed %}checked{% endif %} /></div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {{ wizard.form.departments | bootstrap }}
+                            {{ wizard.form.networks | bootstrap }}
+                            {{ wizard.form.translation_methods | bootstrap }}
+                            {{ wizard.form.software | bootstrap }}
+                            {{ wizard.form.hardware | bootstrap }}
+                            {{ wizard.form.output_target | bootstrap }}
+                            {{ wizard.form.publication | bootstrap }}
+                            <input type="hidden" name="translator-count" value="0" />
+                            <input type="hidden" name="facilitator-count" value="0" />
+                            <input type="hidden" name="material-count" value="0" />
+                        {% endif %}
+                        
+                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                        
+                        <button type="submit" class="btn btn-primary pull-right">
+                            {% if form.errors %}
+                                Try again
+                            {% else %}
+                                {% if wizard.steps.step0 == 0 %}
+                                    Create Event
+                                {% elif wizard.steps.step0 == 1 %}
+                                    Submit Event
+                                {% endif %}
+                            {% endif %}
+                        </button>
+
+                        {% if wizard.steps.prev %}
+                            <button name="wizard_goto_step" type="submit" class="btn btn-default" value="{{wizard.steps.prev}}">Back</button>
+                        {% endif %}
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body%}
+
+{% block custom_bottom_script %}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initial scripts
+            // 
+            var l = document.querySelectorAll('input.language-selector');
+            if (l.length) {
+                var i = l[l.length-1].id;
+                var number = parseInt(i[i.length-1]); 
+            }
+            // 
+            $('.language-selector').languageSelector();
+
+            // Event listeners
+            // 
+            $('.add-charter-link').on('click', function(e) {
+                e.preventDefault();
+                addCharter();
+            });
+            $('.charter-list').on('click', '.remove-charter-link', function(e) {
+                e.preventDefault();
+                removeCharter(this);
+            });
+
+            // Function defs
+            // 
+            function addCharter() {
+                // Incrememnt number to get unique id
+                number += 1;
+                // console.log('number', number);
+                // Define element
+                var el = '<div class="entry">' +
+                         '    <div class="form-group">' +
+                         '        <label class="control-label required " for="id_0-language_' + number + '">Charter</label>' +
+                         '        <div class=" ">' +
+                         '            <input class="language-selector form-control" data-source-url="/tracking/ac/charters" id="id_0-language_' + number + '" maxlength="200" name="0-language_' + number + '" type="text">' +
+                         '        </div>' + 
+                         '    </div>' +
+                         '    <a href="" class="remove-charter-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>' +
+                         '</div>';
+                // Append element to the target container
+                $('#charter-list').append(el);
+                // Turn the element into language selector
+                $('#id_0-language_' + number).languageSelector();
+            }
+
+            function removeCharter(el) {
+                // Remove the container element of the selected element
+                $(el.parentElement).detach();
+            }
+        });
+
+        $(document).ready(function() {
+            var required_fields = ['start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
+            required_fields.forEach(function(field) {
+                if (document.querySelector('label[for="id_1-' + field + '"]')) {
+                    document.querySelector('label[for="id_1-' + field + '"]').classList.add('required');
+                }
+            });
+        });
+    </script>
+{% endblock custom_bottom_script %}
