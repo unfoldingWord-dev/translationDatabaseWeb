@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, FormView
 
@@ -626,7 +626,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             new_items = check_for_new_items(event)
             if len(new_items):
                 ids.append(event.id)
-        
+
         if len(new_items):
             self.request.session["new_item_info"] = {
                 "object": "event",
@@ -648,7 +648,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         return context
 
     def get_form(self, step=None, data=None, files=None):
-        if step == None:
+        if step is None:
             step = self.steps.current
 
         if step == '0' and self.request.POST:
@@ -837,6 +837,7 @@ def get_translator_data(self):
                     translators.append({"name": name})
     return translators
 
+
 # Function: Returns an array of Facilitator objects' properties
 def get_facilitator_data(self):
     facilitators = []
@@ -852,6 +853,7 @@ def get_facilitator_data(self):
                     facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
     return facilitators
 
+
 # Function: Returns an array of Material objects' properties
 def get_material_data(self):
     materials = []
@@ -866,6 +868,7 @@ def get_material_data(self):
                     materials.append({"name": name, "licensed": licensed})
     return materials
 
+
 # Function: Takes an array of translator properties and returns an array of their ids
 def get_translator_ids(array):
     ids = []
@@ -877,6 +880,7 @@ def get_translator_ids(array):
         ids.append(person.id)
 
     return ids
+
 
 # Function: Takes an array of facilitator properties and returns an array of their ids
 def get_facilitator_ids(array):
@@ -894,6 +898,7 @@ def get_facilitator_ids(array):
 
     return ids
 
+
 # Function: Takes an array of material properties and returns an array of their ids
 def get_material_ids(array):
     ids = []
@@ -909,7 +914,8 @@ def get_material_ids(array):
 
     return ids
 
-# 
+
+#
 def check_for_new_items(event):
     fields = []
     if len(event.translation_methods.filter(name="Other")):

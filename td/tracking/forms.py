@@ -10,7 +10,6 @@ from td.models import Country, Language
 from .models import (
     Charter,
     Department,
-    Network,
     Event,
     Hardware,
     Output,
