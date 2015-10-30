@@ -77,6 +77,13 @@
 		ul > li > label {
 			font-weight: lighter;
 		}
+		.form-notice-container {
+			padding: 1rem;
+			margin-bottom: 2rem;
+			background-color: rgba(0,0,0,0.075);
+			border-radius: 5px;
+			font-weight: lighter;
+		}
 	</style>
 {% endblock extra_style %}	
 
@@ -98,6 +105,8 @@
 						{{ form.location | bootstrap }}
 						{{ form.lead_dept | bootstrap }}
 						{{ form.contact_person | bootstrap }}
+						{{ form.current_check_level | bootstrap }}
+						{{ form.target_check_level | bootstrap }}
 
 						<!-- form.translators -->
 						<div class="form-group clearfix">
@@ -153,7 +162,7 @@
 									<a id="add-material" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
 								</div>
 								<div class="material-checkboxes">
-									<label class="control-label control-label-sub full-width text-center">Licensed</label>
+									<label class="control-label control-label-sub full-width text-center">Copyrighted</label>
 								</div>
 							</div>
 							<div id="material-list">
@@ -170,8 +179,10 @@
 							</div>
 						</div>
 
-						{{ form.current_check_level | bootstrap }}
-						{{ form.target_check_level | bootstrap }}
+                        <div class="form-notice-container">
+                            <p class="form-notice">Note: From this point on, you can select multiple items.</p>
+                        </div>
+
 						{{ form.departments | bootstrap }}
 						{{ form.networks | bootstrap }}
 						{{ form.translation_methods | bootstrap }}
