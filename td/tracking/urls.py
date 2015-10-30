@@ -26,7 +26,6 @@ urlpatterns = [
     # Charter
     url(r"^charter/new/$", CharterAdd.as_view(), name="charter_add"),
     url(r"^charter/update/(?P<pk>\d+)/$", CharterUpdate.as_view(), name="charter_update"),
-    # url(r"^charter/detail/(?P<pk>\d+)/$", charter, name="charter"),
 
     # Event
     url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
