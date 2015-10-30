@@ -3,15 +3,20 @@ import re
 import urlparse
 
 from django import forms
-from django.core.mail import send_mail
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse as urlReverse
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, FormView
-
-from account.mixins import LoginRequiredMixin
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    TemplateView,
+    DetailView,
+    FormView
+)
 
 from .forms import (
     CharterForm,
@@ -35,14 +40,12 @@ from .models import (
 )
 
 from td.utils import DataTableSourceView
-
-from django.core.urlresolvers import reverse as urlReverse
-
+from account.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
 
 
 # ------------------------------- #
-#            HOME VIEWS           #
+#            MISC VIEWS           #
 # ------------------------------- #
 
 
@@ -145,14 +148,14 @@ class CharterAdd(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
 
-    # Overwritten to set initial values
+    # Overridden to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
             "created_by": self.request.user.username
         }
 
-    # Overwritten to redirect upon valid submission
+    # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
@@ -163,10 +166,18 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
     form_class = CharterForm
     template_name_suffix = "_update_form"
 
-    # Overwritten to redirect upon valid submission
+    # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
+
+
+class NewCharterModalView(CharterAdd):
+    template_name = 'tracking/new_charter_modal.html'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return render(self.request, "tracking/new_charter_modal.html", {"success": True})
 
 
 # -------------------------------- #
@@ -178,52 +189,55 @@ class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
 
-    # Overwritten to include initial values
+    # Overridden to include initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
             "created_by": self.request.user.username,
         }
 
-    # Overwritten to pass URL argument to forms.py
+    # Overridden to pass URL argument to forms.py init()
     def get_form_kwargs(self, **kwargs):
         keywords = super(EventAddView, self).get_form_kwargs(**kwargs)
         if "pk" in self.kwargs:
             keywords["pk"] = self.kwargs["pk"]
         return keywords
 
-    # Overwritten to include custom data
+    # Overridden to include custom dynamic data
     def get_context_data(self, *args, **kwargs):
         context = super(EventAddView, self).get_context_data(**kwargs)
-        context["translators"] = self.get_translator_data(self)
-        context["facilitators"] = self.get_facilitator_data(self)
-        context["materials"] = self.get_material_data(self)
+        context["translators"] = get_translator_data(self)
+        context["facilitators"] = get_facilitator_data(self)
+        context["materials"] = get_material_data(self)
         return context
 
-    # Overwritten to execute custom save and redirect upon valid submission
+    # Overridden to execute custom save and redirect upon valid submission
     def form_valid(self, form):
         event = self.object = form.save()
 
         # Add translators info
-        translators = self.get_translator_data(self)
-        translator_ids = self.get_translator_ids(translators)
+        translators = get_translator_data(self)
+        translator_ids = get_translator_ids(translators)
         event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
 
         # Add facilitators info
-        facilitators = self.get_facilitator_data(self)
-        facilitator_ids = self.get_facilitator_ids(facilitators)
+        facilitators = get_facilitator_data(self)
+        facilitator_ids = get_facilitator_ids(facilitators)
         event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
 
         # Add materials info
-        materials = self.get_material_data(self)
-        material_ids = self.get_material_ids(materials)
+        materials = get_material_data(self)
+        material_ids = get_material_ids(materials)
         event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
 
-        self.set_event_number()
+        # Determine and set event number
+        event.number = get_next_event_number(self.object.charter)
+        event.save()
 
+        # Check whether the user selected "Other" for one or more fields.
+        # If he did, redirect him to NewItemForm with appropriate context info
         new_items = check_for_new_items(event)
         if len(new_items):
-            print '\nNEW ITEMS DETECTED IN', new_items
             self.request.session["new_item_info"] = {
                 "object": "event",
                 "id": [event.id],
@@ -234,257 +248,195 @@ class EventAddView(LoginRequiredMixin, CreateView):
         else:
             return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
 
-    # ----------------------------------- #
-    #    EVENTADDVIEW CUSTOM FUNCTIONS    #
-    # ----------------------------------- #
-
-    # Function: Returns an array of Translator objects' properties
-    def get_translator_data(self, form):
-        translators = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("translator") and key != "translator-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        translators.append({"name": name})
-        return translators
-
-    # Function: Returns an array of Facilitator objects' properties
-    def get_facilitator_data(self, form):
-        facilitators = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("facilitator") and key != "facilitator-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        number = key[11:]
-                        is_lead = True if "is_lead" + number in post else False
-                        speaks_gl = True if "speaks_gl" + number in post else False
-                        facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
-        return facilitators
-
-    # Function: Returns an array of Material objects' properties
-    def get_material_data(self, form):
-        materials = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("material") and key != "material-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        number = key[8:]
-                        licensed = True if "licensed" + number in post else False
-                        materials.append({"name": name, "licensed": licensed})
-        return materials
-
-    # Function: Takes an array of translator properties and returns an array of their ids
-    def get_translator_ids(self, array):
-        ids = []
-        for translator in array:
-            try:
-                person = Translator.objects.get(name=translator["name"])
-            except Translator.DoesNotExist:
-                person = Translator.objects.create(name=translator["name"])
-            ids.append(person.id)
-
-        return ids
-
-    # Function: Takes an array of facilitator properties and returns an array of their ids
-    def get_facilitator_ids(self, array):
-        ids = []
-        for facilitator in array:
-            try:
-                person = Facilitator.objects.get(name=facilitator["name"])
-            except Facilitator.DoesNotExist:
-                person = Facilitator.objects.create(
-                    name=facilitator["name"],
-                    is_lead=facilitator["is_lead"],
-                    speaks_gl=facilitator["speaks_gl"],
-                )
-            ids.append(person.id)
-
-        return ids
-
-    # Function: Takes an array of material properties and returns an array of their ids
-    def get_material_ids(self, array):
-        ids = []
-        for material in array:
-            try:
-                object = Material.objects.get(name=material["name"])
-            except Material.DoesNotExist:
-                object = Material.objects.create(
-                    name=material["name"],
-                    licensed=material["licensed"],
-                )
-            ids.append(object.id)
-
-        return ids
-
-    # Function: Sets property:number in event
-    def set_event_number(self):
-        events = Event.objects.filter(charter=self.object.charter)
-        event_numbers = []
-        for event in events:
-            event_numbers.append(event.number)
-        latest = 0
-        for number in event_numbers:
-            if number > latest:
-                latest = number
-        Event.objects.filter(pk=self.object.id).update(number=(latest + 1))
-
 
 class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
     form_class = EventForm
     template_name_suffix = "_update_form"
 
-    # Overwritten to include custom data
+    # Overridden to include custom dynamic data
     def get_context_data(self, *args, **kwargs):
         context = super(EventUpdateView, self).get_context_data(**kwargs)
-        context["translators"] = self.get_translator_data(self)
-        context["facilitators"] = self.get_facilitator_data(self)
-        context["materials"] = self.get_material_data(self)
+        context["translators"] = get_translator_data(self)
+        context["facilitators"] = get_facilitator_data(self)
+        context["materials"] = get_material_data(self)
         return context
 
-    # Overwritten to execute custom save and redirect upon valid submission
+    # Overridden to execute custom save and redirect upon valid submission
     def form_valid(self, form):
         event = self.object = form.save()
 
         # Update translators info
-        translators = self.get_translator_data(self)
-        translator_ids = self.get_translator_ids(translators)
+        translators = get_translator_data(self)
+        translator_ids = get_translator_ids(translators)
         event.translators.clear()
         event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
 
         # Add facilitators info
-        facilitators = self.get_facilitator_data(self)
-        facilitator_ids = self.get_facilitator_ids(facilitators)
+        facilitators = get_facilitator_data(self)
+        facilitator_ids = get_facilitator_ids(facilitators)
         event.facilitators.clear()
         event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
 
         # Add materials info
-        materials = self.get_material_data(self)
-        material_ids = self.get_material_ids(materials)
+        materials = get_material_data(self)
+        material_ids = get_material_ids(materials)
         event.materials.clear()
         event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
 
-        return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
-
-    # ----------------------------------- #
-    #    EVENTADDVIEW CUSTOM FUNCTIONS    #
-    # ----------------------------------- #
-
-    # Function: Returns an array of Translator objects' properties
-    def get_translator_data(self, form):
-        translators = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("translator") and key != "translator-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        translators.append({"name": name})
+        # Check whether the user selected "Other" for one or more fields.
+        # If he did, redirect him to NewItemForm with appropriate context info
+        new_items = check_for_new_items(event)
+        if len(new_items):
+            self.request.session["new_item_info"] = {
+                "object": "event",
+                "id": [event.id],
+                "fields": new_items,
+            }
+            messages.warning(self.request, "Almost done! Your event has been saved. But...")
+            return redirect("tracking:new_item")
         else:
-            people = Event.objects.get(pk=self.kwargs["pk"]).translators.all()
-            for person in people:
-                translators.append({"name": person.name})
-        return translators
-
-    # Function: Returns an array of Facilitator objects' properties
-    def get_facilitator_data(self, form):
-        facilitators = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("facilitator") and key != "facilitator-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        number = key[11:]
-                        is_lead = True if "is_lead" + number in post else False
-                        speaks_gl = True if "speaks_gl" + number in post else False
-                        facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
-        else:
-            people = Event.objects.get(pk=self.kwargs["pk"]).facilitators.all()
-            for person in people:
-                facilitators.append({"name": person.name, "is_lead": person.is_lead, "speaks_gl": person.speaks_gl})
-        return facilitators
-
-    # Function: Returns an array of Material objects' properties
-    def get_material_data(self, form):
-        materials = []
-        if self.request.POST:
-            post = self.request.POST
-            for key in sorted(post):
-                if key.startswith("material") and key != "material-count":
-                    name = post[key] if post[key] else ""
-                    if name:
-                        number = key[8:]
-                        licensed = True if "licensed" + number in post else False
-                        materials.append({"name": name, "licensed": licensed})
-        else:
-            mats = Event.objects.get(pk=self.kwargs["pk"]).materials.all()
-            for mat in mats:
-                materials.append({"name": mat.name, "licensed": mat.licensed})
-        return materials
-
-    # Function: Takes an array of translator properties and returns an array of their ids
-    def get_translator_ids(self, array):
-        ids = []
-        for translator in array:
-            try:
-                person = Translator.objects.get(name=translator["name"])
-            except Translator.DoesNotExist:
-                person = Translator.objects.create(name=translator["name"])
-            ids.append(person.id)
-
-        return ids
-
-    # Function: Takes an array of facilitator properties and returns an array of their ids
-    def get_facilitator_ids(self, array):
-        ids = []
-        for facilitator in array:
-            try:
-                person = Facilitator.objects.get(name=facilitator["name"])
-            except Facilitator.DoesNotExist:
-                person = Facilitator.objects.create(
-                    name=facilitator["name"],
-                    is_lead=facilitator["is_lead"],
-                    speaks_gl=facilitator["speaks_gl"],
-                )
-            ids.append(person.id)
-
-        return ids
-
-    # Function: Takes an array of material properties and returns an array of their ids
-    def get_material_ids(self, array):
-        ids = []
-        for material in array:
-            try:
-                object = Material.objects.get(name=material["name"])
-            except Material.DoesNotExist:
-                object = Material.objects.create(
-                    name=material["name"],
-                    licensed=material["licensed"],
-                )
-            ids.append(object.id)
-
-        return ids
+            return redirect("tracking:charter_add_success", obj_type="event", pk=self.object.id)
 
 
 class EventDetailView(LoginRequiredMixin, DetailView):
     model = Event
 
     def get_context_data(self, **kwargs):
+        # TODO: context["event"] is not needed. The event could be accessed as
+        #    object in the template.
         context = super(EventDetailView, self).get_context_data(**kwargs)
         context["event"] = self.object
         return context
 
 
-# -------------------------------- #
-#            OTHER VIEWS           #
-# -------------------------------- #
+class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
+    template_name = 'tracking/multi_charter_event_form.html'
+    form_list = [MultiCharterStarter, MultiCharterEventForm2]
+    initial_dict = {
+        "1": {"start_date": timezone.now().date()}
+    }
+
+    # Overriden to get the context for the dynamic data in step 2
+    def get_context_data(self, form, **kwargs):
+        context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
+        if self.steps.current == "1":
+            context.update({"translators": get_translator_data(self)})
+            context.update({"facilitators": get_facilitator_data(self)})
+            context.update({"materials": get_material_data(self)})
+        return context
+
+    # Overriden to send a dynamic form based on user's input in step 1
+    def get_form(self, step=None, data=None, files=None):
+        if step is None:
+            step = self.steps.current
+
+        if step == '0' and self.request.POST:
+            # Create array container for field names
+            charter_fields = []
+            # Iterate through post data...
+            for key in sorted(data):
+                # ... to look for our language fields and add them to the array
+                if key.startswith("0-language"):
+                    charter_fields.append(key)
+            # Create a a dictionary of the field name and field definition for every language fields we have
+            attrs = dict((field, forms.CharField(
+                label="Charter",
+                max_length=200,
+                widget=forms.TextInput(
+                    attrs={
+                        "class": "language-selector form-control",
+                        "data-source-url": urlReverse("tracking:charters_autocomplete"),
+                        "value": data[field],
+                    }
+                ),
+                required=True,
+            )) for field in charter_fields)
+            # Dynamically create a new Form object with the field definitions
+            NewForm = type("NewForm", (MultiCharterEventForm1,), attrs)
+            # Bind modified posted data to the new form
+            form = NewForm(data)
+        else:
+            # Otherwise, returns a form that would have been returned
+            form = super(MultiCharterEventView, self).get_form(step, data, files)
+
+        return form
+
+    # This needs to be defined per requirements. This runs when all the steps are validated.
+    def done(self, form_list, form_dict, **kwargs):
+        data = self.get_all_cleaned_data()
+        # Collect charters info from the first step
+        charters = []
+        for key in data:
+            if key.startswith("0-language"):
+                # No try..pass because the assumption is user can only select existing project charter
+                charters.append(Charter.objects.get(pk=data[key]))
+        # Container to collect info for success page
+        charter_info = []
+        # Containers to collect new_item_info, if any
+        new_items = []
+        ids = []
+        # Create an event for each charter
+        for charter in charters:
+            event = Event.objects.create(
+                charter=charter,
+                location=data.get("location"),
+                start_date=data.get("start_date"),
+                end_date=data.get("end_date"),
+                lead_dept=data.get("lead_dept"),
+                current_check_level=data.get("current_check_level"),
+                target_check_level=data.get("target_check_level"),
+                contact_person=data.get("contact_person"),
+                created_at=timezone.now(),
+                created_by=self.request.user.username,
+                number=get_next_event_number(charter),
+            )
+            event.save()
+            # The cleaned data already has the list of object instances for these relationship fields
+            event.hardware.add(*data.get("hardware"))
+            event.software.add(*data.get("software"))
+            event.networks.add(*data.get("networks"))
+            event.departments.add(*data.get("departments"))
+            event.translation_methods.add(*data.get("translation_methods"))
+            event.publication.add(*data.get("publication"))
+            event.output_target.add(*data.get("output_target"))
+            # Process and add dynamic facilitators info
+            facilitators = get_facilitator_data(self)
+            facilitator_ids = get_facilitator_ids(facilitators)
+            event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
+            # Process and add dynamic translators info
+            translators = get_translator_data(self)
+            translator_ids = get_translator_ids(translators)
+            event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
+            # Process and add dynamic materials info
+            materials = get_material_data(self)
+            material_ids = get_material_ids(materials)
+            event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
+
+            # Collecting info for success page
+            charter_info.append({"name": charter.language.name, "id": charter.language.id})
+            # Collecting info for NewItemForm
+            new_items = check_for_new_items(event)
+            if len(new_items):
+                ids.append(event.id)
+
+        # Determine whether the user should be redirected to the success page or NewItemForm
+        if len(new_items):
+            self.request.session["new_item_info"] = {
+                "object": "event",
+                "id": ids,
+                "fields": new_items,
+            }
+            messages.warning(self.request, "Almost done! Your event has been saved. But...")
+            return redirect("tracking:new_item")
+        else:
+            self.request.session["mc-event-succes-charters"] = charter_info
+            return redirect("tracking:multi_charter_success")
+
+
+# ---------------------------------- #
+#            SUCCESS VIEWS           #
+# ---------------------------------- #
 
 
 class SuccessView(LoginRequiredMixin, TemplateView):
@@ -563,140 +515,6 @@ class MultiCharterSuccessView(LoginRequiredMixin, TemplateView):
         context["charters"] = self.request.session.get("mc-event-succes-charters", [])
         print '\nCONTEXT', context["charters"]
         return context
-
-
-class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
-    template_name = 'tracking/multi_charter_event_form.html'
-    form_list = [MultiCharterStarter, MultiCharterEventForm2]
-    success_url = '/success/'
-    initial_dict = {
-        "1": {"start_date": timezone.now().date()}
-    }
-
-    def done(self, form_list, form_dict, **kwargs):
-        data = self.get_all_cleaned_data()
-
-        charters = []
-        charter_info = []
-        for key in data:
-            if key.startswith("0-language"):
-                # No try..pass because the assumption is user can only select existing project charter
-                charters.append(Charter.objects.get(pk=data[key]))
-
-        new_items = []
-        ids = []
-        for charter in charters:
-            event = Event.objects.create(
-                charter=charter,
-                location=data.get("location"),
-                start_date=data.get("start_date"),
-                end_date=data.get("end_date"),
-                lead_dept=data.get("lead_dept"),
-                current_check_level=data.get("current_check_level"),
-                target_check_level=data.get("target_check_level"),
-                contact_person=data.get("contact_person"),
-                created_at=timezone.now(),
-                created_by=self.request.user.username,
-                number=self.get_next_event_number(charter),
-            )
-            event.save()
-
-            event.hardware.add(*data.get("hardware"))
-            event.software.add(*data.get("software"))
-            event.networks.add(*data.get("networks"))
-            event.departments.add(*data.get("departments"))
-            event.translation_methods.add(*data.get("translation_methods"))
-            event.publication.add(*data.get("publication"))
-            event.output_target.add(*data.get("output_target"))
-
-            facilitators = get_facilitator_data(self)
-            facilitator_ids = get_facilitator_ids(facilitators)
-            event.facilitators.add(*list(Facilitator.objects.filter(id__in=facilitator_ids)))
-
-            translators = get_translator_data(self)
-            translator_ids = get_translator_ids(translators)
-            event.translators.add(*list(Translator.objects.filter(id__in=translator_ids)))
-
-            materials = get_material_data(self)
-            material_ids = get_material_ids(materials)
-            event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
-
-            charter_info.append({"name": charter.language.name, "id": charter.language.id})
-
-            new_items = check_for_new_items(event)
-            if len(new_items):
-                ids.append(event.id)
-
-        if len(new_items):
-            self.request.session["new_item_info"] = {
-                "object": "event",
-                "id": ids,
-                "fields": new_items,
-            }
-            messages.warning(self.request, "Almost done! Your event has been saved. But...")
-            return redirect("tracking:new_item")
-        else:
-            self.request.session["mc-event-succes-charters"] = charter_info
-            return redirect("tracking:multi_charter_success")
-
-    def get_context_data(self, form, **kwargs):
-        context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
-        if self.steps.current == "1":
-            context.update({"translators": get_translator_data(self)})
-            context.update({"facilitators": get_facilitator_data(self)})
-            context.update({"materials": get_material_data(self)})
-        return context
-
-    def get_form(self, step=None, data=None, files=None):
-        if step is None:
-            step = self.steps.current
-
-        if step == '0' and self.request.POST:
-            # Create array container for field names
-            charter_fields = []
-            # Iterate through post data...
-            for key in sorted(data):
-                # ... to look for our language fields and add them to the array
-                if key.startswith("0-language"):
-                    charter_fields.append(key)
-            # Create a a dictionary of the field name and field definition for every language fields we have
-            attrs = dict((field, forms.CharField(
-                label="Charter",
-                max_length=200,
-                widget=forms.TextInput(
-                    attrs={
-                        "class": "language-selector form-control",
-                        "data-source-url": urlReverse("tracking:charters_autocomplete"),
-                        "value": data[field],
-                    }
-                ),
-                required=True,
-            )) for field in charter_fields)
-            # Dynamically create a new Form object with the field definitions
-            NewForm = type("NewForm", (MultiCharterEventForm1,), attrs)
-            # Bind modified posted data to the new form
-            form = NewForm(data)
-        else:
-            form = super(MultiCharterEventView, self).get_form(step, data, files)
-
-        return form
-
-    def get_next_event_number(self, charter):
-        events = Event.objects.filter(charter=charter)
-        latest = 0
-        for event in events:
-            if event.number > latest:
-                latest = event.number
-        return latest + 1
-
-
-class NewCharterModalView(CharterAdd):
-
-    template_name = 'tracking/new_charter_modal.html'
-
-    def form_valid(self, form):
-        self.object = form.save()
-        return render(self.request, "tracking/new_charter_modal.html", {"success": True})
 
 
 class NewItemView(LoginRequiredMixin, FormView):
@@ -794,6 +612,7 @@ class NewItemView(LoginRequiredMixin, FormView):
 # -------------------- #
 
 
+# Function: Returns a JSON response of charter and language info based on a search term
 def charters_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
     charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
@@ -810,6 +629,8 @@ def charters_autocomplete(request):
     return JsonResponse({"results": data, "count": len(data), "term": term})
 
 
+# Function: Same like charters_autocomplete, but returns the id of the language, instead
+#    of the charter
 def charters_autocomplete_lid(request):
     term = request.GET.get("q").lower().encode("utf-8")
     charters = Charter.objects.filter(Q(language__code__icontains=term) | Q(language__name__icontains=term))
@@ -826,6 +647,7 @@ def charters_autocomplete_lid(request):
     return JsonResponse({"results": data, "count": len(data), "term": term})
 
 
+# Function: Returns an array of Translator objects' properties
 def get_translator_data(self):
     translators = []
     if self.request.POST:
@@ -915,7 +737,8 @@ def get_material_ids(array):
     return ids
 
 
-#
+# Function: Takes an instance of Event and returns an array of field names which have
+#    the value of "Other"
 def check_for_new_items(event):
     fields = []
     if len(event.translation_methods.filter(name="Other")):
@@ -929,3 +752,14 @@ def check_for_new_items(event):
     if len(event.publication.filter(name="Other")):
         fields.append("publication")
     return fields
+
+
+# Function: Takes an instance of Charter and returns the number to be used by the
+#    next event for that charter
+def get_next_event_number(charter):
+    events = Event.objects.filter(charter=charter)
+    latest = 0
+    for event in events:
+        if event.number > latest:
+            latest = event.number
+    return latest + 1

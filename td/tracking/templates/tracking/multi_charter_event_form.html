@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}Translation Project Event | New{% endblock head_title %}
+{% block head_title %}Tracking | Multi-Charter Event Form{% endblock head_title %}
 
 {% block extra_style %}
     <style>
@@ -83,6 +83,15 @@
         ul > li > label {
             font-weight: lighter;
         }
+        .form-notice-container {
+            padding: 1rem;
+            margin-bottom: 2rem;
+            background-color: rgba(0,0,0,0.075);
+            border-radius: 5px;
+        }
+        .form-notice {
+            font-weight: lighter;
+        }
     </style>
 {% endblock extra_style %}  
 
@@ -104,19 +113,18 @@
                     <h2 class="panel-title">Multiple Charter Event Form | Step <span>{{ wizard.steps.step1 }}</span> of <span>{{ wizard.steps.count }}</span></h2>
                 </div>
                 <div class="panel-body">
-                    
-                    <p style="clear: both; padding: 1rem 1rem; margin-bottom: 2.5rem; font-weight: lighter; background-color: rgba(0,0,0,0.075); border-radius: 5px;">
-                        Note: <strong>*</strong> indicates required fields
-                    </p>
-
                     <form action="" method="POST" class="form">
                         {% csrf_token %}
                         {{ wizard.management_form }}
+
+                        <div class="form-notice-container">
+                            <p class="form-notice">Note: <strong>*</strong> indicates required fields</p>
+                        </div>
                         
                         {% if wizard.steps.step0 == 0 %}
-                            <div style="background: rgba(0,0,0,0.075); border-radius: 5px; padding: 1rem; margin-bottom: 2rem; font-weight: lighter;">
-                                <p>Note: Searching for a language for the first time may take a while.</p>
-                                <p>Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+                            <div class="form-notice-container">
+                                <p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
+                                <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
                             </div>
                             <div id="charter-list" class="charter-list">
                                 {% for field in wizard.form %}
@@ -260,6 +268,7 @@
 {% block custom_bottom_script %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script>
+        // Will affect step 1
         $(document).ready(function() {
             // Initial scripts
             // 
@@ -310,11 +319,15 @@
             }
         });
 
+        // Will affect step 2
         $(document).ready(function() {
+            // Initial scripts
+            // 
             var required_fields = ['start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
             required_fields.forEach(function(field) {
-                if (document.querySelector('label[for="id_1-' + field + '"]')) {
-                    document.querySelector('label[for="id_1-' + field + '"]').classList.add('required');
+                field = document.querySelector('label[for="id_1-' + field + '"]');
+                if (field) {
+                    field.classList.add('required');
                 }
             });
         });

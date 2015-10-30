@@ -8,11 +8,11 @@
 	</div>
 	<div class="modal-body">
 		{% if success %}
-			<p>Project charter has been created. Close this and try again.</p>
+			<p class="success">Project charter has been created. Close this and try again.</p>
 		{% else %}
-			<div style="background: rgba(0,0,0,0.075); border-radius: 5px; padding: 1rem; margin-bottom: 2rem; font-weight: lighter;">
-				<p>Note: Searching for a language for the first time may take a while.</p>
-				<p>Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+			<div class="form-notice-container">
+				<p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
+				<p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
 			</div>
 			{% csrf_token %}
 			{{ form | bootstrap}}
@@ -29,22 +29,29 @@
 </form>
 <script>
 	$(document).ready(function() {
+		// Initial scripts
+		// 
+		$('.language-selector').languageSelector();
 		var form_options = {
 			target: '.modal-content',
 			success: function() { }
 		}
 		$('#new_charter_modal').ajaxForm(form_options);
-		$('.language-selector').languageSelector();
+
+		// Event Listeners
+		// 
 		['button[name="cancel"]', 'button[name="close"]'].forEach(function(el) {
 			$(el).on('click', hideAndClear);
 		});
-	});
 
-	function hideAndClear() {
+		// Function definitions
+		// 
+		function hideAndClear() {
 		setTimeout(function() {jQuery('.modal.content').modal('hide');}, 1000);
 		$('body').on('hidden.bs.modal', '.modal', function() {
 			console.log('removing data');
 			$(this).removeData('bs.modal');
 		});
 	}
+	});
 </script>
