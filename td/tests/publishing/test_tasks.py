@@ -39,11 +39,15 @@ class PublishTasksTestCase(TestCase):
     @patch("td.publishing.tasks.PublishRequest.publish")
     @patch("td.publishing.tasks.notify_requestor_approved")
     def test_approve_publish_request(self, mock_task, mock_publish):
-        mock_publish.return_value = Mock(pk=self.user.id)
+        mock_publish.return_value = Mock(pk=1)
         resource_id = approve_publish_request(
             self.request.id,
             self.user.id
         )
-        self.assertEqual(resource_id, self.user.id)
+        # Assert that the resource.id was returned...
+        self.assertEqual(resource_id, 1)
+        # and that the PublishRequst.publish was called with the user object...
         mock_publish.assert_called_once_with(by_user=self.user)
+        # and the notify_requestor_approved celery task was called with the
+        # PublishRequest.id
         mock_task.delay.assert_called_once_with(self.request.id)
