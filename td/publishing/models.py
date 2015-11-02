@@ -6,8 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 import reversion
 
 from td.models import Language
-
-from .resources import RESOURCE_TYPES
+from td.publishing.resources import RESOURCE_TYPES
 
 
 class Organization(models.Model):
@@ -126,7 +125,7 @@ class OfficialResourceType(models.Model):
 @reversion.register()
 class OfficialResource(models.Model):
     language = models.ForeignKey(Language, related_name="official_resources", verbose_name="Language")
-    resource_type = models.ForeignKey(OfficialResourceType, verbose_name="official_resources")
+    resource_type = models.ForeignKey(OfficialResourceType, verbose_name="Official resource type")
     contact = models.ForeignKey(Contact, related_name="official_resources", null=True, blank=True)
     date_started = models.DateField()
     notes = models.TextField(blank=True)
@@ -209,7 +208,7 @@ class Comment(models.Model):
 @python_2_unicode_compatible
 class PublishRequest(models.Model):
     requestor = models.CharField(max_length=100, verbose_name="Requester name")
-    resource_type = models.ForeignKey(OfficialResourceType, null=True)
+    resource_type = models.ForeignKey(OfficialResourceType, null=True, verbose_name='Official resource type')
     language = models.ForeignKey(Language, related_name="publish_requests")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, verbose_name="Requested checking level")
     source_text = models.ForeignKey(Language, related_name="source_publish_requests", null=True)
