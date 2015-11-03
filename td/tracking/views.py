@@ -42,6 +42,7 @@ from .models import (
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
+from extra_views import ModelFormSetView
 
 
 # ------------------------------- #
@@ -147,6 +148,7 @@ class AjaxCharterEventsListView(EventTableSourceView):
 class CharterAdd(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
+    template_name = "tracking/charter_form.html"
 
     # Overridden to set initial values
     def get_initial(self):
@@ -178,6 +180,29 @@ class NewCharterModalView(CharterAdd):
     def form_valid(self, form):
         self.object = form.save()
         return render(self.request, "tracking/new_charter_modal.html", {"success": True})
+
+
+class MultiCharterAddView(ModelFormSetView):
+    template_name = "tracking/multi_charter_form.html"
+    model = Charter
+    form_class = CharterForm
+    extra = 1
+
+    def get_queryset(self):
+        print 'GETTING QUERYSET'
+        return Charter.objects.none()
+
+    # def get_formset(self):
+    #     print 'GETTING FORMSET'
+    #     return 
+
+    def formset_valid(self, formset):
+        print 'FORMSET IS VALID'
+        return super(MultiCharterAddView, self).formset_valid(formset)
+
+    def formset_invalid(self, formset):
+        print 'FORMSET IS INVALID'
+        return super(MultiCharterAddView, self).formset_invalid(formset)
 
 
 # -------------------------------- #

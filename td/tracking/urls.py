@@ -16,6 +16,7 @@ from .views import (
     MultiCharterSuccessView,
     NewCharterModalView,
     NewItemView,
+    MultiCharterAddView,
 )
 
 urlpatterns = [
@@ -34,6 +35,7 @@ urlpatterns = [
     url(r"^event/detail/(?P<pk>\d+)/$", EventDetailView.as_view(), name="event_detail"),
 
     url(r"^mc-event/new/$", MultiCharterEventView.as_view(), name="multi_charter_event_add"),
+    url(r"^mc/new/$", MultiCharterAddView.as_view(), name="multi_charter_add"),
 
     # Others
     url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
@@ -44,6 +46,5 @@ urlpatterns = [
     url(r"^success/mc-event/$", MultiCharterSuccessView.as_view(), name="multi_charter_success"),
     url(r"^new_item/$", NewItemView.as_view(), name="new_item"),
 
-    # Under Construction
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
 ]
