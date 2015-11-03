@@ -13,6 +13,10 @@
 
     <div class="panel panel-default">
         <div class="panel-heading panel-heading-with-table">
+            <a href="{% url "publish_request" %}" class="btn btn-xs btn-primary pull-right">
+                <i class="fa fa-plus"></i>
+                Add
+            </a>
             <h2 class="panel-title">{% trans "Publish Requests" %}</h2>
         </div>
         {% if publish_requests %}
