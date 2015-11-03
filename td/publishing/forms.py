@@ -5,8 +5,9 @@ from django.utils.formats import mark_safe
 from multiupload.fields import MultiFileField
 
 from td.models import Language
-from .models import RecentCommunication, Connection, OfficialResource, PublishRequest
-from .translations import OBSTranslation
+from td.publishing.models import (
+    RecentCommunication, Connection, OfficialResource, PublishRequest)
+from td.publishing.translations import OBSTranslation
 
 
 class RecentComForm(forms.ModelForm):
@@ -85,13 +86,19 @@ class OfficialResourceForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.ln
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.lc
                 self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
-        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(official_resources__checking_level=3)
+
         if self.instance.publish_date:
             self.fields["publish"].initial = True
+
         if not self.fields["publish"].initial:
             self.fields["version"].widget.attrs["disabled"] = "disabled"
             self.fields["checking_entity"].widget.attrs["disabled"] = "disabled"
             self.fields["checking_level"].widget.attrs["disabled"] = "disabled"
+
+        source_text_queryset = self.fields["source_text"].queryset.filter(
+            official_resources__checking_level=3
+        )
+        self.fields["source_text"].queryset = source_text_queryset
 
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
@@ -118,7 +125,12 @@ class OfficialResourceForm(forms.ModelForm):
 
 class PublishRequestForm(forms.ModelForm):
 
-    license_agreements = MultiFileField(required=False, min_num=0, max_file_size=5242880)  # 5 MB
+    # 5 MB limitation
+    license_agreements = MultiFileField(
+        required=False,
+        min_num=0,
+        max_file_size=5242880
+    )
 
     def __init__(self, *args, **kwargs):
         super(PublishRequestForm, self).__init__(*args, **kwargs)
@@ -131,7 +143,11 @@ class PublishRequestForm(forms.ModelForm):
             ),
             required=True
         )
-        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(official_resources__checking_level=3)
+
+        source_text_queryset = self.fields["source_text"].queryset.filter(
+            official_resources__checking_level=3
+        )
+        self.fields["source_text"].queryset = source_text_queryset
 
         if self.instance.pk:
             lang = self.instance.language
@@ -162,8 +178,16 @@ class PublishRequestForm(forms.ModelForm):
         lang = cleaned_data["language"]
         obs = OBSTranslation(base_path="", lang_code=lang.code)
         if not obs.qa_check():
-            error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
-            raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
+            error_list_html = "".join([
+                (
+                    '<li><a href="{url}"><i class="fa fa-external-link"></i>'
+                    '</a> {description}</li>'
+                ).format(**err) for err in obs.qa_issues_list
+            ])
+            raise forms.ValidationError(mark_safe(
+                "The language does not pass the quality check for the following"
+                " reasons: <ul>" + error_list_html + "</ul>"
+            ))
         return cleaned_data
 
     class Meta:
