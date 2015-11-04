@@ -17,7 +17,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	// Add class:required to the following label
 	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
 	required_fields.forEach(function(field) {
-		$('label[for="id_' + field + '"]').addClass('required');
+		var field = document.querySelector('label[for="id_' + field + '"]');
+		if (field) {
+			field.classList.add('required');
+		}
 	});
 });
 
@@ -50,7 +53,7 @@ function addInline(label) {
 					'<input name="material' + length + '" type="text" class="form-control" />' +
 				'</div>' +
 				'<div class="material-checkboxes">' +
-					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" /></div>' +
+					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
 				'</div>' +
 			'</div>';
 			break;
