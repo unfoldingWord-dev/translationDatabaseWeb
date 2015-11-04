@@ -516,7 +516,6 @@ class MultiCharterSuccessView(LoginRequiredMixin, TemplateView):
         # NOTE: Maybe the logic for custom message should go in the template?
         context = super(MultiCharterSuccessView, self).get_context_data(**kwargs)
         context["charters"] = self.request.session.get("mc-event-succes-charters", [])
-        print '\nCONTEXT', context["charters"]
         return context
 
 
@@ -574,7 +573,7 @@ class NewItemView(LoginRequiredMixin, FormView):
         send_mail(
             'tD New Item',
             'Some new items needs to be added to the event.' + str(self.request.POST),
-            'vleong@gmail.com',
+            self.request.user.email,
             ['vleong2332@gmail.com'],
             fail_silently=False
         )
