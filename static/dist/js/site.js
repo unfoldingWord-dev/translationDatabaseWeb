@@ -9225,7 +9225,7 @@
 				break;
 			// Build material element
 			case 'material':
-				var elem = '<div class="inline inline-input clearfix">' + '<div class="material-text clearfix">' + '<input name="material' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="material-checkboxes">' + '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
+				var elem = '<div class="inline inline-input clearfix">' + '<div class="material-text clearfix">' + '<input name="material' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="material-checkboxes">' + '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' + '</div>' + '</div>';
 				break;
 			// Build translator element
 			case 'translator':

@@ -172,7 +172,7 @@
 											<input name="material{{ forloop.counter0 }}" type="text" class="form-control" value="{{ material.name }}"/>
 										</div>
 										<div class="material-checkboxes">
-											<div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if material.licensed %}checked{% endif %} /></div>
+											<div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if not material.licensed %}{% else %}checked{% endif %} /></div>
 										</div>
 									</div>
 								{% endfor %}

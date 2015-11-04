@@ -104,12 +104,8 @@ class Event(models.Model):
     publication = models.ManyToManyField(
         "Publication",
         blank=True,
-        verbose_name="Publishing Medium"
+        verbose_name="Distribution Method"
     )
-    # output_target = models.TextField(
-    #     max_length=1500,
-    #     blank=True,
-    # )
     current_check_level = models.SlugField(
         choices=CHECKING_LEVEL,
         verbose_name="Current Checking Level",
@@ -137,10 +133,6 @@ class Event(models.Model):
         blank=True,
         verbose_name="Hardware Used",
     )
-    # publishing_process = models.TextField(
-    #     max_length=1500,
-    #     blank=True,
-    # )
     contact_person = models.CharField(
         max_length=200,
     )
