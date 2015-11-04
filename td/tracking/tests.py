@@ -58,8 +58,14 @@ class ViewsTestCase(TestCase):
 
     # Home
 
-    def test_home_view_success(self):
+    def test_home_view_no_login(self):
         response = self.client.get("/tracking/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/account/login/?next=/tracking/")
+
+    def test_home_view_with_login(self):
+        self.client.login(username="testuser", password="testpassword")
+        response = self.client.get("/tracking/", **self.credentials)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.template_name[0], "tracking/project_list.html")
         self.assertIn("<h1>Tracking Dashboard</h1>", response.content)

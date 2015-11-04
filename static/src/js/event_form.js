@@ -53,7 +53,7 @@ function addInline(label) {
 					'<input name="material' + length + '" type="text" class="form-control" />' +
 				'</div>' +
 				'<div class="material-checkboxes">' +
-					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" /></div>' +
+					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
 				'</div>' +
 			'</div>';
 			break;

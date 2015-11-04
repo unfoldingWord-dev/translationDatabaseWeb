@@ -27,9 +27,11 @@
             </tbody>
         </table>
     </div>
-    <div class="col-md-6">
-        {% include "resources/_project_detail.html" with data=charter %}
-    </div>
+    {% if user.is_authenticated and charter%}
+        <div class="col-md-6">
+            {% include "resources/_project_detail.html" with data=charter %}
+        </div>
+    {% endif %}
 </div>
 
 {% if user.is_authenticated and charter%}

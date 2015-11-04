@@ -11,17 +11,17 @@ from .views import (
     EventUpdateView,
     EventDetailView,
     SuccessView,
-    TemplateView,
     MultiCharterEventView,
     MultiCharterSuccessView,
     NewCharterModalView,
     NewItemView,
+    HomeView,
 )
 
 urlpatterns = [
 
     # Home
-    url(r"^$", TemplateView.as_view(template_name="tracking/project_list.html"), name="project_list"),
+    url(r"^$", HomeView.as_view(), name="project_list"),
 
     # Charter
     url(r"^charter/new/$", CharterAdd.as_view(), name="charter_add"),

@@ -48,6 +48,9 @@ from formtools.wizard.views import SessionWizardView
 #            MISC VIEWS           #
 # ------------------------------- #
 
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/project_list.html"
+
 
 class CharterTableSourceView(DataTableSourceView):
 
@@ -60,7 +63,7 @@ class CharterTableSourceView(DataTableSourceView):
 
     @property
     def filtered_data(self):
-        if len(self.search_term) and len(self.search_term) <= 3:
+        if self.search_term and len(self.search_term) <= 3:
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
@@ -90,7 +93,7 @@ class EventTableSourceView(DataTableSourceView):
 
     @property
     def filtered_data(self):
-        if len(self.search_term) and len(self.search_term) <= 3:
+        if self.search_term and len(self.search_term) <= 3:
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
