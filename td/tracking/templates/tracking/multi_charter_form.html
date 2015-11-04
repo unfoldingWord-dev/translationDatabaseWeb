@@ -44,26 +44,37 @@
 	<form action="" method="POST" class="form">
 		{% csrf_token %}
 		{{ formset.management_form }}
-		{% for form in formset.forms %}
-			<div class="row form-instance">
-				<div class="col-md-6">
-					<div class="panel panel-default">
-						{% if forloop.first %}
-							<div class="panel-heading">
-								<h2 class="panel-title">New Translation Project Charter</h2>
+		<div class="form-list">
+			{% for form in formset.forms %}
+				<div class="row form-instance">
+					<div class="col-md-6">
+						<div class="panel panel-default">
+							{% if forloop.first %}
+								<div class="panel-heading">
+									<h2 class="panel-title">New Translation Project Charter</h2>
+								</div>
+							{% endif %}
+							<div class="panel-body">
+								{{ form | bootstrap}}
+								<a href="" class="remove-form-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>
 							</div>
-						{% endif %}
-						<div class="panel-body">
-							{{ form | bootstrap}}
 						</div>
 					</div>
 				</div>
-			</div>
-		{% endfor %}
+			{% endfor %}
+		</div>
 
-		<button type="submit" class="btn btn-primary pull-right">
-			{% if form.errors %}Try again{% else %}Add Project{% endif %}
-		</button>
+		<a href="" class="add-form-link" style="display: block; margin: 1rem 0; font-weight: lighter;">More Charter</a>
+
+		<div class="row">
+			<div class="col-md-6">
+				<button type="submit" class="btn btn-primary btn-block">
+					{% if form.errors %}Try again{% else %}Add Project(s){% endif %}
+				</button>
+			</div>
+		</div>
+
+		<input id="form-number" type="hidden" value="0" />
 	</form>
 
 {% endblock body%}
@@ -71,10 +82,41 @@
 {% block custom_bottom_script %}
 	<script>
 		$(document).ready(function() {
+			// 
+			//
 			var form = $('.form-instance').clone();
-			console.log(form);
-			form.appendTo('form');
-			$('#id_form-TOTAL_FORMS').val(2);
+			var formNumber = parseInt($('#form-number').val());
+
+			// Event listeners
+            // 
+            $('.add-form-link').on('click', function(e) {
+                e.preventDefault();
+                addForm();
+            });
+            $('form').on('click', '.remove-form-link', function(e) {
+                e.preventDefault();
+                removeForm(this);
+            });
+
+            // 
+            // 
+			function addForm() {
+				formNumber++;
+				$('#form-number').val(formNumber);
+				var clone = form.clone();
+				// clone[0].innerHTML = clone[0].innerHTML.replace('form-0-', 'form-' + formNumber + '-');
+				// console.log(clone[0].innerHTML);
+				console.log(clone[0].innerHTML.replace('form-0-', 'form-1-'));
+				clone.appendTo('.form-list');
+				var total = $('#id_form-TOTAL_FORMS');
+				total.val(parseInt(total.val()) + 1);
+			}
+
+			function removeForm(el) {
+				$(el).parents('.form-instance').detach();
+				var total = $('#id_form-TOTAL_FORMS');
+				total.val(parseInt(total.val()) - 1);
+			}
 
 		});
 	</script>
