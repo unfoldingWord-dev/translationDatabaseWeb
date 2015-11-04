@@ -91,6 +91,21 @@ class CharterForm(forms.ModelForm):
         }
 
 
+class MultiCharterForm(CharterForm):
+     # Overriden add custom initialize the form
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterForm, self).__init__(*args, **kwargs)
+        # 
+        self.fields["language"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector-marked",
+                    "data-source-url": urlReverse("names_autocomplete")
+                }
+            ),
+            required=True
+        )
+
 # --------------- #
 #    EVENTFORM    #
 # --------------- #

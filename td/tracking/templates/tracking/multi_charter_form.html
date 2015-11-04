@@ -68,6 +68,14 @@
 
 {% endblock body%}
 
-{% block extra_script %}
+{% block custom_bottom_script %}
+	<script>
+		$(document).ready(function() {
+			var form = $('.form-instance').clone();
+			console.log(form);
+			form.appendTo('form');
+			$('#id_form-TOTAL_FORMS').val(2);
 
-{% endblock extra_script %}
+		});
+	</script>
+{% endblock custom_bottom_script %}

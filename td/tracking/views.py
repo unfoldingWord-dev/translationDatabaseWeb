@@ -24,6 +24,7 @@ from .forms import (
     MultiCharterStarter,
     MultiCharterEventForm1,
     MultiCharterEventForm2,
+    MultiCharterForm,
 )
 from .models import (
     Charter,
@@ -185,16 +186,12 @@ class NewCharterModalView(CharterAdd):
 class MultiCharterAddView(ModelFormSetView):
     template_name = "tracking/multi_charter_form.html"
     model = Charter
-    form_class = CharterForm
+    form_class = MultiCharterForm
     extra = 1
 
     def get_queryset(self):
         print 'GETTING QUERYSET'
         return Charter.objects.none()
-
-    # def get_formset(self):
-    #     print 'GETTING FORMSET'
-    #     return 
 
     def formset_valid(self, formset):
         print 'FORMSET IS VALID'
