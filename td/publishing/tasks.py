@@ -5,6 +5,7 @@ import subprocess
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.contrib.auth.models import User
 
 from celery import task
 
@@ -66,6 +67,7 @@ def notify_requestor_rejected(request_id):
 
 def approve_publish_request(request_id, user_id):
     pr = PublishRequest.objects.get(pk=request_id)
-    oresource = pr.publish(by_user=user_id)
+    user = User.objects.get(pk=user_id)
+    oresource = pr.publish(by_user=user)
     notify_requestor_approved.delay(pr.pk)
     return oresource.pk
