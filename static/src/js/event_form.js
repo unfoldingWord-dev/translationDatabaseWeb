@@ -1,3 +1,4 @@
+/* @@@ rewrite this */
 document.addEventListener('DOMContentLoaded', function (event) {
 
 	// For the following fields...
@@ -7,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 			addInline(field);
 
 		// ... attach click event handler
-		document.querySelector('#add-' + field).addEventListener('click', function(event) {
+		$("#add-" + field).on("click", function (event) {
 			event.preventDefault();
 			addInline(field);
 		});
@@ -16,7 +17,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	// Add class:required to the following label
 	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
 	required_fields.forEach(function(field) {
-		document.querySelector('label[for="id_' + field + '"]').classList.add('required');
+		var field = document.querySelector('label[for="id_' + field + '"]');
+		if (field) {
+			field.classList.add('required');
+		}
 	});
 });
 
@@ -49,7 +53,7 @@ function addInline(label) {
 					'<input name="material' + length + '" type="text" class="form-control" />' +
 				'</div>' +
 				'<div class="material-checkboxes">' +
-					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" /></div>' +
+					'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
 				'</div>' +
 			'</div>';
 			break;
@@ -72,5 +76,5 @@ function addInline(label) {
 //    --------
 function addCount(label) {
 	var elem = document.getElementsByName(label + '-count');
-	elem[0].value = parseInt(elem[0].value) + 1;
+	if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
 }

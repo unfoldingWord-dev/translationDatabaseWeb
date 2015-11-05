@@ -58,8 +58,14 @@ class ViewsTestCase(TestCase):
 
     # Home
 
-    def test_home_view_success(self):
+    def test_home_view_no_login(self):
         response = self.client.get("/tracking/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/account/login/?next=/tracking/")
+
+    def test_home_view_with_login(self):
+        self.client.login(username="testuser", password="testpassword")
+        response = self.client.get("/tracking/", **self.credentials)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.template_name[0], "tracking/project_list.html")
         self.assertIn("<h1>Tracking Dashboard</h1>", response.content)
@@ -130,9 +136,12 @@ class ViewsTestCase(TestCase):
     # Charter Detail
 
     def test_charter_detail_page(self):
+        """
+        Charter detail page should no longer exists. It is now integrated to the language detail page.
+        """
 
         response = self.client.get("/tracking/charter/detail/99")
-        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response.status_code, 404)
 
         response = self.client.get("/tracking/charter/detail/")
         self.assertEqual(response.status_code, 404)
@@ -186,9 +195,6 @@ class UrlsTestCase(TestCase):
 
         url = reverse("tracking:charter_add")
         self.assertEqual(url, "/tracking/charter/new/")
-
-        url = reverse("tracking:charter", args=[999])
-        self.assertEqual(url, "/tracking/charter/detail/999/")
 
         url = reverse("tracking:charter_update", args=[999])
         self.assertEqual(url, "/tracking/charter/update/999/")
@@ -251,18 +257,6 @@ class UrlsTestCase(TestCase):
         self.assertEqual(resolver.namespace, "tracking")
         self.assertEqual(resolver.view_name, "tracking:charter_update")
         self.assertEqual(resolver.url_name, "charter_update")
-
-    def test_url_resolve_charter_detail(self):
-        """
-        URL for charter detail resolves to correct setting
-        """
-
-        resolver = resolve("/tracking/charter/detail/999/")
-        self.assertIn("pk", resolver.kwargs)
-        self.assertEqual(resolver.kwargs["pk"], "999")
-        self.assertEqual(resolver.namespace, "tracking")
-        self.assertEqual(resolver.view_name, "tracking:charter")
-        self.assertEqual(resolver.url_name, "charter")
 
 
 class CharterFormTestCase(TestCase):

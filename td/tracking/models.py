@@ -104,12 +104,8 @@ class Event(models.Model):
     publication = models.ManyToManyField(
         "Publication",
         blank=True,
-        verbose_name="Publishing Medium"
+        verbose_name="Distribution Method"
     )
-    # output_target = models.TextField(
-    #     max_length=1500,
-    #     blank=True,
-    # )
     current_check_level = models.SlugField(
         choices=CHECKING_LEVEL,
         verbose_name="Current Checking Level",
@@ -126,24 +122,17 @@ class Event(models.Model):
         "TranslationMethod",
         blank=True,
         verbose_name="Translation Methodologies",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     software = models.ManyToManyField(
         "Software",
         blank=True,
         verbose_name="Software/App Used",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     hardware = models.ManyToManyField(
         "Hardware",
         blank=True,
         verbose_name="Hardware Used",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
-    # publishing_process = models.TextField(
-    #     max_length=1500,
-    #     blank=True,
-    # )
     contact_person = models.CharField(
         max_length=200,
     )
@@ -169,7 +158,6 @@ class Event(models.Model):
         related_name="event_supporting_dept",
         blank=True,
         verbose_name="Supporting Departments",
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     created_at = models.DateTimeField(
         default=timezone.now,

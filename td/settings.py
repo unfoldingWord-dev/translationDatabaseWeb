@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "reversion",
     "absoluteuri",
     "storages",
+    "formtools",
 
     # project
     "td",

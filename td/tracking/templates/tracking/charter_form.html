@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}Translation Project Charter | Add{% endblock head_title %}
+{% block head_title %}Tracking | New Charter{% endblock head_title %}
 
 {% block extra_style %}
 	<style>
@@ -23,8 +23,14 @@
 			width: 33.33%;
 			margin-right: 0;
 		}
-		select[multiple] {
-			height: 155px;
+		.form-notice-container {
+			padding: 1rem;
+			margin-bottom: 2rem;
+			background-color: rgba(0,0,0,0.075);
+			border-radius: 5px;
+		}
+		.form-notice {
+			font-weight: lighter;
 		}
 	</style>
 {% endblock extra_style %}	
@@ -38,15 +44,16 @@
 					<h2 class="panel-title">New Translation Project Charter</h2>
 				</div>
 				<div class="panel-body">
+					<div class="form-notice-container">
+						<p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
+						<p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+					</div>
+
 					<form action="{% url 'tracking:charter_add' %}" method="POST" class="form">
 						{% csrf_token %}
 						{{ form | bootstrap }}
 						<button type="submit" class="btn btn-primary pull-right">
-							{% if form.errors %}
-								Try again
-							{% else %}
-								Add Project
-							{% endif %}
+							{% if form.errors %}Try again{% else %}Add Project{% endif %}
 						</button>
 					</form>
 				</div>

@@ -20,9 +20,11 @@
             {% if user.is_authenticated %}
                 {% url "tracking:charter_add" as url_add_charter %}
                 {% url "tracking:event_add" as url_add_event %}
+                {% url "tracking:multi_charter_event_add" as url_add_mc_event %}
                 {% blocktrans %}
                     <a href="{{ url_add_charter }}" class="btn btn-primary large">Add a Charter</a>
                     <a href="{{ url_add_event }}" class="btn btn-primary large">Add an Event</a>
+                    <a href="{{ url_add_mc_event }}" class="btn btn-primary large">Add Multi-Charter Event</a>
                 {% endblocktrans %}
             {% else %}
             <p>
