@@ -196,6 +196,7 @@ class EventForm(forms.ModelForm):
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
             "created_by": forms.HiddenInput(),
+            "number": forms.HiddenInput(),
             "departments": forms.CheckboxSelectMultiple(),
             "publication": forms.CheckboxSelectMultiple(),
             "output_target": forms.CheckboxSelectMultiple(),
