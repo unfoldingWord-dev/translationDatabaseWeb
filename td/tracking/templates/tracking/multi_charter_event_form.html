@@ -275,13 +275,17 @@
         $(document).ready(function() {
             // Initial scripts
             // 
-            var l = document.querySelectorAll('input.language-selector');
-            if (l.length) {
-                var i = l[l.length-1].id;
-                var number = parseInt(i[i.length-1]); 
+            var list = document.querySelectorAll('input.language-selector-marked');
+            if (list.length) {
+                var number = 0;
+                for (var i = 0; i < list.length; i++) {
+                    if (parseInt(list.item(i).id.substring(14)) > number) {
+                        number = parseInt(list.item(i).id.substring(14));
+                    }
+                }
             }
             // 
-            $('.language-selector').languageSelector();
+            $('.language-selector-marked').languageSelector();
 
             // Event listeners
             // 
@@ -299,13 +303,13 @@
             function addCharter() {
                 // Incrememnt number to get unique id
                 number += 1;
-                // console.log('number', number);
+                console.log('number', number);
                 // Define element
                 var el = '<div class="entry">' +
                          '    <div class="form-group">' +
                          '        <label class="control-label required " for="id_0-language_' + number + '">Charter</label>' +
                          '        <div class=" ">' +
-                         '            <input class="language-selector form-control" data-source-url="/tracking/ac/charters" id="id_0-language_' + number + '" maxlength="200" name="0-language_' + number + '" type="text">' +
+                         '            <input class="language-selector-marked form-control" data-source-url="/tracking/ac/charters" id="id_0-language_' + number + '" maxlength="200" name="0-language_' + number + '" type="text">' +
                          '        </div>' + 
                          '    </div>' +
                          '    <a href="" class="remove-charter-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>' +
