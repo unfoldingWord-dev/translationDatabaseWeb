@@ -252,7 +252,7 @@ class MultiCharterStarter(forms.Form):
             max_length=200,
             widget=forms.TextInput(
                 attrs={
-                    "class": "language-selector form-control",
+                    "class": "language-selector-marked form-control",
                     "data-source-url": urlReverse("tracking:charters_autocomplete"),
                 }
             ),
