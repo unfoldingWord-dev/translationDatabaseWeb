@@ -273,7 +273,7 @@ class Chapter(models.Model):
 
 class Frame(models.Model):
     chapter = models.ForeignKey(Chapter)
-    identifier = models.CharField(max_length=10)
+    identifier = models.CharField(max_length=50)
     img = models.URLField(max_length=300)
     text = models.TextField()
 

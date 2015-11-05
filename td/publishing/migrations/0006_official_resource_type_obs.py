@@ -51,4 +51,9 @@ class Migration(migrations.Migration):
                 null=True
             ),
         ),
+        migrations.AlterField(
+            model_name='frame',
+            name='identifier',
+            field=models.CharField(max_length=50),
+        ),
     ]
