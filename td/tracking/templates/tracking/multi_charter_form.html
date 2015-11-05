@@ -106,7 +106,7 @@
 				var clone = form.clone();
 				// clone[0].innerHTML = clone[0].innerHTML.replace('form-0-', 'form-' + formNumber + '-');
 				// console.log(clone[0].innerHTML);
-				console.log(clone[0].innerHTML.replace('form-0-', 'form-1-'));
+				console.dir(clone.find('input[name*="form-0"]').attr);
 				clone.appendTo('.form-list');
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) + 1);
