@@ -45,7 +45,7 @@
 		{% csrf_token %}
 		{{ formset.management_form }}
 		<div class="form-list">
-			{% for form in formset.forms %}
+			{% for form in formset %}
 				<div class="row form-instance">
 					<div class="col-md-6">
 						<div class="panel panel-default">
@@ -73,19 +73,20 @@
 				</button>
 			</div>
 		</div>
-
-		<input id="form-number" type="hidden" value="0" />
 	</form>
 
 {% endblock body%}
 
 {% block custom_bottom_script %}
 	<script>
+
 		$(document).ready(function() {
-			// 
+			// Initial script
 			//
-			var form = $('.form-instance').clone();
-			var formNumber = parseInt($('#form-number').val());
+			var form = $('.form-instance:first').clone();
+			var formNumber = parseInt($('.form-instance:last').find('.panel-body').children().eq(0).prop('id').substring(8, 9));
+			console.log('formNumber', formNumber);
+			$('.language-selector-marked').languageSelector();
 
 			// Event listeners
             // 
@@ -98,24 +99,51 @@
                 removeForm(this);
             });
 
-            // 
+            // Function defs
             // 
 			function addForm() {
+				// 
 				formNumber++;
 				$('#form-number').val(formNumber);
-				var clone = form.clone();
-				// clone[0].innerHTML = clone[0].innerHTML.replace('form-0-', 'form-' + formNumber + '-');
-				// console.log(clone[0].innerHTML);
-				console.dir(clone.find('input[name*="form-0"]').attr);
+				console.log('adding', formNumber);
+				// 
+				var clone = updateIndex(form.clone(), formNumber);
+				clone.find('.language-selector-marked').languageSelector();
 				clone.appendTo('.form-list');
+				// 
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) + 1);
+				// 
 			}
-
 			function removeForm(el) {
+				// Remove the form container element
 				$(el).parents('.form-instance').detach();
+				// Update form numbering system
+				renumberForms($('.form-instance'));
+				formNumber--;
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) - 1);
+			}
+			function updateIndex(form, number) {
+				var currentId = new RegExp('form' + '-(\\d+)-');
+				var replacement = 'form-' + number + '-';
+				form.find('input').each(function(index, el) {
+					$(el).prop('id', $(el).prop('id').replace(currentId, replacement));
+					$(el).prop('name', $(el).prop('name').replace(currentId, replacement));
+				});
+				form.find('select').each(function(index, el) {
+					$(el).prop('id', $(el).prop('id').replace(currentId, replacement));
+					$(el).prop('name', $(el).prop('name').replace(currentId, replacement));
+				});
+				form.find('label').each(function(index, el) {
+					$(el).prop('for', $(el).prop('for').replace(currentId, replacement));
+				});
+				return form;
+			}
+			function renumberForms(forms) {
+				$(forms).each(function(index, form) {
+					form = updateIndex($(form), index);
+				});
 			}
 
 		});

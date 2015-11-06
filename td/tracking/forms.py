@@ -106,6 +106,7 @@ class MultiCharterForm(CharterForm):
             required=True
         )
 
+
 # --------------- #
 #    EVENTFORM    #
 # --------------- #

@@ -39,6 +39,7 @@ from .models import (
     Output,
     Publication,
 )
+from td.models import Language
 
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
@@ -191,6 +192,27 @@ class MultiCharterAddView(ModelFormSetView):
     model = Charter
     form_class = MultiCharterForm
     extra = 1
+
+    def get_initial(self):
+        print 'GETTING INITIAL'
+        # print dir(self)
+        # print self.__dict__
+        return {}
+
+    def construct_formset(self):
+        formset = super(MultiCharterAddView, self).construct_formset()
+        if self.request.POST:
+            print 'THERE IS POST'
+            for x in range(len(formset.forms)):
+                pk = self.request.POST.get("form-" + str(x) + "-language")
+                if pk:
+                    language = Language.objects.get(pk=pk)
+                    widget = formset.forms[x].fields["language"].widget.attrs
+                    widget["data-lang-pk"] = pk
+                    widget["data-lang-ln"] = language.ln
+                    widget["data-lang-lc"] = language.lc
+                    widget["data-lang-lr"] = language.lr
+        return formset
 
     def get_queryset(self):
         print 'GETTING QUERYSET'
