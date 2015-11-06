@@ -195,7 +195,11 @@ class OfficialResource(models.Model):
         ordering = ["language", "contact"]
 
     def __unicode__(self):
-        return self.language.code
+        return "({code}) {resource_type} {version}".format(
+            code=self.language.code,
+            resource_type=self.resource_type.long_name,
+            version=self.version
+        )
 
 
 class Comment(models.Model):
@@ -258,8 +262,8 @@ class Chapter(models.Model):
     resource_type = models.ForeignKey(OfficialResourceType)
     language = models.ForeignKey(Language)
     number = models.IntegerField()
-    ref = models.CharField(max_length=300)
-    title = models.CharField(max_length=300)
+    ref = models.TextField()
+    title = models.TextField()
 
     @property
     def data(self):
@@ -273,8 +277,8 @@ class Chapter(models.Model):
 
 class Frame(models.Model):
     chapter = models.ForeignKey(Chapter)
-    identifier = models.CharField(max_length=50)
-    img = models.URLField(max_length=300)
+    identifier = models.TextField()
+    img = models.URLField()
     text = models.TextField()
 
     @property
