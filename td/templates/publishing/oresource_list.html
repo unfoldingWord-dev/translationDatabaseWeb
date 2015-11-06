@@ -72,11 +72,6 @@
                         <tr>
                             {% include "publishing/_oresource_row_data.html" %}
                         </tr>
-                        {% for version in oresource.versions %}
-                            <tr class="version">
-                                {% include "publishing/_oresource_row_data.html" with oresource=version.object_version.object %}
-                            </tr>
-                        {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>

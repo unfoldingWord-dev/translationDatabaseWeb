@@ -140,20 +140,6 @@ class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
     model = OfficialResource
     template_name = "publishing/oresource_form.html"
 
-    @property
-    def lang(self):
-        if not hasattr(self, "_lang"):
-            if self.kwargs.get("code"):
-                self._lang = get_object_or_404(Language, code=self.kwargs.get("code"))
-            else:
-                self._lang = None
-        return self._lang
-
-    def get_context_data(self, **kwargs):
-        context = super(OfficialResourceUpdateView, self).get_context_data(**kwargs)
-        context.update(dict(lang=self.lang))
-        return context
-
     def get_form(self, form_class):
         form = super(OfficialResourceUpdateView, self).get_form(form_class)
         del form.fields["language"]
@@ -174,9 +160,6 @@ class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
             published.send(sender=self, official_resource=self.object)
         return redirect("oresource_list")
 
-    def get_object(self):
-        return get_object_or_404(OfficialResource, language=self.lang)
-
 
 class OfficialResourceListView(LoginRequiredMixin, ListView):
     model = OfficialResource
@@ -189,7 +172,8 @@ class OfficialResourceListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, **kwargs):
         qs = super(OfficialResourceListView, self).get_queryset(**kwargs)
-        qs = qs.order_by("language__name", "-created")
+        qs = qs.order_by("resource_type__short_name", "language__name", "-created")
+        qs = qs.distinct("language__name", "resource_type__short_name")
         return qs
 
 
@@ -210,7 +194,7 @@ class PublishRequestCreateView(CreateView):
         # check validity of request
         messages.info(self.request, "Thank you for your request")
         send_request_email(self.object.pk)
-        return redirect("publish_request")
+        return redirect("oresource_list")
 
 
 class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
@@ -222,8 +206,15 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         # check validity of request...
         self.object = form.save()
         messages.info(self.request, "Publish Request Approved")
-        approve_publish_request(self.object.pk, self.request.user.id)
-        return redirect("oresource_update", code=self.object.language.code)
+        approve_publish_request(self.object.pk, self.request.user.pk)
+        return redirect("oresource_update", pk=self.kwargs.get('pk'))
+
+    def get_object(self):
+        request = get_object_or_404(
+            self.model,
+            id=self.kwargs.get('pk')
+        )
+        return request
 
 
 class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
