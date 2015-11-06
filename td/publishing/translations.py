@@ -244,3 +244,8 @@ class OBSTranslation(object):
 
     def __str__(self):
         return "OBS Translation for: {0}".format(self.lang_code)
+
+
+TRANSLATION_TYPES = {
+    "obs": OBSTranslation,
+}

@@ -7,7 +7,7 @@ from multiupload.fields import MultiFileField
 from td.models import Language
 from td.publishing.models import (
     RecentCommunication, Connection, OfficialResource, PublishRequest)
-from td.publishing.translations import OBSTranslation
+from td.publishing.translations import TRANSLATION_TYPES
 
 
 class RecentComForm(forms.ModelForm):
@@ -97,7 +97,7 @@ class OfficialResourceForm(forms.ModelForm):
 
         source_text_queryset = self.fields["source_text"].queryset.filter(
             official_resources__checking_level=3
-        )
+        ).distinct("code")
         self.fields["source_text"].queryset = source_text_queryset
 
     def clean_language(self):
@@ -146,7 +146,7 @@ class PublishRequestForm(forms.ModelForm):
 
         source_text_queryset = self.fields["source_text"].queryset.filter(
             official_resources__checking_level=3
-        )
+        ).distinct("code")
         self.fields["source_text"].queryset = source_text_queryset
 
         if self.instance.pk:
@@ -176,18 +176,21 @@ class PublishRequestForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(PublishRequestForm, self).clean()
         lang = cleaned_data["language"]
-        obs = OBSTranslation(base_path="", lang_code=lang.code)
-        if not obs.qa_check():
-            error_list_html = "".join([
-                (
-                    '<li><a href="{url}"><i class="fa fa-external-link"></i>'
-                    '</a> {description}</li>'
-                ).format(**err) for err in obs.qa_issues_list
-            ])
-            raise forms.ValidationError(mark_safe(
-                "The language does not pass the quality check for the following"
-                " reasons: <ul>" + error_list_html + "</ul>"
-            ))
+        resource_type = cleaned_data["resource_type"]
+        ResourceTranslator = TRANSLATION_TYPES.get(resource_type.short_name, None)
+        if ResourceTranslator:
+            translation = ResourceTranslator(base_path="", lang_code=lang.code)
+            if not translation.qa_check():
+                error_list_html = "".join([
+                    (
+                        '<li><a href="{url}"><i class="fa fa-external-link"></i>'
+                        '</a> {description}</li>'
+                    ).format(**err) for err in translation.qa_issues_list
+                ])
+                raise forms.ValidationError(mark_safe(
+                    "The language does not pass the quality check for the following"
+                    " reasons: <ul>" + error_list_html + "</ul>"
+                ))
         return cleaned_data
 
     class Meta:
