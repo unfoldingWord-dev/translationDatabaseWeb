@@ -1,6 +1,6 @@
 <td>
     {% if not version %}
-        <a href="{% url "oresource_update" oresource.language.code %}" class="btn btn-xs btn-default">
+        <a href="{% url "oresource_update" oresource.pk %}" class="btn btn-xs btn-default">
             <i class="fa fa-pencil"></i>
             Edit
         </a>
@@ -9,8 +9,11 @@
 <td class="language">
     {% if not version %}
         <a href="{% url "oresource_detail" oresource.pk %}">
-            {{ oresource.language.name }} ({{ oresource.language.code }})
+            {{ oresource.resource_type.long_name }}
         </a>
+        <br />
+        <strong>{{ oresource.language.name }}</strong>
+        <code>{{ oresource.language.code }}</code>
         <br />
     {% endif %}
     <small class="text-muted">
