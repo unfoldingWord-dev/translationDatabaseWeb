@@ -187,36 +187,42 @@ class NewCharterModalView(CharterAdd):
         return render(self.request, "tracking/new_charter_modal.html", {"success": True})
 
 
-class MultiCharterAddView(ModelFormSetView):
+class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
     template_name = "tracking/multi_charter_form.html"
     model = Charter
     form_class = MultiCharterForm
     extra = 1
 
+    def get_factory_kwargs(self):
+        print 'GET FACTORY KWARGS'
+        kwargs = super(MultiCharterAddView, self).get_factory_kwargs()
+        kwargs["form"] = MultiCharterForm
+        return kwargs
+
     def get_initial(self):
-        print 'GETTING INITIAL'
-        # print dir(self)
-        # print self.__dict__
-        return {}
+        print 'INITIAL', self.request.user.username
+        return [{
+            "start_date": timezone.now().date(),
+            "created_by": self.request.user.username,
+        }]
+
+    def get_queryset(self):
+        return Charter.objects.none()
 
     def construct_formset(self):
         formset = super(MultiCharterAddView, self).construct_formset()
+        # Fill out data attrs needed by select2 to display user selection properly on POST
         if self.request.POST:
-            print 'THERE IS POST'
-            for x in range(len(formset.forms)):
-                pk = self.request.POST.get("form-" + str(x) + "-language")
-                if pk:
-                    language = Language.objects.get(pk=pk)
-                    widget = formset.forms[x].fields["language"].widget.attrs
-                    widget["data-lang-pk"] = pk
+            for index in range(len(formset.forms)):
+                language_pk = self.request.POST.get("form-" + str(index) + "-language")
+                if language_pk:
+                    language = Language.objects.get(pk=language_pk)
+                    widget = formset.forms[index].fields["language"].widget.attrs
+                    widget["data-lang-pk"] = language.pk
                     widget["data-lang-ln"] = language.ln
                     widget["data-lang-lc"] = language.lc
                     widget["data-lang-lr"] = language.lr
         return formset
-
-    def get_queryset(self):
-        print 'GETTING QUERYSET'
-        return Charter.objects.none()
 
     def formset_valid(self, formset):
         print 'FORMSET IS VALID'

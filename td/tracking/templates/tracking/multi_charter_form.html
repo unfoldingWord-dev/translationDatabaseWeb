@@ -33,6 +33,13 @@
 			font-weight: lighter;
 			cursor: pointer;
 		}
+		.form-instance .panel-body {
+			background-color: #FFF;
+			transition: background-color 666ms easeOut;
+		}
+		.form-instance .panel-body.new-form {
+			background-color: #F0FAF0;
+		}
 	</style>
 {% endblock extra_style %}	
 
@@ -49,11 +56,9 @@
 				<div class="row form-instance">
 					<div class="col-md-6">
 						<div class="panel panel-default">
-							{% if forloop.first %}
 								<div class="panel-heading">
 									<h2 class="panel-title">New Translation Project Charter</h2>
 								</div>
-							{% endif %}
 							<div class="panel-body">
 								{{ form | bootstrap}}
 								<a href="" class="remove-form-link" style="margin-top: -2rem; font-weight: lighter;">Remove</a>
@@ -85,7 +90,6 @@
 			//
 			var form = $('.form-instance:first').clone();
 			var formNumber = parseInt($('.form-instance:last').find('.panel-body').children().eq(0).prop('id').substring(8, 9));
-			console.log('formNumber', formNumber);
 			$('.language-selector-marked').languageSelector();
 
 			// Event listeners
@@ -105,11 +109,19 @@
 				// 
 				formNumber++;
 				$('#form-number').val(formNumber);
-				console.log('adding', formNumber);
 				// 
 				var clone = updateIndex(form.clone(), formNumber);
+				clone = updateValue(clone, formNumber);
+				clone = cleanError(clone, formNumber);
 				clone.find('.language-selector-marked').languageSelector();
 				clone.appendTo('.form-list');
+				scrollToLast();
+				// 
+				var last = $('.form-instance:last .panel-body');
+				last.addClass('new-form');
+				window.setTimeout(function() {
+					last.removeClass('new-form');
+				}, 1500);
 				// 
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) + 1);
@@ -123,6 +135,7 @@
 				formNumber--;
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) - 1);
+				scrollToLast();
 			}
 			function updateIndex(form, number) {
 				var currentId = new RegExp('form' + '-(\\d+)-');
@@ -144,6 +157,33 @@
 				$(forms).each(function(index, form) {
 					form = updateIndex($(form), index);
 				});
+			}
+			function updateValue(form, number) {
+				var idPrefixSelector = '#id_form-' + number + '-';
+				form.find(idPrefixSelector + 'language').val("");
+				form.find(idPrefixSelector + 'countries').val([]);
+				form.find(idPrefixSelector + 'number').val("");
+				if (number > 0) {
+					var idPrefixPrevious = '#id_form-' + (number - 1) + '-';;
+					var selects = ['start_date_month', 'start_date_day', 'start_date_year', 'end_date_month', 'end_date_day', 'end_date_year', 'lead_dept'];
+					selects.forEach(function(field) {
+						form.find(idPrefixSelector + field).prop('selectedIndex', $(document).find(idPrefixPrevious + field).prop('selectedIndex'));
+					});
+					form.find(idPrefixSelector + 'contact_person').val($(document).find(idPrefixPrevious + 'contact_person').val());
+				}
+				return form
+			}
+			function cleanError(form) {
+				form.find('.has-error').removeClass('has-error');
+				form.find('span.help-block').remove();
+				return form
+			}
+			function scrollToLast() {
+				var offset = 80;
+				var target = $('.form-instance:last').offset().top - offset;
+				$('body').animate({
+					scrollTop: target
+				}, 367, 'swing');
 			}
 
 		});

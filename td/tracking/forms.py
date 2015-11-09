@@ -106,6 +106,10 @@ class MultiCharterForm(CharterForm):
             required=True
         )
 
+    def has_changed(self):
+        changed_data = super(MultiCharterForm, self).has_changed()
+        return bool(self.initial or changed_data)
+
 
 # --------------- #
 #    EVENTFORM    #
