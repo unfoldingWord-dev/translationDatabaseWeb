@@ -59,23 +59,35 @@ class TranslationAcademyTestCase(TestCase):
     @requests_mock.mock()
     def test_parse_table_of_contents(self, mock_requests):
         expected = {
-            "id": u"/foo/bar",
-            "sections": [{
-                "pages": [{"name": u"foobar2", "url": u"/foo/bar/2"}],
-                "title": "Foobar2",
-            }],
-            "title": u"Foobar"
+            'sections': [
+                {
+                    'pages': [
+                        {
+                            'url': u'/en/ta/vol1/intro/ta_intro',
+                            'name': u'Introduction to translationAcademy'
+                        }
+                    ],
+                    'title': u'Table of Contents - Introduction'
+                }
+            ],
+            'id': u'volume-1-table-of-contents',
+            'title': u'Volume 1 Table of Contents'
         }
         contents = (
-            '<h2 id="/foo/bar">Foobar</h2><!--comment--><h3 id="/foo/bar/2">'
-            'Foobar2</h3><div><a href="/foo/bar/2">foobar2</a></div><a href="/pag'
-            'e/footer">PageFooter</a>'
+            '<h2 id="volume-1-table-of-contents">Volume 1 Table of Contents</h2>'
+            '<div id="plugin_include__en__ta__vol1__intro__toc_intro">'
+            '<h3 class="sectionedit4" id="table-of-contents-introduction">'
+            'Table of Contents - Introduction</h3><div class="level3">'
+            '<p>This module answers the question: What is in the Introduction?<br>'
+            '</p></div><h4 id="introduction">Introduction</h4><div class="level4">'
+            '<ol><li class="level1"><div class="li"> <a href="/en/ta/vol1/intro/ta_'
+            'intro" class="wikilink1" title="en:ta:vol1:intro:ta_intro">Introduction'
+            ' to translationAcademy</a></div></li></ol></div></div>'
         )
         mock_requests.get(
             "https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody",
             text=contents
         )
-
         toc_soup = self.resource.fetch_table_of_contents()
         toc = self.resource._parse_table_of_contents(toc_soup)
         self.assertEquals(toc, expected)
@@ -89,10 +101,10 @@ class TranslationAcademyTestCase(TestCase):
                     u'="/foo/bar">\n  foobar\n </a>\n</div>'
                 ),
                 "id": u"/foo/bar",
-                "img": None
+                "img": ''
             }],
             "ref": "https://door43.org/en/ta/vol1/toc",
-            "number": u"/foo/bar",
+            "number": 1,
             "title": u"Foobar"
         }
         contents = (
