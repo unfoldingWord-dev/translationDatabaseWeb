@@ -174,38 +174,6 @@ class OBSTranslation(object):
                 chapter_data["frames"].append(frame_data)
         return chapter_data
 
-    def _get_front_matter(self):
-        front_data = {}
-        # todo: redo all this using requests
-        # front_path = os.path.join(self.obs_path, "front-matter.txt")
-        # if os.path.exists(front_path):
-        #    front_matter = codecs.open(front_path, 'r', encoding='utf-8').read()
-        #    obs_names = OBS_NAME_RE.search(front_matter)
-        #    if obs_names:
-        #        front_data["name"] = obs_names.group(1)
-        #    else:
-        #        front_data["name"] = OBS_DEFAULT_NAME
-        #    tag_lines = TAG_LINE_RE.search(front_matter)
-        #    if tag_lines:
-        #        front_data["tagline"] = tag_lines.group(0).split('**')[1].strip()
-        #    else:
-        #        front_data["tagline"] = OBS_DEFAULT_TAGLINE
-        #    front_data["language"] = self.lang_code
-        #    front_data["date_modified"] = self.today
-        #    front_data["front-matter"] = clean_text(front_matter)
-        return front_data
-
-    def _get_back_matter(self):
-        back_data = {}
-        # todo: redo all this using requests
-        # back_path = os.path.join(self.obs_path, "back-matter.txt")
-        # if os.path.exists(back_path):
-        #    back = codecs.open(back_path, 'r', encoding='utf-8').read()
-        #    back_data["language"] = self.lang_code
-        #    back_data["back-matter"] = clean_text(back)
-        #    back_data["date_modified"] = datetime.date.today()
-        return back_data
-
     def _get_chapters(self):
         chapter_list = []
         for cn in CHAPTER_LIST:

@@ -28,7 +28,14 @@ def resource_language_json(request, kind, lang):
     return JsonResponse(data)
 
 
-def resource_catalog_json(request, kind):
+def resource_catalog_json(request, kind=None):
+    # List all resources if a 'kind' isn't specified
+    if kind is None:
+        return JsonResponse(
+            [resource.data for resource in OfficialResourceType.objects.all()],
+            safe=False
+        )
+
     resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
     return JsonResponse(resource_type.data, safe=False)
 
@@ -194,6 +201,7 @@ class PublishRequestCreateView(CreateView):
         # check validity of request
         messages.info(self.request, "Thank you for your request")
         send_request_email(self.object.pk)
+        # TODO if the user is not logged in, redirect to the home page
         return redirect("oresource_list")
 
 
@@ -207,7 +215,7 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         messages.info(self.request, "Publish Request Approved")
         approve_publish_request(self.object.pk, self.request.user.pk)
-        return redirect("oresource_update", pk=self.kwargs.get('pk'))
+        return redirect("oresource_list")
 
     def get_object(self):
         request = get_object_or_404(
