@@ -86,60 +86,70 @@
 	<script>
 
 		$(document).ready(function() {
-			// Initial script
+			// INITIAL SCRIPTS
 			//
+			// Clone the first form before we do anything to it
 			var form = $('.form-instance:first').clone();
+			// Get the latest form ID number in the page
 			var formNumber = parseInt($('.form-instance:last').find('.panel-body').children().eq(0).prop('id').substring(8, 9));
+			// Turn all language fields into Select2 search fields
 			$('.language-selector-marked').languageSelector();
 
-			// Event listeners
+			// EVENT LISTENERS
             // 
             $('.add-form-link').on('click', function(e) {
                 e.preventDefault();
                 addForm();
             });
+            // Dynamically bind the event handler because the remove link will be dynamically created and inserted into the DOM
             $('form').on('click', '.remove-form-link', function(e) {
                 e.preventDefault();
                 removeForm(this);
             });
 
-            // Function defs
+            // FUNCTION DEFINITIONS
             // 
 			function addForm() {
-				// 
+				// Update ID number for the new form
 				formNumber++;
-				$('#form-number').val(formNumber);
-				// 
+				// Create a clone of the clone and prep it to be added to the page
 				var clone = updateIndex(form.clone(), formNumber);
 				clone = updateValue(clone, formNumber);
 				clone = cleanError(clone, formNumber);
 				clone.find('.language-selector-marked').languageSelector();
 				clone.appendTo('.form-list');
-				scrollToLast();
 				// 
+				scrollToLast();
+				// Make the new form's background to glow green for a bit
 				var last = $('.form-instance:last .panel-body');
 				last.addClass('new-form');
 				window.setTimeout(function() {
 					last.removeClass('new-form');
 				}, 1500);
-				// 
+				// Update Django's numbering system
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) + 1);
-				// 
 			}
+			// 
 			function removeForm(el) {
-				// Remove the form container element
+				// 
 				$(el).parents('.form-instance').detach();
-				// Update form numbering system
+				// 
 				renumberForms($('.form-instance'));
+				// Update ID number for the next form
 				formNumber--;
+				// Update Django's numbering system
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) - 1);
+				// 
 				scrollToLast();
 			}
+			// 
 			function updateIndex(form, number) {
+				// Set up what to look for and what to change the ID to
 				var currentId = new RegExp('form' + '-(\\d+)-');
 				var replacement = 'form-' + number + '-';
+				// Search for elements and change their identifications to the appropriate number
 				form.find('input').each(function(index, el) {
 					$(el).prop('id', $(el).prop('id').replace(currentId, replacement));
 					$(el).prop('name', $(el).prop('name').replace(currentId, replacement));
@@ -153,18 +163,26 @@
 				});
 				return form;
 			}
+			// 
 			function renumberForms(forms) {
+				// Collect all the form instance and renumber them from 0 up 
 				$(forms).each(function(index, form) {
 					form = updateIndex($(form), index);
 				});
 			}
+			// 
 			function updateValue(form, number) {
+				// Setup ID selector
 				var idPrefixSelector = '#id_form-' + number + '-';
+				// Clear the values of the following fields
 				form.find(idPrefixSelector + 'language').val("");
 				form.find(idPrefixSelector + 'countries').val([]);
 				form.find(idPrefixSelector + 'number').val("");
+				// If there's at least 1 form in the page...
 				if (number > 0) {
-					var idPrefixPrevious = '#id_form-' + (number - 1) + '-';;
+					// Setup the previous form's ID selector
+					var idPrefixPrevious = '#id_form-' + (number - 1) + '-';
+					// Duplicate the value of the following fields
 					var selects = ['start_date_month', 'start_date_day', 'start_date_year', 'end_date_month', 'end_date_day', 'end_date_year', 'lead_dept'];
 					selects.forEach(function(field) {
 						form.find(idPrefixSelector + field).prop('selectedIndex', $(document).find(idPrefixPrevious + field).prop('selectedIndex'));
@@ -173,17 +191,20 @@
 				}
 				return form
 			}
+			// 
 			function cleanError(form) {
+				// Remove error classes and messages
 				form.find('.has-error').removeClass('has-error');
 				form.find('span.help-block').remove();
 				return form
 			}
+			// 
 			function scrollToLast() {
-				var offset = 80;
-				var target = $('.form-instance:last').offset().top - offset;
+				// Scroll to the latest form (usually means the one that's just created)
+				var target = $('.form-instance:last').offset().top - 80;
 				$('body').animate({
 					scrollTop: target
-				}, 367, 'swing');
+				}, 333, 'swing');
 			}
 
 		});

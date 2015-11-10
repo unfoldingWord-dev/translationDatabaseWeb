@@ -192,6 +192,7 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
     model = Charter
     form_class = MultiCharterForm
     extra = 1
+    success_url = '/tracking/'
 
     def get_factory_kwargs(self):
         print 'GET FACTORY KWARGS'
@@ -226,11 +227,8 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 
     def formset_valid(self, formset):
         print 'FORMSET IS VALID'
+        messages.info(self.request, "Your charters have been successfully created.")
         return super(MultiCharterAddView, self).formset_valid(formset)
-
-    def formset_invalid(self, formset):
-        print 'FORMSET IS INVALID'
-        return super(MultiCharterAddView, self).formset_invalid(formset)
 
 
 # -------------------------------- #
