@@ -129,7 +129,8 @@ class PublishRequestForm(forms.ModelForm):
     license_agreements = MultiFileField(
         required=False,
         min_num=0,
-        max_file_size=5242880
+        max_file_size=5242880,
+        label="License, Statement of Faith, and Translation Guidelines Agreements",
     )
 
     def __init__(self, *args, **kwargs):
@@ -175,22 +176,24 @@ class PublishRequestForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(PublishRequestForm, self).clean()
-        lang = cleaned_data["language"]
-        resource_type = cleaned_data["resource_type"]
-        ResourceTranslator = TRANSLATION_TYPES.get(resource_type.short_name, None)
-        if ResourceTranslator:
-            translation = ResourceTranslator(base_path="", lang_code=lang.code)
-            if not translation.qa_check():
-                error_list_html = "".join([
-                    (
-                        '<li><a href="{url}"><i class="fa fa-external-link"></i>'
-                        '</a> {description}</li>'
-                    ).format(**err) for err in translation.qa_issues_list
-                ])
-                raise forms.ValidationError(mark_safe(
-                    "The language does not pass the quality check for the following"
-                    " reasons: <ul>" + error_list_html + "</ul>"
-                ))
+        if self.is_valid():
+            lang = cleaned_data["language"]
+            resource_type = cleaned_data["resource_type"]
+            ResourceTranslator = TRANSLATION_TYPES.get(resource_type.short_name, None)
+            if ResourceTranslator:
+                translation = ResourceTranslator(base_path="", lang_code=lang.code)
+                if not translation.qa_check():
+                    error_list_html = "".join([
+                        (
+                            '<li><a href="{url}" target="_blank"><i class="fa '
+                            'fa-external-link"></i></a> {description}</li>'
+                        ).format(**err) for err in translation.qa_issues_list
+                    ])
+                    raise forms.ValidationError(mark_safe(
+                        "This resource did not pass the quality check. Please "
+                        "click each link below and fix the issue mentioned on "
+                        "the Door43 site: <ul>" + error_list_html + "</ul>"
+                    ))
         return cleaned_data
 
     class Meta:
