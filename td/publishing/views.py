@@ -29,13 +29,15 @@ def resource_language_json(request, kind, lang):
 
 
 def resource_catalog_json(request, kind=None):
-    ret = None
-    if kind:
-        resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
-        ret = resource_type.data
-    else:
-        ret = [resource.data for resource in OfficialResourceType.objects.all()]
-    return JsonResponse(ret, safe=False)
+    # List all resources if a 'kind' isn't specified
+    if kind is None:
+        return JsonResponse(
+            [resource.data for resource in OfficialResourceType.objects.all()],
+            safe=False
+        )
+
+    resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
+    return JsonResponse(resource_type.data, safe=False)
 
 
 @login_required
