@@ -93,6 +93,15 @@ class TranslationAcademy(object):
     and then each topic and contents.
     """
 
+    # chapter document IDs in the table of contents
+    SECTIONS = [
+        "plugin_include__en__ta__vol1__intro__toc_intro",
+        "plugin_include__en__ta__vol1__translate__toc_transvol1",
+        "plugin_include__en__ta__vol1__checking__toc_checkvol1",
+        "plugin_include__en__ta__vol1__tech__toc_techvol1",
+        "plugin_include__en__ta__vol1__process__toc_processvol1",
+    ]
+
     source_url = "https://door43.org{uri}"
     chapters_uri = "/{lang_code}/ta/vol{vol_no}/toc"
 
@@ -119,21 +128,20 @@ class TranslationAcademy(object):
             "sections": [],
         }
 
-        section = {"title": None, "pages": []}
-        # Iterate over links on the page, finding the previous header element
-        # to grab the section's title for each resulting link until the title
-        # changes. Skip the last link, which is a self-referencing footer link.
-        for a_el in soup.find_all("a")[:-1]:
-            section_title = a_el.find_previous(("h3", "h2", "h1")).text
-            if section_title != section["title"]:
-                toc["sections"].append(section)
-                section["title"] = section_title
-                section["pages"] = []
-
-            section["pages"].append({
-                "name": a_el.text,
-                "url": a_el.get("href"),
-            })
+        # Iterate over each section of the TOC, grabbing the header element's
+        # text as the chapter's title, then fetching all links inside the
+        # section.
+        for section_id in self.SECTIONS:
+            section_el = soup.find(id=section_id)
+            if section_el:
+                pages = []
+                title = section_el.find_next("h3").text
+                for a_el in section_el.find_all("a"):
+                    pages.append({
+                        "name": a_el.text,
+                        "url": a_el.get("href"),
+                    })
+                toc["sections"].append({"title": title, "pages": pages})
         return toc
 
     def fetch_chapter(self, chapter_uri):
@@ -163,11 +171,10 @@ class TranslationAcademy(object):
             chapter_data["title"] = title_el.text
             # 'https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody'
             chapter_data["ref"] = chapter_url
-            # 'table-of-contents-introduction'
-            chapter_data["number"] = title_el.get("id")
+            chapter_data["number"] = 1
             chapter_data["frames"] = [{
                 "id": title_el.get("id"),
-                "img": None,
+                "img": "",
                 "text": soup.prettify(formatter="html"),
             }]
 
@@ -175,13 +182,33 @@ class TranslationAcademy(object):
 
     def fetch_chapters(self):
         """
-        Fetch and return all contents of each chapter
+        Fetch and return contents of each chapter
         """
         toc_soup = self.fetch_table_of_contents()
         toc = self._parse_table_of_contents(toc_soup)
+        toc_title_el = toc_soup.find("h2")
+
+        # include table of contents as chapter
+        yield {
+            "number": 1,
+            "title": toc_title_el.text,
+            "ref": self.chapters_uri.format(
+                lang_code=self.lang_code,
+                vol_no=self.volume_number
+            ),
+            "frames": [{
+                "id": toc_title_el.get("id"),
+                "img": "",
+                "text": toc_soup.prettify(formatter="html")
+            }],
+        }
+
         for section in toc["sections"]:
             for page in section["pages"]:
-                yield self.fetch_chapter(page["url"])
+                chapter = self.fetch_chapter(page["url"])
+                # Some pages have not been completed, skip these
+                if chapter:
+                    yield chapter
 
     def fetch_table_of_contents(self):
         """
