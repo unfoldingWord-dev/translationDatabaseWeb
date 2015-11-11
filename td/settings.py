@@ -152,6 +152,7 @@ INSTALLED_APPS = [
     "absoluteuri",
     "storages",
     "formtools",
+    "import_export",
 
     # project
     "td",
