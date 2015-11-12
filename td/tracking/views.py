@@ -195,13 +195,11 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
     success_url = '/tracking/'
 
     def get_factory_kwargs(self):
-        print 'GET FACTORY KWARGS'
         kwargs = super(MultiCharterAddView, self).get_factory_kwargs()
         kwargs["form"] = MultiCharterForm
         return kwargs
 
     def get_initial(self):
-        print 'INITIAL', self.request.user.username
         return [{
             "start_date": timezone.now().date(),
             "created_by": self.request.user.username,
@@ -226,7 +224,6 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
         return formset
 
     def formset_valid(self, formset):
-        print 'FORMSET IS VALID'
         messages.info(self.request, "Your charters have been successfully created.")
         return super(MultiCharterAddView, self).formset_valid(formset)
 
