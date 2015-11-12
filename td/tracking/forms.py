@@ -92,10 +92,10 @@ class CharterForm(forms.ModelForm):
 
 
 class MultiCharterForm(CharterForm):
-     # Overriden add custom initialize the form
+    # Overriden add custom initialize the form
     def __init__(self, *args, **kwargs):
         super(MultiCharterForm, self).__init__(*args, **kwargs)
-        # 
+        #
         self.fields["language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
