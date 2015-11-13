@@ -22,25 +22,12 @@ from td.tracking.forms import (
 
 class ViewsTestCase(TestCase):
 
-    fixtures = ["td_tracking_seed.json"]
-
-    def setUp(self):
-        self.credentials = {"username": "testuser", "password": "testpassword"}
-        User.objects.create_user(**self.credentials)
-
     # Home
 
     def test_home_view_no_login(self):
         response = self.client.get("/tracking/")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/account/login/?next=/tracking/")
-
-    def test_home_view_with_login(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/", **self.credentials)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name[0], "tracking/project_list.html")
-        self.assertIn("<h1>Tracking Dashboard</h1>", response.content)
 
     # New Charter
 
@@ -49,74 +36,12 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/account/login/?next=/tracking/charter/new/")
 
-    def test_new_charter_view_with_login(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/new/", **self.credentials)
-        self.assertEqual(response.status_code, 200)
-
-    def test_new_charter_view_with_param(self):
-        response = self.client.get("/tracking/charter/new/99")
-        self.assertEqual(response.status_code, 404)
-
-    def test_new_charter_view_correct_template(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/new/", **self.credentials)
-        self.assertIn("New Translation Project Charter", response.content)
-
-    def test_new_charter_view_default_start_date(self):
-        date = datetime.datetime.now()
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/new/", **self.credentials)
-        month_option_string = "<option value=\"" + str(date.month) + "\" selected=\"selected\">"
-        day_option_string = "<option value=\"" + str(date.day) + "\" selected=\"selected\">"
-        year_option_string = "<option value=\"" + str(date.year) + "\" selected=\"selected\">"
-        self.assertIn(month_option_string, response.content)
-        self.assertIn(day_option_string, response.content)
-        self.assertIn(year_option_string, response.content)
-
-    def test_new_charter_view_default_created_by(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/new/", **self.credentials)
-        created_by_string = "name=\"created_by\" type=\"hidden\" value=\"testuser\""
-        self.assertIn(created_by_string, response.content)
-
     # Update Charter
 
     def test_charter_upadate_view_no_login(self):
         response = self.client.get("/tracking/charter/update/99/")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/account/login/?next=/tracking/charter/update/99/")
-
-    def test_charter_upadate_view_with_login_not_found(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/update/99/", **self.credentials)
-        self.assertEqual(response.status_code, 404)
-
-    def test_charter_upadate_view_no_param(self):
-        response = self.client.get("/tracking/charter/update/")
-        self.assertEqual(response.status_code, 404)
-
-    def test_charter_update_view_correct_template(self):
-        now = datetime.datetime.now()
-        department = Department.objects.get(pk=1)
-        language = Language.objects.create(code="wa")
-        charter = Charter.objects.create(language=language, start_date=now, end_date=now, lead_dept=department)
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/charter/update/" + str(charter.id) + "/", **self.credentials)
-        self.assertIn("Update Translation Project Charter", response.content)
-
-    # Charter Detail
-
-    def test_charter_detail_page(self):
-        """
-        Charter detail page should no longer exists. It is now integrated to the language detail page.
-        """
-
-        response = self.client.get("/tracking/charter/detail/99")
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.get("/tracking/charter/detail/")
-        self.assertEqual(response.status_code, 404)
 
     # Success
 

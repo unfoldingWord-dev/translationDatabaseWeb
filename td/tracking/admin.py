@@ -44,6 +44,13 @@ class CharterResource(resources.ModelResource):
         fields = ('id', 'language', 'countries', 'start_date', 'end_date', 'lead_dept', 'number', 'contact_person', 'created_by')
 
 
+class EventResource(resources.ModelResource):
+
+    class Meta:
+        model = Event
+        fields = ('id', 'charter', 'number', 'location', 'start_date', 'end_date', 'lead_dept', 'output_target', 'publication', 'current_check_level', 'target_check_level', 'translation_methods', 'software', 'hardware', 'contact_person', 'materials', 'translators', 'facilitators', 'networks', 'departments', 'created_at', 'created_by')
+
+
 class CharterAdmin(ImportExportModelAdmin):
     resource_class = CharterResource
     fieldsets = [
@@ -56,7 +63,8 @@ class CharterAdmin(ImportExportModelAdmin):
     list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ImportExportModelAdmin):
+    resource_class = EventResource
     fieldsets = [
         ("General", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
         ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
@@ -64,7 +72,7 @@ class EventAdmin(admin.ModelAdmin):
         ("Misc", {"fields": ["output_target", "publication", "current_check_level", "target_check_level"]}),
         ("Submission Info", {"fields": [("created_at", "created_by")]}),
     ]
-    filter_vertical = ('translators', 'networks', )
+    filter_horizontal = ('translators', 'networks', )
     list_display = ("charter", "number", "location", "start_date", "end_date", "contact_person")
 
 

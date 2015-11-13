@@ -124,7 +124,7 @@ class AjaxCharterListView(CharterTableSourceView):
         "end_date",
         "contact_person"
     ]
-    # link is on column because name can"t handle non-roman characters
+    # link is on column because name can't handle non-roman characters
     link_column = "language__code"
     link_url_name = "language_detail"
     link_url_field = "lang_id"
@@ -150,12 +150,12 @@ class AjaxCharterEventsListView(EventTableSourceView):
 # ---------------------------------- #
 
 
-class CharterAdd(LoginRequiredMixin, CreateView):
+class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
     template_name = "tracking/charter_form.html"
 
-    # Overridden to set initial values
+    # Overidden to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
@@ -168,7 +168,7 @@ class CharterAdd(LoginRequiredMixin, CreateView):
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
-class CharterUpdate(LoginRequiredMixin, UpdateView):
+class CharterUpdateView(LoginRequiredMixin, UpdateView):
     model = Charter
     form_class = CharterForm
     template_name_suffix = "_update_form"
@@ -179,7 +179,7 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
-class NewCharterModalView(CharterAdd):
+class NewCharterModalView(CharterAddView):
     template_name = 'tracking/new_charter_modal.html'
 
     def form_valid(self, form):
