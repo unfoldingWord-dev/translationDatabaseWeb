@@ -5,7 +5,7 @@ from django.utils import timezone
 from td.tracking.views import *
 from td.tracking.models import Charter, Department
 from td.tracking.forms import *
-from td.models import Language, Country
+from td.models import Language
 
 from mock import patch, Mock
 
@@ -19,6 +19,11 @@ def setup_view(view, request, *args, **kwargs):
     view.args = args
     view.kwargs = kwargs
     return view
+
+
+# ------------------------------- #
+#            MISC VIEWS           #
+# ------------------------------- #
 
 
 class HomeViewTestCase(TestCase):
@@ -45,6 +50,11 @@ class HomeViewTestCase(TestCase):
         """
         view = setup_view(HomeView(), self.request)
         self.assertEqual(view.template_name, "tracking/project_list.html")
+
+
+# ---------------------------------- #
+#            CHARTER VIEWS           #
+# ---------------------------------- #
 
 
 class CharterAddViewTestCase(TestCase):
@@ -207,13 +217,13 @@ class NewCharterModalViewTestCase(TestCase):
 class MultiCharterAddViewTestCase(TestCase):
 
     def setUp(self):
-        user, _ = User.objects.get_or_create(
+        self.user, _ = User.objects.get_or_create(
             username="test_user",
             email="test@gmail.com",
             password="test_password",
         )
-        self.request = RequestFactory().get('/tracking/mc/new/')
-        self.request.user = user
+        self.request = RequestFactory().get("/tracking/mc/new/")
+        self.request.user = self.user
         self.view = setup_view(MultiCharterAddView(), self.request)
 
     def test_get(self):
@@ -248,7 +258,39 @@ class MultiCharterAddViewTestCase(TestCase):
         """
         Language fields must have data-lang* attributes on POST
         """
-        pass
+        language, _ = Language.objects.get_or_create(
+            id=1234,
+            name="OneTwoThreeFour",
+            code="ottf",
+            country=None,
+        )
+        language, _ = Language.objects.get_or_create(
+            id=5678,
+            name="FiveSixSevenEight",
+            code="fsse",
+            country=None,
+        )
+        post_data = {
+            "form-TOTAL_FORMS": "2",
+            "form-INITIAL_FORMS": "0",
+            "form-MAX_NUM_FORMS": "9999",
+            "form-0-language": "1234",
+            "form-1-language": "5678",
+        }
+        post = RequestFactory().post("/tracking/mc/new/", post_data)
+        post.user = self.user
+        post_view = setup_view(MultiCharterAddView(), post)
+        output = post_view.construct_formset()
+        widget_1 = output.forms[0].fields["language"].widget.attrs
+        widget_2 = output.forms[1].fields["language"].widget.attrs
+        self.assertEqual(widget_1["data-lang-pk"], 1234)
+        self.assertEqual(widget_1["data-lang-ln"], "OneTwoThreeFour")
+        self.assertEqual(widget_1["data-lang-lc"], "ottf")
+        self.assertEqual(widget_1["data-lang-lr"], "")
+        self.assertEqual(widget_2["data-lang-pk"], 5678)
+        self.assertEqual(widget_2["data-lang-ln"], "FiveSixSevenEight")
+        self.assertEqual(widget_2["data-lang-lc"], "fsse")
+        self.assertEqual(widget_2["data-lang-lr"], "")
 
     def formset_valid(self):
         """

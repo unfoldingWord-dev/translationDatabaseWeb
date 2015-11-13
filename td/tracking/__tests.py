@@ -2,8 +2,7 @@ import datetime
 
 from django import forms
 from django.test import TestCase
-from django.core.urlresolvers import reverse, resolve
-from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.forms.extras.widgets import SelectDateWidget
 
 from td.tracking.models import (
@@ -11,9 +10,6 @@ from td.tracking.models import (
     Country,
     Language,
     Department,
-    Hardware,
-    Software,
-    TranslationMethod,
 )
 from td.tracking.forms import (
     CharterForm,
