@@ -255,7 +255,7 @@ class PublishRequest(models.Model):
                 "source_text": self.source_text.code if self.source_text else "",
                 "source_text_version": self.source_version,
                 "version": self.version,
-                "license": "", # @TODO - where from?
+                "license": "",  # @TODO - where from?
             }
         }
 
