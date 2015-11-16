@@ -17,17 +17,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='frame',
             name='ref',
-            field=models.TextField(default=None, null=True),
+            field=models.TextField(blank=True),
         ),
         migrations.AddField(
             model_name='frame',
             name='title',
-            field=models.TextField(default=None, null=True),
+            field=models.TextField(blank=True),
         ),
         migrations.AlterField(
             model_name='chapter',
             name='ref',
-            field=models.TextField(default=None, null=True),
+            field=models.TextField(blank=True),
         ),
         migrations.AddField(
             model_name='chapter',

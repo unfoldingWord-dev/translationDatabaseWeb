@@ -101,7 +101,7 @@ class OfficialResourceType(models.Model):
                 ch, _ = self.chapter_set.get_or_create(
                     publish_request=publish_request,
                     language=language,
-                    ref=chapter.get("ref", None),
+                    ref=chapter.get("ref", ""),
                     title=chapter["title"],
                     number=chapter.get("number", idx),
                 )
@@ -109,8 +109,8 @@ class OfficialResourceType(models.Model):
                     ch.frame_set.get_or_create(
                         identifier=frame["id"],
                         number=frame.get("number", None),
-                        ref=frame.get("ref", None),
-                        title=frame.get("title", None),
+                        ref=frame.get("ref", ""),
+                        title=frame.get("title", ""),
                         img=frame["img"],
                         text=frame["text"]
                     )
@@ -287,7 +287,7 @@ class Chapter(models.Model):
     created = models.DateTimeField(default=timezone.now)
     language = models.ForeignKey(Language)
     number = models.IntegerField()
-    ref = models.TextField(default=None, null=True)
+    ref = models.TextField(blank=True)
     title = models.TextField()
 
     @property
@@ -312,8 +312,8 @@ class Frame(models.Model):
     chapter = models.ForeignKey(Chapter)
     identifier = models.TextField()
     number = models.IntegerField(default=None, null=True)
-    ref = models.TextField(default=None, null=True)
-    title = models.TextField(default=None, null=True)
+    ref = models.TextField(blank=True)
+    title = models.TextField(blank=True)
     img = models.URLField()
     text = models.TextField()
 
