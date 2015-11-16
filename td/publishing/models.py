@@ -239,9 +239,6 @@ class PublishRequest(models.Model):
 
     @property
     def data(self):
-        # resource_type.long_name,short_name excluded due to desired results in
-        # the catalog.json endpoint (td.publishing.views.resource_catalog_json).
-        # This might should change later...
         return {
             "mod": self.created_at.isoformat(),
             "direction": self.language.get_direction_display(),

@@ -38,12 +38,13 @@ def resource_language_json(request, kind, lang):
         "-approved_at"
     ).first()
 
-    data = {"chapters": []}
+    data = {"chapters": [], "meta": {}}
     # If no published chapter_set exists, revert to the previous dumping
     # of all chapters with the language code and resource type.
     if published and published.chapter_set.count():
         for chapter in published.chapter_set.order_by("number"):
             data["chapters"].append(chapter.data)
+        data["meta"] = published.data
     else:
         chapters = Chapter.objects.filter(
             resource_type=resource_type,
