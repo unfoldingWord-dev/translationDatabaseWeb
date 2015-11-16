@@ -92,21 +92,25 @@ class OfficialResourceType(models.Model):
     long_name = models.CharField(max_length=50, help_text="a more descriptive name")
     description = models.TextField(blank=True)
 
-    def ingest(self, language):
+    def ingest(self, language, publish_request):
         ResourceIngestor = RESOURCE_TYPES.get(self.short_name)
         if ResourceIngestor:
             resource_ingestor = ResourceIngestor(language.code)
             chapters = resource_ingestor.fetch_chapters()
-            for chapter in chapters:
+            for idx, chapter in enumerate(chapters):
                 ch, _ = self.chapter_set.get_or_create(
+                    publish_request=publish_request,
                     language=language,
-                    ref=chapter["ref"],
+                    ref=chapter.get("ref", None),
                     title=chapter["title"],
-                    number=chapter["number"]
+                    number=chapter.get("number", idx),
                 )
                 for frame in chapter["frames"]:
                     ch.frame_set.get_or_create(
                         identifier=frame["id"],
+                        number=frame.get("number", None),
+                        ref=frame.get("ref", None),
+                        title=frame.get("title", None),
                         img=frame["img"],
                         text=frame["text"]
                     )
@@ -142,8 +146,8 @@ class OfficialResource(models.Model):
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
 
-    def ingest(self):
-        self.resource_type.ingest(self.language)
+    def ingest(self, publish_request):
+        self.resource_type.ingest(self.language, publish_request)
 
     @property
     def data(self):
@@ -166,7 +170,7 @@ class OfficialResource(models.Model):
         }
         """
         return {
-            "date_modified": "",  # @@@ what is this?
+            "date_modified": self.created,
             "direction": self.language.get_direction_display(),
             "language": self.language.code,
             "string": self.language.name,
@@ -233,6 +237,28 @@ class PublishRequest(models.Model):
         else:
             return "invalid"
 
+    @property
+    def data(self):
+        # resource_type.long_name,short_name excluded due to desired results in
+        # the catalog.json endpoint (td.publishing.views.resource_catalog_json).
+        # This might should change later...
+        return {
+            "mod": self.created_at.isoformat(),
+            "direction": self.language.get_direction_display(),
+            "lc": self.language.code,
+            "name": self.language.name,
+            "status": {
+                "checking_entity": "",  # orgs aren't being added to resources
+                "checking_level": self.checking_level,
+                "contributors": self.contributors,
+                "publish_date": self.approved_at.isoformat(),
+                "source_text": self.source_text.code if self.source_text else "",
+                "source_text_version": self.source_version,
+                "version": self.version,
+                "license": "", # @TODO - where from?
+            }
+        }
+
     def publish(self, by_user):
         resource = self.resource_type.officialresource_set.create(
             created_by=by_user,
@@ -246,7 +272,7 @@ class PublishRequest(models.Model):
         )
         self.approved_at = timezone.now()
         self.save()
-        resource.ingest()
+        resource.ingest(publish_request=self)
         return resource
 
     def __str__(self):
@@ -260,31 +286,50 @@ class LicenseAgreement(models.Model):
 
 class Chapter(models.Model):
     resource_type = models.ForeignKey(OfficialResourceType)
+    publish_request = models.ForeignKey(PublishRequest, default=None, null=True)
+    created = models.DateTimeField(default=timezone.now)
     language = models.ForeignKey(Language)
     number = models.IntegerField()
-    ref = models.TextField()
+    ref = models.TextField(default=None, null=True)
     title = models.TextField()
 
     @property
     def data(self):
-        return {
-            "frames": [frame.data for frame in self.frame_set.order_by("identifier")],
+        data = {
             "number": self.number,
-            "ref": self.ref,
-            "title": self.title
+            "title": self.title,
         }
+        if self.ref:
+            data["ref"] = self.ref
+
+        frame_set = self.frame_set
+        if self.resource_type.short_name == "obs":
+            frame_set = frame_set.order_by("identifier")
+        else:
+            frame_set = frame_set.order_by("number", "id")
+        data["frames"] = [fr.data for fr in frame_set]
+        return data
 
 
 class Frame(models.Model):
     chapter = models.ForeignKey(Chapter)
     identifier = models.TextField()
+    number = models.IntegerField(default=None, null=True)
+    ref = models.TextField(default=None, null=True)
+    title = models.TextField(default=None, null=True)
     img = models.URLField()
     text = models.TextField()
 
     @property
     def data(self):
-        return {
+        data = {
             "id": self.identifier,
-            "img": self.img,
-            "text": self.text
+            "text": self.text,
         }
+        if self.img:
+            data["img"] = self.img
+        if self.ref:
+            data["ref"] = self.ref
+        if self.title:
+            data["title"] = self.title
+        return data
