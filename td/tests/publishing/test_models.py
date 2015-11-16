@@ -41,4 +41,4 @@ class PublishRequestTestCase(TestCase):
         resource = self.model.publish(by_user=self.user)
         self.assertIsInstance(resource, OfficialResource)
         self.assertEqual(resource.language.code, "en")
-        mock_ingest.assert_called_once_with()
+        mock_ingest.assert_called_once_with(publish_request=self.model)
