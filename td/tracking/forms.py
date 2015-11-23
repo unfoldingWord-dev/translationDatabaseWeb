@@ -277,7 +277,7 @@ class MultiCharterEventForm1(forms.Form):
         #   ex: {"0-language_0": <CharField...>, "0-language_1": <CharField...>}
         for name, field in self.fields.iteritems():
             # Check for fields that have a value set from submission attempt
-            if field.widget.attrs.get("value"):
+            if field.widget.attrs.get("value", None):
                 # Fill the input attrs with language info for select2 to display the correct info
                 language = Language.objects.get(charter__pk=field.widget.attrs["value"])
                 field.widget.attrs["data-lang-pk"] = language.id

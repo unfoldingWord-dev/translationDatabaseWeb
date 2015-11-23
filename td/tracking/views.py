@@ -192,7 +192,7 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
     model = Charter
     form_class = MultiCharterForm
     extra = 1
-    success_url = '/tracking/'
+    success_url = "/tracking/"
 
     def get_factory_kwargs(self):
         kwargs = super(MultiCharterAddView, self).get_factory_kwargs()
@@ -350,13 +350,6 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
 class EventDetailView(LoginRequiredMixin, DetailView):
     model = Event
 
-    def get_context_data(self, **kwargs):
-        # TODO: context["event"] is not needed. The event could be accessed as
-        #    object in the template.
-        context = super(EventDetailView, self).get_context_data(**kwargs)
-        context["event"] = self.object
-        return context
-
 
 class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     template_name = 'tracking/multi_charter_event_form.html'
@@ -369,9 +362,9 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
         if self.steps.current == "1":
-            context.update({"translators": get_translator_data(self)})
-            context.update({"facilitators": get_facilitator_data(self)})
-            context.update({"materials": get_material_data(self)})
+            context["translators"] = get_translator_data(self)
+            context["facilitators"] = get_facilitator_data(self)
+            context["materials"] = get_material_data(self)
         return context
 
     # Overriden to send a dynamic form based on user's input in step 1
@@ -379,7 +372,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         if step is None:
             step = self.steps.current
 
-        if step == '0' and self.request.POST:
+        if step == "0" and self.request.POST:
             # Create array container for field names
             charter_fields = []
             # Iterate through post data...
@@ -805,6 +798,8 @@ def check_for_new_items(event):
 #    next event for that charter
 def get_next_event_number(charter):
     events = Event.objects.filter(charter=charter)
+    # TODO: Put in model as model logic
+    # event = Event.objects.filter(charter=charter).values("number").order_by("number").first()
     latest = 0
     for event in events:
         if event.number > latest:

@@ -25,14 +25,14 @@ class CharterResource(resources.ModelResource):
         lead_dept_ids = []
         country_ids = []
         for language in dataset["language_code"]:
-            language_ids.append(Language.objects.get(code=language).id)
+            language_ids.append(Language.objects.get(code=language.lower()).id)
         for dept in dataset["lead_dept_name"]:
             lead_dept_ids.append(Department.objects.get(name=dept).id)
         for countries in dataset["country_codes"]:
             ids = []
             codes = countries.split(",")
             for code in codes:
-                ids.append(str(Country.objects.get(code=code).id))
+                ids.append(str(Country.objects.get(code=code.upper()).id))
             country_ids.append(",".join(ids))
         dataset.insert_col(1, language_ids, "language")
         dataset.insert_col(7, lead_dept_ids, "lead_dept")
