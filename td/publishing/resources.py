@@ -94,7 +94,7 @@ class TranslationAcademy(object):
     """
 
     # chapter document IDs in the table of contents
-    SECTIONS = [
+    CHAPTERS = [
         "plugin_include__en__ta__vol1__intro__toc_intro",
         "plugin_include__en__ta__vol1__translate__toc_transvol1",
         "plugin_include__en__ta__vol1__checking__toc_checkvol1",
@@ -125,38 +125,39 @@ class TranslationAcademy(object):
         toc = {
             "title": page_header_el.text,
             "id": page_header_el.get("id"),
-            "sections": [],
+            "chapters": [],
         }
 
         # Iterate over each section of the TOC, grabbing the header element's
         # text as the chapter's title, then fetching all links inside the
-        # section.
-        for section_id in self.SECTIONS:
-            section_el = soup.find(id=section_id)
-            if section_el:
-                pages = []
-                title = section_el.find_next("h3").text
-                for a_el in section_el.find_all("a"):
-                    pages.append({
+        # chapter.
+        for chapter_id in self.CHAPTERS:
+            chapter_el = soup.find(id=chapter_id)
+            if chapter_el:
+                frames = []
+                title = chapter_el.find_next("h3").text
+                title = title.replace('Table of Contents - ', '')
+                for idx, a_el in enumerate(chapter_el.find_all("a")):
+                    frames.append({
+                        "number": idx + 1,
                         "name": a_el.text,
                         "url": a_el.get("href"),
                     })
-                toc["sections"].append({"title": title, "pages": pages})
+                toc["chapters"].append({"title": title, "frames": frames})
         return toc
 
-    def fetch_chapter(self, chapter_uri):
+    def fetch_frame(self, frame_uri):
         """
-        Fetch the content from the `chapter_uri`, parsing and formatting the
+        Fetch the content from the `frame_uri`, parsing and formatting the
         input into one expected by the publishing module.
 
-        :param chapter_uri: URI for chapter of translationAcademy
+        :param chapter_uri: URI for frame of translationAcademy
         :type chapter_uri: string
 
         :returns: dict
         """
-        chapter_data = {}
-        chapter_url = self.source_url.format(uri=chapter_uri)
-        response = self.session.get(chapter_url)
+        frame_url = self.source_url.format(uri=frame_uri)
+        response = self.session.get(frame_url)
 
         if response.ok:
             soup = BeautifulSoup(response.text, "html.parser")
@@ -167,54 +168,45 @@ class TranslationAcademy(object):
 
             # Find the page title header
             title_el = soup.find(("h1", "h2", "h3"))
-            # 'Table of Contents - Introduction'
-            chapter_data["title"] = title_el.text
-            # 'https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody'
-            chapter_data["ref"] = chapter_url
-            chapter_data["number"] = 1
-            chapter_data["frames"] = [{
+            return {
                 "id": title_el.get("id"),
+                "ref": frame_uri,
+                "title": title_el.text.replace("Table of Contents - ", ""),
                 "img": "",
                 "text": soup.prettify(formatter="html"),
-            }]
-
-        return chapter_data
+            }
 
     def fetch_chapters(self):
         """
         Fetch and return contents of each chapter
         """
-        toc_soup = self.fetch_table_of_contents()
-        toc = self._parse_table_of_contents(toc_soup)
-        toc_title_el = toc_soup.find("h2")
+        toc = self.fetch_table_of_contents()
+        for chapter_no, chapter in enumerate(toc["chapters"]):
+            frames = []
+            for frame in chapter["frames"]:
+                frame_content = self.fetch_frame(frame["url"])
+                if not frame_content:
+                    frame_content = {
+                        "id": frame["name"].lower().replace(" ", "-"),
+                        "ref": frame["url"],
+                        "title": frame["name"],
+                        "img": "",
+                        "text": "",
+                    }
+                frame_content["number"] = frame["number"]
+                frames.append(frame_content)
 
-        # include table of contents as chapter
-        yield {
-            "number": 1,
-            "title": toc_title_el.text,
-            "ref": self.chapters_uri.format(
-                lang_code=self.lang_code,
-                vol_no=self.volume_number
-            ),
-            "frames": [{
-                "id": toc_title_el.get("id"),
-                "img": "",
-                "text": toc_soup.prettify(formatter="html")
-            }],
-        }
-
-        for section in toc["sections"]:
-            for page in section["pages"]:
-                chapter = self.fetch_chapter(page["url"])
-                # Some pages have not been completed, skip these
-                if chapter:
-                    yield chapter
+            yield {
+                "number": chapter_no,
+                "title": chapter["title"],
+                "frames": frames,
+            }
 
     def fetch_table_of_contents(self):
         """
-        Fetch the table of contents page for translationAcademy
+        Fetch and parse the table of contents page for translationAcademy
 
-        :returns: object - BeautifulSoup HTML parser
+        :returns: dict
         """
         chapters_uri = self.chapters_uri.format(
             lang_code=self.lang_code,
@@ -224,7 +216,8 @@ class TranslationAcademy(object):
         response = self.session.get(chapters_url)
         if not response.ok:
             response.raise_for_status()
-        return BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(response.text, "html.parser")
+        return self._parse_table_of_contents(soup)
 
 
 RESOURCE_TYPES = {

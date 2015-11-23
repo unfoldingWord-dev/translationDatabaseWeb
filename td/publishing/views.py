@@ -1,41 +1,110 @@
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import JsonResponse
-from django.db.models import Q
-from django.shortcuts import redirect, get_object_or_404
-from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
+from copy import deepcopy
 
 from django.contrib import messages
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.utils import timezone
+from django.views.generic import (
+    CreateView, DetailView, ListView, UpdateView, DeleteView)
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language
-
-from .forms import RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm
-from .models import Contact, OfficialResource, PublishRequest, OfficialResourceType
-from .signals import published
-from .tasks import send_request_email, approve_publish_request
+from td.publishing.forms import (
+    RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm)
+from td.publishing.models import (
+    Contact, Chapter, OfficialResource, PublishRequest, OfficialResourceType)
+from td.publishing.signals import published
+from td.publishing.tasks import send_request_email, approve_publish_request
 
 
 def resource_language_json(request, kind, lang):
+    """
+    Return the last published (approved) version of a resource by resource_type
+    and language.
+    """
     resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
     language = get_object_or_404(Language, code=lang)
-    chapters = resource_type.chapter_set.filter(language=language).order_by("number")
-    data = {
-        "chapters": [chapter.data for chapter in chapters]
-    }
+
+    published = PublishRequest.objects.filter(
+        resource_type=resource_type,
+        language=language
+    ).order_by(
+        "resource_type__short_name",
+        "language__code",
+        "-approved_at"
+    ).first()
+
+    data = {"chapters": [], "meta": {}}
+    # If no published chapter_set exists, revert to the previous dumping
+    # of all chapters with the language code and resource type.
+    if published and published.chapter_set.count():
+        for chapter in published.chapter_set.order_by("number"):
+            data["chapters"].append(chapter.data)
+        data["meta"] = published.data
+    else:
+        chapters = Chapter.objects.filter(
+            resource_type=resource_type,
+            language=language
+        ).order_by("number")
+        for chapter in chapters:
+            data["chapters"].append(chapter.data)
     return JsonResponse(data)
 
 
 def resource_catalog_json(request, kind=None):
+    # Catalog will be of official resources by language, eg:
+    # [ { title: Open Bible Story, slug: obs, languages: [] } ]
+    catalog = []
     # List all resources if a 'kind' isn't specified
     if kind is None:
-        return JsonResponse(
-            [resource.data for resource in OfficialResourceType.objects.all()],
-            safe=False
+        # @TODO - move this out of the view
+        published_requests = PublishRequest.objects.filter(
+            approved_at__isnull=False
+        ).order_by(
+            "resource_type__short_name",
+            "language__code",
+            "-approved_at",
         )
 
+        # langs will contain a list of languages for the catalog item, while
+        # listing all of the versions for the language + resource type
+        resource = {"title": None, "slug": None, "langs": []}
+        languages = {}
+        for pub_req in published_requests:
+            # If the resource type changes, copy the previous to the catalog,
+            # set the new resource title, slug and reset langs
+            if resource["title"] != pub_req.resource_type.long_name:
+                if resource["title"] is not None:
+                    resource["langs"] = [
+                        lang for code, lang in languages.items()
+                    ]
+                    catalog.append(deepcopy(resource))
+                resource["title"] = pub_req.resource_type.long_name
+                resource["slug"] = pub_req.resource_type.short_name
+                resource["langs"] = []
+            else:
+                # If this is the newest published version, set the date
+                # mod(ified), append current data as first of the ver(sion)s
+                if pub_req.language.code not in languages.keys():
+                    languages[pub_req.language.code] = {
+                        "lc": pub_req.language.code,
+                        "mod": pub_req.created_at,
+                        "vers": [pub_req.data, ],
+                    }
+                else:
+                    # Append all other items to the vers list
+                    languages[pub_req.language.code]["vers"].append(
+                        pub_req.data
+                    )
+        if resource["title"] is not None:
+            catalog.append(resource)
+        return JsonResponse({"cat": catalog}, safe=False)
+
+    # @TODO change the format for published requests by resource type
     resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
     return JsonResponse(resource_type.data, safe=False)
 
@@ -213,8 +282,8 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         # to do:
         # check validity of request...
         self.object = form.save()
-        messages.info(self.request, "Publish Request Approved")
         approve_publish_request(self.object.pk, self.request.user.pk)
+        messages.info(self.request, "Publish Request Approved")
         return redirect("oresource_list")
 
     def get_object(self):
@@ -239,7 +308,7 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
-    langs = Language.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    langs = Language.objects.filter(Q(code__icontains=term) | Q(name__icontains=term))
     d = [
         {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
         for x in langs
@@ -248,10 +317,20 @@ def languages_autocomplete(request):
 
 
 def source_languages_autocomplete(request):
-    term = request.GET.get("q").lower().encode("utf-8")
-    langs = Language.objects.filter(checking_level=3).filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    term = request.GET.get("q")
+    langs = PublishRequest.objects.filter(
+        Q(language__code__icontains=term)
+        | Q(language__name__icontains=term),
+        checking_level=3
+    ).order_by("language__code", "-approved_at").distinct("language__code")
     d = [
-        {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag, "ver": x.version}
+        {
+            "pk": x.id,
+            "ln": x.language.name,
+            "lc": x.language.code,
+            "gl": x.language.gateway_flag,
+            "ver": x.version
+        }
         for x in langs
     ]
     return JsonResponse({"results": d, "count": len(d), "term": term})

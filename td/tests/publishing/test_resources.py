@@ -44,30 +44,17 @@ class TranslationAcademyTestCase(TestCase):
 
     @requests_mock.mock()
     def test_fetch_table_of_contents(self, mock_requests):
-        contents = (
-            '<h3 id="/foo/bar">Foobar</h3><!--comment--><div>'
-            '<a href="/foo/bar">foobar</a></div>'
-        )
-        mock_requests.get(
-            "https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody",
-            text=contents
-        )
-
-        toc = self.resource.fetch_table_of_contents()
-        self.assertEquals(str(toc), contents)
-
-    @requests_mock.mock()
-    def test_parse_table_of_contents(self, mock_requests):
         expected = {
-            'sections': [
+            'chapters': [
                 {
-                    'pages': [
+                    'frames': [
                         {
+                            'number': 1,
                             'url': u'/en/ta/vol1/intro/ta_intro',
                             'name': u'Introduction to translationAcademy'
                         }
                     ],
-                    'title': u'Table of Contents - Introduction'
+                    'title': u'Introduction'
                 }
             ],
             'id': u'volume-1-table-of-contents',
@@ -88,23 +75,19 @@ class TranslationAcademyTestCase(TestCase):
             "https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody",
             text=contents
         )
-        toc_soup = self.resource.fetch_table_of_contents()
-        toc = self.resource._parse_table_of_contents(toc_soup)
+        toc = self.resource.fetch_table_of_contents()
         self.assertEquals(toc, expected)
 
     @requests_mock.mock()
-    def test_fetch_chapter(self, mock_requests):
+    def test_fetch_frame(self, mock_requests):
         expected = {
-            "frames": [{
-                "text": (
-                    u'<h3 id="/foo/bar">\n Foobar\n</h3>\n<div>\n <a href'
-                    u'="/foo/bar">\n  foobar\n </a>\n</div>'
-                ),
-                "id": u"/foo/bar",
-                "img": ''
-            }],
-            "ref": "https://door43.org/en/ta/vol1/toc",
-            "number": 1,
+            "text": (
+                u'<h3 id="/foo/bar">\n Foobar\n</h3>\n<div>\n <a href'
+                u'="/foo/bar">\n  foobar\n </a>\n</div>'
+            ),
+            "id": u"/foo/bar",
+            "img": "",
+            "ref": "/en/ta/vol1/toc",
             "title": u"Foobar"
         }
         contents = (
@@ -116,5 +99,5 @@ class TranslationAcademyTestCase(TestCase):
             text=contents
         )
 
-        chapter = self.resource.fetch_chapter("/en/ta/vol1/toc")
+        chapter = self.resource.fetch_frame("/en/ta/vol1/toc")
         self.assertEquals(chapter, expected)
