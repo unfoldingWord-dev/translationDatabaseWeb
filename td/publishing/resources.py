@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 from bs4 import element, BeautifulSoup
 import requests
@@ -81,10 +82,11 @@ class OpenBibleStory(object):
         return chapter_data
 
     def fetch_chapters(self):
-        return [
+        chapters = [
             self.fetch_chapter(chapter_number)
             for chapter_number in self.chapter_numbers
         ]
+        return {"chapters": chapters}
 
 
 class TranslationAcademy(object):
@@ -111,6 +113,31 @@ class TranslationAcademy(object):
         self.session.params = {"do": "export_xhtmlbody"}
         self.volume_number = str(volume_number)
 
+    def _parse_frames(self, soup):
+        frames = []
+        sub_frames = []
+
+        for a_el in soup.find_all("a"):
+            # @TODO - There is a better way...
+            li_classes = a_el.find_previous("li").get("class")
+            li_lvl = int(li_classes[0].lstrip("level"))
+            frame = self.fetch_frame(a_el.get("href"))
+            if li_lvl == 1:
+                if sub_frames:
+                    frames[-1]["frames"] = deepcopy(sub_frames)
+                    sub_frames = []
+                frames.append(frame)
+            elif li_lvl == 2:
+                sub_frames.append(frame)
+            elif li_lvl == 3:
+                if "frames" not in sub_frames[-1]:
+                    sub_frames[-1]["frames"] = []
+                sub_frames[-1]["frames"].append(frame)
+
+        if sub_frames:
+            frames[-1]["frames"] = sub_frames
+        return frames
+
     def _parse_table_of_contents(self, soup):
         """
         Traverse HTML results via BeautifulSoup, returning the table of
@@ -133,17 +160,39 @@ class TranslationAcademy(object):
         # chapter.
         for chapter_id in self.CHAPTERS:
             chapter_el = soup.find(id=chapter_id)
-            if chapter_el:
-                frames = []
-                title = chapter_el.find_next("h3").text
-                title = title.replace('Table of Contents - ', '')
-                for idx, a_el in enumerate(chapter_el.find_all("a")):
-                    frames.append({
-                        "number": idx + 1,
-                        "name": a_el.text,
-                        "url": a_el.get("href"),
+            if not chapter_el:
+                continue
+
+            # Get the chapter's title
+            title = chapter_el.find_next(("h4", "h3")).text
+            chapter = {"title": title.replace("Table of Contents - ", "")}
+
+            # Find frames under the chapter
+            frames = []
+            for frame_header in chapter_el.find_all("h4"):
+                el = frame_header.find_next_sibling("div")
+                for frame in self._parse_frames(el):
+                    frames.append(frame)
+
+            if frames:
+                chapter["frames"] = frames
+
+            # Find sections (with frames) under the chapter
+            sections = []
+            for section_header in chapter_el.find_all("h5"):
+                el = section_header.find_next_sibling("div")
+                section_frames = self._parse_frames(el)
+                if section_frames:
+                    sections.append({
+                        "id": el.get("id"),
+                        "title": section_header.text,
+                        "frames": section_frames
                     })
-                toc["chapters"].append({"title": title, "frames": frames})
+
+            if sections:
+                chapter["sections"] = sections
+
+            toc["chapters"].append(chapter)
         return toc
 
     def fetch_frame(self, frame_uri):
@@ -172,37 +221,10 @@ class TranslationAcademy(object):
                 "id": title_el.get("id"),
                 "ref": frame_uri,
                 "title": title_el.text.replace("Table of Contents - ", ""),
-                "img": "",
                 "text": soup.prettify(formatter="html"),
             }
 
     def fetch_chapters(self):
-        """
-        Fetch and return contents of each chapter
-        """
-        toc = self.fetch_table_of_contents()
-        for chapter_no, chapter in enumerate(toc["chapters"]):
-            frames = []
-            for frame in chapter["frames"]:
-                frame_content = self.fetch_frame(frame["url"])
-                if not frame_content:
-                    frame_content = {
-                        "id": frame["name"].lower().replace(" ", "-"),
-                        "ref": frame["url"],
-                        "title": frame["name"],
-                        "img": "",
-                        "text": "",
-                    }
-                frame_content["number"] = frame["number"]
-                frames.append(frame_content)
-
-            yield {
-                "number": chapter_no,
-                "title": chapter["title"],
-                "frames": frames,
-            }
-
-    def fetch_table_of_contents(self):
         """
         Fetch and parse the table of contents page for translationAcademy
 
