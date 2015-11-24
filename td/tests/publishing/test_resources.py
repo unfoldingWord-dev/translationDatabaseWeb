@@ -43,23 +43,7 @@ class TranslationAcademyTestCase(TestCase):
         self.resource = TranslationAcademy("en")
 
     @requests_mock.mock()
-    def test_fetch_table_of_contents(self, mock_requests):
-        expected = {
-            'chapters': [
-                {
-                    'frames': [
-                        {
-                            'number': 1,
-                            'url': u'/en/ta/vol1/intro/ta_intro',
-                            'name': u'Introduction to translationAcademy'
-                        }
-                    ],
-                    'title': u'Introduction'
-                }
-            ],
-            'id': u'volume-1-table-of-contents',
-            'title': u'Volume 1 Table of Contents'
-        }
+    def test_fetch_chapters(self, mock_requests):
         contents = (
             '<h2 id="volume-1-table-of-contents">Volume 1 Table of Contents</h2>'
             '<div id="plugin_include__en__ta__vol1__intro__toc_intro">'
@@ -71,11 +55,36 @@ class TranslationAcademyTestCase(TestCase):
             'intro" class="wikilink1" title="en:ta:vol1:intro:ta_intro">Introduction'
             ' to translationAcademy</a></div></li></ol></div></div>'
         )
+        expected = {
+            'chapters': [
+                {
+                    'frames': [{
+                        'id': u'introduction-to-translationacademy',
+                        'ref': u'/en/ta/vol1/intro/ta_intro',
+                        'title': u'Introduction to translationAcademy',
+                        'text': (
+                            u'<h2 id="introduction-to-translationacademy">\n '
+                            u'Introduction to translationAcademy\n</h2>'
+                        )
+                    }],
+                    'title': u'Introduction'
+                }
+            ],
+            'id': u'volume-1-table-of-contents',
+            'title': u'Volume 1 Table of Contents'
+        }
         mock_requests.get(
             "https://door43.org/en/ta/vol1/toc?do=export_xhtmlbody",
             text=contents
         )
-        toc = self.resource.fetch_table_of_contents()
+        mock_requests.get(
+            "https://door43.org/en/ta/vol1/intro/ta_intro?do=export_xhtmlbody",
+            text=(
+                '<h2 id="introduction-to-translationacademy">Introduction to '
+                'translationAcademy</h2>'
+            )
+        )
+        toc = self.resource.fetch_chapters()
         self.assertEquals(toc, expected)
 
     @requests_mock.mock()
@@ -86,7 +95,6 @@ class TranslationAcademyTestCase(TestCase):
                 u'="/foo/bar">\n  foobar\n </a>\n</div>'
             ),
             "id": u"/foo/bar",
-            "img": "",
             "ref": "/en/ta/vol1/toc",
             "title": u"Foobar"
         }
