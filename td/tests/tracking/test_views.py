@@ -681,12 +681,13 @@ class MultiCharterEventViewTestCase(TestCase):
         self.view.instance_dict = {"1": Event}
         self.assertIsInstance(self.view.get_form(step=1), MultiCharterEventForm2)
 
-        language = lambda: None
-        setattr(language, "id", "9999")
-        setattr(language, "ln", "Test Language")
-        setattr(language, "lc", "tl")
-        setattr(language, "lr", "Test Region")
-        setattr(language, "gateway_flag", True)
+        language = Mock(
+            id="9999",
+            ln="Test Language",
+            lc="tl",
+            lr="Test Region",
+            gateway_flag=True,
+        )
         mock_get.return_value = language
         post_data = {"0-language": "9999"}
         self.request = RequestFactory().post('/tracking/mc-event/new/', post_data)
@@ -707,17 +708,17 @@ class MultiCharterEventViewTestCase(TestCase):
         self.view.get_all_cleaned_data = Mock(return_value=mock_cleaned_data)
         #
         mock_event = Mock()
-        setattr(mock_event, "save", Mock())
-        setattr(mock_event.hardware, "add", Mock())
-        setattr(mock_event.software, "add", Mock())
-        setattr(mock_event.networks, "add", Mock())
-        setattr(mock_event.departments, "add", Mock())
-        setattr(mock_event.translation_methods, "add", Mock())
-        setattr(mock_event.publication, "add", Mock())
-        setattr(mock_event.output_target, "add", Mock())
-        setattr(mock_event.facilitators, "add", Mock())
-        setattr(mock_event.translators, "add", Mock())
-        setattr(mock_event.materials, "add", Mock())
+        mock_event.save = Mock()
+        mock_event.hardware = Mock(add=Mock())
+        mock_event.software = Mock(add=Mock())
+        mock_event.networks = Mock(add=Mock())
+        mock_event.departments = Mock(add=Mock())
+        mock_event.translation_methods = Mock(add=Mock())
+        mock_event.publication = Mock(add=Mock())
+        mock_event.output_target = Mock(add=Mock())
+        mock_event.facilitators = Mock(add=Mock())
+        mock_event.translators = Mock(add=Mock())
+        mock_event.materials = Mock(add=Mock())
         mock_event_create.return_value = mock_event
         #
         mock_new_items.return_value = []
