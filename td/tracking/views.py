@@ -24,6 +24,7 @@ from .forms import (
     MultiCharterStarter,
     MultiCharterEventForm1,
     MultiCharterEventForm2,
+    MultiCharterForm,
 )
 from .models import (
     Charter,
@@ -38,10 +39,12 @@ from .models import (
     Output,
     Publication,
 )
+from td.models import Language
 
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
+from extra_views import ModelFormSetView
 
 
 # ------------------------------- #
@@ -121,7 +124,7 @@ class AjaxCharterListView(CharterTableSourceView):
         "end_date",
         "contact_person"
     ]
-    # link is on column because name can"t handle non-roman characters
+    # link is on column because name can't handle non-roman characters
     link_column = "language__code"
     link_url_name = "language_detail"
     link_url_field = "lang_id"
@@ -147,11 +150,12 @@ class AjaxCharterEventsListView(EventTableSourceView):
 # ---------------------------------- #
 
 
-class CharterAdd(LoginRequiredMixin, CreateView):
+class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
+    template_name = "tracking/charter_form.html"
 
-    # Overridden to set initial values
+    # Overidden to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
@@ -164,7 +168,7 @@ class CharterAdd(LoginRequiredMixin, CreateView):
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
-class CharterUpdate(LoginRequiredMixin, UpdateView):
+class CharterUpdateView(LoginRequiredMixin, UpdateView):
     model = Charter
     form_class = CharterForm
     template_name_suffix = "_update_form"
@@ -175,12 +179,53 @@ class CharterUpdate(LoginRequiredMixin, UpdateView):
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
-class NewCharterModalView(CharterAdd):
+class NewCharterModalView(CharterAddView):
     template_name = 'tracking/new_charter_modal.html'
 
     def form_valid(self, form):
         self.object = form.save()
         return render(self.request, "tracking/new_charter_modal.html", {"success": True})
+
+
+class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
+    template_name = "tracking/multi_charter_form.html"
+    model = Charter
+    form_class = MultiCharterForm
+    extra = 1
+    success_url = "/tracking/"
+
+    def get_factory_kwargs(self):
+        kwargs = super(MultiCharterAddView, self).get_factory_kwargs()
+        kwargs["form"] = MultiCharterForm
+        return kwargs
+
+    def get_initial(self):
+        return [{
+            "start_date": timezone.now().date(),
+            "created_by": self.request.user.username,
+        }]
+
+    def get_queryset(self):
+        return Charter.objects.none()
+
+    def construct_formset(self):
+        formset = super(MultiCharterAddView, self).construct_formset()
+        # Fill out data attrs needed by select2 to display user selection properly on POST
+        if self.request.POST:
+            for index in range(len(formset.forms)):
+                language_pk = self.request.POST.get("form-" + str(index) + "-language")
+                if language_pk:
+                    language = Language.objects.get(pk=language_pk)
+                    widget = formset.forms[index].fields["language"].widget.attrs
+                    widget["data-lang-pk"] = language.pk
+                    widget["data-lang-ln"] = language.ln
+                    widget["data-lang-lc"] = language.lc
+                    widget["data-lang-lr"] = language.lr
+        return formset
+
+    def formset_valid(self, formset):
+        messages.info(self.request, "Your charters have been successfully created.")
+        return super(MultiCharterAddView, self).formset_valid(formset)
 
 
 # -------------------------------- #
@@ -305,13 +350,6 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
 class EventDetailView(LoginRequiredMixin, DetailView):
     model = Event
 
-    def get_context_data(self, **kwargs):
-        # TODO: context["event"] is not needed. The event could be accessed as
-        #    object in the template.
-        context = super(EventDetailView, self).get_context_data(**kwargs)
-        context["event"] = self.object
-        return context
-
 
 class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     template_name = 'tracking/multi_charter_event_form.html'
@@ -324,9 +362,9 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
         if self.steps.current == "1":
-            context.update({"translators": get_translator_data(self)})
-            context.update({"facilitators": get_facilitator_data(self)})
-            context.update({"materials": get_material_data(self)})
+            context["translators"] = get_translator_data(self)
+            context["facilitators"] = get_facilitator_data(self)
+            context["materials"] = get_material_data(self)
         return context
 
     # Overriden to send a dynamic form based on user's input in step 1
@@ -334,7 +372,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         if step is None:
             step = self.steps.current
 
-        if step == '0' and self.request.POST:
+        if step == "0" and self.request.POST:
             # Create array container for field names
             charter_fields = []
             # Iterate through post data...
@@ -396,13 +434,13 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             )
             event.save()
             # The cleaned data already has the list of object instances for these relationship fields
-            event.hardware.add(*data.get("hardware"))
-            event.software.add(*data.get("software"))
-            event.networks.add(*data.get("networks"))
-            event.departments.add(*data.get("departments"))
-            event.translation_methods.add(*data.get("translation_methods"))
-            event.publication.add(*data.get("publication"))
-            event.output_target.add(*data.get("output_target"))
+            event.hardware.add(*data.get("hardware", []))
+            event.software.add(*data.get("software", []))
+            event.networks.add(*data.get("networks", []))
+            event.departments.add(*data.get("departments", []))
+            event.translation_methods.add(*data.get("translation_methods", []))
+            event.publication.add(*data.get("publication", []))
+            event.output_target.add(*data.get("output_target", []))
             # Process and add dynamic facilitators info
             facilitators = get_facilitator_data(self)
             facilitator_ids = get_facilitator_ids(facilitators)
@@ -433,7 +471,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             messages.warning(self.request, "Almost done! Your event has been saved. But...")
             return redirect("tracking:new_item")
         else:
-            self.request.session["mc-event-succes-charters"] = charter_info
+            self.request.session["mc-event-success-charters"] = charter_info
             return redirect("tracking:multi_charter_success")
 
 
@@ -515,7 +553,7 @@ class MultiCharterSuccessView(LoginRequiredMixin, TemplateView):
         # Append additional context to display custom message
         # NOTE: Maybe the logic for custom message should go in the template?
         context = super(MultiCharterSuccessView, self).get_context_data(**kwargs)
-        context["charters"] = self.request.session.get("mc-event-succes-charters", [])
+        context["charters"] = self.request.session.get("mc-event-success-charters", [])
         return context
 
 
@@ -760,6 +798,8 @@ def check_for_new_items(event):
 #    next event for that charter
 def get_next_event_number(charter):
     events = Event.objects.filter(charter=charter)
+    # TODO: Put in model as model logic
+    # event = Event.objects.filter(charter=charter).values("number").order_by("number").first()
     latest = 0
     for event in events:
         if event.number > latest:
