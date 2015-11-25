@@ -228,4 +228,75 @@
 
 {% block custom_bottom_script %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script>
+    	['translator', 'facilitator', 'material'].forEach(function(field) {
+	    	$('form').on('paste', 'input[name*="' + field + '"]', function(e) {
+	    		e.preventDefault();
+	    		var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
+	    		var fields = $('input[type="text"][name*="' + field + '"]');
+	    		for (var i = 0; i < text.length - fields.length; i++) {
+	    			addInline(field);
+	    		}
+	    		$('input[type="text"][name*="' + field + '"]').each(function(index) {
+	    			this.value = text[index] || "";
+	    		});
+	    	});
+    	});
+
+
+		// ================
+		// CUSTOM FUNCTIONS
+		// ================
+
+		//    addInline
+		//    ---------
+    	function addInline(label) {
+			var list = $('#' + label + '-list');
+			var length = list.children().length;
+			switch(label) {
+				// Build facilitator element
+				case 'facilitator':
+					var elem = '<div class="inline inline-input clearfix">' +
+						'<div class="facilitator-text clearfix">' +
+							'<input name="facilitator' + length + '" type="text" class="form-control" />' +
+						'</div>' +
+						'<div class="facilitator-checkboxes">' +
+							'<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' +
+							'<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' +
+						'</div>' +
+					'</div>';
+					break;
+				// Build material element
+				case 'material':
+					var elem = '<div class="inline inline-input clearfix">' +
+						'<div class="material-text clearfix">' +
+							'<input name="material' + length + '" type="text" class="form-control" />' +
+						'</div>' +
+						'<div class="material-checkboxes">' +
+							'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
+						'</div>' +
+					'</div>';
+					break;
+				// Build translator element
+				case 'translator':
+					var elem = '<div class="inline inline-input clearfix">' +
+						'<div class="translator-text full-width clearfix">' +
+							'<input name="translator' + length + '" type="text" class="form-control" />' +
+						'</div>';
+					break;
+				default:
+					var elem = '';
+					break;
+			}
+			list.append(elem);
+			addCount(label);
+		}
+
+		//    addCount
+		//    --------
+		function addCount(label) {
+			var elem = document.getElementsByName(label + '-count');
+			if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
+		}
+    </script>
 {% endblock custom_bottom_script %}

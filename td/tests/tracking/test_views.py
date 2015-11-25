@@ -681,12 +681,13 @@ class MultiCharterEventViewTestCase(TestCase):
         self.view.instance_dict = {"1": Event}
         self.assertIsInstance(self.view.get_form(step=1), MultiCharterEventForm2)
 
-        language = lambda: None
-        setattr(language, "id", "9999")
-        setattr(language, "ln", "Test Language")
-        setattr(language, "lc", "tl")
-        setattr(language, "lr", "Test Region")
-        setattr(language, "gateway_flag", True)
+        language = Mock(
+            id="9999",
+            ln="Test Language",
+            lc="tl",
+            lr="Test Region",
+            gateway_flag=True,
+        )
         mock_get.return_value = language
         post_data = {"0-language": "9999"}
         self.request = RequestFactory().post('/tracking/mc-event/new/', post_data)
