@@ -1,43 +1,92 @@
+from django.contrib import messages
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import JsonResponse
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
-
-from django.contrib import messages
+from django.views.generic import (
+    CreateView, DetailView, ListView, UpdateView, DeleteView)
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language
-
-from .forms import RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm
-from .models import Contact, OfficialResource, PublishRequest, OfficialResourceType
-from .signals import published
-from .tasks import send_request_email, approve_publish_request
+from td.publishing.output_mappers import publish_requests_as_catalog
+from td.publishing.forms import (
+    RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm)
+from td.publishing.models import (
+    Contact, Chapter, OfficialResource, PublishRequest, OfficialResourceType)
+from td.publishing.signals import published
+from td.publishing.tasks import send_request_email, approve_publish_request
 
 
 def resource_language_json(request, kind, lang):
+    """
+    Return the last published (approved) version of a resource by resource_type
+    and language.
+
+    :param kind: OfficialResourceType short_name
+    :type kind: str
+    :param lang: Language code
+    :type lang: str
+    """
     resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
     language = get_object_or_404(Language, code=lang)
-    chapters = resource_type.chapter_set.filter(language=language).order_by("number")
-    data = {
-        "chapters": [chapter.data for chapter in chapters]
-    }
+    data = {"chapters": [], "meta": {}}
+
+    # Get the last published resource by language
+    published = PublishRequest.objects.filter(
+        resource_type=resource_type,
+        language=language
+    ).order_by(
+        "resource_type__short_name",
+        "language__code",
+        "-approved_at"
+    ).first()
+
+    # First check for published documents, then the previous implementation of
+    # checking for published chapters, and finally listing all chapters.
+    if published and published.documents.count():
+        data = published.documents.first().json_data
+        data["meta"] = published.data
+    elif published and published.chapter_set.count():
+        # Last published chapter_set
+        for chapter in published.chapter_set.order_by("number"):
+            data["chapters"].append(chapter.data)
+        data["meta"] = published.data
+    else:
+        # All chapters by language and resource
+        chapters = Chapter.objects.filter(
+            resource_type=resource_type,
+            language=language
+        ).order_by("number")
+        for chapter in chapters:
+            data["chapters"].append(chapter.data)
     return JsonResponse(data)
 
 
 def resource_catalog_json(request, kind=None):
-    # List all resources if a 'kind' isn't specified
-    if kind is None:
-        return JsonResponse(
-            [resource.data for resource in OfficialResourceType.objects.all()],
-            safe=False
-        )
+    """
+    Return a catalog of published resources by languag.
 
-    resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
-    return JsonResponse(resource_type.data, safe=False)
+    :param kind: OfficialResourceType short_name. Optional, in which case the
+                    entire catalog of resources and languages will be listed.
+    :type kind: str
+    """
+    # List all resources if a 'kind' isn't specified
+    published_requests = PublishRequest.objects.filter(
+        approved_at__isnull=False
+    ).order_by(
+        "resource_type__short_name",
+        "language__code",
+        "-approved_at",
+    )
+    if kind:
+        resource_type = get_object_or_404(OfficialResourceType, short_name=kind)
+        published_requests = published_requests.filter(resource_type=resource_type)
+
+    catalog = publish_requests_as_catalog(published_requests)
+    return JsonResponse(catalog, safe=False)
 
 
 @login_required
@@ -213,8 +262,8 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         # to do:
         # check validity of request...
         self.object = form.save()
-        messages.info(self.request, "Publish Request Approved")
         approve_publish_request(self.object.pk, self.request.user.pk)
+        messages.info(self.request, "Publish Request Approved")
         return redirect("oresource_list")
 
     def get_object(self):
@@ -239,7 +288,7 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
-    langs = Language.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    langs = Language.objects.filter(Q(code__icontains=term) | Q(name__icontains=term))
     d = [
         {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
         for x in langs
@@ -248,10 +297,20 @@ def languages_autocomplete(request):
 
 
 def source_languages_autocomplete(request):
-    term = request.GET.get("q").lower().encode("utf-8")
-    langs = Language.objects.filter(checking_level=3).filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    term = request.GET.get("q")
+    langs = PublishRequest.objects.filter(
+        Q(language__code__icontains=term)
+        | Q(language__name__icontains=term),
+        checking_level=3
+    ).order_by("language__code", "-approved_at").distinct("language__code")
     d = [
-        {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag, "ver": x.version}
+        {
+            "pk": x.id,
+            "ln": x.language.name,
+            "lc": x.language.code,
+            "gl": x.language.gateway_flag,
+            "ver": x.version
+        }
         for x in langs
     ]
     return JsonResponse({"results": d, "count": len(d), "term": term})

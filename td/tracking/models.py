@@ -65,9 +65,6 @@ class Charter(models.Model):
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
 
-    def get_fields(self):
-        return [(field.name, field.value_to_string(self)) for field in Charter._meta.fields]
-
 
 # ----------- #
 #    EVENT    #
@@ -168,12 +165,8 @@ class Event(models.Model):
         default="unknown",
     )
 
-    # Functions
     def __unicode__(self):
         return str(self.id)
-
-    def get_fields(self):
-        return [(field.name, field.value_to_string(self)) for field in Event._meta.fields]
 
 
 # ------------------------ #

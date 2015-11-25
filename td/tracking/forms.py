@@ -91,6 +91,26 @@ class CharterForm(forms.ModelForm):
         }
 
 
+class MultiCharterForm(CharterForm):
+    # Overriden add custom initialize the form
+    def __init__(self, *args, **kwargs):
+        super(MultiCharterForm, self).__init__(*args, **kwargs)
+        #
+        self.fields["language"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector-marked",
+                    "data-source-url": urlReverse("names_autocomplete")
+                }
+            ),
+            required=True
+        )
+
+    def has_changed(self):
+        changed_data = super(MultiCharterForm, self).has_changed()
+        return bool(self.initial or changed_data)
+
+
 # --------------- #
 #    EVENTFORM    #
 # --------------- #
@@ -257,7 +277,7 @@ class MultiCharterEventForm1(forms.Form):
         #   ex: {"0-language_0": <CharField...>, "0-language_1": <CharField...>}
         for name, field in self.fields.iteritems():
             # Check for fields that have a value set from submission attempt
-            if field.widget.attrs.get("value"):
+            if field.widget.attrs.get("value", None):
                 # Fill the input attrs with language info for select2 to display the correct info
                 language = Language.objects.get(charter__pk=field.widget.attrs["value"])
                 field.widget.attrs["data-lang-pk"] = language.id
