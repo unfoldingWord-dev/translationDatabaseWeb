@@ -89,6 +89,15 @@
 
 {% block body %}
 
+	<!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="charterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!-- Modal end -->
+
 	<div class="row">
 		<div class="col-md-6">
 			<div class="panel panel-default">
@@ -100,6 +109,13 @@
 						{% csrf_token %}
 
 						{{ form.charter | bootstrap }}
+
+						<p style="clear: both; padding: 1rem 0; font-weight: lighter;">
+                            Can't find your charter? It probably has not been created. Why not 
+                            <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
+                            right now and try again?
+                        </p>
+
 						{{ form.start_date | bootstrap }}
 						{{ form.end_date | bootstrap }}
 						{{ form.location | bootstrap }}
@@ -209,3 +225,7 @@
 	</div>
 
 {% endblock body%}
+
+{% block custom_bottom_script %}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+{% endblock custom_bottom_script %}
