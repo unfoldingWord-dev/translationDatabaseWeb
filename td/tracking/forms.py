@@ -88,6 +88,7 @@ class CharterForm(forms.ModelForm):
         exclude = ["created_at"]
         widgets = {
             "created_by": forms.HiddenInput(),
+            "countries": forms.SelectMultiple(attrs={"size": "8"})
         }
 
 

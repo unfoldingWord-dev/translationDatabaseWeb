@@ -118,6 +118,7 @@
 				clone = cleanError(clone, formNumber);
 				clone.find('.language-selector-marked').languageSelector();
 				clone.appendTo('.form-list');
+				markRequired(clone, ['language', 'countries', 'start_date', 'end_date', 'number', 'lead_dept', 'contact_person']);
 				// 
 				scrollToLast();
 				// Make the new form's background to glow green for a bit
@@ -129,6 +130,16 @@
 				// Update Django's numbering system
 				var total = $('#id_form-TOTAL_FORMS');
 				total.val(parseInt(total.val()) + 1);
+				// Mark required fields
+			}
+			//
+			function markRequired(el, required_fields) {
+				required_fields.forEach(function(field) {
+					var field = el.find('label[for*="' + field + '"]');
+					if (field) {
+						field.addClass('required');
+					}
+				});
 			}
 			// 
 			function removeForm(el) {

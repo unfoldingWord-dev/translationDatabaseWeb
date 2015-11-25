@@ -15,13 +15,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	});
 
 	// Add class:required to the following label
-	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person'];
-	required_fields.forEach(function(field) {
-		var field = document.querySelector('label[for="id_' + field + '"]');
-		if (field) {
-			field.classList.add('required');
-		}
-	});
+	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person', 'number', 'countries', 'language'];
+	markRequired(required_fields);
 });
 
 // ================
@@ -77,4 +72,15 @@ function addInline(label) {
 function addCount(label) {
 	var elem = document.getElementsByName(label + '-count');
 	if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
+}
+
+//    markRequired
+//    ------------
+function markRequired(required_fields) {
+	required_fields.forEach(function(field) {
+		var field = document.querySelector('label[for*="' + field + '"]');
+		if (field) {
+			field.classList.add('required');
+		}
+	});
 }
