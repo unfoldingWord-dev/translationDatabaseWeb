@@ -685,9 +685,62 @@ class MultiCharterEventViewTestCase(TestCase):
         self.view = setup_view(MultiCharterEventView(), self.request)
         self.assertIsInstance(self.view.get_form(step="0", data=post_data), MultiCharterEventForm1)
 
-    def test_done(self):
-        form_list = []
-        form_dict = {}
-        output = self.view.done(form_list, form_dict)
-        print '\nOUTPUT', output
-        pass
+    @patch("td.tracking.views.Charter.objects.get")
+    @patch("td.tracking.views.Event.objects.create")
+    @patch("td.tracking.views.get_next_event_number")
+    @patch("td.tracking.views.check_for_new_items")
+    @patch("td.tracking.views.messages.warning")
+    def test_done(self, mock_warning, mock_new_items, mock_next_number, mock_event_create, mock_charter_get):
+        #
+        mock_cleaned_data = {
+            "0-language_0": "9999",
+            "0-language_1": "8888",
+        }
+        self.view.get_all_cleaned_data = Mock(return_value=mock_cleaned_data)
+        #
+        mock_event = Mock()
+        setattr(mock_event, "save", Mock())
+        setattr(mock_event.hardware, "add", Mock())
+        setattr(mock_event.software, "add", Mock())
+        setattr(mock_event.networks, "add", Mock())
+        setattr(mock_event.departments, "add", Mock())
+        setattr(mock_event.translation_methods, "add", Mock())
+        setattr(mock_event.publication, "add", Mock())
+        setattr(mock_event.output_target, "add", Mock())
+        setattr(mock_event.facilitators, "add", Mock())
+        setattr(mock_event.translators, "add", Mock())
+        setattr(mock_event.materials, "add", Mock())
+        mock_event_create.return_value = mock_event
+        #
+        mock_new_items.return_value = []
+        response = self.view.done({}, {})
+        # 
+        calls = mock_charter_get.call_args_list
+        self.assertEqual(len(calls), 2)  # Implies that mock_charter_get is called 2x
+        calls[0].assert_called_once_with(pk="9999")
+        calls[1].assert_called_once_with(pk="8888")
+        self.assertEqual(mock_event_create.call_count, 2)
+        self.assertEqual(mock_event.hardware.add.call_count, 2)
+        self.assertEqual(mock_event.software.add.call_count, 2)
+        self.assertEqual(mock_event.networks.add.call_count, 2)
+        self.assertEqual(mock_event.departments.add.call_count, 2)
+        self.assertEqual(mock_event.translation_methods.add.call_count, 2)
+        self.assertEqual(mock_event.publication.add.call_count, 2)
+        self.assertEqual(mock_event.output_target.add.call_count, 2)
+        self.assertEqual(mock_event.facilitators.add.call_count, 2)
+        self.assertEqual(mock_event.translators.add.call_count, 2)
+        self.assertEqual(mock_event.materials.add.call_count, 2)
+        self.assertEqual(mock_event.save.call_count, 2)
+        self.assertEqual(mock_next_number.call_count, 2)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("tracking:multi_charter_success"))
+        self.assertTrue(self.view.request.session._session["mc-event-success-charters"])
+
+        mock_new_items.return_value = ["facilitators", "translators"]
+        response = self.view.done({}, {})
+        self.assertTrue(self.view.request.session._session["new_item_info"])
+        self.assertTrue(mock_warning.call_count, 1)
+        # Only care about the first argument when calling messages.warning
+        self.assertEqual(mock_warning.call_args[0][0], self.request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("tracking:new_item"))

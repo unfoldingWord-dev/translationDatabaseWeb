@@ -433,6 +433,7 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin,
     model = Language
     form_class = LanguageForm
     action_kind = "CREATE"
+    template_name = "resources/language_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.country = get_object_or_404(Country, pk=self.kwargs.get("pk"))

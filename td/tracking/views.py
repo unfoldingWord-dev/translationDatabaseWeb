@@ -434,13 +434,13 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             )
             event.save()
             # The cleaned data already has the list of object instances for these relationship fields
-            event.hardware.add(*data.get("hardware"))
-            event.software.add(*data.get("software"))
-            event.networks.add(*data.get("networks"))
-            event.departments.add(*data.get("departments"))
-            event.translation_methods.add(*data.get("translation_methods"))
-            event.publication.add(*data.get("publication"))
-            event.output_target.add(*data.get("output_target"))
+            event.hardware.add(*data.get("hardware", []))
+            event.software.add(*data.get("software", []))
+            event.networks.add(*data.get("networks", []))
+            event.departments.add(*data.get("departments", []))
+            event.translation_methods.add(*data.get("translation_methods", []))
+            event.publication.add(*data.get("publication", []))
+            event.output_target.add(*data.get("output_target", []))
             # Process and add dynamic facilitators info
             facilitators = get_facilitator_data(self)
             facilitator_ids = get_facilitator_ids(facilitators)
@@ -471,7 +471,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             messages.warning(self.request, "Almost done! Your event has been saved. But...")
             return redirect("tracking:new_item")
         else:
-            self.request.session["mc-event-succes-charters"] = charter_info
+            self.request.session["mc-event-success-charters"] = charter_info
             return redirect("tracking:multi_charter_success")
 
 
