@@ -1,4 +1,3 @@
-import requests_mock
 from mock import patch, Mock
 
 from django.contrib.auth.models import User
@@ -744,3 +743,215 @@ class MultiCharterEventViewTestCase(TestCase):
         self.assertEqual(mock_warning.call_args[0][0], self.request)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("tracking:new_item"))
+
+
+# ---------------------------------- #
+#            SUCCESS VIEWS           #
+# ---------------------------------- #
+
+
+class SuccessViewTestCase(TestCase):
+
+    def setUp(self):
+        user, _ = User.objects.get_or_create(
+            username="test_user",
+            email="test@gmail.com",
+            password="test_password",
+        )
+        language = Language.objects.create(
+            id=9999,
+            code="ts",
+            name="Test Language",
+        )
+        department = Department.objects.create(
+            name="Test Department",
+        )
+        self.charter = Charter.objects.create(
+            id=9999,
+            language=language,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.event = Event.objects.create(
+            id=9999,
+            charter=self.charter,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.request = RequestFactory().get('/tracking/success/')
+        self.request.user = user
+        self.view = setup_view(SuccessView(), self.request, obj_type="charter", pk=9999)
+
+    def test_config(self):
+        """
+        Sanity check for config
+        """
+        self.assertEqual(self.view.template_name, "tracking/charter_add_success.html")
+
+    def test_get_no_allowed(self):
+        """
+        SuccessView should redirect to home page if referrer is not recognized
+        """
+        self.request.META["HTTP_REFERER"] = "wrong/url"
+        response = SuccessView.as_view()(self.request, obj_type="charter", pk=9999)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("tracking:project_list"))
+
+    def test_get_allowed(self):
+        """
+        SuccessView should be successfull if referrer is recognized
+        """
+        self.request.META["HTTP_REFERER"] = reverse("tracking:charter_add")
+        response = SuccessView.as_view()(self.request, obj_type="charter", pk=9999)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_context_data_charter(self):
+        """
+        get_context_data needs to return the right context based on obj_type and pk kwargs
+        """
+        result = self.view.get_context_data(obj_type="charter", pk=9999)
+        self.assertEqual(result["obj_type"], "charter")
+        self.assertEqual(result["language_id"], 9999)
+        self.assertEqual(result["status"], "Success")
+
+    def test_get_context_data_event(self):
+        """
+        get_context_data needs to return the right context based on obj_type and pk kwargs
+        """
+        result = self.view.get_context_data(obj_type="event", pk=9999)
+        self.assertEqual(result["obj_type"], "event")
+        self.assertEqual(result["language_id"], 9999)
+        self.assertEqual(result["status"], "Success")
+
+    def test_get_context_data_wrong(self):
+        """
+        get_context_data needs to return the right context based on obj_type and pk kwargs
+        """
+        result = self.view.get_context_data(obj_type="wrong", pk=9999)
+        self.assertEqual(result["obj_type"], "wrong")
+        self.assertEqual(result["status"], "Sorry :(")
+
+
+class MultiCharterSuccessViewTestCase(TestCase):
+
+    def setUp(self):
+        user, _ = User.objects.get_or_create(
+            username="test_user",
+            email="test@gmail.com",
+            password="test_password",
+        )
+        language = Language.objects.create(
+            id=9999,
+            code="ts",
+            name="Test Language",
+        )
+        department = Department.objects.create(
+            name="Test Department",
+        )
+        self.charter = Charter.objects.create(
+            id=9999,
+            language=language,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.event = Event.objects.create(
+            id=9999,
+            charter=self.charter,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.request = RequestFactory().get('/tracking/success/mc-event/')
+        self.request.user = user
+        setattr(self.request, "session", {})
+        self.view = setup_view(MultiCharterSuccessView(), self.request)
+
+    def test_config(self):
+        """
+        Sanity check for config
+        """
+        self.assertEqual(self.view.template_name, "tracking/multi_charter_success.html")
+
+    def test_get_no_allowed(self):
+        """
+        MultiCharterSuccessView should redirect to home page if referrer is not recognized
+        """
+        self.request.META["HTTP_REFERER"] = "wrong/url"
+        response = MultiCharterSuccessView.as_view()(self.request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("tracking:project_list"))
+
+    def test_get_allowed(self):
+        """
+        MultiCharterSuccessView should be successfull if referrer is recognized
+        """
+        self.request.META["HTTP_REFERER"] = reverse("tracking:multi_charter_event_add")
+        response = MultiCharterSuccessView.as_view()(self.request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_context_data_charter(self):
+        """
+        get_context_data needs to return the right context based on obj_type and pk kwargs
+        """
+        self.request.session["mc-event-success-charters"] = "something"
+        self.view = setup_view(MultiCharterSuccessView(), self.request)
+        result = self.view.get_context_data()
+        self.assertEqual(result["charters"], "something")
+
+
+class NewItemViewTestCase(TestCase):
+    # TODO
+    pass
+
+
+class chartersAutocompleteTestCase(TestCase):
+    # TODO
+    pass
+
+
+class chartersAutocompleteLidTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getTranslatorDataTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getFacilitatorDataTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getMaterialDataTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getTranslatorIdsTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getFacilitatorIdsTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getMaterialIdsTestCase(TestCase):
+    # TODO
+    pass
+
+
+class checkForNewItemsTestCase(TestCase):
+    # TODO
+    pass
+
+
+class getNextEventNumberTestCase(TestCase):
+    # TODO
+    pass

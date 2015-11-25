@@ -553,7 +553,7 @@ class MultiCharterSuccessView(LoginRequiredMixin, TemplateView):
         # Append additional context to display custom message
         # NOTE: Maybe the logic for custom message should go in the template?
         context = super(MultiCharterSuccessView, self).get_context_data(**kwargs)
-        context["charters"] = self.request.session.get("mc-event-succes-charters", [])
+        context["charters"] = self.request.session.get("mc-event-success-charters", [])
         return context
 
 
