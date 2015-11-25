@@ -124,6 +124,7 @@ class EventForm(forms.ModelForm):
     def __init__(self, pk="-1", *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         # Alphabetize items in selection
+        self.fields = determine_widget(self.fields, ["departments", "hardware", "software", "translation_methods", "output_target", "publication"], 9)
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
@@ -218,12 +219,6 @@ class EventForm(forms.ModelForm):
             "facilitators": forms.HiddenInput(),
             "created_by": forms.HiddenInput(),
             "number": forms.HiddenInput(),
-            "departments": forms.CheckboxSelectMultiple(),
-            "publication": forms.CheckboxSelectMultiple(),
-            "output_target": forms.CheckboxSelectMultiple(),
-            "hardware": forms.CheckboxSelectMultiple(),
-            "software": forms.CheckboxSelectMultiple(),
-            "translation_methods": forms.CheckboxSelectMultiple(),
         }
 
     # -------------------------------- #
@@ -369,6 +364,15 @@ def check_text_input(form, field_name):
         raise forms.ValidationError(_("This field is required"), "invalid_input")
     else:
         return escape(text)
+
+
+def determine_widget(fields, names, limit):
+    for name in names:
+        if len(fields[name].queryset) > limit:
+            fields[name].widget = forms.SelectMultiple()
+        else:
+            fields[name].widget = forms.CheckboxSelectMultiple()
+    return fields
 
 
 # ------------------- #
