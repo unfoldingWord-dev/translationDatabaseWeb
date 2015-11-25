@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+from jsonfield import JSONField
 import reversion
 
 from td.models import Language
@@ -97,23 +98,12 @@ class OfficialResourceType(models.Model):
         if ResourceIngestor:
             resource_ingestor = ResourceIngestor(language.code)
             chapters = resource_ingestor.fetch_chapters()
-            for idx, chapter in enumerate(chapters):
-                ch, _ = self.chapter_set.get_or_create(
-                    publish_request=publish_request,
-                    language=language,
-                    ref=chapter.get("ref", ""),
-                    title=chapter["title"],
-                    number=chapter.get("number", idx),
-                )
-                for frame in chapter["frames"]:
-                    ch.frame_set.get_or_create(
-                        identifier=frame["id"],
-                        number=frame.get("number", None),
-                        ref=frame.get("ref", ""),
-                        title=frame.get("title", ""),
-                        img=frame["img"],
-                        text=frame["text"]
-                    )
+            resource_doc = ResourceDocument()
+            resource_doc.json_data = chapters
+            resource_doc.publish_request = publish_request
+            resource_doc.resource_type = publish_request.resource_type
+            resource_doc.language = language
+            resource_doc.save()
 
     @property
     def data(self):
@@ -330,3 +320,11 @@ class Frame(models.Model):
         if self.title:
             data["title"] = self.title
         return data
+
+
+class ResourceDocument(models.Model):
+    publish_request = models.ForeignKey(PublishRequest, related_name="documents")
+    resource_type = models.ForeignKey(OfficialResourceType)
+    language = models.ForeignKey(Language)
+    created_on = models.DateTimeField(auto_now_add=True)
+    json_data = JSONField()
