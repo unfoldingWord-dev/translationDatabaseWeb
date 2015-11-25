@@ -1,12 +1,9 @@
-import datetime
-
 from django import forms
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.forms.extras.widgets import SelectDateWidget
 
 from td.tracking.models import (
-    Charter,
     Country,
     Language,
     Department,
@@ -14,67 +11,6 @@ from td.tracking.models import (
 from td.tracking.forms import (
     CharterForm,
 )
-
-
-class ViewsTestCase(TestCase):
-
-    # Home
-
-    def test_home_view_no_login(self):
-        response = self.client.get("/tracking/")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/account/login/?next=/tracking/")
-
-    # New Charter
-
-    def test_new_charter_view_no_login(self):
-        response = self.client.get("/tracking/charter/new/")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/account/login/?next=/tracking/charter/new/")
-
-    # Update Charter
-
-    def test_charter_upadate_view_no_login(self):
-        response = self.client.get("/tracking/charter/update/99/")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/account/login/?next=/tracking/charter/update/99/")
-
-    # Success
-
-    def test_success_with_no_login(self):
-
-        response = self.client.get("/tracking/success/charter/99/")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/account/login/?next=/tracking/success/charter/99/")
-
-    def test_success_with_login_no_referer(self):
-
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/success/charter/99/", **self.credentials)
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/tracking/")
-
-    def test_success_with_login_wrong_referer(self):
-
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/success/charter/99/", username="testuser", password="testpassword", HTTP_REFERER="http://www.google.com")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/tracking/")
-
-    def test_success_with_login_correct_referer(self):
-
-        now = datetime.datetime.now()
-        department = Department.objects.get(pk=1)
-        language = Language.objects.create(code="wa")
-        charter = Charter.objects.create(language=language, start_date=now, end_date=now, lead_dept=department)
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get("/tracking/success/charter/" + str(charter.id) + "/", username="testuser", password="testpassword", HTTP_REFERER="http://td.unfoldingword.org/tracking/charter/new/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context["link_id"] == str(charter.id))
-        self.assertTrue(response.context["status"] == "Success")
-        self.assertIn("has been successfully added", response.context["message"])
-
-    # test_success_with_login_correct_referer_wrong_type(self):
 
 
 class CharterFormTestCase(TestCase):
