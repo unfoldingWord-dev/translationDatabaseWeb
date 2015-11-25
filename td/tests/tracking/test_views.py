@@ -8,9 +8,18 @@ from django.utils.importlib import import_module
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
-from td.tracking.views import *
+from td.tracking.views import (
+    HomeView,
+    CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
+    EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
+    SuccessView, MultiCharterSuccessView,
+)
 from td.tracking.models import Charter, Department, Event
-from td.tracking.forms import *
+from td.tracking.forms import (
+    CharterForm, MultiCharterForm,
+    EventForm,
+    MultiCharterStarter, MultiCharterEventForm1, MultiCharterEventForm2,
+)
 from td.models import Language
 
 
@@ -713,7 +722,7 @@ class MultiCharterEventViewTestCase(TestCase):
         #
         mock_new_items.return_value = []
         response = self.view.done({}, {})
-        # 
+        #
         calls = mock_charter_get.call_args_list
         self.assertEqual(len(calls), 2)  # Implies that mock_charter_get is called 2x
         calls[0].assert_called_once_with(pk="9999")
