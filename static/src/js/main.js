@@ -2,6 +2,7 @@ require("../less/site.less");
 
 window.jQuery = window.$ = require("jquery");
 
+// Requirements for td.tracking
 require("./event_form.js");
 
 require("bootstrap");

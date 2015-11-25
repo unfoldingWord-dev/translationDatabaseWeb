@@ -50,6 +50,7 @@
 
 	window.jQuery = window.$ = __webpack_require__(115);
 
+	// Requirements for td.tracking
 	__webpack_require__(116);
 
 	__webpack_require__(117);
