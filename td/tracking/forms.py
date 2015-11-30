@@ -85,9 +85,10 @@ class CharterForm(forms.ModelForm):
 
     class Meta:
         model = Charter
-        exclude = ["created_at"]
+        exclude = ["created_at", "modified_at"]
         widgets = {
             "created_by": forms.HiddenInput(),
+            "modified_by": forms.HiddenInput(),
             "countries": forms.SelectMultiple(attrs={"size": "8"})
         }
 
@@ -213,11 +214,12 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        exclude = ["created_at", "translators", "facilitators", "materials"]
+        exclude = ["created_at", "modified_at", "translators", "facilitators", "materials"]
         widgets = {
+            "created_by": forms.HiddenInput(),
+            "modified_by": forms.HiddenInput(),
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
-            "created_by": forms.HiddenInput(),
             "number": forms.HiddenInput(),
         }
 
@@ -310,7 +312,7 @@ class MultiCharterEventForm2(EventForm):
     # Overriden EvenForm's Meta class to adapt this form into MultiCharterEventView step 2
     class Meta:
         model = Event
-        exclude = ["created_at", "created_by", "charter", "translators", "facilitators", "materials"]
+        exclude = ["created_at", "created_by", "modified_at", "modified_by", "charter", "translators", "facilitators", "materials"]
         widgets = {
             "departments": forms.CheckboxSelectMultiple(),
             "publication": forms.CheckboxSelectMultiple(),

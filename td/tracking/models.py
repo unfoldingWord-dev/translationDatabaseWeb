@@ -53,6 +53,14 @@ class Charter(models.Model):
     created_by = models.CharField(
         max_length=200,
     )
+    modified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    modified_by = models.CharField(
+        max_length=200,
+        blank=True,
+    )
 
     @property
     def lang_id(self):
@@ -163,6 +171,17 @@ class Event(models.Model):
     created_by = models.CharField(
         max_length=200,
         default="unknown",
+    )
+    modified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    modified_by = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+    comment = models.TextField(
+        blank=True,
     )
 
     def __unicode__(self):
