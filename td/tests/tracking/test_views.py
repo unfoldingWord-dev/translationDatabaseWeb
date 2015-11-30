@@ -164,7 +164,7 @@ class CharterUpdateViewTestCase(TestCase):
         """
         form_valid() should call save() and redirect to the success page with object's type and ID as args
         """
-        mock_form.save = Mock(return_value=type("MockForm", (), {"id": 9999}))
+        mock_form.save = Mock(return_value=Mock(id=9999, save=Mock()))
         response = self.view.form_valid(mock_form)
         mock_form.save.assert_called_once_with()
         self.assertEqual(response.status_code, 302)
