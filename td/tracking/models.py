@@ -75,10 +75,10 @@ class Charter(models.Model):
         return self.language.id
 
     @classmethod
-    def lang_data(self):
+    def lang_data(cls):
         return [
             dict(pk=x.language.pk, lc=x.language.lc, ln=x.language.ln, cc=[x.language.cc], lr=x.language.lr)
-            for x in self.objects.all()
+            for x in cls.objects.all()
         ]
 
 

@@ -9,7 +9,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
 from td.tracking.views import (
-    HomeView,
+    HomeView, CharterTableSourceView,
     CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
     EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
     SuccessView, MultiCharterSuccessView,
@@ -23,7 +23,7 @@ from td.tracking.forms import (
 from td.models import Language
 
 
-def setup_view(view, request, *args, **kwargs):
+def setup_view(view, request=None, *args, **kwargs):
     """
     Mimic as_view() by returning the view instance.
     args and kwargs are the same as you would pass to reverse()
@@ -63,6 +63,48 @@ class HomeViewTestCase(TestCase):
         """
         view = setup_view(HomeView(), self.request)
         self.assertEqual(view.template_name, "tracking/project_list.html")
+
+
+class CharterTableSourceViewTestCase(TestCase):
+
+    def setUp(self):
+        language0 = Language.objects.create(
+            id=9999,
+            code="ts",
+            name="Test Language",
+        )
+        language1 = Language.objects.create(
+            id=8888,
+            code="ml",
+            name="Mock Language",
+        )
+        department = Department.objects.create(
+            name="Test Department",
+        )
+        self.charter0 = Charter.objects.create(
+            id=9999,
+            language=language0,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.charter1 = Charter.objects.create(
+            id=8888,
+            language=language1,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+
+    def test_queryset(self):
+        self.view = setup_view(CharterTableSourceView(), pk=9999)
+        self.assertEqual(len(self.view.queryset), 1)
+        self.assertEqual(self.view.queryset[0], self.charter0)
+
+    def test_queryset_empty(self):
+        self.view = setup_view(CharterTableSourceView())
+        self.view.model = Charter
+        self.assertEqual(len(self.view.queryset), 2)
 
 
 # ---------------------------------- #

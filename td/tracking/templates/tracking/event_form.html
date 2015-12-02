@@ -6,90 +6,90 @@
 {% block head_title %}Tracking | New Event{% endblock head_title %}
 
 {% block extra_style %}
-	<style>
-		form .form-group::after {
-			content: '';
-			display: block;
-			clear: both;
-		}
-		.control-label-sub {
-			font-size: 90%;
-			font-weight: 300;
-			color: #444;
-		}
-		.full-width {
-			width: 100%;
-		}
-		.half-width {
-			width: 50%;
-		}
-		.quarter-width {
-			width: 25%;
-		}
+    <style>
+        form .form-group::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        .control-label-sub {
+            font-size: 90%;
+            font-weight: 300;
+            color: #444;
+        }
+        .full-width {
+            width: 100%;
+        }
+        .half-width {
+            width: 50%;
+        }
+        .quarter-width {
+            width: 25%;
+        }
 
-		.date-input {
-			width: calc(33.33% - 3px);
-			display: inline-block;
-			float: left;
-			margin-right: 3px;
-		}
-		.date-input:last-child {
-			width: 33.33%;
-			margin-right: 0;
-		}
+        .date-input {
+            width: calc(33.33% - 3px);
+            display: inline-block;
+            float: left;
+            margin-right: 3px;
+        }
+        .date-input:last-child {
+            width: 33.33%;
+            margin-right: 0;
+        }
 
-		.inline div, .inline label {
-			display: inline;
-			float: left;
-		}
-		.inline-input {
-			margin-top: 0.1rem;
-		}
-		.inline input[type="checkbox"].form-control {
-			width: 20px;
-			height: 20px;
-			margin: 7px auto 0 auto;
-		}
-		.facilitator-text {
-			width: calc(100% - 140px);
-		}
-		.facilitator-checkboxes {
-			width: 140px;
-		}
-		.material-text {
-			width: calc(100% - 70px);
-		}
-		.material-checkboxes {
-			width: 70px;
-		}
-		.btn-add {
-			margin-left: 1rem;
-		}
+        .inline div, .inline label {
+            display: inline;
+            float: left;
+        }
+        .inline-input {
+            margin-top: 0.1rem;
+        }
+        .inline input[type="checkbox"].form-control {
+            width: 20px;
+            height: 20px;
+            margin: 7px auto 0 auto;
+        }
+        .facilitator-text {
+            width: calc(100% - 140px);
+        }
+        .facilitator-checkboxes {
+            width: 140px;
+        }
+        .material-text {
+            width: calc(100% - 70px);
+        }
+        .material-checkboxes {
+            width: 70px;
+        }
+        .btn-add {
+            margin-left: 1rem;
+        }
 
-		input[type="checkbox"] {
-			width: auto;
-			margin: 0 1rem;
-		}
-		ul {
-			list-style: none;
-			padding-left: 0;
-		}
-		ul > li > label {
-			font-weight: lighter;
-		}
-		.form-notice-container {
-			padding: 1rem;
-			margin-bottom: 2rem;
-			background-color: rgba(0,0,0,0.075);
-			border-radius: 5px;
-			font-weight: lighter;
-		}
-	</style>
-{% endblock extra_style %}	
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0 1rem;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul > li > label {
+            font-weight: lighter;
+        }
+        .form-notice-container {
+            padding: 1rem;
+            margin-bottom: 2rem;
+            background-color: rgba(0,0,0,0.075);
+            border-radius: 5px;
+            font-weight: lighter;
+        }
+    </style>
+{% endblock extra_style %}  
 
 {% block body %}
 
-	<!-- Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="charterModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -98,209 +98,209 @@
     </div>
     <!-- Modal end -->
 
-	<div class="row">
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h2 class="panel-title">New Translation Event/Workshop</h2>
-				</div>
-				<div class="panel-body">
-					<form action="" method="POST" class="form">
-						{% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">New Translation Event/Workshop</h2>
+                </div>
+                <div class="panel-body">
+                    <form action="" method="POST" class="form">
+                        {% csrf_token %}
 
-						{{ form.charter | bootstrap }}
+                        {{ form.charter | bootstrap }}
 
-						<div class="form-notice-container">
-							<p class="form-notice">
-	                            Can't find your charter? It probably has not been created. Why not 
-	                            <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
-	                            right now and try again?
-	                        </p>
+                        <div class="form-notice-container">
+                            <p class="form-notice">
+                                Can't find your charter? It probably has not been created. Why not 
+                                <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
+                                right now and try again?
+                            </p>
                         </div>
 
-						{{ form.start_date | bootstrap }}
-						{{ form.end_date | bootstrap }}
-						{{ form.location | bootstrap }}
-						{{ form.lead_dept | bootstrap }}
-						{{ form.contact_person | bootstrap }}
-						{{ form.current_check_level | bootstrap }}
-						{{ form.target_check_level | bootstrap }}
+                        {{ form.start_date | bootstrap }}
+                        {{ form.end_date | bootstrap }}
+                        {{ form.location | bootstrap }}
+                        {{ form.lead_dept | bootstrap }}
+                        {{ form.contact_person | bootstrap }}
+                        {{ form.current_check_level | bootstrap }}
+                        {{ form.target_check_level | bootstrap }}
 
-						<!-- form.translators -->
-						<div class="form-group clearfix">
-							<div class="inline inline-label">
-								<div class="translator-text full-width">
-									<label class="control-label">Translator</label>
-									<a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
-								</div>
-							</div>
-							<div id="translator-list">
-								{% for translator in translators %}
-									<div class="inline inline-input clearfix">
-										<div class="translator-text clearfix full-width">
-											<input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
-										</div>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
+                        <!-- form.translators -->
+                        <div class="form-group clearfix">
+                            <div class="inline inline-label">
+                                <div class="translator-text full-width">
+                                    <label class="control-label">Translator</label>
+                                    <a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <div id="translator-list">
+                                {% for translator in translators %}
+                                    <div class="inline inline-input clearfix">
+                                        <div class="translator-text clearfix full-width">
+                                            <input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
 
-						<!-- form.facilitators -->
-						<div class="form-group clearfix">
-							<div class="inline inline-label">
-								<div class="facilitator-text">
-									<label class="control-label">Facilitator</label>
-									<a id="add-facilitator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
-								</div>
-								<div class="facilitator-checkboxes">
-									<label class="control-label control-label-sub half-width text-center">Lead</label>
-									<label class="control-label control-label-sub half-width text-center">Speaks GL</label>
-								</div>
-							</div>
-							<div id="facilitator-list">
-								{% for facilitator in facilitators %}
-									<div class="inline inline-input clearfix">
-										<div class="facilitator-text clearfix">
-											<input name="facilitator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ facilitator.name }}"/>
-										</div>
-										<div class="facilitator-checkboxes">
-											<div class="half-width"><input name="is_lead{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if facilitator.is_lead %}checked{% endif %} /></div>
-											<div class="half-width"><input name="speaks_gl{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if facilitator.speaks_gl %}checked{% endif %} /></div>
-										</div>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
+                        <!-- form.facilitators -->
+                        <div class="form-group clearfix">
+                            <div class="inline inline-label">
+                                <div class="facilitator-text">
+                                    <label class="control-label">Facilitator</label>
+                                    <a id="add-facilitator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="facilitator-checkboxes">
+                                    <label class="control-label control-label-sub half-width text-center">Lead</label>
+                                    <label class="control-label control-label-sub half-width text-center">Speaks GL</label>
+                                </div>
+                            </div>
+                            <div id="facilitator-list">
+                                {% for facilitator in facilitators %}
+                                    <div class="inline inline-input clearfix">
+                                        <div class="facilitator-text clearfix">
+                                            <input name="facilitator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ facilitator.name }}"/>
+                                        </div>
+                                        <div class="facilitator-checkboxes">
+                                            <div class="half-width"><input name="is_lead{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if facilitator.is_lead %}checked{% endif %} /></div>
+                                            <div class="half-width"><input name="speaks_gl{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if facilitator.speaks_gl %}checked{% endif %} /></div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
 
-						<!-- form.materials -->
-						<div class="form-group clearfix">
-							<div class="inline inline-label">
-								<div class="material-text">
-									<label class="control-label">Material</label>
-									<a id="add-material" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
-								</div>
-								<div class="material-checkboxes">
-									<label class="control-label control-label-sub full-width text-center">Copyrighted</label>
-								</div>
-							</div>
-							<div id="material-list">
-								{% for material in materials %}
-									<div class="inline inline-input clearfix">
-										<div class="material-text clearfix">
-											<input name="material{{ forloop.counter0 }}" type="text" class="form-control" value="{{ material.name }}"/>
-										</div>
-										<div class="material-checkboxes">
-											<div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if not material.licensed %}{% else %}checked{% endif %} /></div>
-										</div>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
+                        <!-- form.materials -->
+                        <div class="form-group clearfix">
+                            <div class="inline inline-label">
+                                <div class="material-text">
+                                    <label class="control-label">Material</label>
+                                    <a id="add-material" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="material-checkboxes">
+                                    <label class="control-label control-label-sub full-width text-center">Copyrighted</label>
+                                </div>
+                            </div>
+                            <div id="material-list">
+                                {% for material in materials %}
+                                    <div class="inline inline-input clearfix">
+                                        <div class="material-text clearfix">
+                                            <input name="material{{ forloop.counter0 }}" type="text" class="form-control" value="{{ material.name }}"/>
+                                        </div>
+                                        <div class="material-checkboxes">
+                                            <div class="full-width"><input name="licensed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if not material.licensed %}{% else %}checked{% endif %} /></div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
 
                         <div class="form-notice-container">
                             <p class="form-notice">Note: From this point on, select ALL that applies.</p>
                             <p class="form-notice">Note: Hold Ctrl when clicking to select multiple items from the scrolling list.</p>
                         </div>
 
-						{{ form.departments | bootstrap }}
-						{{ form.networks | bootstrap }}
-						{{ form.translation_methods | bootstrap }}
-						{{ form.software | bootstrap }}
-						{{ form.hardware | bootstrap }}
-						{{ form.output_target | bootstrap }}
-						{{ form.publication | bootstrap }}
-						{{ form.comment | bootstrap }}
+                        {{ form.departments | bootstrap }}
+                        {{ form.networks | bootstrap }}
+                        {{ form.translation_methods | bootstrap }}
+                        {{ form.software | bootstrap }}
+                        {{ form.hardware | bootstrap }}
+                        {{ form.output_target | bootstrap }}
+                        {{ form.publication | bootstrap }}
+                        {{ form.comment | bootstrap }}
 
-						<button type="submit" class="btn btn-primary pull-right">
-							{% if form.errors %}Try again{% else %}Add Event{% endif %}
-						</button>
+                        <button type="submit" class="btn btn-primary pull-right">
+                            {% if form.errors %}Try again{% else %}Add Event{% endif %}
+                        </button>
 
-						<input type="hidden" name="translator-count" value="0" />
-						<input type="hidden" name="facilitator-count" value="0" />
-						<input type="hidden" name="material-count" value="0" />
-						{% for hidden in form.hidden_fields %}
-							{{ hidden }}
-						{% endfor %}
+                        <input type="hidden" name="translator-count" value="0" />
+                        <input type="hidden" name="facilitator-count" value="0" />
+                        <input type="hidden" name="material-count" value="0" />
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
 
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock body%}
 
 {% block custom_bottom_script %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script>
-    	['translator', 'facilitator', 'material'].forEach(function(field) {
-	    	$('form').on('paste', 'input[name*="' + field + '"]', function(e) {
-	    		e.preventDefault();
-	    		var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
-	    		var fields = $('input[type="text"][name*="' + field + '"]');
-	    		for (var i = 0; i < text.length - fields.length; i++) {
-	    			addInline(field);
-	    		}
-	    		$('input[type="text"][name*="' + field + '"]').each(function(index) {
-	    			this.value = text[index] || "";
-	    		});
-	    	});
-    	});
+        ['translator', 'facilitator', 'material'].forEach(function(field) {
+            $('form').on('paste', 'input[name*="' + field + '"]', function(e) {
+                e.preventDefault();
+                var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
+                var fields = $('input[type="text"][name*="' + field + '"]');
+                for (var i = 0; i < text.length - fields.length; i++) {
+                    addInline(field);
+                }
+                $('input[type="text"][name*="' + field + '"]').each(function(index) {
+                    this.value = text[index] || "";
+                });
+            });
+        });
 
 
-		// ================
-		// CUSTOM FUNCTIONS
-		// ================
+        // ================
+        // CUSTOM FUNCTIONS
+        // ================
 
-		//    addInline
-		//    ---------
-    	function addInline(label) {
-			var list = $('#' + label + '-list');
-			var length = list.children().length;
-			switch(label) {
-				// Build facilitator element
-				case 'facilitator':
-					var elem = '<div class="inline inline-input clearfix">' +
-						'<div class="facilitator-text clearfix">' +
-							'<input name="facilitator' + length + '" type="text" class="form-control" />' +
-						'</div>' +
-						'<div class="facilitator-checkboxes">' +
-							'<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' +
-							'<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' +
-						'</div>' +
-					'</div>';
-					break;
-				// Build material element
-				case 'material':
-					var elem = '<div class="inline inline-input clearfix">' +
-						'<div class="material-text clearfix">' +
-							'<input name="material' + length + '" type="text" class="form-control" />' +
-						'</div>' +
-						'<div class="material-checkboxes">' +
-							'<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
-						'</div>' +
-					'</div>';
-					break;
-				// Build translator element
-				case 'translator':
-					var elem = '<div class="inline inline-input clearfix">' +
-						'<div class="translator-text full-width clearfix">' +
-							'<input name="translator' + length + '" type="text" class="form-control" />' +
-						'</div>';
-					break;
-				default:
-					var elem = '';
-					break;
-			}
-			list.append(elem);
-			addCount(label);
-		}
+        //    addInline
+        //    ---------
+        function addInline(label) {
+            var list = $('#' + label + '-list');
+            var length = list.children().length;
+            switch(label) {
+                // Build facilitator element
+                case 'facilitator':
+                    var elem = '<div class="inline inline-input clearfix">' +
+                        '<div class="facilitator-text clearfix">' +
+                            '<input name="facilitator' + length + '" type="text" class="form-control" />' +
+                        '</div>' +
+                        '<div class="facilitator-checkboxes">' +
+                            '<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' +
+                            '<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' +
+                        '</div>' +
+                    '</div>';
+                    break;
+                // Build material element
+                case 'material':
+                    var elem = '<div class="inline inline-input clearfix">' +
+                        '<div class="material-text clearfix">' +
+                            '<input name="material' + length + '" type="text" class="form-control" />' +
+                        '</div>' +
+                        '<div class="material-checkboxes">' +
+                            '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
+                        '</div>' +
+                    '</div>';
+                    break;
+                // Build translator element
+                case 'translator':
+                    var elem = '<div class="inline inline-input clearfix">' +
+                        '<div class="translator-text full-width clearfix">' +
+                            '<input name="translator' + length + '" type="text" class="form-control" />' +
+                        '</div>';
+                    break;
+                default:
+                    var elem = '';
+                    break;
+            }
+            list.append(elem);
+            addCount(label);
+        }
 
-		//    addCount
-		//    --------
-		function addCount(label) {
-			var elem = document.getElementsByName(label + '-count');
-			if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
-		}
+        //    addCount
+        //    --------
+        function addCount(label) {
+            var elem = document.getElementsByName(label + '-count');
+            if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
+        }
     </script>
 {% endblock custom_bottom_script %}

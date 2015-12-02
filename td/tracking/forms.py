@@ -369,11 +369,13 @@ def check_text_input(form, field_name):
 
 
 def determine_widget(fields, names, limit):
+    """
+    Determine what widget should be used based on the given limit.
+    This is used mainly for deciding whether a field should be displayed as checkboxes
+       or as a multiselect (if it's too long).
+    """
     for name in names:
-        if len(fields[name].queryset) > limit:
-            fields[name].widget = forms.SelectMultiple()
-        else:
-            fields[name].widget = forms.CheckboxSelectMultiple()
+        fields[name].widget = forms.SelectMultiple() if len(fields[name].queryset) > limit else forms.CheckboxSelectMultiple()
     return fields
 
 
