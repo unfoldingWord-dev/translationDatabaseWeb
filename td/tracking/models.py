@@ -62,16 +62,23 @@ class Charter(models.Model):
         blank=True,
     )
 
-    @property
-    def lang_id(self):
-        return self.language.id
-
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
         return self.language.code.encode("utf-8")
 
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
+
+    @property
+    def lang_id(self):
+        return self.language.id
+
+    @classmethod
+    def lang_data(self):
+        return [
+            dict(pk=x.language.pk, lc=x.language.lc, ln=x.language.ln, cc=[x.language.cc], lr=x.language.lr)
+            for x in self.objects.all()
+        ]
 
 
 # ----------- #
