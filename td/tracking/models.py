@@ -38,6 +38,7 @@ class Charter(models.Model):
     number = models.CharField(
         max_length=10,
         verbose_name="Project Accounting Number",
+        blank=True,
     )
     lead_dept = models.ForeignKey(
         "Department",

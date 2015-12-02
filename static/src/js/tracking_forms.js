@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	});
 
 	// Add class:required to the following label
-	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person', 'number', 'countries', 'language'];
+	var required_fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person', 'countries', 'language'];
 	markRequired(required_fields);
 });
 
