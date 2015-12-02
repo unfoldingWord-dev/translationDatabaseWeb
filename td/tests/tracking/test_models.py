@@ -20,15 +20,15 @@ from td.models import Language
 class CharterTestCase(TestCase):
 
     def setUp(self):
-        language, _ = Language.objects.get_or_create(
+        language = Language.objects.create(
             id=9999,
             code="ts",
             name="Test Language",
         )
-        department, _ = Department.objects.get_or_create(
+        department = Department.objects.create(
             name="Test Department",
         )
-        self.model, _ = Charter.objects.get_or_create(
+        self.model = Charter.objects.create(
             language=language,
             start_date=timezone.now().date(),
             end_date=timezone.now().date(),
@@ -46,6 +46,17 @@ class CharterTestCase(TestCase):
         Charter.lang_id should return the ID of its language
         """
         self.assertEqual(self.model.lang_id, 9999)
+
+    def test_lang_data(self):
+        """
+        lang_data() should return desired dict
+        """
+        data = self.model.lang_data()
+        self.assertEqual(data[0]["pk"], 9999)
+        self.assertEqual(data[0]["lc"], "ts")
+        self.assertEqual(data[0]["ln"], "Test Language")
+        self.assertEqual(data[0]["cc"], [""])
+        self.assertEqual(data[0]["lr"], "")
 
 
 class EventTestCase(TestCase):
