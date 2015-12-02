@@ -110,11 +110,13 @@
 
 						{{ form.charter | bootstrap }}
 
-						<p style="clear: both; padding: 1rem 0; font-weight: lighter;">
-                            Can't find your charter? It probably has not been created. Why not 
-                            <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
-                            right now and try again?
-                        </p>
+						<div class="form-notice-container">
+							<p class="form-notice">
+	                            Can't find your charter? It probably has not been created. Why not 
+	                            <a href="{% url 'tracking:new_charter_modal' %}" data-toggle="modal" data-target="#modal" title="New Charter" data-tooltip>Create one</a>
+	                            right now and try again?
+	                        </p>
+                        </div>
 
 						{{ form.start_date | bootstrap }}
 						{{ form.end_date | bootstrap }}
@@ -196,7 +198,8 @@
 						</div>
 
                         <div class="form-notice-container">
-                            <p class="form-notice">Note: From this point on, you can select multiple items.</p>
+                            <p class="form-notice">Note: From this point on, select ALL that applies.</p>
+                            <p class="form-notice">Note: Hold Ctrl when clicking to select multiple items from the scrolling list.</p>
                         </div>
 
 						{{ form.departments | bootstrap }}

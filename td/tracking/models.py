@@ -163,7 +163,6 @@ class Event(models.Model):
     networks = models.ManyToManyField(
         Network,
         blank=True,
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     departments = models.ManyToManyField(
         "Department",
