@@ -85,9 +85,11 @@ class CharterForm(forms.ModelForm):
 
     class Meta:
         model = Charter
-        exclude = ["created_at"]
+        exclude = ["created_at", "modified_at"]
         widgets = {
             "created_by": forms.HiddenInput(),
+            "modified_by": forms.HiddenInput(),
+            "countries": forms.SelectMultiple(attrs={"size": "8"})
         }
 
 
@@ -123,6 +125,7 @@ class EventForm(forms.ModelForm):
     def __init__(self, pk="-1", *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         # Alphabetize items in selection
+        self.fields = determine_widget(self.fields, ["departments", "hardware", "software", "translation_methods", "output_target", "publication"], 9)
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
@@ -211,18 +214,13 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        exclude = ["created_at", "translators", "facilitators", "materials"]
+        exclude = ["created_at", "modified_at", "translators", "facilitators", "materials"]
         widgets = {
+            "created_by": forms.HiddenInput(),
+            "modified_by": forms.HiddenInput(),
             "materials": forms.HiddenInput(),
             "facilitators": forms.HiddenInput(),
-            "created_by": forms.HiddenInput(),
             "number": forms.HiddenInput(),
-            "departments": forms.CheckboxSelectMultiple(),
-            "publication": forms.CheckboxSelectMultiple(),
-            "output_target": forms.CheckboxSelectMultiple(),
-            "hardware": forms.CheckboxSelectMultiple(),
-            "software": forms.CheckboxSelectMultiple(),
-            "translation_methods": forms.CheckboxSelectMultiple(),
         }
 
     # -------------------------------- #
@@ -314,7 +312,7 @@ class MultiCharterEventForm2(EventForm):
     # Overriden EvenForm's Meta class to adapt this form into MultiCharterEventView step 2
     class Meta:
         model = Event
-        exclude = ["created_at", "created_by", "charter", "translators", "facilitators", "materials"]
+        exclude = ["created_at", "created_by", "modified_at", "modified_by", "charter", "translators", "facilitators", "materials"]
         widgets = {
             "departments": forms.CheckboxSelectMultiple(),
             "publication": forms.CheckboxSelectMultiple(),
@@ -368,6 +366,17 @@ def check_text_input(form, field_name):
         raise forms.ValidationError(_("This field is required"), "invalid_input")
     else:
         return escape(text)
+
+
+def determine_widget(fields, names, limit):
+    """
+    Determine what widget should be used based on the given limit.
+    This is used mainly for deciding whether a field should be displayed as checkboxes
+       or as a multiselect (if it's too long).
+    """
+    for name in names:
+        fields[name].widget = forms.SelectMultiple() if len(fields[name].queryset) > limit else forms.CheckboxSelectMultiple()
+    return fields
 
 
 # ------------------- #

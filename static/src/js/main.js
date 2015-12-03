@@ -3,7 +3,7 @@ require("../less/site.less");
 window.jQuery = window.$ = require("jquery");
 
 // Requirements for td.tracking
-require("./event_form.js");
+require("./tracking_forms.js");
 
 require("bootstrap");
 require("imports?define=>false!bootstrap-daterangepicker");

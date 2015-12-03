@@ -27,10 +27,11 @@
             </tbody>
         </table>
     </div>
-    {% if user.is_authenticated and charter%}
+    {% if user.is_authenticated %}
         <div class="col-md-6">
             {% include "resources/_project_detail.html" with data=charter %}
         </div>
+        
     {% endif %}
 </div>
 
