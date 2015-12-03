@@ -57,7 +57,7 @@ class CharterAdmin(ImportExportModelAdmin):
         ("General", {"fields": ["language", "countries"]}),
         ("Timing", {"fields": [("start_date", "end_date")]}),
         ("Internal", {"fields": ["number", "lead_dept", "contact_person"]}),
-        ("Submission Info", {"fields": [("created_at", "created_by")]}),
+        ("Submission Info", {"fields": [("created_at", "created_by"), ("modified_at", "modified_by")]}),
     ]
     filter_horizontal = ('countries', )
     list_display = ("language", "__unicode__", "start_date", "end_date", "number", "contact_person")
@@ -69,8 +69,8 @@ class EventAdmin(ImportExportModelAdmin):
         ("General", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
         ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
         ("Resources", {"fields": ["software", "hardware", "translation_methods", "materials"]}),
-        ("Misc", {"fields": ["output_target", "publication", "current_check_level", "target_check_level"]}),
-        ("Submission Info", {"fields": [("created_at", "created_by")]}),
+        ("Misc", {"fields": ["output_target", "publication", "current_check_level", "target_check_level", "comment"]}),
+        ("Submission Info", {"fields": [("created_at", "created_by"), ("modified_at", "modified_by")]}),
     ]
     filter_horizontal = ('translators', 'networks', )
     list_display = ("charter", "number", "location", "start_date", "end_date", "contact_person")

@@ -6,12 +6,12 @@
 {% block body %}
 
     <!-- Need to put this back in with the right data -->
-    <!-- {% include "resources/_breadcrumbs.html" with region=country.region %} -->
+    {% include "resources/_breadcrumbs.html" with region=object.charter.language.country.region country=object.charter.language.country language=object.charter.language %}
 
 <h1>
     Event {{ object.number}} of {{ object.charter.language.name }} Project
     {% if user.is_authenticated %}
-    <a class="btn btn-primary btn-xs" href="{% url "tracking:event_update" object.pk %}">Edit</a>
+        <a class="btn btn-primary btn-xs" href="{% url "tracking:event_update" object.pk %}">Edit</a>
     {% endif %}
 </h1>
 
@@ -25,8 +25,10 @@
                 <tr><th>Lead Department</th><td>{{ object.lead_dept }}</td></tr>
                 <tr><th>Contact Person</th><td>{{ object.contact_person }}</td></tr>
                 <tr><th>Checking Level (start, end)</th><td>{{ object.current_check_level | default:"n/a" }}, {{ object.target_check_level | default:"n/a" }}</td></tr>
-                <tr><th>Created By</th><td>{{ object.created_by }}</td></tr>
                 <tr><th>Created At</th><td>{{ object.created_at }}</td></tr>
+                <tr><th>Created By</th><td>{{ object.created_by }}</td></tr>
+                <tr><th>Modified At</th><td>{{ object.modified_at }}</td></tr>
+                <tr><th>Modified By</th><td>{{ object.modified_by }}</td></tr>
             </tbody>
         </table>
     </div>
