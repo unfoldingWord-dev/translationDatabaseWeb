@@ -173,9 +173,17 @@ class CharterUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CharterForm
     template_name_suffix = "_update_form"
 
+    # Overidden to set initial values
+    def get_initial(self):
+        return {
+            "modified_by": self.request.user.username
+        }
+
     # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
+        self.object.modified_at = timezone.now()
+        self.object.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
 
 
@@ -302,6 +310,12 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
     form_class = EventForm
     template_name_suffix = "_update_form"
 
+    # Overridden to include initial values
+    def get_initial(self):
+        return {
+            "modified_by": self.request.user.username,
+        }
+
     # Overridden to include custom dynamic data
     def get_context_data(self, *args, **kwargs):
         context = super(EventUpdateView, self).get_context_data(**kwargs)
@@ -331,6 +345,9 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         material_ids = get_material_ids(materials)
         event.materials.clear()
         event.materials.add(*list(Material.objects.filter(id__in=material_ids)))
+
+        event.modified_at = timezone.now()
+        event.save()
 
         # Check whether the user selected "Other" for one or more fields.
         # If he did, redirect him to NewItemForm with appropriate context info

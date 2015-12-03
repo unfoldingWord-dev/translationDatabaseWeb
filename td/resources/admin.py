@@ -15,7 +15,7 @@ class EntryTrackingAdmin(admin.ModelAdmin):
 
 
 class ResourceAdmin(EntryTrackingAdmin):
-    list_display = ["title", "language", "media", "published_flag"]
+    list_display = ["title", "language", "published_flag"]
 
 
 class TitleAdmin(EntryTrackingAdmin):

@@ -38,6 +38,7 @@ class Charter(models.Model):
     number = models.CharField(
         max_length=10,
         verbose_name="Project Accounting Number",
+        blank=True,
     )
     lead_dept = models.ForeignKey(
         "Department",
@@ -53,10 +54,14 @@ class Charter(models.Model):
     created_by = models.CharField(
         max_length=200,
     )
-
-    @property
-    def lang_id(self):
-        return self.language.id
+    modified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    modified_by = models.CharField(
+        max_length=200,
+        blank=True,
+    )
 
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
@@ -64,6 +69,17 @@ class Charter(models.Model):
 
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
+
+    @property
+    def lang_id(self):
+        return self.language.id
+
+    @classmethod
+    def lang_data(cls):
+        return [
+            dict(pk=x.language.pk, lc=x.language.lc, ln=x.language.ln, cc=[x.language.cc], lr=x.language.lr)
+            for x in cls.objects.all()
+        ]
 
 
 # ----------- #
@@ -148,7 +164,6 @@ class Event(models.Model):
     networks = models.ManyToManyField(
         Network,
         blank=True,
-        help_text="Hold Ctrl while clicking to select multiple items",
     )
     departments = models.ManyToManyField(
         "Department",
@@ -163,6 +178,17 @@ class Event(models.Model):
     created_by = models.CharField(
         max_length=200,
         default="unknown",
+    )
+    modified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    modified_by = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+    comment = models.TextField(
+        blank=True,
     )
 
     def __unicode__(self):
