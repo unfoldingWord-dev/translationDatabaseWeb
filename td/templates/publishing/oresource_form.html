@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}{% if lang %}Update{% else %}Create{% endif %} Official Resource{% endblock %}
+{% block head_title %}{% if form.language %}Update{% else %}Create{% endif %} Official Resource{% endblock %}
 
 {% block body %}
     <ul class="breadcrumb">
         <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
         <li><a href="{% url "oresource_list" %}">{% trans "Official Resources" %}</a></li>
-        <li>{% if lang %}Update{% else %}Create{% endif %} Official Resource</li>
+        <li>{% if form.language %}Update{% else %}Create{% endif %} Official Resource</li>
     </ul>
 
     <div class="row">
@@ -17,7 +17,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title">
-                        {% if lang %}Update{% else %}Create{% endif %} Official Resource{% if lang %} for {{ lang.name }}{% endif %}
+                        {% if form.language %} Update {% else %} Create {% endif %}
+                        Official Resource
                     </h2>
                 </div>
                 <div class="panel-body">
@@ -25,7 +26,7 @@
                         {% csrf_token %}
                         {{ form|bootstrap }}
                         <button type="submit" class="btn btn-primary pull-right">
-                            {% if lang %}Update{% else %}Create{% endif %}
+                            {% if form.language %} Update {% else %} Create {% endif %}
                         </button>
                     </form>
                 </div>
@@ -35,11 +36,10 @@
 {% endblock %}
 
 
-{% block extra_script %}
+{% block custom_bottom_script %}
     <script>
-    $(function() {
-
-        $('#id_publish').click(function() {
+    $(function(){
+        $("#id_publish").change(function(){
             var disable = !this.checked;
             $('#id_checking_level').attr('disabled', disable);
             $('#id_checking_entity').attr('disabled', disable);

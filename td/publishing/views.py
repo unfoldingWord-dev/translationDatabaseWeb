@@ -13,7 +13,8 @@ from account.mixins import LoginRequiredMixin
 from td.models import Language
 from td.publishing.output_mappers import publish_requests_as_catalog
 from td.publishing.forms import (
-    RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm)
+    RecentComForm, ConnectionForm, OfficialResourceForm, PublishRequestForm,
+    PublishRequestNoAuthForm)
 from td.publishing.models import (
     Contact, Chapter, OfficialResource, PublishRequest, OfficialResourceType)
 from td.publishing.signals import published
@@ -37,7 +38,8 @@ def resource_language_json(request, kind, lang):
     # Get the last published resource by language
     published = PublishRequest.objects.filter(
         resource_type=resource_type,
-        language=language
+        language=language,
+        approved_at__isnull=False
     ).order_by(
         "resource_type__short_name",
         "language__code",
@@ -198,7 +200,6 @@ class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form(self, form_class):
         form = super(OfficialResourceUpdateView, self).get_form(form_class)
-        del form.fields["language"]
         return form
 
     def form_valid(self, form):
@@ -240,7 +241,7 @@ class OfficialResourceDetailView(LoginRequiredMixin, DetailView):
 
 class PublishRequestCreateView(CreateView):
     model = PublishRequest
-    form_class = PublishRequestForm
+    form_class = PublishRequestNoAuthForm
 
     def form_valid(self, form):
         self.object = form.save()

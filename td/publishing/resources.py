@@ -12,12 +12,43 @@ LINK_TAG_RE = re.compile(ur"\[\[.*?\]\]", re.UNICODE)
 IMG_TAG_RE = re.compile(ur"{{.*?}}", re.UNICODE)
 
 
+def remove_html_comments(soup):
+    """
+    Remove HTML comments from incoming parsed html data
+
+    :param soup: BeautifulSoup html.parser
+    :type soup: object
+    """
+    is_html_comment = lambda text: isinstance(text, element.Comment)
+    for html_comment in soup.find_all(text=is_html_comment):
+        html_comment.extract()
+
+
+def fix_dokuwiki_hyperlink_title_attr(soup):
+    """
+    Replace or set all title attributes of hyperlink elements in the html doc
+    to the lowercase, hyphenated element text if the "en:ta:vol1:toc" type
+    pattern is found.
+
+    :param soup: BeautifulSoup html.parser
+    :type soup: object
+
+    :returns: object -- BeautifulSoup
+    """
+    for a_el in soup.find_all("a"):
+        # Replace titles where the "en:ta:vol1:toc" pattern is found
+        if a_el.get("title") and ":" in a_el.get("title"):
+            a_el["title"] = a_el.text
+
+
 def clean_text(input_text):
     """
-    cleans up text from possible dokuwiki and html tag polution
+    Cleans up text from possible dokuwiki and html tag polution
 
     :param input_text:
-    :return:
+    :para type: str
+
+    :returns: str
     """
     output_text = HTML_TAG_RE.sub(u"", input_text)
     output_text = LINK_TAG_RE.sub(u"", output_text)
@@ -25,9 +56,6 @@ def clean_text(input_text):
     return output_text
 
 
-# obs-catalog.json - can make this from data we already have
-# obs-{lang}.json - _get_chapters() + app_words (not implemented yet) / stuff data in database
-# github file creation (aka uwexport): front_matter, back_matter, qa, langcat
 class OpenBibleStory(object):
     img_link_re = re.compile(ur"https://.*\.(jpg|jpeg|gif)", re.UNICODE)
     title_re = re.compile(ur"======.*", re.UNICODE)
@@ -58,6 +86,27 @@ class OpenBibleStory(object):
         text = smartyPants(text)
         return text
 
+    def _fetch_matter(self, prefix):
+        """
+        Fetch the front and back matter content for OBS
+
+        :param prefix: 'front' or 'back'
+        :type prefix: str
+
+        :returns: dict
+        """
+        matter = "{0}-matter".format(prefix)
+        ret = {"id": matter, "text": None}
+        resp = self.session.get(
+            self.source_url.format(
+                lang_code=self.lang_code,
+                chapter=matter
+            )
+        )
+        if resp.ok:
+            ret["text"] = self._parse_frame_text(resp.text)
+        return ret
+
     def fetch_chapter(self, chapter_number):
         chapter_data = {"frames": [], "number": chapter_number, "ref": "", "title": ""}
         response = self.session.get(
@@ -86,7 +135,11 @@ class OpenBibleStory(object):
             self.fetch_chapter(chapter_number)
             for chapter_number in self.chapter_numbers
         ]
-        return {"chapters": chapters}
+        return {
+            "chapters": chapters,
+            "front_matter": self._fetch_matter(prefix="front"),
+            "back_matter": self._fetch_matter(prefix="back"),
+        }
 
 
 class TranslationAcademy(object):
@@ -114,6 +167,15 @@ class TranslationAcademy(object):
         self.volume_number = str(volume_number)
 
     def _parse_frames(self, soup):
+        """
+        Fetch the frame content from the hyperlink in the list element, then
+        check for sub-frames in any child list elements.
+
+        :param soup: HTML results of the TOC listing via BeautifulSoup
+        :type soup: object
+
+        :returns: list
+        """
         frames = []
         sub_frames = []
 
@@ -210,10 +272,12 @@ class TranslationAcademy(object):
 
         if response.ok:
             soup = BeautifulSoup(response.text, "html.parser")
-            # Remove HTML comments coming from dokuwiki plugins
-            is_html_comment = lambda text: isinstance(text, element.Comment)
-            for html_comment in soup.find_all(text=is_html_comment):
-                html_comment.extract()
+
+            # Remove HTML comment elements, specifically those from dokuwiki
+            remove_html_comments(soup)
+            # Replaces the hyperlink title attribute values like:
+            # "en:ta:vol1:translate:translate_retell" to the hyperlink text
+            fix_dokuwiki_hyperlink_title_attr(soup)
 
             # Find the page title header
             title_el = soup.find(("h1", "h2", "h3"))
