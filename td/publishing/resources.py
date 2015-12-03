@@ -27,8 +27,7 @@ def remove_html_comments(soup):
 def fix_dokuwiki_hyperlink_title_attr(soup):
     """
     Replace or set all title attributes of hyperlink elements in the html doc
-    to the lowercase, hyphenated element text if the "en:ta:vol1:toc" type
-    pattern is found.
+    to the element text if the "en:ta:vol1:toc" type pattern is found.
 
     :param soup: BeautifulSoup html.parser
     :type soup: object
@@ -46,7 +45,7 @@ def clean_text(input_text):
     Cleans up text from possible dokuwiki and html tag polution
 
     :param input_text:
-    :para type: str
+    :type input_text: str
 
     :returns: str
     """
@@ -57,6 +56,10 @@ def clean_text(input_text):
 
 
 class OpenBibleStory(object):
+    """
+    Fetch and parse the OpenBibleStory content from door43
+    """
+
     img_link_re = re.compile(ur"https://.*\.(jpg|jpeg|gif)", re.UNICODE)
     title_re = re.compile(ur"======.*", re.UNICODE)
     ref_re = re.compile(ur"//.*//", re.UNICODE)
