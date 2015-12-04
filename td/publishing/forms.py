@@ -198,6 +198,14 @@ class PublishRequestForm(forms.ModelForm):
 
     class Meta:
         model = PublishRequest
+        exclude = ["approved_at", "created_at", "requestor_email"]
+        widgets = {"license_title": forms.TextInput()}
+
+
+class PublishRequestNoAuthForm(PublishRequestForm):
+
+    class Meta:
+        model = PublishRequest
         fields = [
             "requestor",
             "requestor_email",
