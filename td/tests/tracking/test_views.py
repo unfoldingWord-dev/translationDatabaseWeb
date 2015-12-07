@@ -9,12 +9,17 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
 from td.tracking.views import (
-    HomeView, CharterTableSourceView,
+    HomeView, CharterTableSourceView, EventTableSourceView,
     CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
     EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
-    SuccessView, MultiCharterSuccessView,
+    SuccessView, MultiCharterSuccessView, NewItemView,
 )
-from td.tracking.models import Charter, Department, Event
+from td.tracking.models import (
+    Charter, Event,
+    Department, Hardware, Software,
+    TranslationMethod, Output, Publication,
+    Network,
+)
 from td.tracking.forms import (
     CharterForm, MultiCharterForm,
     EventForm,
@@ -105,6 +110,108 @@ class CharterTableSourceViewTestCase(TestCase):
         self.view = setup_view(CharterTableSourceView())
         self.view.model = Charter
         self.assertEqual(len(self.view.queryset), 2)
+
+    def test_filtered_data(self):
+        self.request = RequestFactory().get('', {
+            "search[value]": "test",
+            "order[0][column]": "0"
+        })
+        self.view = setup_view(CharterTableSourceView(), self.request)
+        self.view.model = Charter
+        self.view.fields = ["language__name"]
+        self.assertIn(self.charter0, self.view.filtered_data)
+
+    def test_filtered_data_all(self):
+        self.request = RequestFactory().get('', {
+            "search[value]": "language",
+            "order[0][column]": "0"
+        })
+        self.view = setup_view(CharterTableSourceView(), self.request)
+        self.view.model = Charter
+        self.view.fields = ["language__name"]
+        result = self.view.filtered_data
+        self.assertIn(self.charter0, result)
+        self.assertIn(self.charter1, result)
+
+    def test_filtered_data_short(self):
+        self.request = RequestFactory().get('', {
+            "search[value]": "l",
+            "order[0][column]": "0"
+        })
+        self.view = setup_view(CharterTableSourceView(), self.request)
+        self.view.model = Charter
+        self.view.fields = ["language__name"]
+        result = self.view.filtered_data
+        self.assertIn(self.charter0, result)
+        self.assertIn(self.charter1, result) 
+
+
+class EventTableSourceViewTestCase(TestCase):
+
+    def setUp(self):
+        language = Language.objects.create(
+            id=9999,
+            code="ts",
+            name="Test Language",
+        )
+        department = Department.objects.create(
+            name="Test Department",
+        )
+        charter = Charter.objects.create(
+            id=9999,
+            language=language,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        self.event0 = Event.objects.create(
+            charter=charter,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+            number=1,
+        )
+        self.event1 = Event.objects.create(
+            charter=charter,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+            number=2,
+        )
+
+    def test_queryset(self):
+        self.view = setup_view(EventTableSourceView(), pk=9999)
+        qs = self.view.queryset
+        self.assertEqual(len(qs), 2)
+        self.assertIn(self.event0, qs)
+        self.assertIn(self.event1, qs)
+
+    def test_queryset_empty(self):
+        self.view = setup_view(EventTableSourceView())
+        self.view.model = Event
+        self.assertEqual(len(self.view.queryset), 2)
+
+    def test_filtered_data(self):
+        self.request = RequestFactory().get('', {
+            "search[value]": "1",
+            "order[0][column]": "0"
+        })
+        self.view = setup_view(EventTableSourceView(), self.request)
+        self.view.model = Event
+        self.view.fields = ["number"]
+        self.assertIn(self.event0, self.view.filtered_data)
+
+    def test_filtered_data_all(self):
+        self.request = RequestFactory().get('', {
+            "search[value]": "",
+            "order[0][column]": "0"
+        })
+        self.view = setup_view(EventTableSourceView(), self.request)
+        self.view.model = Event
+        self.view.fields = ["number"]
+        result = self.view.filtered_data
+        self.assertIn(self.event0, result)
+        self.assertIn(self.event1, result)
 
 
 # ---------------------------------- #
@@ -955,8 +1062,89 @@ class MultiCharterSuccessViewTestCase(TestCase):
 
 
 class NewItemViewTestCase(TestCase):
-    # TODO
-    pass
+    def setUp(self):
+        self.user, _ = User.objects.get_or_create(
+            username="test_user",
+            email="test@gmail.com",
+            password="test_password",
+        )
+        self.request = RequestFactory().get('/tracking/new_item/')
+        self.request.user = self.user
+        setattr(self.request, "session", {})
+        setattr(self.request, "_messages", FallbackStorage(self.request))
+        self.view = setup_view(NewItemView(), self.request)
+
+    @patch("td.tracking.views.NewItemView.get_form")
+    def test_get(self, mock_get_form):
+        """
+        Sanity check against errors when fetching a new item form
+        """
+        response = NewItemView.as_view()(self.request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_config(self):
+        """
+        Sanity check for config
+        """
+        self.assertEqual(self.view.template_name, "tracking/new_item_form.html")
+        self.assertIs(self.view.field_model_map["event"], Event)
+        self.assertIs(self.view.field_model_map["hardware"], Hardware)
+        self.assertIs(self.view.field_model_map["software"], Software)
+        self.assertIs(self.view.field_model_map["translation_methods"], TranslationMethod)
+        self.assertIs(self.view.field_model_map["output_target"], Output)
+        self.assertIs(self.view.field_model_map["publication"], Publication)
+        self.assertIs(self.view.field_model_map["networks"], Network)
+        self.assertTrue(self.view.field_label_map["translation_methods"])
+        self.assertTrue(self.view.field_label_map["hardware"])
+        self.assertTrue(self.view.field_label_map["software"])
+        self.assertTrue(self.view.field_label_map["networks"])
+        self.assertTrue(self.view.field_label_map["output_target"])
+        self.assertTrue(self.view.field_label_map["publication"])
+
+    def test_get_context_data(self):
+        """
+        """
+        self.assertIn("new_item_info", self.view.get_context_data())
+
+    def test_get_form_get(self):
+        """
+        """
+        self.view.request.session["new_item_info"] = {
+            "fields": ["publication"],
+            "id": 9999,
+        }
+        form = self.view.get_form()
+        self.assertIn("publication", form.fields)
+
+    def test_get_form_post(self):
+        """
+        """
+        post_data = {
+            "publication": "Test Publication"
+        }
+        post = RequestFactory().post('/tracking/new_item/', post_data)
+        post.user = self.user
+        setattr(post, "session", {})
+        post_view = setup_view(NewItemView(), post)
+        post_view.request.session["new_item_info"] = {
+            "fields": ["publication"],
+            "id": 9999,
+        }
+        form = post_view.get_form()
+        self.assertIn("publication", form.fields)
+        self.assertEqual(form.data["publication"], "Test Publication")
+
+    @patch("td.tracking.views.messages.success")
+    @patch("td.tracking.views.send_mail")
+    def test_form_valid(self, mock_send_mail, mock_msg_success):
+        mock_form = Mock()
+        self.view.create_new_item = Mock()
+        response = self.view.form_valid(mock_form)
+        self.assertEqual(self.view.create_new_item.call_count, 1)
+        self.assertEqual(mock_send_mail.call_count, 1)
+        self.assertEqual(mock_msg_success.call_count, 1)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("tracking:project_list"))
 
 
 class chartersAutocompleteTestCase(TestCase):
