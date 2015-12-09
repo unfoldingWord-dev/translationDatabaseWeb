@@ -3,7 +3,9 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}Tracking | New Event{% endblock head_title %}
+{% block head_title %}
+    {% if view == "create" %}New{% else %}Update{% endif %} Event
+{% endblock head_title %}
 
 {% block extra_style %}
     <style>
@@ -50,10 +52,10 @@
             height: 20px;
             margin: 7px auto 0 auto;
         }
-        .facilitator-text {
+        .facilitator-text, .translator-text {
             width: calc(100% - 140px);
         }
-        .facilitator-checkboxes {
+        .facilitator-checkboxes, .translator-checkboxes {
             width: 140px;
         }
         .material-text {
@@ -102,7 +104,7 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title">New Translation Event/Workshop</h2>
+                    <h2 class="panel-title">{% if view == "create" %}New{% else %}Update{% endif %} Translation Event/Workshop</h2>
                 </div>
                 <div class="panel-body">
                     <form action="" method="POST" class="form">
@@ -129,16 +131,24 @@
                         <!-- form.translators -->
                         <div class="form-group clearfix">
                             <div class="inline inline-label">
-                                <div class="translator-text full-width">
+                                <div class="translator-text">
                                     <label class="control-label">Translator</label>
                                     <a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="translator-checkboxes">
+                                    <label id="sof-label" class="control-label control-label-sub half-width text-center" title="Statement of Faith">SoF</label>
+                                    <label id="tg-label" class="control-label control-label-sub half-width text-center" title="Translation Guideline">TG</label>
                                 </div>
                             </div>
                             <div id="translator-list">
                                 {% for translator in translators %}
                                     <div class="inline inline-input clearfix">
-                                        <div class="translator-text clearfix full-width">
+                                        <div class="translator-text clearfix">
                                             <input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
+                                        </div>
+                                        <div class="translator-checkboxes">
+                                            <div class="half-width"><input name="sof{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if translator.sof %}checked{% endif %} /></div>
+                                            <div class="half-width"><input name="tg{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if translator.tg %}checked{% endif %} /></div>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -231,76 +241,6 @@
 {% endblock body%}
 
 {% block custom_bottom_script %}
+    <!-- Custom script for new charter modal -->
     <script src="http://malsup.github.com/jquery.form.js"></script>
-    <script>
-        ['translator', 'facilitator', 'material'].forEach(function(field) {
-            $('form').on('paste', 'input[name*="' + field + '"]', function(e) {
-                e.preventDefault();
-                var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
-                var fields = $('input[type="text"][name*="' + field + '"]');
-                for (var i = 0; i < text.length - fields.length; i++) {
-                    addInline(field);
-                }
-                $('input[type="text"][name*="' + field + '"]').each(function(index) {
-                    this.value = text[index] || "";
-                });
-            });
-        });
-
-
-        // ================
-        // CUSTOM FUNCTIONS
-        // ================
-
-        //    addInline
-        //    ---------
-        function addInline(label) {
-            var list = $('#' + label + '-list');
-            var length = list.children().length;
-            switch(label) {
-                // Build facilitator element
-                case 'facilitator':
-                    var elem = '<div class="inline inline-input clearfix">' +
-                        '<div class="facilitator-text clearfix">' +
-                            '<input name="facilitator' + length + '" type="text" class="form-control" />' +
-                        '</div>' +
-                        '<div class="facilitator-checkboxes">' +
-                            '<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' +
-                            '<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' +
-                        '</div>' +
-                    '</div>';
-                    break;
-                // Build material element
-                case 'material':
-                    var elem = '<div class="inline inline-input clearfix">' +
-                        '<div class="material-text clearfix">' +
-                            '<input name="material' + length + '" type="text" class="form-control" />' +
-                        '</div>' +
-                        '<div class="material-checkboxes">' +
-                            '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' +
-                        '</div>' +
-                    '</div>';
-                    break;
-                // Build translator element
-                case 'translator':
-                    var elem = '<div class="inline inline-input clearfix">' +
-                        '<div class="translator-text full-width clearfix">' +
-                            '<input name="translator' + length + '" type="text" class="form-control" />' +
-                        '</div>';
-                    break;
-                default:
-                    var elem = '';
-                    break;
-            }
-            list.append(elem);
-            addCount(label);
-        }
-
-        //    addCount
-        //    --------
-        function addCount(label) {
-            var elem = document.getElementsByName(label + '-count');
-            if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
-        }
-    </script>
 {% endblock custom_bottom_script %}

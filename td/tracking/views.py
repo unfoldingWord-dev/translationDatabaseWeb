@@ -265,6 +265,7 @@ class EventAddView(LoginRequiredMixin, CreateView):
         context["translators"] = get_translator_data(self)
         context["facilitators"] = get_facilitator_data(self)
         context["materials"] = get_material_data(self)
+        context["view"] = "create"
         return context
 
     # Overridden to execute custom save and redirect upon valid submission
@@ -308,7 +309,6 @@ class EventAddView(LoginRequiredMixin, CreateView):
 class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
     form_class = EventForm
-    template_name_suffix = "_update_form"
 
     # Overridden to include initial values
     def get_initial(self):
@@ -322,6 +322,7 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         context["translators"] = get_translator_data(self)
         context["facilitators"] = get_facilitator_data(self)
         context["materials"] = get_material_data(self)
+        context["view"] = "update"
         return context
 
     # Overridden to execute custom save and redirect upon valid submission
@@ -382,6 +383,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             context["translators"] = get_translator_data(self)
             context["facilitators"] = get_facilitator_data(self)
             context["materials"] = get_material_data(self)
+            context["view"] = "create"
         return context
 
     # Overriden to send a dynamic form based on user's input in step 1
@@ -713,7 +715,14 @@ def get_translator_data(self):
             if key.startswith("translator") and key != "translator-count":
                 name = post[key] if post[key] else ""
                 if name:
-                    translators.append({"name": name})
+                    number = key[10:]
+                    sof = True if "sof" + number in post else False
+                    tg = True if "tg" + number in post else False
+                    translators.append({"name": name, "sof": sof, "tg": tg})
+    elif self.request.method == "GET":
+        if self.object:
+            for person in self.object.translators.all():
+                translators.append({"name": person.name, "sof": person.sof, "tg": person.tg})
     return translators
 
 
@@ -730,6 +739,10 @@ def get_facilitator_data(self):
                     is_lead = True if "is_lead" + number in post else False
                     speaks_gl = True if "speaks_gl" + number in post else False
                     facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
+    elif self.request.method == "GET":
+        if self.object:
+            for person in self.object.facilitators.all():
+                facilitators.append({"name": person.name, "is_lead": person.is_lead, "speaks_gl": person.speaks_gl})
     return facilitators
 
 
@@ -745,6 +758,10 @@ def get_material_data(self):
                     number = key[8:]
                     licensed = True if "licensed" + number in post else False
                     materials.append({"name": name, "licensed": licensed})
+    elif self.request.method == "GET":
+        if self.object:
+            for thing in self.object.materials.all():
+                materials.append({"name": thing.name, "licensed": thing.licensed})
     return materials
 
 
@@ -754,8 +771,15 @@ def get_translator_ids(array):
     for translator in array:
         try:
             person = Translator.objects.get(name=translator["name"])
+            person.sof = translator["sof"]
+            person.tg = translator["tg"]
+            person.save()
         except Translator.DoesNotExist:
-            person = Translator.objects.create(name=translator["name"])
+            person = Translator.objects.create(
+                name=translator["name"],
+                sof=translator["sof"],
+                tg=translator["tg"],
+            )
         ids.append(person.id)
 
     return ids
@@ -767,6 +791,9 @@ def get_facilitator_ids(array):
     for facilitator in array:
         try:
             person = Facilitator.objects.get(name=facilitator["name"])
+            person.is_lead = facilitator["is_lead"]
+            person.speaks_gl = facilitator["speaks_gl"]
+            person.save()
         except Facilitator.DoesNotExist:
             person = Facilitator.objects.create(
                 name=facilitator["name"],
@@ -784,6 +811,8 @@ def get_material_ids(array):
     for material in array:
         try:
             object = Material.objects.get(name=material["name"])
+            object.licensed = material["licensed"]
+            object.save()
         except Material.DoesNotExist:
             object = Material.objects.create(
                 name=material["name"],

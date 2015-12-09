@@ -143,7 +143,7 @@ class CharterTableSourceViewTestCase(TestCase):
         self.view.fields = ["language__name"]
         result = self.view.filtered_data
         self.assertIn(self.charter0, result)
-        self.assertIn(self.charter1, result) 
+        self.assertIn(self.charter1, result)
 
 
 class EventTableSourceViewTestCase(TestCase):
@@ -519,10 +519,11 @@ class EventAddViewTestCase(TestCase):
         get_material_data() should be called once
         """
         self.view.object = Mock()
-        self.view.get_context_data()
+        context = self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
         mock_get_material.assert_called_once_with(self.view)
+        self.assertEqual(context["view"], "create")
 
     @patch("td.tracking.views.messages")
     @patch("td.tracking.views.check_for_new_items")
@@ -530,8 +531,11 @@ class EventAddViewTestCase(TestCase):
     @patch("td.tracking.views.get_facilitator_ids")
     @patch("td.tracking.views.get_translator_ids")
     @patch("td.tracking.views.get_material_ids")
+    @patch("td.tracking.views.get_facilitator_data")
+    @patch("td.tracking.views.get_translator_data")
+    @patch("td.tracking.views.get_material_data")
     @patch("td.tracking.forms.EventForm")
-    def test_form_valid(self, mock_form, mock_material_ids, mock_translator_ids, mock_facilitator_ids, mock_next_number, mock_new_items, mock_messages):
+    def test_form_valid(self, mock_form, mock_material_data, mock_translator_data, mock_facilitator_data, mock_material_ids, mock_translator_ids, mock_facilitator_ids, mock_next_number, mock_new_items, mock_messages):
         language, _ = Language.objects.get_or_create(
             id=9999,
             code="ts",
@@ -559,6 +563,9 @@ class EventAddViewTestCase(TestCase):
         mock_translator_ids.return_value = []
         mock_facilitator_ids.return_value = []
         mock_material_ids.return_value = []
+        mock_translator_data.return_value = []
+        mock_facilitator_data.return_value = []
+        mock_material_data.return_value = []
         mock_next_number.return_value = 9999
 
         # Scenario 1: no new items
@@ -567,6 +574,9 @@ class EventAddViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("tracking:charter_add_success", kwargs={"obj_type": "event", "pk": "9999"}))
         mock_form.save.assert_called_once_with()
+        self.assertEqual(mock_translator_data.call_count, 1)
+        self.assertEqual(mock_facilitator_data.call_count, 1)
+        self.assertEqual(mock_material_data.call_count, 1)
         mock_translator_ids.assert_called_once_with([])
         mock_facilitator_ids.assert_called_once_with([])
         mock_material_ids.assert_called_once_with([])
@@ -643,7 +653,6 @@ class EventUpdateViewTestCase(TestCase):
         """
         self.assertIs(self.view.model, Event)
         self.assertIs(self.view.form_class, EventForm)
-        self.assertEqual(self.view.template_name_suffix, "_update_form")
 
     @patch("td.tracking.views.get_facilitator_data")
     @patch("td.tracking.views.get_translator_data")
@@ -655,19 +664,23 @@ class EventUpdateViewTestCase(TestCase):
         get_material_data() should be called once
         """
         self.view.object = Mock()
-        self.view.get_context_data()
+        context = self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
         mock_get_material.assert_called_once_with(self.view)
+        self.assertEqual(context["view"], "update")
 
     @patch("td.tracking.views.messages")
     @patch("td.tracking.views.check_for_new_items")
     @patch("td.tracking.views.get_next_event_number")
+    @patch("td.tracking.views.get_facilitator_data")
+    @patch("td.tracking.views.get_translator_data")
+    @patch("td.tracking.views.get_material_data")
     @patch("td.tracking.views.get_facilitator_ids")
     @patch("td.tracking.views.get_translator_ids")
     @patch("td.tracking.views.get_material_ids")
     @patch("td.tracking.forms.EventForm")
-    def test_form_valid(self, mock_form, mock_material_ids, mock_translator_ids, mock_facilitator_ids, mock_next_number, mock_new_items, mock_messages):
+    def test_form_valid(self, mock_form, mock_material_ids, mock_translator_ids, mock_facilitator_ids, mock_material_data, mock_translator_data, mock_facilitator_data, mock_next_number, mock_new_items, mock_messages):
         mock_event = type("MockEvent", (), {
             "id": 9999,
             "charter": self.charter,
@@ -677,6 +690,9 @@ class EventUpdateViewTestCase(TestCase):
             "save": Mock()
         })
         mock_form.save.return_value = mock_event
+        mock_translator_data.return_value = []
+        mock_facilitator_data.return_value = []
+        mock_material_data.return_value = []
         mock_translator_ids.return_value = []
         mock_facilitator_ids.return_value = []
         mock_material_ids.return_value = []
@@ -688,6 +704,9 @@ class EventUpdateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("tracking:charter_add_success", kwargs={"obj_type": "event", "pk": "9999"}))
         mock_form.save.assert_called_once_with()
+        self.assertEqual(mock_translator_data.call_count, 1)
+        self.assertEqual(mock_facilitator_data.call_count, 1)
+        self.assertEqual(mock_material_data.call_count, 1)
         mock_translator_ids.assert_called_once_with([])
         mock_facilitator_ids.assert_called_once_with([])
         mock_material_ids.assert_called_once_with([])
@@ -801,6 +820,8 @@ class MultiCharterEventViewTestCase(TestCase):
             "speaks_gl0": True,
             "material0": "Test Material",
             "licensed0": True,
+            "sof0": True,
+            "tg0": True,
         }
         self.request = RequestFactory().post('/tracking/mc-event/new/', post_data)
         self.view = setup_view(MultiCharterEventView(), self.request)
@@ -813,7 +834,8 @@ class MultiCharterEventViewTestCase(TestCase):
         #
         context = self.view.get_context_data(mock_form_2)
         #
-        self.assertEqual(context["translators"][0], {"name": "Test Translator"})
+        self.assertEqual(context["view"], "create")
+        self.assertEqual(context["translators"][0], {"name": "Test Translator", "sof": True, "tg": True})
         self.assertEqual(context["facilitators"][0], {"name": "Test Facilitator", "is_lead": True, "speaks_gl": True})
         self.assertEqual(context["materials"][0], {"name": "Test Material", "licensed": True})
 
@@ -847,13 +869,19 @@ class MultiCharterEventViewTestCase(TestCase):
     @patch("td.tracking.views.Event.objects.create")
     @patch("td.tracking.views.get_next_event_number")
     @patch("td.tracking.views.check_for_new_items")
+    @patch("td.tracking.views.get_translator_data")
+    @patch("td.tracking.views.get_facilitator_data")
+    @patch("td.tracking.views.get_material_data")
     @patch("td.tracking.views.messages.warning")
-    def test_done(self, mock_warning, mock_new_items, mock_next_number, mock_event_create, mock_charter_get):
+    def test_done(self, mock_warning, mock_material_data, mock_facilitator_data, mock_translator_data, mock_new_items, mock_next_number, mock_event_create, mock_charter_get):
         #
         mock_cleaned_data = {
             "0-language_0": "9999",
             "0-language_1": "8888",
         }
+        mock_translator_data.return_value = []
+        mock_facilitator_data.return_value = []
+        mock_material_data.return_value = []
         self.view.get_all_cleaned_data = Mock(return_value=mock_cleaned_data)
         #
         mock_event = Mock()

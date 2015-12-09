@@ -56,10 +56,10 @@
             height: 20px;
             margin: 7px auto 0 auto;
         }
-        .facilitator-text {
+        .facilitator-text, .translator-text {
             width: calc(100% - 140px);
         }
-        .facilitator-checkboxes {
+        .facilitator-checkboxes, .translator-checkboxes {
             width: 140px;
         }
         .material-text {
@@ -157,16 +157,24 @@
                             <!-- form.translators -->
                             <div class="form-group clearfix">
                                 <div class="inline inline-label">
-                                    <div class="translator-text full-width">
+                                    <div class="translator-text">
                                         <label class="control-label">Translator</label>
                                         <a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <div class="translator-checkboxes">
+                                        <label class="control-label control-label-sub half-width text-center" title="Statement of Faith">SoF</label>
+                                        <label class="control-label control-label-sub half-width text-center" title="Translation Guideline">TG</label>
                                     </div>
                                 </div>
                                 <div id="translator-list">
                                     {% for translator in translators %}
                                         <div class="inline inline-input clearfix">
-                                            <div class="translator-text clearfix full-width">
+                                            <div class="translator-text clearfix">
                                                 <input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
+                                            </div>
+                                            <div class="translator-checkboxes">
+                                                <div class="half-width"><input name="sof{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if translator.sof %}checked{% endif %} /></div>
+                                                <div class="half-width"><input name="tg{{ forloop.counter0 }}" type="checkbox" class="form-control"  {% if translator.tg %}checked{% endif %} /></div>
                                             </div>
                                         </div>
                                     {% endfor %}

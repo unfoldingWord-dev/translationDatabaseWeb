@@ -45,7 +45,7 @@
                 <tr><th>Translators</th>
                     <td>
                         {% for person in object.translators.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}
+                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}{% if not person.sof or not person.tg %}   <i class="fa fa-exclamation-triangle" title="This translator has not signed all the documents needed."></i>{% endif %}
                         {% endfor %}
                     </td>
                 </tr>

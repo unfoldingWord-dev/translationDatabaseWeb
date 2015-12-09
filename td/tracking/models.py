@@ -39,6 +39,7 @@ class Charter(models.Model):
         max_length=10,
         verbose_name="Project Accounting Number",
         blank=True,
+        default="",
     )
     lead_dept = models.ForeignKey(
         "Department",
@@ -200,9 +201,7 @@ class Event(models.Model):
 # ------------------------ #
 class TranslationMethod(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
@@ -213,9 +212,7 @@ class TranslationMethod(models.Model):
 # -------------- #
 class Software(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
@@ -226,9 +223,7 @@ class Software(models.Model):
 # -------------- #
 class Hardware(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
@@ -239,13 +234,8 @@ class Hardware(models.Model):
 # -------------- #
 class Material(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
-
-    licensed = models.BooleanField(
-        default=False
-    )
+    name = models.CharField(max_length=200)
+    licensed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -256,9 +246,9 @@ class Material(models.Model):
 # ---------------- #
 class Translator(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
+    sof = models.BooleanField(default=False)
+    tg = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -269,17 +259,9 @@ class Translator(models.Model):
 # ----------------- #
 class Facilitator(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
-
-    is_lead = models.BooleanField(
-        default=False
-    )
-
-    speaks_gl = models.BooleanField(
-        default=False
-    )
+    name = models.CharField(max_length=200)
+    is_lead = models.BooleanField(default=False)
+    speaks_gl = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -290,9 +272,7 @@ class Facilitator(models.Model):
 # ---------------- #
 class Department(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
@@ -303,9 +283,7 @@ class Department(models.Model):
 # ------------------- #
 class Output(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
@@ -316,9 +294,7 @@ class Output(models.Model):
 # ----------------- #
 class Publication(models.Model):
 
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
 
     def __unicode__(self):
         return self.name
