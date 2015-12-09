@@ -1137,6 +1137,8 @@ class NewItemViewTestCase(TestCase):
     @patch("td.tracking.views.messages.success")
     @patch("td.tracking.views.send_mail")
     def test_form_valid(self, mock_send_mail, mock_msg_success):
+        """
+        """
         mock_form = Mock()
         self.view.create_new_item = Mock()
         response = self.view.form_valid(mock_form)
@@ -1145,6 +1147,17 @@ class NewItemViewTestCase(TestCase):
         self.assertEqual(mock_msg_success.call_count, 1)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("tracking:project_list"))
+
+    # def test_create_new_item(self):
+    #     info = {
+    #         "fields": ["publication"],
+    #         "id": [9999],
+    #     }
+    #     post = {
+    #         "publication": "Test Publication"
+    #     }
+    #     response = self.view.create_new_item(info, post)
+    #     print '\nRESPONSE:', response
 
 
 class chartersAutocompleteTestCase(TestCase):
