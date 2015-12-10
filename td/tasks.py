@@ -1,32 +1,68 @@
 from __future__ import absolute_import
 
-from django.db import connection
-
 from celery import task
+from django.db import connection
 from pinax.eventlog.models import log
 
 from td.imports.models import (
-    EthnologueLanguageCode,
-    EthnologueCountryCode,
-    SIL_ISO_639_3,
-    WikipediaISOLanguage,
-    WikipediaISOCountry,
-    IMBPeopleGroup
-)
-
+    EthnologueLanguageCode, EthnologueCountryCode, SIL_ISO_639_3,
+    WikipediaISOLanguage, WikipediaISOCountry, IMBPeopleGroup)
+from td.models import Region, Country, Language, AdditionalLanguage
 from td.resources.models import Title, Resource, Media
-from td.models import Region, Country, Language
+from td.signals import languages_integrated
+from td.utils import return_ascii_str
 
-from .models import AdditionalLanguage
-from .signals import languages_integrated
+
+def _get_anglicized_language_name(row):
+    """
+    Determine which field's value can be used as the `language.anglicized_name`
+    from the language imports integration.
+
+    :param row: Single row of data from the `intergrate_imports` sql query
+    :type row: tuple
+
+    :returns: str
+    """
+    anglicized_name = ""
+    # If the `native_name` is already an anglicized, return `None`
+    if not return_ascii_str(row[1]):
+        # Attempt to determine the anglicized language name from row data
+        if row[2] and row[2].strip():
+            # Using `imports_wikipediaisolanguage.language_name` if found...
+            anglicized_name = row[2]
+        else:
+            # ...otherwise, try to find an anglicized version from one of:
+            # 4: `nn1name`, 6: `nn2name`, 8: `imports_sil_iso_639_3.ref_name`
+            anglicized_name = (
+                return_ascii_str(row[4])
+                or return_ascii_str(row[6])
+                or return_ascii_str(row[8])
+                or ""
+            )
+            # ref_name (r[8]) can sometime contain this "!ADDL" value, remove it
+            if anglicized_name == "!ADDL":
+                anglicized_name = ""
+    return anglicized_name
+
+
+def _get_or_create_object(model, slug, name):
+    o, c = model.objects.get_or_create(slug=slug)
+    if c:
+        o.name = name
+        o.save()
+    return o
 
 
 @task()
 def integrate_imports():
+    """
+    Integrate imported language data into the language model
+    """
     cursor = connection.cursor()
     cursor.execute("""
 select coalesce(nullif(x.part_1, ''), x.code) as code,
        coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
+       coalesce(nullif(nn1.language_name, ''), nn2.language_name, '') as anglicized_name,
        coalesce(cc.code, ''),
        nullif(nn1.native_name, '') as nn1name,
        nn1.id,
@@ -43,26 +79,33 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
  where lc.status = %s or lc.status is NULL order by code;
 """, [EthnologueLanguageCode.STATUS_LIVING])
     rows = cursor.fetchall()
-    rows.extend([(x.merge_code(), x.merge_name(), None, "", None, "", None, "!ADDL", x.id, x.three_letter) for x in AdditionalLanguage.objects.all()])
+    rows.extend([
+        (
+            x.merge_code(), x.merge_name(), x.native_name, None, "", None, "",
+            None, "!ADDL", x.id, x.three_letter
+        )
+        for x in AdditionalLanguage.objects.all()
+    ])
     rows.sort()
     for r in rows:
         if r[0] is not None:
             language, _ = Language.objects.get_or_create(code=r[0])
             language.name = r[1]
-            if r[1] == r[3]:
-                language.source = WikipediaISOLanguage.objects.get(pk=r[4])
-            if r[1] == r[5]:
-                language.source = WikipediaISOLanguage.objects.get(pk=r[6])
-            if r[1] == r[7]:
-                language.source = SIL_ISO_639_3.objects.get(pk=r[8])
-            if r[7] == "!ADDL":
-                language.source = AdditionalLanguage.objects.get(pk=r[8])
-            if r[9] != "":
-                language.iso_639_3 = r[9]
+            language.anglicized_name = _get_anglicized_language_name(r)
+            if r[1] == r[4]:
+                language.source = WikipediaISOLanguage.objects.get(pk=r[5])
+            if r[1] == r[6]:
+                language.source = WikipediaISOLanguage.objects.get(pk=r[7])
+            if r[1] == r[8]:
+                language.source = SIL_ISO_639_3.objects.get(pk=r[9])
+            if r[8] == "!ADDL":
+                language.source = AdditionalLanguage.objects.get(pk=r[9])
+            if r[10] != "":
+                language.iso_639_3 = r[10]
             language.save()
-            if r[2]:
-                language.country = next(iter(Country.objects.filter(code=r[2])), None)
-                language.source = EthnologueCountryCode.objects.get(code=r[2])
+            if r[3]:
+                language.country = next(iter(Country.objects.filter(code=r[3])), None)
+                language.source = EthnologueCountryCode.objects.get(code=r[3])
                 language.save()
     languages_integrated.send(sender=Language)
     log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})
@@ -82,14 +125,6 @@ def update_countries_from_imports():
             country.name = wcountry.english_short_name
         country.alpha_3_code = wcountry.alpha_3
         country.save()
-
-
-def _get_or_create_object(model, slug, name):
-    o, c = model.objects.get_or_create(slug=slug)
-    if c:
-        o.name = name
-        o.save()
-    return o
 
 
 @task()

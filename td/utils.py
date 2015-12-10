@@ -32,6 +32,23 @@ def svg_to_pdf(svg_data):
     return pdf
 
 
+def return_ascii_str(value):
+    """
+    Only return the `value` if it is determined to be ascii encoded or encodable
+
+    :param value: Hopeful ascii value
+    :type value: str or `None`
+
+    :return: str - `None` if ascii value not found
+    """
+    if value:
+        try:
+            value.encode("ascii")
+        except UnicodeEncodeError:
+            return None
+    return value
+
+
 class DataTableSourceView(View):
 
     def __init__(self, **kwargs):
