@@ -1176,16 +1176,38 @@ class NewItemViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("tracking:project_list"))
 
-    # def test_create_new_item(self):
-    #     info = {
-    #         "fields": ["publication"],
-    #         "id": [9999],
-    #     }
-    #     post = {
-    #         "publication": "Test Publication"
-    #     }
-    #     response = self.view.create_new_item(info, post)
-    #     print '\nRESPONSE:', response
+    def test_create_new_item(self):
+        language = Language.objects.create(
+            id=9999,
+            code="ts",
+            name="Test Language",
+        )
+        department = Department.objects.create(
+            name="Test Department",
+        )
+        charter = Charter.objects.create(
+            id=9999,
+            language=language,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        Event.objects.create(
+            id=9999,
+            charter=charter,
+            start_date=timezone.now().date(),
+            end_date=timezone.now().date(),
+            lead_dept=department,
+        )
+        info = {
+            "fields": ["publication"],
+            "id": [9999],
+        }
+        post = {
+            "publication": "Test Publication"
+        }
+        response = self.view.create_new_item(info, post)
+        print '\nRESPONSE:', response
 
 
 class chartersAutocompleteTestCase(TestCase):
