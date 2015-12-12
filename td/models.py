@@ -170,6 +170,12 @@ class Language(models.Model):
         return ""
 
     @property
+    def cc_all(self):
+        pks = [int(pk) for pk in self.attributes.filter(attribute="country_id").values_list("value", flat=True)]
+        countries = Country.objects.filter(pk__in=pks)
+        return [c.code.encode("utf-8") for c in countries]
+
+    @property
     def lr(self):
         if self.country and self.country.region:
             return self.country.region.name.encode("utf-8")
@@ -204,7 +210,7 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
+            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
             for x in cls.objects.all().order_by("code")
         ]
 
