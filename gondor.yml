@@ -5,3 +5,8 @@ exec:
 branches:
   master: primary
   develop: demo 
+deploy:
+  services:
+    - web-3vdfg
+    - worker-a3omr
+buildpack: https://buildpack.gondor.io/python
