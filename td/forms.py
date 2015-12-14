@@ -97,6 +97,7 @@ class LanguageForm(EntityTrackingForm):
             "code",
             "iso_639_3",
             "name",
+            "anglicized_name",
             "direction",
             "gateway_language",
             "native_speakers",
