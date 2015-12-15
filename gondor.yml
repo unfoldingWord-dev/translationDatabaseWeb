@@ -7,6 +7,6 @@ branches:
   develop: demo 
 deploy:
   services:
-    - web-3vdfg
-    - worker-a3omr
+    - web
+    - worker
 buildpack: https://buildpack.gondor.io/python
