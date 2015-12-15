@@ -123,3 +123,13 @@ def integrate_imb_language_data():
                     resource.published_flag = True
                     resource.save()
                     resource.medias.add(media)
+    for imb in IMBPeopleGroup.objects.order_by("language"):
+        language = next(iter(Language.objects.filter(iso_639_3=imb.rol)), None)
+        if not language:
+            language = next(iter(Language.objects.filter(code=imb.rol)), None)
+        if language:
+            country = next(iter(Country.objects.filter(name=imb.country)), None)
+            if country is not None:
+                language.country = country
+                language.source = imb
+                language.save()
