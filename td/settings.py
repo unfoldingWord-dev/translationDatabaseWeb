@@ -223,7 +223,7 @@ FIXTURE_DIRS = [
 
 # Email settings
 
-EMAIL_NOTIFY_LIST = ["someone@unfoldingword.org"]
+EMAIL_NOTIFY_LIST = ["publishing@unfoldingword.org"]
 EMAIL_FROM = "uwadmin@unfoldingword.org"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
