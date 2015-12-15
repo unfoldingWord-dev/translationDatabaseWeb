@@ -218,6 +218,7 @@ class PublishRequest(models.Model):
                                         default="",
                                         verbose_name="Requester email",
                                         help_text="email address to be notified of request status")
+    license_title = models.TextField(default="CC BY-SA 4.0", blank=True, null=False)
 
     @property
     def version(self):
@@ -230,7 +231,7 @@ class PublishRequest(models.Model):
     @property
     def data(self):
         return {
-            "mod": self.created_at.isoformat(),
+            "mod": self.created_at.strftime("%s"),
             "direction": self.language.get_direction_display(),
             "lc": self.language.code,
             "name": self.language.name,
@@ -242,7 +243,7 @@ class PublishRequest(models.Model):
                 "source_text": self.source_text.code if self.source_text else "",
                 "source_text_version": self.source_version,
                 "version": self.version,
-                "license": "",  # @TODO - where from?
+                "license": self.license_title,
             }
         }
 

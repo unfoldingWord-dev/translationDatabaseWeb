@@ -90,7 +90,7 @@ class LanguageIntegrationTests(TestCase):
         self.assertEquals(langs["kmg"]["lr"], "Pacific")
         self.assertEquals(langs["kmg"]["ld"], "ltr")
         self.assertTrue("es-419" in langs)
-        self.assertEquals(langs["es-419"]["cc"], [""])
+        self.assertEquals(langs["es-419"]["cc"], [])
         self.assertEquals(langs["es-419"]["ln"], u"Espa\xf1ol Latin America")
         self.assertEquals(langs["es-419"]["lr"], "")
         self.assertEquals(langs["es-419"]["ld"], "ltr")
