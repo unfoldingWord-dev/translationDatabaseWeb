@@ -718,11 +718,10 @@ def get_translator_data(self):
                     number = key[10:]
                     docs_signed = True if "docs_signed" + number in post else False
                     translators.append({"name": name, "docs_signed": docs_signed})
-                    print '\nDOCS SIGNED: ', name, docs_signed
     elif self.request.method == "GET":
         if self.object:
             for person in self.object.translators.all():
-                translators.append({"name": person.name, "sof": person.sof, "tg": person.tg})
+                translators.append({"name": person.name, "docs_signed": person.docs_signed})
     return translators
 
 
