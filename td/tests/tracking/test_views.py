@@ -820,8 +820,7 @@ class MultiCharterEventViewTestCase(TestCase):
             "speaks_gl0": True,
             "material0": "Test Material",
             "licensed0": True,
-            "sof0": True,
-            "tg0": True,
+            "docs_signed0": True,
         }
         self.request = RequestFactory().post('/tracking/mc-event/new/', post_data)
         self.view = setup_view(MultiCharterEventView(), self.request)
@@ -835,7 +834,7 @@ class MultiCharterEventViewTestCase(TestCase):
         context = self.view.get_context_data(mock_form_2)
         #
         self.assertEqual(context["view"], "create")
-        self.assertEqual(context["translators"][0], {"name": "Test Translator", "sof": True, "tg": True})
+        self.assertEqual(context["translators"][0], {"name": "Test Translator", "docs_signed": True})
         self.assertEqual(context["facilitators"][0], {"name": "Test Facilitator", "is_lead": True, "speaks_gl": True})
         self.assertEqual(context["materials"][0], {"name": "Test Material", "licensed": True})
 
@@ -1207,7 +1206,7 @@ class NewItemViewTestCase(TestCase):
             "publication": "Test Publication"
         }
         response = self.view.create_new_item(info, post)
-        print '\nRESPONSE:', response
+        # Still needs to be completed
 
 
 class chartersAutocompleteTestCase(TestCase):
