@@ -23,7 +23,7 @@ def handle_entity_save(sender, instance, *args, **kwargs):
     if sender in ENTITIES:
         if getattr(instance, "source", None) is not None:
             for attribute in instance.tracker.changed().keys():
-                instance.attributes.create(
+                instance.attributes.get_or_create(
                     attribute=attribute,
                     value=getattr(instance, attribute) or "",
                     source_ct=ContentType.objects.get_for_model(instance.source),
