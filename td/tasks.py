@@ -8,25 +8,27 @@ from pinax.eventlog.models import log
 from td.imports.models import (
     EthnologueLanguageCode,
     EthnologueCountryCode,
+    IMBPeopleGroup,
     SIL_ISO_639_3,
-    WikipediaISOLanguage,
     WikipediaISOCountry,
-    IMBPeopleGroup
+    WikipediaISOLanguage
 )
-
 from td.resources.models import Title, Resource, Media
-from td.models import Region, Country, Language
 
-from .models import AdditionalLanguage
+from .models import AdditionalLanguage, Country, Language, Region
 from .signals import languages_integrated
 
 
 @task()
 def integrate_imports():
+    """
+    Integrate imported language data into the language model
+    """
     cursor = connection.cursor()
     cursor.execute("""
 select coalesce(nullif(x.part_1, ''), x.code) as code,
        coalesce(nullif(nn1.native_name, ''), nullif(nn2.native_name, ''), x.ref_name) as name,
+       coalesce(nullif(nn1.language_name, ''), nn2.language_name, lc.name, '') as anglicized_name,
        coalesce(cc.code, ''),
        nullif(nn1.native_name, '') as nn1name,
        nn1.id,
@@ -43,29 +45,44 @@ left join imports_ethnologuecountrycode cc on lc.country_code = cc.code
  where lc.status = %s or lc.status is NULL order by code;
 """, [EthnologueLanguageCode.STATUS_LIVING])
     rows = cursor.fetchall()
-    rows.extend([(x.merge_code(), x.merge_name(), None, "", None, "", None, "!ADDL", x.id, x.three_letter) for x in AdditionalLanguage.objects.all()])
+    rows.extend([
+        (
+            x.merge_code(), x.merge_name(), x.native_name, None, "", None, "",
+            None, "!ADDL", x.id, x.three_letter
+        )
+        for x in AdditionalLanguage.objects.all()
+    ])
     rows.sort()
     for r in rows:
         if r[0] is not None:
             language, _ = Language.objects.get_or_create(code=r[0])
             language.name = r[1]
-            if r[1] == r[3]:
-                language.source = WikipediaISOLanguage.objects.get(pk=r[4])
-            if r[1] == r[5]:
-                language.source = WikipediaISOLanguage.objects.get(pk=r[6])
-            if r[1] == r[7]:
-                language.source = SIL_ISO_639_3.objects.get(pk=r[8])
-            if r[7] == "!ADDL":
-                language.source = AdditionalLanguage.objects.get(pk=r[8])
-            if r[9] != "":
-                language.iso_639_3 = r[9]
+            language.anglicized_name = r[2]
+            if r[1] == r[4]:
+                language.source = WikipediaISOLanguage.objects.get(pk=r[5])
+            if r[1] == r[6]:
+                language.source = WikipediaISOLanguage.objects.get(pk=r[7])
+            if r[1] == r[8]:
+                language.source = SIL_ISO_639_3.objects.get(pk=r[9])
+            if r[8] == "!ADDL":
+                language.source = AdditionalLanguage.objects.get(pk=r[9])
+            if r[10] != "":
+                language.iso_639_3 = r[10]
             language.save()
-            if r[2]:
-                language.country = next(iter(Country.objects.filter(code=r[2])), None)
-                language.source = EthnologueCountryCode.objects.get(code=r[2])
+            if r[3]:
+                language.country = next(iter(Country.objects.filter(code=r[3])), None)
+                language.source = EthnologueCountryCode.objects.get(code=r[3])
                 language.save()
     languages_integrated.send(sender=Language)
     log(user=None, action="INTEGRATED_SOURCE_DATA", extra={})
+
+
+def _get_or_create_object(model, slug, name):
+    o, c = model.objects.get_or_create(slug=slug)
+    if c:
+        o.name = name
+        o.save()
+    return o
 
 
 @task()
@@ -82,14 +99,6 @@ def update_countries_from_imports():
             country.name = wcountry.english_short_name
         country.alpha_3_code = wcountry.alpha_3
         country.save()
-
-
-def _get_or_create_object(model, slug, name):
-    o, c = model.objects.get_or_create(slug=slug)
-    if c:
-        o.name = name
-        o.save()
-    return o
 
 
 @task()
@@ -114,3 +123,13 @@ def integrate_imb_language_data():
                     resource.published_flag = True
                     resource.save()
                     resource.medias.add(media)
+    for imb in IMBPeopleGroup.objects.order_by("language"):
+        language = next(iter(Language.objects.filter(iso_639_3=imb.rol)), None)
+        if not language:
+            language = next(iter(Language.objects.filter(code=imb.rol)), None)
+        if language:
+            country = next(iter(Country.objects.filter(name=imb.country)), None)
+            if country is not None:
+                language.country = country
+                language.source = imb
+                language.save()
