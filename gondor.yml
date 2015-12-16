@@ -5,3 +5,8 @@ exec:
 branches:
   master: primary
   develop: demo 
+deploy:
+  services:
+    - web
+    - worker
+buildpack: https://buildpack.gondor.io/python
