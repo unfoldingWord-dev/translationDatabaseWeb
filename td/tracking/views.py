@@ -716,9 +716,9 @@ def get_translator_data(self):
                 name = post[key] if post[key] else ""
                 if name:
                     number = key[10:]
-                    sof = True if "sof" + number in post else False
-                    tg = True if "tg" + number in post else False
-                    translators.append({"name": name, "sof": sof, "tg": tg})
+                    docs_signed = True if "docs_signed" + number in post else False
+                    translators.append({"name": name, "docs_signed": docs_signed})
+                    print '\nDOCS SIGNED: ', name, docs_signed
     elif self.request.method == "GET":
         if self.object:
             for person in self.object.translators.all():
@@ -771,14 +771,12 @@ def get_translator_ids(array):
     for translator in array:
         try:
             person = Translator.objects.get(name=translator["name"])
-            person.sof = translator["sof"]
-            person.tg = translator["tg"]
+            person.docs_signed = translator["docs_signed"]
             person.save()
         except Translator.DoesNotExist:
             person = Translator.objects.create(
                 name=translator["name"],
-                sof=translator["sof"],
-                tg=translator["tg"],
+                docs_signed=translator["docs_signed"]
             )
         ids.append(person.id)
 

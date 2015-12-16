@@ -247,8 +247,9 @@ class Material(models.Model):
 class Translator(models.Model):
 
     name = models.CharField(max_length=200)
-    sof = models.BooleanField(default=False)
-    tg = models.BooleanField(default=False)
+    # sof = models.BooleanField(default=False)
+    # tg = models.BooleanField(default=False)
+    docs_signed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
