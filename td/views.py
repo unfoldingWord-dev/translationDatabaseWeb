@@ -1,5 +1,3 @@
-import operator
-
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
@@ -7,7 +5,6 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView
@@ -40,16 +37,9 @@ def names_text_export(request):
 
 
 def names_json_export(request):
+    # Set safe to False to allow list instead of dict to be returned
     data = cache_get_or_set("langnames", Language.names_data)
-    return JsonResponse(data, safe=False)  # Set safe to False to allow list instead of dict to be returned
-
-
-def cache_get_or_set(key, acallable):
-    data = cache.get(key)
-    if data is None:
-        data = acallable()
-        cache.set(key, data, None)
-    return data
+    return JsonResponse(data, safe=False)
 
 
 @csrf_exempt
@@ -59,6 +49,14 @@ def export_svg(request):
     response.write(svg_to_pdf(svg))
     response["Content-Disposition"] = "attachment; filename=gateway_languages_map.pdf"
     return response
+
+
+def cache_get_or_set(key, acallable):
+    data = cache.get(key)
+    if data is None:
+        data = acallable()
+        cache.set(key, data, None)
+    return data
 
 
 def languages_autocomplete(request):
@@ -85,7 +83,10 @@ def languages_autocomplete(request):
         d.extend([
             x
             for x in data
-            if term in x["lc"] or term in x["ln"].lower() or term in x["lr"].lower()
+            if (
+                term in x["lc"] or term in x["ln"].lower()
+                or term in x["ang"].lower() or term in x["lr"].lower()
+            )
         ])
     return JsonResponse({"results": d, "count": len(d), "term": term})
 
@@ -373,23 +374,18 @@ class LanguageTableSourceView(DataTableSourceView):
 
     @property
     def filtered_data(self):
-        if self.search_term and len(self.search_term) <= 3:
-            qs = self.queryset.filter(
-                reduce(
-                    operator.or_,
-                    [Q(code__istartswith=self.search_term)]
-                )
-            ).order_by("code")
+        """
+        Return results of the language code filtered by search_term if the
+        search_term is 3 or less characters long, otherwise defer to inherited
+        behavior.
+        """
+        search_term = self.search_term.strip()
+        if search_term and len(search_term) <= 3:
+            qs = self.queryset.filter(code__startswith=search_term.lower())
             if qs.count():
-                return qs
-        return self.queryset.filter(
-            reduce(
-                operator.or_,
-                [Q(x) for x in self.filter_predicates]
-            )
-        ).order_by(
-            self.order_by
-        )
+                return qs.order_by("code")
+
+        return super(LanguageTableSourceView, self).filtered_data
 
 
 class LanguageListView(TemplateView):
@@ -402,7 +398,7 @@ class AjaxLanguageListView(LanguageTableSourceView):
         "code",
         "iso_639_3",
         "name",
-        "direction",
+        "anglicized_name",
         "country__name",
         "native_speakers",
         "gateway_language__name",

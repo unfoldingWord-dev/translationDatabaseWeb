@@ -145,6 +145,7 @@ class Language(models.Model):
     )
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100, blank=True)
+    anglicized_name = models.CharField(max_length=100, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True)
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
@@ -182,6 +183,10 @@ class Language(models.Model):
     def ln(self):
         return self.name.encode("utf-8")
 
+    @property
+    def ang(self):
+        return self.anglicized_name
+
     @classmethod
     def codes_text(cls):
         return " ".join([
@@ -199,7 +204,7 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(pk=x.pk, lc=x.lc, ln=x.ln, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
+            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, cc=[x.cc], lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
             for x in cls.objects.all().order_by("code")
         ]
 
