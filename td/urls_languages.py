@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from td.resources.views import ResourceEditView, ResourceCreateView, HomeView
 from .views import (
@@ -23,8 +23,7 @@ from .views import (
     NetworkListView
 )
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     url(r"^$", HomeView.as_view(), name="uw_home"),
     url(r"networks/$", NetworkListView.as_view(), name="network_list"),
     url(r"networks/create/$", NetworkCreateView.as_view(), name="network_create"),
@@ -50,4 +49,4 @@ urlpatterns = patterns(
 
     url(r"country_gateways.json$", country_tree_data, name="country_tree_data"),
     url(r"country_map_data.json$", country_map_data, name="country_map_data"),
-)
+]
