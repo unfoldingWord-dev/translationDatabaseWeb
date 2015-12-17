@@ -331,4 +331,4 @@ class ResourceDocument(models.Model):
     resource_type = models.ForeignKey(OfficialResourceType)
     language = models.ForeignKey(Language)
     created_on = models.DateTimeField(auto_now_add=True)
-    json_data = JSONField()
+    json_data = JSONField(default=dict)

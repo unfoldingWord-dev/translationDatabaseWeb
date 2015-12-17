@@ -77,7 +77,7 @@ class Country(models.Model):
     region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True, db_table='uw_country_primary_networks')
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     tracker = FieldTracker()
 
@@ -153,7 +153,7 @@ class Language(models.Model):
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     tracker = FieldTracker()
 
