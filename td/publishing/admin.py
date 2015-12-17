@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.contrib import admin
-import reversion
+
+from reversion.admin import VersionAdmin
 
 from .models import (
     Contact,
@@ -75,7 +76,7 @@ class OfficialResourceTypeAdmin(admin.ModelAdmin):
     list_display = ["short_name", "long_name", "description"]
 
 
-class OfficialResourceAdmin(reversion.VersionAdmin):
+class OfficialResourceAdmin(VersionAdmin):
     list_display = ["language", "resource_type", "source_text", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_version", "created", "created_by"]
     list_display_links = ["language"]
     list_editable = ["contact", "notes"]

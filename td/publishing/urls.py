@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic import TemplateView
 
 
@@ -23,8 +23,7 @@ from .views import (
 )
 
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     url(r"^$", TemplateView.as_view(template_name="publishing/homepage.html"), name="publishing_home"),
     url(r"^api/contacts/", api_contact, name="api_contacts"),
     url(r"^contacts/$", ContactList.as_view(), name="contact_list"),
@@ -44,4 +43,4 @@ urlpatterns = patterns(
     url(r"^catalog.json$", resource_catalog_json, name="resource_catalog_json"),
     url(r"^(?P<kind>\w+)-catalog.json$", resource_catalog_json, name="resource_catalog_json"),
     url(r"^(?P<kind>\w+)-(?P<lang>\w+).json$", resource_language_json, name="resource_language_json"),
-)
+]
