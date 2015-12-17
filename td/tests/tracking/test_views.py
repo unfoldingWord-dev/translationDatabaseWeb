@@ -1,10 +1,11 @@
+import importlib
+
 from mock import patch, Mock
 
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
-from django.utils.importlib import import_module
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
@@ -662,7 +663,7 @@ class MultiCharterEventViewTestCase(TestCase):
         self.request = RequestFactory().get('/tracking/mc-event/new/')
         self.request.user = self.user
         # SessionWizardView will try to use session. Setting session up here.
-        engine = import_module(settings.SESSION_ENGINE)
+        engine = importlib.import_module(settings.SESSION_ENGINE)
         store = engine.SessionStore()
         store.save()
         setattr(self.request, "session", store)

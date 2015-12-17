@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.contrib.auth.models import User
 
@@ -42,3 +43,22 @@ class PublishRequestTestCase(TestCase):
         self.assertIsInstance(resource, OfficialResource)
         self.assertEqual(resource.language.code, "en")
         mock_ingest.assert_called_once_with(publish_request=self.model)
+
+    @patch("td.publishing.models.OfficialResource.ingest")
+    def test_publish_unicode_notes(self, mock_ingest):
+        r = PublishRequest.objects.create(
+            requestor="Wendy Colón",
+            resource_type=self.model.resource_type,
+            language=self.model.language,
+            checking_level=1,
+            source_text=self.model.source_text,
+            contributors="""Wendy Colón
+Aida Rodríguez
+Ada González
+Miriam Planas"""
+        )
+        r = PublishRequest.objects.get(pk=r.pk)
+        resource = r.publish(by_user=self.user)
+        self.assertIsInstance(resource, OfficialResource)
+        self.assertEqual(resource.language.code, "en")
+        mock_ingest.assert_called_once_with(publish_request=r)

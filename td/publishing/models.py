@@ -255,7 +255,10 @@ class PublishRequest(models.Model):
             source_text=self.source_text,
             source_version=self.source_version,
             version=self.version,
-            notes="requestor: {0}\ncontributors: {1}".format(self.requestor, self.contributors),
+            notes="requestor: {0}\ncontributors: {1}".format(
+                self.requestor.encode("utf-8"),
+                self.contributors.encode("utf-8")
+            ),
             date_started=self.created_at.date()
         )
         self.approved_at = timezone.now()
