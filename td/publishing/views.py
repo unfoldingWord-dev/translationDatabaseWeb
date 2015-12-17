@@ -198,10 +198,6 @@ class OfficialResourceUpdateView(LoginRequiredMixin, UpdateView):
     model = OfficialResource
     template_name = "publishing/oresource_form.html"
 
-    def get_form(self, form_class):
-        form = super(OfficialResourceUpdateView, self).get_form(form_class)
-        return form
-
     def form_valid(self, form):
         self.object = form.save(commit=False)
         published_flag = False
