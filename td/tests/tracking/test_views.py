@@ -1,10 +1,11 @@
+import importlib
+
 from mock import patch, Mock
 
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
-from django.utils.importlib import import_module
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
@@ -411,7 +412,7 @@ class EventAddViewTestCase(TestCase):
         get_facilitator_data() should be called once
         get_material_data() should be called once
         """
-        self.view.object = Mock()
+        self.view.object = None
         self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
@@ -547,7 +548,7 @@ class EventUpdateViewTestCase(TestCase):
         get_facilitator_data() should be called once
         get_material_data() should be called once
         """
-        self.view.object = Mock()
+        self.view.object = None
         self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
@@ -662,7 +663,7 @@ class MultiCharterEventViewTestCase(TestCase):
         self.request = RequestFactory().get('/tracking/mc-event/new/')
         self.request.user = self.user
         # SessionWizardView will try to use session. Setting session up here.
-        engine = import_module(settings.SESSION_ENGINE)
+        engine = importlib.import_module(settings.SESSION_ENGINE)
         store = engine.SessionStore()
         store.save()
         setattr(self.request, "session", store)

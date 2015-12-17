@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from jsonfield import JSONField
-import reversion
+from reversion import revisions as reversion
 
 from td.models import Language
 from td.publishing.resources import RESOURCE_TYPES
@@ -255,7 +255,10 @@ class PublishRequest(models.Model):
             source_text=self.source_text,
             source_version=self.source_version,
             version=self.version,
-            notes="requestor: {0}\ncontributors: {1}".format(self.requestor, self.contributors),
+            notes="requestor: {0}\ncontributors: {1}".format(
+                self.requestor.encode("utf-8"),
+                self.contributors.encode("utf-8")
+            ),
             date_started=self.created_at.date()
         )
         self.approved_at = timezone.now()
@@ -328,4 +331,4 @@ class ResourceDocument(models.Model):
     resource_type = models.ForeignKey(OfficialResourceType)
     language = models.ForeignKey(Language)
     created_on = models.DateTimeField(auto_now_add=True)
-    json_data = JSONField()
+    json_data = JSONField(default=dict)

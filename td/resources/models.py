@@ -68,7 +68,7 @@ class Media(models.Model):
 @python_2_unicode_compatible
 class Publisher(models.Model):
     name = models.CharField(max_length=255)
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     def __str__(self):
         return self.name
@@ -82,7 +82,7 @@ class Title(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     def __str__(self):
         return self.name
@@ -100,7 +100,7 @@ class Resource(models.Model):
     published_flag = models.BooleanField(default=True, db_index=True, blank=True)
     published_date = models.DateField(default=None, null=True, blank=True, db_index=True)
     copyright_year = models.IntegerField(default=None, null=True, blank=True, db_index=True, verbose_name="copyright")
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     def the_publisher(self):
         return self.publisher or self.title.publisher
