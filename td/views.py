@@ -62,9 +62,8 @@ def cache_get_or_set(key, acallable):
 
 def get_langnames():
     data = cache.get("langnames", [])
-    if data is None and cache.get("langnames_fetching", False) is False:
+    if not data and cache.get("langnames_fetching", False) is False:
         reset_langnames_cache.delay()
-        data = []
     return data
 
 
