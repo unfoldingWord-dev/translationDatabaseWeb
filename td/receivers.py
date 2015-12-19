@@ -11,6 +11,7 @@ from pinax.eventlog.models import log
 
 from .models import AdditionalLanguage
 from td.models import Country, Language
+from .tasks import reset_langnames_cache
 from .signals import languages_integrated
 
 
@@ -36,13 +37,13 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, **kwargs):
-    cache.delete("langnames")
+    reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Language)
 def handle_language_delete(sender, **kwargs):
-    cache.delete("langnames")
+    reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
 
@@ -58,8 +59,7 @@ def handle_country_delete(sender, **kwargs):
 
 @receiver(languages_integrated)
 def handle_languages_integrated(sender, **kwargs):
-    cache.delete("langnames")
-    cache.set("langnames", Language.names_data(), None)
+    reset_langnames_cache.delay()
 
 
 @receiver(user_logged_in)
