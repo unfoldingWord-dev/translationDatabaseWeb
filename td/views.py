@@ -25,6 +25,7 @@ from td.forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
 from td.resources.models import transform_country_data
 from td.resources.tasks import get_map_gateways
 from td.resources.views import EntityTrackingMixin
+from .tasks import reset_langnames_cache
 from .utils import DataTableSourceView, svg_to_pdf
 
 
@@ -38,7 +39,7 @@ def names_text_export(request):
 
 def names_json_export(request):
     # Set safe to False to allow list instead of dict to be returned
-    data = cache_get_or_set("langnames", Language.names_data)
+    data = get_langnames()
     return JsonResponse(data, safe=False)
 
 
@@ -59,9 +60,16 @@ def cache_get_or_set(key, acallable):
     return data
 
 
+def get_langnames():
+    data = cache.get("langnames", [])
+    if not data and cache.get("langnames_fetching", False) is False:
+        reset_langnames_cache.delay()
+    return data
+
+
 def languages_autocomplete(request):
     term = request.GET.get("q").lower()
-    data = cache_get_or_set("langnames", Language.names_data)
+    data = get_langnames()
     d = []
     if len(term) <= 3:
         term = term.encode("utf-8")

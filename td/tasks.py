@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from django.core.cache import cache
 from django.db import connection
 
 from celery import task
@@ -17,6 +18,14 @@ from td.resources.models import Title, Resource, Media
 
 from .models import AdditionalLanguage, Country, Language, Region
 from .signals import languages_integrated
+
+
+@task()
+def reset_langnames_cache():
+    cache.set("langnames_fetching", True)
+    cache.delete("langnames")
+    cache.set("langnames", Language.names_data(), None)
+    cache.set("langnames_fetching", False)
 
 
 @task()
