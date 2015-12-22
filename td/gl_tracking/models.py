@@ -4,37 +4,12 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils import timezone
 
-from td.models import Language
+# from td.models import Language
 
 
 # ------------- #
 #    CHOICES    #
 # ------------- #
-ARTICLE_NAMES = (
-    ('sof', 'Statement of Faith'),
-    ('lic', 'CC-SA Licensing Agreement'),
-    ('tg', 'Translation Guidelines'),
-    ('d43', 'Door43 Content'),
-    ('fbm', 'Front/Back Matter'),
-    ('maw', 'Mobile App Words'),
-    ('ta1', 'translationAcademy Vol. 1'),
-    ('tn', 'translationNote'),
-    ('tw1', 'translationWords Vol. 1'),
-    ('obs', 'OBS Stories'),
-    ('tq', 'translationQuotes'),
-    ('ta2', 'translationAcademy Vol. 2'),
-    ('tnb', 'translationNotes Bible'),
-    ('tw2', 'translationWords Vol. 2'),
-    ('tqb', 'translationQuotes Bible'),
-    ('ulb', 'Unrestricted Literal Bible'),
-    ('udb', 'Unrestricted Dynamic Bible'),
-)
-
-PHASE = (
-    (1, '1'),
-    (2, '2'),
-)
-
 METHODS = (
     ('online', 'Online'),
     ('offline', 'Offline'),
@@ -117,7 +92,7 @@ class Document(models.Model):
 @python_2_unicode_compatible
 class Progress(models.Model):
 
-    language = models.ForeignKey(Language)
+    language = models.ForeignKey('td.Language', limit_choices_to={'gateway_flag': True})
     type = models.ForeignKey('Document')
     is_online = models.NullBooleanField()
     method = models.CharField(max_length=200, choices=METHODS, blank=True)
@@ -130,7 +105,10 @@ class Progress(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return '%s (%s)' % (self.type, self.language)
+        return str(self.type)
+
+    class Meta:
+        unique_together = ("language", "type")
 
 
 # ------------- #

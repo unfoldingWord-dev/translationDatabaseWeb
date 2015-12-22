@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from account.mixins import LoginRequiredMixin
 
-from td.models import Region
+from td.models import Language, Region
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -19,6 +19,56 @@ class PhaseProgressView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(PhaseProgressView, self).get_context_data(**kwargs)
-        context["phase"] = self.request.POST["phase"]
-        context["regions"] = Region.objects.all()
+        
+        regions = map_gls(Language.objects.filter(gateway_flag=True))
+        for key, region in regions.iteritems():
+            region["regional_progress"] = get_regional_progress(region["gateway_languages"], self.request.POST["phase"])
+
+        context["regions"] = regions
+        context["overall_progress"] = get_overall_progress(context["regions"])
+
+        print '\nCONTEXT RETURNED', context
         return context
+
+
+def map_gls(gls):
+    regions = {}
+    regions["unknown"] = {}
+    regions["unknown"]["gateway_languages"] = []
+    for lang in gls:
+        region = lang.lr
+        if region:
+            if region not in regions:
+                regions[region] = {}
+                regions[region]["gateway_languages"] = []
+            regions[region]["gateway_languages"].append(lang)
+        else:
+            regions["unknown"]["gateway_languages"].append(lang)
+    return regions
+
+
+def get_regional_progress(gateway_languages, phase):
+    total = 0
+    count = 0
+    for lang in gateway_languages:
+        count = count + 1
+        if phase == "1":
+            total = float(total) + lang.progress_phase_1
+        elif phase == "2":
+            total = float(total) + lang.progress_phase_2
+    if count:
+        return round(total/count, 2)
+    else:
+        return "err"
+
+
+def get_overall_progress(regions):
+    total = 0.0
+    count = 0
+    for key, region in regions.iteritems():
+        count += 1
+        total += region["regional_progress"]
+    if count:
+        return round(total/count, 2)
+    else:
+        return "err" 

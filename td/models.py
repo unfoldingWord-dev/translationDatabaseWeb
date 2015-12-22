@@ -7,6 +7,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
+from td.gl_tracking.models import Document
 
 @python_2_unicode_compatible
 class AdditionalLanguage(models.Model):
@@ -192,6 +193,24 @@ class Language(models.Model):
     @property
     def ang(self):
         return self.anglicized_name
+
+    @property
+    def progress_phase_1(self):
+        total = 0
+        for doc in self.progress_set.filter(type__category__phase__number="1"):
+            if type(doc.completion_rate) == int:
+                total = total + doc.completion_rate
+        return round(float(total) / float(len(Document.objects.filter(category__phase__number="1"))), 2)
+
+
+    @property
+    def progress_phase_2(self):
+        total = 0
+        for doc in self.progress_set.filter(type__category__phase__number="2"):
+            if type(doc.completion_rate) == int:
+                total = total + doc.completion_rate
+        return round(float(total) / float(len(Document.objects.filter(category__phase__number="2"))), 2)
+    
 
     @classmethod
     def codes_text(cls):

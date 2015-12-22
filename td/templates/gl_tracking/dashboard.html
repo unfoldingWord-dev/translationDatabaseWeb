@@ -27,7 +27,7 @@
                 <li id="" role="presentation" class="active clickable" data-phase="1"><a>Phase I</a></li>
                 <li role="presentation" class="clickable" data-phase="2"><a>Phase II</a></li>
             </ul>
-            <div id="phase_overview" class="panel">
+            <div id="phase_overview" class="panel" style="position: relative;">
             </div>
         </div>
     </section>
@@ -68,7 +68,26 @@
                 if (status === 'error') {
                     $(this).html('There is an error getting the data');
                 }
-            }).html('<p>Loading...</p>');
+                // $(this).find('.loading-div').remove();
+            }).append(get_loading_div());
+        }
+
+        function get_loading_div() {
+            var div = $(document.createElement('div'));
+            div.html('Loading...');
+            div.addClass('loading-div');
+            div.css('position', 'absolute');
+            div.css('width', '100%');
+            div.css('height', '100%');
+            div.css('color', 'red');
+            div.css('background-color', 'rgba(255,255,255,0.75)');
+            div.css('top', '0');
+            div.css('left', '0');
+            div.css('right', '0');
+            div.css('bottom', '0');
+            div.css('text-align', 'center');
+            div.css('padding', '3rem');
+            return div;
         }
     });
 
