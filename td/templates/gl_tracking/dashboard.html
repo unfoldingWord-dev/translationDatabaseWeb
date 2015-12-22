@@ -1,0 +1,76 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block head_title %}GL Tracking{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
+            {% if user.is_authenticated %}
+                {% url "gl:home" as custom_url %}
+                {% blocktrans %}
+                    <a href="{{ custom_url }}" class="btn btn-primary large disabled">Add progress</a>
+                {% endblocktrans %}
+            {% endif %}
+        </div>
+    </section>
+
+    <section id="content_body">
+        <div class="container">
+            <ul id="phase_tabs" class="nav nav-tabs">
+                <li id="" role="presentation" class="active clickable" data-phase="1"><a>Phase I</a></li>
+                <li role="presentation" class="clickable" data-phase="2"><a>Phase II</a></li>
+            </ul>
+            <div id="phase_overview" class="panel">
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block custom_bottom_script %}
+<script type="text/javascript">
+    
+    $(function() {
+        // INITIAL SCRIPT
+        // ==============
+        load_phase('1');
+
+        // EVENT LISTENERS
+        // ===============
+        // Switching tabs and loading data when clicking on tabs
+        $('#phase_tabs > li').on('click', function(e) {
+            if (switch_tab(e)) {
+                load_phase(e.currentTarget.dataset.phase);
+            }
+        });
+
+
+
+
+        //
+        function switch_tab(e) {
+            if (e.currentTarget.className.indexOf('active') !== -1) {return false;}
+            $('#phase_tabs > li').removeClass('active');
+            $(e.currentTarget).addClass('active');
+            return true;
+        }
+
+        //
+        function load_phase(phase) {
+            $('#phase_overview').load('phase_progress/', {'phase': phase}, function(response, status, xhr) {
+                if (status === 'error') {
+                    $(this).html('There is an error getting the data');
+                }
+            }).html('<p>Loading...</p>');
+        }
+    });
+
+</script>
+{% endblock %}

@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     "td.resources",
     "td.publishing",
     "td.tracking",
+    "td.gl_tracking",
 ]
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
