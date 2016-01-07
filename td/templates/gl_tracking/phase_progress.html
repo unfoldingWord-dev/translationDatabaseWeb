@@ -1,70 +1,134 @@
 <style>
-    .main_container {
+    .main-container {
         display: flex;
         margin-top: 2rem;
+        width: 100%;
     }
-    .labels_container {
+    .main-container.language-list {
+        flex-direction: column;
+    }
+    .panel.panel-default {
+        width: 100%;
+    }
+    .labels-container {
         margin-right: 1rem;
     }
-    .labels_container p,
-    .progress_bar_wrapper .progress {
+    .labels-container p,
+    .progress-bar-wrapper .progress,
+    .progress-percentage {
         margin-bottom: 1rem;
+        cursor: pointer;
     }
-    .labels_container p:first-child,
-    .progress_bar_wrapper:first-child .progress {
+    .labels-container p:first-child,
+    .progress-bar-wrapper:first-child .progress {
         margin-bottom: 3rem;
     }
-    .progress_bars_container {
+    .progress-bars-container {
         flex: 1;
         display: flex;
         flex-direction: column;
     }
-    .progress_bar_wrapper {
+    .progress-bar-wrapper {
         display: flex;
-    }
-    .progress {
-        flex: 1;
     }
     .progress-bar {
         background-color: #AAA;
     }
-    .progress_bar_wrapper:hover .progress-bar {
+    .progress {
+        flex: 1;
+    }
+    .progress-bar-wrapper:hover .progress-bar,
+    .overall-progress,
+    .progress-bar.active {
         background-color: #337AB7;
     }
-    .overall-progress {
-        background-color: #337AB7;
-    }
-    .progress_percentage {
+    .progress-percentage {
         flex: 0 0 4.5rem;
         text-align: right;
         margin-left: 1rem;
     }
+    .language-list .panel-heading {
+        cursor: pointer;
+    }
+    .language-panel-body {
+        padding: 0;
+    }
+    .btn-link {
+        display: inline;
+    }
 </style>
 
-<div class="main_container">
+<!-- Progress Bars -->
+<div class="main-container">
     
-    <div class="labels_container">
-        <p>Overall</p>
+    <div class="labels-container">
+        <p class="overall" data-region="overall">Overall</p>
         {% for region in regions %}
-            <p>{{region}}</p>
+            <p id="{{region | lower}}-label" data-region="{{region | lower}}">{{region | capfirst}}</p>
         {% endfor %}
     </div>
 
-    <div class="progress_bars_container">
-        <div class="progress_bar_wrapper">
-            <div id="overall_progress" class="progress">
+    <div class="progress-bars-container">
+        <div class="progress-bar-wrapper">
+            <div id="overall-progress" class="progress overall" data-region="overall">
                 <div class="progress-bar overall-progress" role="progressbar" aria-valuenow="{{overall_progress}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 0.2em; width: {{overall_progress}}%;"></div>
             </div>
-            <span class="progress_percentage">{{overall_progress}}%</span>
+            <span class="progress-percentage overall" data-region="{{key | lower}}">{{overall_progress}}%</span>
         </div>
         {% for key, region in regions.items %}
-            <div class="progress_bar_wrapper">
-                <div id="overall_progress" class="progress">
+            <div class="progress-bar-wrapper">
+                <div id="{{key | lower}}-progress" class="progress" data-region="{{key | lower}}">
                     <div class="progress-bar" role="progressbar" aria-valuenow="{{region.regional_progress}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 0.2em; width: {{region.regional_progress}}%;"></div>
                 </div>
-                <span class="progress_percentage">{{region.regional_progress}}%</span>
+                <span class="progress-percentage" data-region="{{key | lower}}">{{region.regional_progress}}%</span>
             </div>
         {% endfor %}
     </div>
+
+</div>
+
+<!-- Region Detail -->
+<div class="main-container">
+
+    <div id="region-detail" class="panel panel-default">
+        <div id="region-detail-header" class="panel-heading">
+            <h1 class="panel-title">Region detail</h1>
+        </div>
+        <div id="region-detail-content" class="panel-body">
+            <span class="placeholder-text">Click on a region to view its detail and languages</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="languages-buttons btn-group-sm hidden">
+    <button class="expand-all btn btn-sm btn-link">Expand All</button>
+    <button class="collapse-all btn btn-sm btn-link">Collapse All</button>
+</div>
+
+<!-- Language List -->
+<div class="main-container language-list">
+
+    {% for key, region in regions.items %}
+        <div id="{{key | lower}}-languages" class="hidden">
+        {% for language in region.gateway_languages %}
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" data-toggle="collapse" data-target="#{{language.code}}">
+                    <span style="float: right;">
+                        {% if phase == "1" %}
+                            {{language.progress_phase_1}}%
+                        {% elif phase == "2" %}
+                            {{language.progress_phase_2}}%
+                        {% endif %}
+                    </span>
+                    <h1 class="panel-title">{{language}} ({{language.code}})</h1>
+                </div>
+                <div id="{{language.code}}" class="panel-body language-panel-body collapse">
+                    {% include "gl_tracking/language_progress.html" with language=language %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endfor %}
 
 </div>

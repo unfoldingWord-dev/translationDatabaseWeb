@@ -60,6 +60,7 @@ class Network(models.Model):
 class Region(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
+    wa_director = models.ForeignKey('gl_tracking.RegionalDirector', null=True, blank=True)
     tracker = FieldTracker()
 
     def __str__(self):
@@ -202,7 +203,6 @@ class Language(models.Model):
                 total = total + doc.completion_rate
         return round(float(total) / float(len(Document.objects.filter(category__phase__number="1"))), 2)
 
-
     @property
     def progress_phase_2(self):
         total = 0
@@ -210,7 +210,6 @@ class Language(models.Model):
             if type(doc.completion_rate) == int:
                 total = total + doc.completion_rate
         return round(float(total) / float(len(Document.objects.filter(category__phase__number="2"))), 2)
-    
 
     @classmethod
     def codes_text(cls):

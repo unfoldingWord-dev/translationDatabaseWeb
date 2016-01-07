@@ -1,0 +1,48 @@
+<style>
+    th {
+        font-weight: normal;
+        color: #AAA;
+    }
+    table.table {
+        margin-bottom: 0;
+    }
+    .table > thead > tr > th {
+        vertical-align: middle;
+    }
+</style>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Online</th>
+                <th>Method</th>
+                <th>Compl.<br />Rate</th>
+                <th>Compl.<br />Date</th>
+                <th>QA Level</th>
+                <th>Door43</th>
+                <th>UW.org</th>
+                <th>Partners</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in language.progress_set.all %}
+                <tr>
+                    <td>{{i.type}}</td>
+                    <td>{{i.is_online|default_if_none:"-"}}</td>
+                    <td>{{i.method|default_if_none:"-"}}</td>
+                    <td>{{i.completion_rate|default_if_none:"-"}}</td>
+                    <td>{{i.completion_date|default_if_none:"-"}}</td>
+                    <td>{{i.qa_level|default_if_none:"-"}}</td>
+                    <td>{{i.in_door43|default_if_none:"-"}}</td>
+                    <td>{{i.in_uw|default_if_none:"-"}}</td>
+                    <td>{{i.partners.all|join:", "}}</td>
+                    <td>{{i.notes|default_if_none:"-"}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
