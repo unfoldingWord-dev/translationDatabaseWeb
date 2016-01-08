@@ -7,9 +7,11 @@ from .views import (
     charters_autocomplete_lid,
     CharterAddView,
     CharterUpdateView,
+    downloadPDF,
     EventAddView,
     EventUpdateView,
     EventDetailView,
+    FileDownloadView,
     SuccessView,
     MultiCharterEventView,
     MultiCharterSuccessView,
@@ -51,5 +53,7 @@ urlpatterns = [
 
     # Others
     url(r"^new_item/$", NewItemView.as_view(), name="new_item"),
+    url(r"^downloads/$", FileDownloadView.as_view(), name="file_download"),
+    url(r"^downloads/(?P<file_name>[A-Za-z_.]+)/$", downloadPDF, name="download_file"),
 
 ]

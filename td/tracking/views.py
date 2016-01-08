@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse as urlReverse
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import (
@@ -143,6 +143,20 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_column = "number"
     link_url_name = "tracking:event_detail"
     link_url_field = "pk"
+
+
+class FileDownloadView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/file_download.html"
+
+
+def downloadPDF(request, file_name):
+    if request.user.is_authenticated():
+        file = open('td/tracking/files/{}'.format(file_name), 'rb')
+        response = HttpResponse(file, content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename={}".format(file_name)
+        return response
+    else:
+        return HttpResponseRedirect(urlReverse("tracking:project_list"))
 
 
 # ---------------------------------- #
