@@ -10,7 +10,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
 from td.tracking.views import (
-    HomeView, CharterTableSourceView, EventTableSourceView,
+    HomeView, CharterTableSourceView, EventTableSourceView, FileDownloadView,
     CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
     EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
     SuccessView, MultiCharterSuccessView, NewItemView,
@@ -213,6 +213,31 @@ class EventTableSourceViewTestCase(TestCase):
         result = self.view.filtered_data
         self.assertIn(self.event0, result)
         self.assertIn(self.event1, result)
+
+
+class FileDownloadViewTestCase(TestCase):
+    def setUp(self):
+        user, _ = User.objects.get_or_create(
+            username="test_user",
+            email="test@gmail.com",
+            password="test_password",
+        )
+        self.request = RequestFactory().get('/tracking/downloads/')
+        self.request.user = user
+
+    def test_get(self):
+        """
+        Sanity check against errors when going to tracking home page
+        """
+        response = FileDownloadView.as_view()(self.request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_config(self):
+        """
+        Sanity check for config
+        """
+        view = setup_view(FileDownloadView(), self.request)
+        self.assertEqual(view.template_name, "tracking/file_download.html")
 
 
 # ---------------------------------- #

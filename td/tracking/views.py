@@ -151,7 +151,7 @@ class FileDownloadView(LoginRequiredMixin, TemplateView):
 
 def downloadPDF(request, file_name):
     if request.user.is_authenticated():
-        file = open('td/tracking/files/{}'.format(file_name), 'rb')
+        file = open('static/dist/files/{}'.format(file_name), 'rb')
         response = HttpResponse(file, content_type="application/pdf")
         response["Content-Disposition"] = "attachment; filename={}".format(file_name)
         return response
