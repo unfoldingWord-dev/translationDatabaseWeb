@@ -545,7 +545,7 @@ class EventAddViewTestCase(TestCase):
         get_material_data() should be called once
         """
         self.view.object = None
-        self.view.get_context_data()
+        context = self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
         mock_get_material.assert_called_once_with(self.view)
@@ -690,7 +690,7 @@ class EventUpdateViewTestCase(TestCase):
         get_material_data() should be called once
         """
         self.view.object = None
-        self.view.get_context_data()
+        context = self.view.get_context_data()
         mock_get_translator.assert_called_once_with(self.view)
         mock_get_facilitator.assert_called_once_with(self.view)
         mock_get_material.assert_called_once_with(self.view)

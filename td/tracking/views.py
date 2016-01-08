@@ -616,7 +616,7 @@ class NewItemView(LoginRequiredMixin, FormView):
         return context
 
     def get_form(self):
-        object = self.get_context_data().get("new_item_info")
+        object = self.request.session.get("new_item_info", {"fields": []})
         # Dynamically create a form class based on how many types of fields the user chose "Other" on
         attrs = {}
         for field in object["fields"]:
