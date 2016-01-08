@@ -29,20 +29,37 @@
         </thead>
 
         <tbody>
-            {% for i in language.progress_set.all %}
-                <tr>
-                    <td>{{i.type}}</td>
-                    <td>{{i.is_online|default_if_none:"-"}}</td>
-                    <td>{{i.method|default_if_none:"-"}}</td>
-                    <td>{{i.completion_rate|default_if_none:"-"}}</td>
-                    <td>{{i.completion_date|default_if_none:"-"}}</td>
-                    <td>{{i.qa_level|default_if_none:"-"}}</td>
-                    <td>{{i.in_door43|default_if_none:"-"}}</td>
-                    <td>{{i.in_uw|default_if_none:"-"}}</td>
-                    <td>{{i.partners.all|join:", "}}</td>
-                    <td>{{i.notes|default_if_none:"-"}}</td>
-                </tr>
-            {% endfor %}
+            {% if phase == "1" %}
+                {% for i in language.documents_phase_1 %}
+                    <tr>
+                        <td>{{i.type}}</td>
+                        <td>{{i.is_online|default_if_none:"-"}}</td>
+                        <td>{{i.method|default_if_none:"-"}}</td>
+                        <td>{{i.completion_rate|default_if_none:"-"}}</td>
+                        <td>{{i.completion_date|default_if_none:"-"}}</td>
+                        <td>{{i.qa_level|default_if_none:"-"}}</td>
+                        <td>{{i.in_door43|default_if_none:"-"}}</td>
+                        <td>{{i.in_uw|default_if_none:"-"}}</td>
+                        <td>{{i.partners.all|join:", "}}</td>
+                        <td>{{i.notes|default_if_none:"-"}}</td>
+                    </tr>
+                {% endfor %}
+            {% elif phase == "2" %}
+                {% for i in language.documents_phase_2 %}
+                    <tr>
+                        <td>{{i.type}}</td>
+                        <td>{{i.is_online|default_if_none:"-"}}</td>
+                        <td>{{i.method|default_if_none:"-"}}</td>
+                        <td>{{i.completion_rate|default_if_none:"-"}}</td>
+                        <td>{{i.completion_date|default_if_none:"-"}}</td>
+                        <td>{{i.qa_level|default_if_none:"-"}}</td>
+                        <td>{{i.in_door43|default_if_none:"-"}}</td>
+                        <td>{{i.in_uw|default_if_none:"-"}}</td>
+                        <td>{{i.partners.all|join:", "}}</td>
+                        <td>{{i.notes|default_if_none:"-"}}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>

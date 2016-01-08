@@ -212,6 +212,14 @@ class Language(models.Model):
         return round(float(total) / float(len(Document.objects.filter(category__phase__number="2"))), 2)
 
     @property
+    def documents_phase_1(self):
+        return self.progress_set.filter(type__category__phase__number="1")
+
+    @property
+    def documents_phase_2(self):
+        return self.progress_set.filter(type__category__phase__number="2")
+
+    @property
     def variant_codes(self):
         return [lang.code for lang in self.variants.all()]
 
