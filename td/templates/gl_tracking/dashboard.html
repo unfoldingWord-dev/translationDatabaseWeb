@@ -8,48 +8,56 @@
 {% block body_class %}{% endblock body_class %}
 
 {% block extra_style %}
-    <style>
-        .placeholder-text {
-            color: #AAA;
-        }
-        .panel-body {
-            position: relative;
-        }
-        #phase-tabs li {
-            cursor: pointer;
-        }
-    </style>
+<style>
+    .placeholder-text {
+        color: #AAA;
+    }
+    .panel-body {
+        position: relative;
+    }
+    #phase-tabs li {
+        cursor: pointer;
+    }
+    .language-list .panel-heading:hover {
+        background-color: #F5F5FF;
+    }
+    .btn-variant-split {
+        line-height: 0;
+        padding: 0 0.5rem;
+        margin-left: 0.65rem;
+    }
+</style>
 {% endblock extra_style %}
 
 {% block body_base %}
-    <section class="jumbotron">
-        <div class="container">
-            {% include "_messages.html" %}
-            <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
-            {% if user.is_authenticated %}
-                {% url "gl:home" as custom_url %}
-                {% blocktrans %}
-                    <a href="{{ custom_url }}" class="btn btn-primary large disabled">Add progress</a>
-                {% endblocktrans %}
-            {% endif %}
-        </div>
-    </section>
+<section class="jumbotron">
+    <div class="container">
+        {% include "_messages.html" %}
+        <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
+        {% if user.is_authenticated %}
+            {% url "gl:home" as custom_url %}
+            {% blocktrans %}
+                <a href="{{ custom_url }}" class="btn btn-primary large disabled">Add progress</a>
+            {% endblocktrans %}
+        {% endif %}
+    </div>
+</section>
 
-    <section id="content_body">
-        <div class="container">
+<section id="content_body">
+    <div class="container">
 
-            <div id="progress-overview" style="margin-bottom: 30px;">
-                <ul id="phase-tabs" class="nav nav-tabs">
-                    <li role="presentation" class="active clickable" data-phase="1"><a>Phase I</a></li>
-                    <li role="presentation" class="clickable" data-phase="2"><a>Phase II</a></li>
-                </ul>
-                <div id="phase_overview" style="position: relative; min-height: 3rem;">
-                    {# phase_progress.html will be loaded here #}
-                </div>
+        <div id="progress-overview" style="margin-bottom: 30px;">
+            <ul id="phase-tabs" class="nav nav-tabs">
+                <li role="presentation" class="active clickable" data-phase="1"><a>Phase I</a></li>
+                <li role="presentation" class="clickable" data-phase="2"><a>Phase II</a></li>
+            </ul>
+            <div id="phase_overview" style="position: relative; min-height: 3rem;">
+                {# phase_progress.html will be loaded here #}
             </div>
-
         </div>
-    </section>
+
+    </div>
+</section>
 
 {% endblock body_base %}
 
@@ -81,14 +89,8 @@
         $('#phase_overview').on('click', '.collapse-all', function() {
             $('.language-list .panel-body.language-panel-body').collapse('hide');
         });
-        $('#phase_overview').on('click', '.overall', function() {
-            // Hide everything so it looks like the beginning
-            $('#region-detail-header h1').html('Region Detail');
-            $('#region-detail-content').html('<span class="placeholder-text">Click on a region to view its detail and languages</span>');
-            $('.languages-buttons').addClass('hidden');
-            $('div[id$=-languages]').addClass('hidden');
-            $('.progress-bar').removeClass('active');
-        });
+        $('#phase_overview').on('click', '.overall', resetDisplay);
+        $('#phase_overview').on('click', '.btn-variant-split', splitVariant);
 
 
         // CUSTOM FUNCTIONS
@@ -151,6 +153,21 @@
             // 
             $('.progress-bar').removeClass('active');
             $('#' + region + '-progress .progress-bar').addClass('active');
+        }
+
+        // 
+        function resetDisplay() {
+            $('#region-detail-header h1').html('Region Detail');
+            $('#region-detail-content').html('<span class="placeholder-text">Click on a region to view its detail and languages</span>');
+            $('.languages-buttons').addClass('hidden');
+            $('div[id$=-languages]').addClass('hidden');
+            $('.progress-bar').removeClass('active');
+        }
+
+        //
+        function splitVariant(e) {
+            e.stopPropagation();
+            console.log('SPLIT VARIANT:', this.dataset.language);
         }
     });
 

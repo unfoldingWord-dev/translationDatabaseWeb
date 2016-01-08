@@ -21,7 +21,7 @@ class PhaseProgressView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(PhaseProgressView, self).get_context_data(**kwargs)
         #
-        regions = map_gls(Language.objects.filter(gateway_flag=True))
+        regions = map_gls(Language.objects.filter(gateway_flag=True, variant_of=None))
         for key, region in regions.iteritems():
             region["regional_progress"] = get_regional_progress(region["gateway_languages"], self.request.POST["phase"])
         #
