@@ -1,0 +1,60 @@
+{% load i18n %}
+{% load bootstrap %}
+
+ {# <form id="variant_split_modal" action="{% url 'gl:ajax_modal_variant_split' %}" method="POST" class="form" role="form"> #}
+<form id="variant_split_modal" action="" method="POST" class="form" role="form">
+    {{ language }}
+    <div class="modal-header">
+        <button name="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h4 class="modal-title" id="variantModalLabel">Split Variant</h4>
+    </div>
+    <div class="modal-body">
+        {% if success %}
+            <p class="success">Variant has been split.</p>
+        {% else %}
+            <!-- <div class="form-notice-container">
+                <p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
+                <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+            </div> -->
+            {% csrf_token %}
+            {# <!-- {{ form | bootstrap}} --> #}
+            THIS IS THE FORM
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        {% if not success %}
+            <button name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary pull-right">
+                {% if form.errors %}Try again{% else %}Split{% endif %}
+            </button>
+        {% endif %}
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // Initial scripts
+        // 
+        var form_options = {
+            target: '.modal-content',
+            success: function() { }
+        }
+        $('#variant_split_modal').ajaxForm(form_options);
+
+        // Event Listeners
+        // 
+        ['button[name="cancel"]', 'button[name="close"]'].forEach(function(el) {
+            $(el).on('click', hideAndClear);
+        });
+
+        // Function definitions
+        // 
+        function hideAndClear() {
+            setTimeout(function() {jQuery('.modal.content').modal('hide');}, 1000);
+            $('body').on('hidden.bs.modal', '.modal', function() {
+                console.log('removing data');
+                $(this).removeData('bs.modal');
+            });
+        }
+    });
+</script>

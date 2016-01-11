@@ -56,6 +56,9 @@
     .btn-link {
         display: inline;
     }
+    .icon-button {
+
+    }
 </style>
 
 <!-- Progress Bars -->
@@ -125,12 +128,13 @@
                     <div style="display: flex;">
                         <h1 class="panel-title">
                             {{language.ang|default:language.ln}} <span class="badge">{{language.code}}</span>
+                        </h1>
+                        {% if language.variant_codes|length > 0 %}
                             {% for variant in language.variant_codes %}
                                 <span class="badge">{{variant}}</span>
                             {% endfor %}
-                        </h1>
-                        {% if language.variant_codes|length > 0 %}
-                            <button class="btn-variant-split" data-language="{{language.code}}"><i class="fa fa-code-fork"></i></button>
+                            
+                            <a class="icon-button" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{language.code}}" data-toggle="modal" data-target="#modal" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i></a>
                         {% endif %}
                     </div>
                 </div>

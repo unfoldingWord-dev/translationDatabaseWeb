@@ -1,10 +1,12 @@
-# from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView
+from django.views.generic.edit import FormView
 
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, Region
 from td.gl_tracking.models import Document
+from td.gl_tracking.forms import VariantSplitModalForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -40,6 +42,15 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         return self.render_to_response(context)
+
+
+class VariantSplitView(LoginRequiredMixin, FormView):
+    template_name = "gl_tracking/variant_split_modal_form.html"
+    form_class = VariantSplitModalForm
+
+    def form_valid(self, form):
+        # self.object = form.save()
+        return render(self.request, "gl_tracking/variant_split_modal.html", {"success": True})
 
 
 # ---------------------- #

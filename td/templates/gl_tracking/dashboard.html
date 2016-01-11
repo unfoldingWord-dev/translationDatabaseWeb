@@ -30,6 +30,16 @@
 {% endblock extra_style %}
 
 {% block body_base %}
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="variantModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!-- Modal end -->
+
 <section class="jumbotron">
     <div class="container">
         {% include "_messages.html" %}
@@ -62,6 +72,7 @@
 {% endblock body_base %}
 
 {% block custom_bottom_script %}
+<script src="http://malsup.github.com/jquery.form.js"></script>
 <script type="text/javascript">
     
     $(function() {
