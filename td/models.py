@@ -199,18 +199,24 @@ class Language(models.Model):
     @property
     def progress_phase_1(self):
         total = 0
+        doc_num = len(Document.objects.filter(category__phase__number="1"))
+        if doc_num == 0:
+            return 0.0
         for doc in self.progress_set.filter(type__category__phase__number="1"):
             if type(doc.completion_rate) == int:
                 total = total + doc.completion_rate
-        return round(float(total) / float(len(Document.objects.filter(category__phase__number="1"))), 2)
+        return round(float(total) / float(doc_num), 2)
 
     @property
     def progress_phase_2(self):
         total = 0
+        doc_num = len(Document.objects.filter(category__phase__number="2"))
+        if doc_num == 0:
+            return 0.0
         for doc in self.progress_set.filter(type__category__phase__number="2"):
             if type(doc.completion_rate) == int:
                 total = total + doc.completion_rate
-        return round(float(total) / float(len(Document.objects.filter(category__phase__number="2"))), 2)
+        return round(float(total) / float(doc_num), 2)
 
     @property
     def documents_phase_1(self):
