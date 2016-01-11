@@ -70,7 +70,7 @@ class CharterTableSourceView(DataTableSourceView):
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
-                    [Q(language__name__istartswith=self.search_term)]
+                    [Q(language__name__icontains=self.search_term)]
                 )
             ).order_by("start_date")
             if qs.count():

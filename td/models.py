@@ -9,6 +9,7 @@ from model_utils import FieldTracker
 
 from td.gl_tracking.models import Document
 
+
 @python_2_unicode_compatible
 class AdditionalLanguage(models.Model):
     DIRECTION_CHOICES = (

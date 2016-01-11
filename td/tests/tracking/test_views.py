@@ -10,7 +10,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 
 from td.tracking.views import (
-    HomeView, CharterTableSourceView, EventTableSourceView, FileDownloadView,
+    HomeView, CharterTableSourceView, EventTableSourceView, FileDownloadView, downloadPDF,
     CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
     EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
     SuccessView, MultiCharterSuccessView, NewItemView,
@@ -238,6 +238,24 @@ class FileDownloadViewTestCase(TestCase):
         """
         view = setup_view(FileDownloadView(), self.request)
         self.assertEqual(view.template_name, "tracking/file_download.html")
+
+
+class DownloadPDFTestCase(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(
+            username="test_user",
+            email="test@gmail.com",
+            password="test_password",
+        )
+        self.request = RequestFactory().get('/tracking/downloads/')
+        self.request.user = user
+
+    def test_user_authenticated(self):
+        """
+        """
+        with self.assertRaisesMessage(IOError, "No such file or directory"):
+            response = downloadPDF(self.request, "transform.pdf")
+            print '\nRESPONSE', response.status_code
 
 
 # ---------------------------------- #
@@ -621,13 +639,6 @@ class EventAddViewTestCase(TestCase):
         self.assertEqual(self.request.session["new_item_info"]["id"], [9999])
         self.assertEqual(self.request.session["new_item_info"]["fields"], ["test"])
         mock_messages.warning.assert_called_once_with(self.request, "Almost done! Your event has been saved. But...")
-
-    # @requests_mock.mock()
-    # @patch("td.tracking.views.redirect")
-    # def test_form_valid_2(self, mock_redirect, mock_request):
-    #     mock_form = Mock()
-    #     self.view.form_valid(mock_form)
-    #     mock_redirect.assert_called_once(reverse("tracking:charter_add_success"))
 
 
 class EventUpdateViewTestCase(TestCase):
@@ -1224,14 +1235,15 @@ class NewItemViewTestCase(TestCase):
             end_date=timezone.now().date(),
             lead_dept=department,
         )
-        info = {
-            "fields": ["publication"],
-            "id": [9999],
-        }
-        post = {
-            "publication": "Test Publication"
-        }
-        response = self.view.create_new_item(info, post)
+        # info = {
+        #     "fields": ["publication"],
+        #     "id": [9999],
+        # }
+        # post = {
+        #     "publication": "Test Publication"
+        # }
+        # response = self.view.create_new_item(info, post)
+        # print response.status_code
         # Still needs to be completed
 
 

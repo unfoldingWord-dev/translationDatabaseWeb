@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+# from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, DetailView
 
 from account.mixins import LoginRequiredMixin
@@ -84,6 +84,6 @@ def get_overall_progress(regions):
         count += 1
         total += region["regional_progress"]
     if count:
-        return round(total/count, 2)
+        return round(total / count, 2)
     else:
-        return "err" 
+        return "err"
