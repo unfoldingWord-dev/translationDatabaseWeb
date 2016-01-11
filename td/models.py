@@ -199,7 +199,7 @@ class Language(models.Model):
     @property
     def progress_phase_1(self):
         total = 0
-        doc_num = len(Document.objects.filter(category__phase__number="1"))
+        doc_num = Document.objects.filter(category__phase__number="1").count()
         if doc_num == 0:
             return 0.0
         for doc in self.progress_set.filter(type__category__phase__number="1"):
@@ -210,7 +210,7 @@ class Language(models.Model):
     @property
     def progress_phase_2(self):
         total = 0
-        doc_num = len(Document.objects.filter(category__phase__number="2"))
+        doc_num = Document.objects.filter(category__phase__number="2").count()
         if doc_num == 0:
             return 0.0
         for doc in self.progress_set.filter(type__category__phase__number="2"):
