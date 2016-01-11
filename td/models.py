@@ -7,6 +7,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
+from td.gl_tracking.models import Document
+
 
 @python_2_unicode_compatible
 class AdditionalLanguage(models.Model):
@@ -59,6 +61,7 @@ class Network(models.Model):
 class Region(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
+    wa_director = models.ForeignKey('gl_tracking.RegionalDirector', null=True, blank=True)
     tracker = FieldTracker()
 
     def __str__(self):
@@ -77,7 +80,7 @@ class Country(models.Model):
     region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True, db_table='uw_country_primary_networks')
-    extra_data = JSONField(blank=True)
+    extra_data = JSONField(default=dict)
 
     tracker = FieldTracker()
 
@@ -153,8 +156,8 @@ class Language(models.Model):
     gateway_flag = models.BooleanField(default=False, blank=True, db_index=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
-    extra_data = JSONField(blank=True)
-
+    variant_of = models.ForeignKey("self", related_name="variants", null=True, blank=True)
+    extra_data = JSONField(default=dict)
     tracker = FieldTracker()
 
     class Meta:
@@ -192,6 +195,40 @@ class Language(models.Model):
     @property
     def ang(self):
         return self.anglicized_name
+
+    @property
+    def progress_phase_1(self):
+        total = 0
+        doc_num = Document.objects.filter(category__phase__number="1").count()
+        if doc_num == 0:
+            return 0.0
+        for doc in self.progress_set.filter(type__category__phase__number="1"):
+            if type(doc.completion_rate) == int:
+                total = total + doc.completion_rate
+        return round(float(total) / float(doc_num), 2)
+
+    @property
+    def progress_phase_2(self):
+        total = 0
+        doc_num = Document.objects.filter(category__phase__number="2").count()
+        if doc_num == 0:
+            return 0.0
+        for doc in self.progress_set.filter(type__category__phase__number="2"):
+            if type(doc.completion_rate) == int:
+                total = total + doc.completion_rate
+        return round(float(total) / float(doc_num), 2)
+
+    @property
+    def documents_phase_1(self):
+        return self.progress_set.filter(type__category__phase__number="1")
+
+    @property
+    def documents_phase_2(self):
+        return self.progress_set.filter(type__category__phase__number="2")
+
+    @property
+    def variant_codes(self):
+        return [lang.code for lang in self.variants.all()]
 
     @classmethod
     def codes_text(cls):

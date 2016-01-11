@@ -62,10 +62,10 @@
         .facilitator-checkboxes {
             width: 140px;
         }
-        .material-text {
+        .material-text, .translator-text {
             width: calc(100% - 70px);
         }
-        .material-checkboxes {
+        .material-checkboxes, .translator-checkboxes {
             width: 70px;
         }
         .btn-add {
@@ -157,16 +157,22 @@
                             <!-- form.translators -->
                             <div class="form-group clearfix">
                                 <div class="inline inline-label">
-                                    <div class="translator-text full-width">
+                                    <div class="translator-text">
                                         <label class="control-label">Translator</label>
                                         <a id="add-translator" class="btn btn-default btn-xs btn-add" href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <div class="translator-checkboxes">
+                                        <label class="control-label control-label-sub full-width text-center" title="Indicates that the translator has signed all the terms of use documents (Statement of Faith, Translation Guidelines, and Sharing Licenses">ToU</label>
                                     </div>
                                 </div>
                                 <div id="translator-list">
                                     {% for translator in translators %}
                                         <div class="inline inline-input clearfix">
-                                            <div class="translator-text clearfix full-width">
+                                            <div class="translator-text clearfix">
                                                 <input name="translator{{ forloop.counter0 }}" type="text" class="form-control" value="{{ translator.name }}"/>
+                                            </div>
+                                            <div class="translator-checkboxes">
+                                                <div class="full-width"><input name="docs_signed{{ forloop.counter0 }}" type="checkbox" class="form-control" {% if translator.signed_docs %}checked{% endif %} /></div>
                                             </div>
                                         </div>
                                     {% endfor %}

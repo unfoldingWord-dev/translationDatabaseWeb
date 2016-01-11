@@ -1,6 +1,6 @@
 {% extends "theme_bootstrap/base.html" %}
 
-{% load invitations_tags %}
+{% load pinax_invitations_tags %}
 {% load staticfiles %}
 {% load metron_tags %}
 {% load i18n %}
@@ -148,6 +148,7 @@
                 {% if request.user.is_authenticated %}
                     <li class="divider"></li>
                     <li><a href="{% url "tracking:project_list" %}">Translation Projects</a></li>
+                    <li><a href="{% url "gl:home" %}">GL Tracker</a></li>
                     <li class="divider"></li>
                     <li><a href="{% url "gateway_flag_update" %}">Update Gateway Languages</a></li>
                     <li><a href="{% url "rtl_languages_update" %}">Update RTL Languages (Scripts)</a></li>

@@ -42,6 +42,12 @@
 
     <section id="content_body">
         <div class="container">
+            <p>
+                {% url "tracking:file_download" as file_download_url %}
+                {% blocktrans %}
+                    <a href="{{file_download_url}}" class="link">Downloadable Files</a>
+                {% endblocktrans %}
+            </p>
             <div class="panel panel-default">
                 <div class="panel-heading"><h1 class="panel-title">Projects</h1></div>
                 <table class="table table-bordered" data-source="{% url 'tracking:ajax_ds_charter_list' %}">

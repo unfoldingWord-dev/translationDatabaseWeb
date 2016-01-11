@@ -15,7 +15,6 @@ ADMINS = [
 ]
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     "default": dj_database_url.config(default="postgres://localhost/td"),
@@ -83,26 +82,6 @@ STATICFILES_FINDERS = [
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = [
-    "django.template.loaders.filesystem.Loader",
-    "django.template.loaders.app_directories.Loader",
-]
-
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.core.context_processors.request",
-    "django.contrib.messages.context_processors.messages",
-    "account.context_processors.account",
-    "pinax_theme_bootstrap.context_processors.theme",
-]
-
-
 MIDDLEWARE_CLASSES = [
     "reversion.middleware.RevisionMiddleware",
     "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
@@ -120,8 +99,29 @@ ROOT_URLCONF = "td.urls"
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "td.wsgi.application"
 
-TEMPLATE_DIRS = [
-    os.path.join(PACKAGE_ROOT, "templates"),
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(PACKAGE_ROOT, "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "debug": DEBUG,
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "account.context_processors.account",
+                "pinax_theme_bootstrap.context_processors.theme",
+            ],
+        },
+    },
 ]
 
 INSTALLED_APPS = [
@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     "td.resources",
     "td.publishing",
     "td.tracking",
+    "td.gl_tracking",
 ]
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
