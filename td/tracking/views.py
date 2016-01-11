@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse as urlReverse
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import (
@@ -70,7 +70,7 @@ class CharterTableSourceView(DataTableSourceView):
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
-                    [Q(language__name__istartswith=self.search_term)]
+                    [Q(language__name__icontains=self.search_term)]
                 )
             ).order_by("start_date")
             if qs.count():
@@ -143,6 +143,20 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_column = "number"
     link_url_name = "tracking:event_detail"
     link_url_field = "pk"
+
+
+class FileDownloadView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/file_download.html"
+
+
+def downloadPDF(request, file_name):
+    if request.user.is_authenticated():
+        file = open('static/dist/files/{}'.format(file_name), 'rb')
+        response = HttpResponse(file, content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename={}".format(file_name)
+        return response
+    else:
+        return HttpResponseRedirect(urlReverse("tracking:project_list"))
 
 
 # ---------------------------------- #
@@ -265,6 +279,7 @@ class EventAddView(LoginRequiredMixin, CreateView):
         context["translators"] = get_translator_data(self)
         context["facilitators"] = get_facilitator_data(self)
         context["materials"] = get_material_data(self)
+        context["view"] = "create"
         return context
 
     # Overridden to execute custom save and redirect upon valid submission
@@ -308,7 +323,6 @@ class EventAddView(LoginRequiredMixin, CreateView):
 class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
     form_class = EventForm
-    template_name_suffix = "_update_form"
 
     # Overridden to include initial values
     def get_initial(self):
@@ -322,6 +336,7 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         context["translators"] = get_translator_data(self)
         context["facilitators"] = get_facilitator_data(self)
         context["materials"] = get_material_data(self)
+        context["view"] = "update"
         return context
 
     # Overridden to execute custom save and redirect upon valid submission
@@ -382,6 +397,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
             context["translators"] = get_translator_data(self)
             context["facilitators"] = get_facilitator_data(self)
             context["materials"] = get_material_data(self)
+            context["view"] = "create"
         return context
 
     # Overriden to send a dynamic form based on user's input in step 1
@@ -600,7 +616,7 @@ class NewItemView(LoginRequiredMixin, FormView):
         return context
 
     def get_form(self):
-        object = self.get_context_data().get("new_item_info")
+        object = self.request.session.get("new_item_info", {"fields": []})
         # Dynamically create a form class based on how many types of fields the user chose "Other" on
         attrs = {}
         for field in object["fields"]:
@@ -713,7 +729,13 @@ def get_translator_data(self):
             if key.startswith("translator") and key != "translator-count":
                 name = post[key] if post[key] else ""
                 if name:
-                    translators.append({"name": name})
+                    number = key[10:]
+                    docs_signed = True if "docs_signed" + number in post else False
+                    translators.append({"name": name, "docs_signed": docs_signed})
+    elif self.request.method == "GET":
+        if self.object:
+            for person in self.object.translators.all():
+                translators.append({"name": person.name, "docs_signed": person.docs_signed})
     return translators
 
 
@@ -730,6 +752,10 @@ def get_facilitator_data(self):
                     is_lead = True if "is_lead" + number in post else False
                     speaks_gl = True if "speaks_gl" + number in post else False
                     facilitators.append({"name": name, "is_lead": is_lead, "speaks_gl": speaks_gl})
+    elif self.request.method == "GET":
+        if self.object:
+            for person in self.object.facilitators.all():
+                facilitators.append({"name": person.name, "is_lead": person.is_lead, "speaks_gl": person.speaks_gl})
     return facilitators
 
 
@@ -745,6 +771,10 @@ def get_material_data(self):
                     number = key[8:]
                     licensed = True if "licensed" + number in post else False
                     materials.append({"name": name, "licensed": licensed})
+    elif self.request.method == "GET":
+        if self.object:
+            for thing in self.object.materials.all():
+                materials.append({"name": thing.name, "licensed": thing.licensed})
     return materials
 
 
@@ -754,8 +784,13 @@ def get_translator_ids(array):
     for translator in array:
         try:
             person = Translator.objects.get(name=translator["name"])
+            person.docs_signed = translator["docs_signed"]
+            person.save()
         except Translator.DoesNotExist:
-            person = Translator.objects.create(name=translator["name"])
+            person = Translator.objects.create(
+                name=translator["name"],
+                docs_signed=translator["docs_signed"]
+            )
         ids.append(person.id)
 
     return ids
@@ -767,6 +802,9 @@ def get_facilitator_ids(array):
     for facilitator in array:
         try:
             person = Facilitator.objects.get(name=facilitator["name"])
+            person.is_lead = facilitator["is_lead"]
+            person.speaks_gl = facilitator["speaks_gl"]
+            person.save()
         except Facilitator.DoesNotExist:
             person = Facilitator.objects.create(
                 name=facilitator["name"],
@@ -784,6 +822,8 @@ def get_material_ids(array):
     for material in array:
         try:
             object = Material.objects.get(name=material["name"])
+            object.licensed = material["licensed"]
+            object.save()
         except Material.DoesNotExist:
             object = Material.objects.create(
                 name=material["name"],

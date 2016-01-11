@@ -43,6 +43,7 @@ urlpatterns = [
 
     url(r"^publishing/", include("td.publishing.urls")),
     url(r"^tracking/", include("td.tracking.urls", namespace="tracking")),
+    url(r"^gl/", include("td.gl_tracking.urls", namespace="gl")),
 
     url(r"^data-sources/additional-languages/$", AdditionalLanguageListView.as_view(), name="ds_additional_languages"),
     url(r"^data-sources/ethnologue/country-codes/$", EthnologueCountryCodeListView.as_view(), name="ds_ethnologue_country_codes"),
