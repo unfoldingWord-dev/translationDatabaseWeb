@@ -1,10 +1,13 @@
-# from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView
+from django.views.generic.edit import FormView
 
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, Region
 from td.gl_tracking.models import Document
+from td.gl_tracking.forms import VariantSplitModalForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -42,6 +45,20 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
         return self.render_to_response(context)
 
 
+class VariantSplitView(LoginRequiredMixin, FormView):
+    template_name = "gl_tracking/variant_split_modal_form.html"
+    form_class = VariantSplitModalForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(VariantSplitView, self).get_context_data(**kwargs)
+        context["language"] = Language.objects.get(code=self.kwargs["slug"])
+        return context
+
+    def form_valid(self, form):
+        language = Language.objects.get(code=self.kwargs["slug"])
+        return render(self.request, "gl_tracking/variant_split_modal_form.html", {"success": True, "language": language})
+
+
 # ---------------------- #
 #    CUSTOM FUNCTIONS    #
 # ---------------------- #
@@ -64,14 +81,14 @@ def map_gls(gls):
 
 
 def get_regional_progress(gateway_languages, phase):
-    total = 0
+    total = 0.0
     count = 0
     for lang in gateway_languages:
         count = count + 1
         if phase == "1":
-            total = float(total) + lang.progress_phase_1
+            total += lang.progress_phase_1
         elif phase == "2":
-            total = float(total) + lang.progress_phase_2
+            total += lang.progress_phase_2
     if count:
         return round(total / count, 2)
     else:
