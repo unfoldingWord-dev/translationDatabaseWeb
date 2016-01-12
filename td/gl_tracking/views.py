@@ -74,7 +74,7 @@ def get_regional_progress(gateway_languages, phase):
     if count:
         return round(total / count, 2)
     else:
-        return "err"
+        return 0.0
 
 
 def get_overall_progress(regions):
@@ -86,4 +86,4 @@ def get_overall_progress(regions):
     if count:
         return round(total / count, 2)
     else:
-        return "err"
+        return 0.0
