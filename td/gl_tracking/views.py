@@ -48,8 +48,6 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
 
 def map_gls(gls):
     regions = {}
-    regions["unknown"] = {}
-    regions["unknown"]["gateway_languages"] = []
     for lang in gls:
         region = lang.lr
         if region:
@@ -58,6 +56,9 @@ def map_gls(gls):
                 regions[region]["gateway_languages"] = []
             regions[region]["gateway_languages"].append(lang)
         else:
+            if "unknown" not in regions:
+                regions["unknown"] = {}
+                regions["unknown"]["gateway_languages"] = []
             regions["unknown"]["gateway_languages"].append(lang)
     return regions
 
