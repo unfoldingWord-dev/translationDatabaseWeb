@@ -55,7 +55,8 @@ class VariantSplitView(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        return render(self.request, "gl_tracking/variant_split_modal_form.html", {"success": True, "language": self.kwargs["slug"]})
+        language = Language.objects.get(code=self.kwargs["slug"])
+        return render(self.request, "gl_tracking/variant_split_modal_form.html", {"success": True, "language": language})
 
 
 # ---------------------- #

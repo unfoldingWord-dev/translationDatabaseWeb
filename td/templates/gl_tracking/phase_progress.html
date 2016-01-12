@@ -134,7 +134,7 @@
                             {% endfor %}
                         </h1>
                         {% if language.variant_codes|length > 0 %}
-                                <button class="icon-button event-blocker" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{language.code}}" data-toggle="modal" data-target="#modal" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i>
+                                <button class="icon-button btn-variant-split" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{language.code}}" data-toggle="modal" data-target="#modal" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i>
                             </span>
                         {% endif %}
                     </div>

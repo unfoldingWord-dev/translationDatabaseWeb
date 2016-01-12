@@ -26,6 +26,9 @@
         padding: 0 0.5rem;
         margin-left: 0.65rem;
     }
+    .full-width {
+        width: 100%;
+    }
 </style>
 {% endblock extra_style %}
 
@@ -33,7 +36,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="variantModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
         </div>
     </div>
@@ -102,6 +105,9 @@
         });
         $('#phase_overview').on('click', '.overall', resetDisplay);
         $('#phase_overview').on('click', '.btn-variant-split', openVariantSplitModal);
+        $('#modal').on('shown.bs.modal', function() {
+            $('#variant').focus();
+        });
 
 
         // CUSTOM FUNCTIONS
@@ -175,8 +181,11 @@
             $('.progress-bar').removeClass('active');
         }
 
-        //
+        // Manually open bootstrap modal while avoiding event propagation
         function openVariantSplitModal(e) {
+            // Note: This will stop bootstrap's default modal showing via data-toggle attribute.
+            // Reason: Without stopping propagation, event will buble up to the panel header
+            //    which will show/hide the panel body. That is undesired behavior.
             e.stopPropagation();
             $('#modal').modal({
                 backdrop: true,
