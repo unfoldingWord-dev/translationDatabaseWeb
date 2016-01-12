@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import FormView
 
@@ -48,9 +49,13 @@ class VariantSplitView(LoginRequiredMixin, FormView):
     template_name = "gl_tracking/variant_split_modal_form.html"
     form_class = VariantSplitModalForm
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(VariantSplitView, self).get_context_data(**kwargs)
+        context["language"] = Language.objects.get(code=self.kwargs["slug"])
+        return context
+
     def form_valid(self, form):
-        # self.object = form.save()
-        return render(self.request, "gl_tracking/variant_split_modal.html", {"success": True})
+        return render(self.request, "gl_tracking/variant_split_modal_form.html", {"success": True, "language": self.kwargs["slug"]})
 
 
 # ---------------------- #
@@ -75,14 +80,14 @@ def map_gls(gls):
 
 
 def get_regional_progress(gateway_languages, phase):
-    total = 0
+    total = 0.0
     count = 0
     for lang in gateway_languages:
         count = count + 1
         if phase == "1":
-            total = float(total) + lang.progress_phase_1
+            total += lang.progress_phase_1
         elif phase == "2":
-            total = float(total) + lang.progress_phase_2
+            total += lang.progress_phase_2
     if count:
         return round(total / count, 2)
     else:

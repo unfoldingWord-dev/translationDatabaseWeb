@@ -101,7 +101,7 @@
             $('.language-list .panel-body.language-panel-body').collapse('hide');
         });
         $('#phase_overview').on('click', '.overall', resetDisplay);
-        $('#phase_overview').on('click', '.btn-variant-split', splitVariant);
+        $('#phase_overview').on('click', '.btn-variant-split', openVariantSplitModal);
 
 
         // CUSTOM FUNCTIONS
@@ -176,9 +176,14 @@
         }
 
         //
-        function splitVariant(e) {
+        function openVariantSplitModal(e) {
             e.stopPropagation();
-            console.log('SPLIT VARIANT:', this.dataset.language);
+            $('#modal').modal({
+                backdrop: true,
+                keyboard: true,
+                show: true
+            });
+            $('#modal .modal-content').load(this.attributes.href.value);
         }
     });
 

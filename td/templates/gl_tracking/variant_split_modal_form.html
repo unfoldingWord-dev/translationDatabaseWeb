@@ -1,45 +1,57 @@
 {% load i18n %}
 {% load bootstrap %}
 
- {# <form id="variant_split_modal" action="{% url 'gl:ajax_modal_variant_split' %}" method="POST" class="form" role="form"> #}
-<form id="variant_split_modal" action="" method="POST" class="form" role="form">
-    {{ language }}
-    <div class="modal-header">
-        <button name="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h4 class="modal-title" id="variantModalLabel">Split Variant</h4>
-    </div>
-    <div class="modal-body">
-        {% if success %}
-            <p class="success">Variant has been split.</p>
-        {% else %}
-            <!-- <div class="form-notice-container">
-                <p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
-                <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
-            </div> -->
-            {% csrf_token %}
-            {# <!-- {{ form | bootstrap}} --> #}
-            THIS IS THE FORM
-        {% endif %}
-    </div>
-    <div class="modal-footer">
-        {% if not success %}
-            <button name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary pull-right">
-                {% if form.errors %}Try again{% else %}Split{% endif %}
-            </button>
-        {% endif %}
-    </div>
-</form>
+<div class="modal-header">
+    <button name="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h4 class="modal-title" id="variantModalLabel">Split Variant</h4>
+</div>
+
+    {% if success %}
+
+        <div class="modal-body">
+            <p class="success">Variant has been split. This page will reload...</p>
+        </div>
+        <div class="modal-footer">
+            <button name="cancel" type="button" class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+        </div>
+
+    {% else %}
+
+        <form id="variant_split_modal" action="{% url 'gl:ajax_modal_variant_split' language.code %}" method="POST" class="form" role="form">
+            <div class="modal-body">
+                {% csrf_token %}
+                {# <!-- {{ form | bootstrap}} --> #}
+                THIS IS THE {{language.ang|default:language.name}} FORM
+            </div>
+            <div class="modal-footer">
+                <button name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary pull-right">
+                    {% if form.errors %}Try again{% else %}Split{% endif %}
+                </button>
+            </div>
+        </form>
+
+    {% endif %}
+</div>
 
 <script>
     $(document).ready(function() {
         // Initial scripts
         // 
-        var form_options = {
-            target: '.modal-content',
-            success: function() { }
-        }
-        $('#variant_split_modal').ajaxForm(form_options);
+        $('#variant_split_modal').on('submit', function(e) {
+            e.preventDefault();
+            $(this).ajaxSubmit({
+                target: '.modal-content',
+                resetForm: true,
+                clearForm: true,
+                success: function() {
+                    setTimeout(function() {
+                        $('#modal').modal('hide');
+                        window.location.reload(false);
+                    }, 1333);
+                }
+            });
+        });
 
         // Event Listeners
         // 
@@ -52,7 +64,6 @@
         function hideAndClear() {
             setTimeout(function() {jQuery('.modal.content').modal('hide');}, 1000);
             $('body').on('hidden.bs.modal', '.modal', function() {
-                console.log('removing data');
                 $(this).removeData('bs.modal');
             });
         }
