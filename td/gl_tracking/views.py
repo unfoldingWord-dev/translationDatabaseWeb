@@ -59,8 +59,6 @@ class VariantSplitView(LoginRequiredMixin, FormView):
 
 def map_gls(gls):
     regions = {}
-    regions["unknown"] = {}
-    regions["unknown"]["gateway_languages"] = []
     for lang in gls:
         region = lang.lr
         if region:
@@ -69,6 +67,9 @@ def map_gls(gls):
                 regions[region]["gateway_languages"] = []
             regions[region]["gateway_languages"].append(lang)
         else:
+            if "unknown" not in regions:
+                regions["unknown"] = {}
+                regions["unknown"]["gateway_languages"] = []
             regions["unknown"]["gateway_languages"].append(lang)
     return regions
 
@@ -85,7 +86,7 @@ def get_regional_progress(gateway_languages, phase):
     if count:
         return round(total / count, 2)
     else:
-        return "err"
+        return 0.0
 
 
 def get_overall_progress(regions):
@@ -97,4 +98,4 @@ def get_overall_progress(regions):
     if count:
         return round(total / count, 2)
     else:
-        return "err"
+        return 0.0
