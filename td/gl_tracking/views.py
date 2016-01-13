@@ -50,13 +50,23 @@ class VariantSplitView(LoginRequiredMixin, FormView):
     form_class = VariantSplitModalForm
 
     def get_context_data(self, *args, **kwargs):
+        # Add language context based on the argument in URL
         context = super(VariantSplitView, self).get_context_data(**kwargs)
         context["language"] = Language.objects.get(code=self.kwargs["slug"])
         return context
 
     def form_valid(self, form):
+        # If valid, remove variant from the language
         language = Language.objects.get(code=self.kwargs["slug"])
-        return render(self.request, "gl_tracking/variant_split_modal_form.html", {"success": True, "language": language})
+        variant = Language.objects.get(code=form.data.get("variant"))
+        language.variants.remove(variant)
+        # Render the same form but with extra context for the template.
+        context = {
+            "success": True,
+            "language": language,
+            "variant": variant,
+        }
+        return render(self.request, "gl_tracking/variant_split_modal_form.html", context)
 
 
 # ---------------------- #
