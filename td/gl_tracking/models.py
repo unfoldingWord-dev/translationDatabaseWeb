@@ -141,7 +141,8 @@ class RegionalDirector(models.Model):
     first_name = models.CharField(max_length=200)
     middle_name = models.CharField(max_length=200, blank=True)
     last_name = models.CharField(max_length=200)
-    user_account = models.ForeignKey(User, null=True, blank=True)
+    # user_account = models.ForeignKey(User, null=True, blank=True)
+    user = models.OneToOneField(User, related_name="regdir", null=True, blank=True)
 
     def __str__(self):
         return self.first_name + " " + self.last_name

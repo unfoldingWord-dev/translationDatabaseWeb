@@ -1,6 +1,8 @@
 {% load i18n %}
 {% load bootstrap %}
 
+<!-- This HTML will be loaded into div.modal-content -->
+
 <div class="modal-header">
     <button name="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h4 class="modal-title" id="variantModalLabel">Split Variant from {{language.ang|default:language.name}}</h4>
@@ -9,7 +11,7 @@
     {% if success %}
 
         <div class="modal-body">
-            <p class="success">Variant has been split. This page will reload...</p>
+            <p class="success">Variant <strong>{{variant.code}}</strong> has been split from <strong>{{language.ang|default:language.name}}</strong>. This page will reload...</p>
         </div>
         <div class="modal-footer">
             <button name="cancel" type="button" class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
@@ -22,7 +24,7 @@
                 {% csrf_token %}
                 <label for="variant" class="form-group full-width">
                     <span class="control-label">Choose variant to split:</span>
-                    <input id="variant" class="form-control" list="variants" required>
+                    <input id="variant" name="variant" class="form-control" list="variants" required>
                     <datalist id="variants">
                         {% for l in language.variants.all %}
                             <option value="{{l.code}}">{{l.ang|default:l.name}} ({{l.code}})</option>
@@ -39,6 +41,7 @@
         </form>
 
     {% endif %}
+
 </div>
 
 <script>

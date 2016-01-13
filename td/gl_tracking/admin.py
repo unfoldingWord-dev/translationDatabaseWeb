@@ -45,7 +45,7 @@ class ProgressAdmin(ImportExportModelAdmin):
 
 
 class RegionalDirectorAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "middle_name", "last_name", "user_account")
+    list_display = ("first_name", "middle_name", "last_name", "user")
 
 
 admin.site.register(Phase, PhaseAdmin)

@@ -75,126 +75,127 @@
 {% endblock body_base %}
 
 {% block custom_bottom_script %}
-<script src="http://malsup.github.com/jquery.form.js"></script>
-<script type="text/javascript">
-    
-    $(function() {
-        // INITIAL SCRIPT
-        // ==============
-        loadPhase('1');
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script type="text/javascript">
+        
+        $(function() {
+            // INITIAL SCRIPT
+            // ==============
+            loadPhase('1');
 
 
-        // EVENT LISTENERS
-        // ===============
-        // Switching tabs and loading data when clicking on tabs
-        $('#phase-tabs > li').on('click', function(e) {
-            if (switchTab(e)) {
-                loadPhase(this.dataset.phase);
+            // EVENT LISTENERS
+            // ===============
+            // Switching tabs and loading data when clicking on tabs
+            $('#phase-tabs > li').on('click', function(e) {
+                if (switchTab(e)) {
+                    loadPhase(this.dataset.phase);
+                }
+            });
+            // Loading region detail and languages when clicking on the region progress
+            ['.labels-container p:not(.overall)', '.progress-bar-wrapper .progress:not(.overall)', '.progress-percentage:not(.overall)']
+            .forEach(function(selector) {
+                $('#phase_overview').on('click', selector, loadRegion);
+            });
+            $('#phase_overview').on('click', '.expand-all', function() {
+                $('.language-list .panel-body.language-panel-body').collapse('show');
+            });
+            $('#phase_overview').on('click', '.collapse-all', function() {
+                $('.language-list .panel-body.language-panel-body').collapse('hide');
+            });
+            $('#phase_overview').on('click', '.overall', resetDisplay);
+            $('#phase_overview').on('click', '.btn-variant-split', openVariantSplitModal);
+            $('#modal').on('shown.bs.modal', function() {
+                $('#variant').focus();
+            });
+
+
+            // CUSTOM FUNCTIONS
+            // ================
+            //
+            function switchTab(e) {
+                if (e.currentTarget.className.indexOf('active') !== -1) {return false;}
+                $('#phase-tabs > li').removeClass('active');
+                $(e.currentTarget).addClass('active');
+                return true;
+            }
+
+            //
+            function loadPhase(phase) {
+                $('#phase_overview')
+                    .load('ajax/phase_progress/', {'phase': phase}, function(response, status, xhr) {
+                        if (status === 'error') displayError(this);
+                    })
+                    .append(getLoadingDiv());
+            }
+
+            //
+            function getLoadingDiv() {
+                var div = $(document.createElement('div'));
+                div.html('Loading...');
+                div.addClass('loading-div');
+                div.css('position', 'absolute');
+                div.css('width', '100%');
+                div.css('height', '100%');
+                div.css('color', 'red');
+                div.css('background-color', 'rgba(255,255,255,0.75)');
+                div.css('top', '0');
+                div.css('left', '0');
+                div.css('right', '0');
+                div.css('bottom', '0');
+                div.css('text-align', 'center');
+                return div;
+            }
+
+            //
+            function displayError(el) {
+                $(el).children().remove();
+                $(el).append('<span style="color: red;">Error in gettting the data</span>');
+            }
+
+            //
+            function loadRegion() {
+                var region = this.dataset.region;
+                $('#region-detail-header h1').html(region.charAt(0).toUpperCase() + region.slice(1));
+                $('#region-detail-content')
+                    .load('ajax/region_detail/' + region + '/', function(response, status, xhr) {
+                        if (status === 'error') displayError(this);
+                    })
+                    .append(getLoadingDiv());
+                // Only show languages for the selected region
+                $('div[id$=-languages]').addClass('hidden');
+                $('#' + region + '-languages').removeClass('hidden');
+                // 
+                $('.languages-buttons').removeClass('hidden');
+                // 
+                $('.progress-bar').removeClass('active');
+                $('#' + region + '-progress .progress-bar').addClass('active');
+            }
+
+            // 
+            function resetDisplay() {
+                $('#region-detail-header h1').html('Region Detail');
+                $('#region-detail-content').html('<span class="placeholder-text">Click on a region to view its detail and languages</span>');
+                $('.languages-buttons').addClass('hidden');
+                $('div[id$=-languages]').addClass('hidden');
+                $('.progress-bar').removeClass('active');
+            }
+
+            // Manually open bootstrap modal while avoiding event propagation
+            function openVariantSplitModal(e) {
+                // Note: This will stop bootstrap's default modal showing via data-toggle attribute.
+                // Reason: Without stopping propagation, event will buble up to the panel header
+                //    which will show/hide the panel body. That is undesired behavior.
+                e.stopPropagation();
+                $('#modal').modal({
+                    backdrop: true,
+                    keyboard: true,
+                    show: true
+                });
+                $('#modal .modal-content').load(this.attributes.href.value);
             }
         });
-        // Loading region detail and languages when clicking on the region progress
-        ['.labels-container p:not(.overall)', '.progress-bar-wrapper .progress:not(.overall)', '.progress-percentage:not(.overall)']
-        .forEach(function(selector) {
-            $('#phase_overview').on('click', selector, loadRegion);
-        });
-        $('#phase_overview').on('click', '.expand-all', function() {
-            $('.language-list .panel-body.language-panel-body').collapse('show');
-        });
-        $('#phase_overview').on('click', '.collapse-all', function() {
-            $('.language-list .panel-body.language-panel-body').collapse('hide');
-        });
-        $('#phase_overview').on('click', '.overall', resetDisplay);
-        $('#phase_overview').on('click', '.btn-variant-split', openVariantSplitModal);
-        $('#modal').on('shown.bs.modal', function() {
-            $('#variant').focus();
-        });
 
+    </script>
 
-        // CUSTOM FUNCTIONS
-        // ================
-        //
-        function switchTab(e) {
-            if (e.currentTarget.className.indexOf('active') !== -1) {return false;}
-            $('#phase-tabs > li').removeClass('active');
-            $(e.currentTarget).addClass('active');
-            return true;
-        }
-
-        //
-        function loadPhase(phase) {
-            $('#phase_overview')
-                .load('ajax/phase_progress/', {'phase': phase}, function(response, status, xhr) {
-                    if (status === 'error') displayError(this);
-                })
-                .append(getLoadingDiv());
-        }
-
-        //
-        function getLoadingDiv() {
-            var div = $(document.createElement('div'));
-            div.html('Loading...');
-            div.addClass('loading-div');
-            div.css('position', 'absolute');
-            div.css('width', '100%');
-            div.css('height', '100%');
-            div.css('color', 'red');
-            div.css('background-color', 'rgba(255,255,255,0.75)');
-            div.css('top', '0');
-            div.css('left', '0');
-            div.css('right', '0');
-            div.css('bottom', '0');
-            div.css('text-align', 'center');
-            return div;
-        }
-
-        //
-        function displayError(el) {
-            $(el).children().remove();
-            $(el).append('<span style="color: red;">Error in gettting the data</span>');
-        }
-
-        //
-        function loadRegion() {
-            var region = this.dataset.region;
-            $('#region-detail-header h1').html(region.charAt(0).toUpperCase() + region.slice(1));
-            $('#region-detail-content')
-                .load('ajax/region_detail/' + region + '/', function(response, status, xhr) {
-                    if (status === 'error') displayError(this);
-                })
-                .append(getLoadingDiv());
-            // Only show languages for the selected region
-            $('div[id$=-languages]').addClass('hidden');
-            $('#' + region + '-languages').removeClass('hidden');
-            // 
-            $('.languages-buttons').removeClass('hidden');
-            // 
-            $('.progress-bar').removeClass('active');
-            $('#' + region + '-progress .progress-bar').addClass('active');
-        }
-
-        // 
-        function resetDisplay() {
-            $('#region-detail-header h1').html('Region Detail');
-            $('#region-detail-content').html('<span class="placeholder-text">Click on a region to view its detail and languages</span>');
-            $('.languages-buttons').addClass('hidden');
-            $('div[id$=-languages]').addClass('hidden');
-            $('.progress-bar').removeClass('active');
-        }
-
-        // Manually open bootstrap modal while avoiding event propagation
-        function openVariantSplitModal(e) {
-            // Note: This will stop bootstrap's default modal showing via data-toggle attribute.
-            // Reason: Without stopping propagation, event will buble up to the panel header
-            //    which will show/hide the panel body. That is undesired behavior.
-            e.stopPropagation();
-            $('#modal').modal({
-                backdrop: true,
-                keyboard: true,
-                show: true
-            });
-            $('#modal .modal-content').load(this.attributes.href.value);
-        }
-    });
-
-</script>
 {% endblock custom_bottom_script %}
