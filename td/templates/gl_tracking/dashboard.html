@@ -1,78 +1,170 @@
 {% extends "site_base.html" %}
 
+
 {% load i18n %}
 {% load humanize %}
 
+
 {% block head_title %}GL Tracking{% endblock head_title %}
+
 
 {% block body_class %}{% endblock body_class %}
 
+
 {% block extra_style %}
-<style>
-    .placeholder-text {
-        color: #AAA;
-    }
-    .panel-body {
-        position: relative;
-    }
-    #phase-tabs li {
-        cursor: pointer;
-    }
-    .language-list .panel-heading:hover {
-        background-color: #F5F5FF;
-    }
-    .btn-variant-split {
-        line-height: 0;
-        padding: 0 0.5rem;
-        margin-left: 0.65rem;
-    }
-    .full-width {
-        width: 100%;
-    }
-</style>
+    <style>
+        .panel-body {
+            position: relative;
+        }
+        .language-list .panel-heading:hover {
+            background-color: #F5F5FF;
+        }
+        .btn-variant-split {
+            line-height: 0;
+            padding: 0 0.5rem;
+            margin-left: 0.65rem;
+        }
+        .main-container {
+            display: flex;
+            margin-top: 2rem;
+            width: 100%;
+        }
+        .main-container.language-list {
+            flex-direction: column;
+        }
+        .progress-overview {
+            margin-bottom: 30px;
+        }
+        .labels-container {
+            margin-right: 1rem;
+        }
+        .labels-container p,
+        .progress-bar-wrapper .progress,
+        .progress-percentage {
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        .overall,
+        p.overall {
+            margin-bottom: 3rem;
+        }
+        .progress-bars-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .progress-bar-wrapper {
+            display: flex;
+        }
+        .progress {
+            flex: 1;
+        }
+        .progress-bar {
+            background-color: #999;
+            min-width: 0.2em;
+        }
+        .progress-bar-wrapper:hover .progress-bar,
+        .overall-progress,
+        .progress-bar.active {
+            background-color: #337AB7;
+        }
+        .progress-percentage {
+            flex: 0 0 4.5rem;
+            text-align: right;
+            margin-left: 1rem;
+        }
+        .phase-view {
+            position: relative;
+            min-height: 3rem;
+        }
+        .language-panel-body {
+            padding: 0;
+        }
+        .btn-link {
+            display: inline;
+        }
+        .icon-button {
+            margin-left: 0.5rem;
+            line-height: 0;
+        }
+        th {
+            font-weight: normal;
+            color: #AAA;
+        }
+        table.table {
+            margin-bottom: 0;
+        }
+        .table > thead > tr > th {
+            vertical-align: middle;
+        }
+        .icon-link {
+            cursor: pointer;
+            color: #337AB7;
+        }
+        ul {
+            padding-left: 2rem;
+        }
+    </style>
 {% endblock extra_style %}
+
 
 {% block body_base %}
 
-<!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="variantModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<!-- Modal end -->
-
-<section class="jumbotron">
-    <div class="container">
-        {% include "_messages.html" %}
-        <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
-        {% if user.is_authenticated %}
-            {% url "gl:home" as custom_url %}
-            {% blocktrans %}
-                <a href="{{ custom_url }}" class="btn btn-primary large disabled">Add progress</a>
-            {% endblocktrans %}
-        {% endif %}
-    </div>
-</section>
-
-<section id="content_body">
-    <div class="container">
-
-        <div id="progress-overview" style="margin-bottom: 30px;">
-            <ul id="phase-tabs" class="nav nav-tabs">
-                <li role="presentation" class="active clickable" data-phase="1"><a>Phase I</a></li>
-                <li role="presentation" class="clickable" data-phase="2"><a>Phase II</a></li>
-            </ul>
-            <div id="phase_overview" style="position: relative; min-height: 3rem;">
-                {# phase_progress.html will be loaded here #}
+    <!-- MODAL (SMALL)-->
+    <div class="modal fade" id="modal-sm" tabindex="-1" role="dialog" aria-labelledby="modalSmall" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
             </div>
         </div>
-
     </div>
-</section>
+
+
+    <!-- MODAL (MEDIUM)-->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalMedium" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL (LARGE) -->
+    <div class="modal fade" id="modal-lg" tabindex="-1" role="dialog" aria-labelledby="modalLarge" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JUMBOTRON -->
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
+        </div>
+    </section>
+
+    <!-- BODY/CONTENT -->
+    <section id="content_body">
+        <div class="container">
+            <div id="progress-overview">
+                <ul id="phase-tabs" class="nav nav-tabs">
+                    {% for phase in phases %}
+                        <li role="presentation" class="clickable {% if forloop.first %}active{% endif %}" data-phase="{{phase.number}}">
+                            <a>{% if phase.name %}{{phase.name}}{% else %}Phase {{phase.number}}{% endif %}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div id="phase-view" class="phase-view">
+                    {# phase_progress.html will be loaded here #}
+                </div>
+            </div>
+        </div>
+    </section>
 
 {% endblock body_base %}
+
 
 {% block custom_bottom_script %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
@@ -88,48 +180,69 @@
             // ===============
             // Switching tabs and loading data when clicking on tabs
             $('#phase-tabs > li').on('click', function(e) {
-                if (switchTab(e)) {
+                if (switchActiveTab(e)) {
                     loadPhase(this.dataset.phase);
                 }
             });
+
             // Loading region detail and languages when clicking on the region progress
             ['.labels-container p:not(.overall)', '.progress-bar-wrapper .progress:not(.overall)', '.progress-percentage:not(.overall)']
             .forEach(function(selector) {
-                $('#phase_overview').on('click', selector, loadRegion);
+                $('#phase-view').on('click', selector, loadRegion);
             });
-            $('#phase_overview').on('click', '.expand-all', function() {
+
+            // Expand/Collapse all language tables when clicking on the corresponding buttons
+            $('#phase-view').on('click', '.expand-all', function() {
                 $('.language-list .panel-body.language-panel-body').collapse('show');
             });
-            $('#phase_overview').on('click', '.collapse-all', function() {
+            $('#phase-view').on('click', '.collapse-all', function() {
                 $('.language-list .panel-body.language-panel-body').collapse('hide');
             });
-            $('#phase_overview').on('click', '.overall', resetDisplay);
-            $('#phase_overview').on('click', '.btn-variant-split', openVariantSplitModal);
+
+            // Hide all region info when clicking on "Overall" bar
+            $('#phase-view').on('click', '.overall', resetDisplay);
+            
+            // Manually open modal form when clicking on the variant split button
+            $('#phase-view').on('click', '.btn-variant-split', openVariantSplitModal);
+            
+            // Auto-focus to the input box when the user opens a modal
             $('#modal').on('shown.bs.modal', function() {
                 $('#variant').focus();
+            });
+
+            $('body').on('hidden.bs.modal', '.modal', function() {
+                $(this).removeData('bs.modal');
+            });
+            
+            // Initialize Bootstrap's popover
+            $('#phase-view').popover({
+                selector: '[data-toggle="popover"]',
+                trigger: 'focus'
             });
 
 
             // CUSTOM FUNCTIONS
             // ================
-            //
-            function switchTab(e) {
+            // Sets the clicked element as active if it wasn't
+            function switchActiveTab(e) {
                 if (e.currentTarget.className.indexOf('active') !== -1) {return false;}
                 $('#phase-tabs > li').removeClass('active');
                 $(e.currentTarget).addClass('active');
                 return true;
             }
 
-            //
+            // Makes an API call to load content into the target element
             function loadPhase(phase) {
-                $('#phase_overview')
+                $('#phase-view')
                     .load('ajax/phase_progress/', {'phase': phase}, function(response, status, xhr) {
                         if (status === 'error') displayError(this);
                     })
+                    // Insert a loading indicator that will be overriden by the upcoming content
+                    //    once that's ready
                     .append(getLoadingDiv());
             }
 
-            //
+            // Creates a simple frost overlay loading indicator
             function getLoadingDiv() {
                 var div = $(document.createElement('div'));
                 div.html('Loading...');
@@ -147,47 +260,56 @@
                 return div;
             }
 
-            //
+            // Inserts an error message to the target element
             function displayError(el) {
                 $(el).children().remove();
                 $(el).append('<span style="color: red;">Error in gettting the data</span>');
             }
 
-            //
+            // Loads and displays appropriate region info and its language tables
             function loadRegion() {
+                // Display region name based on built-in attribute
                 var region = this.dataset.region;
                 $('#region-detail-header h1').html(region.charAt(0).toUpperCase() + region.slice(1));
+                // Make an API call to load region info into the content container
                 $('#region-detail-content')
                     .load('ajax/region_detail/' + region + '/', function(response, status, xhr) {
+                        // Display an error message if there's an error instead
                         if (status === 'error') displayError(this);
                     })
+                    // Display a loading indicator that will be overriden by the upcoming content
+                    //    once it's ready
                     .append(getLoadingDiv());
-                // Only show languages for the selected region
+                // Only show language tables for the selected region
                 $('div[id$=-languages]').addClass('hidden');
                 $('#' + region + '-languages').removeClass('hidden');
-                // 
+                // Show action buttons for the language tables
                 $('.languages-buttons').removeClass('hidden');
-                // 
+                // Set selected region's bar to active
                 $('.progress-bar').removeClass('active');
                 $('#' + region + '-progress .progress-bar').addClass('active');
             }
 
-            // 
+            // Restore the view to the initial stage
             function resetDisplay() {
+                // Restore placeholders
                 $('#region-detail-header h1').html('Region Detail');
                 $('#region-detail-content').html('<span class="placeholder-text">Click on a region to view its detail and languages</span>');
-                $('.languages-buttons').addClass('hidden');
-                $('div[id$=-languages]').addClass('hidden');
                 $('.progress-bar').removeClass('active');
+                // Hide all language tables and action buttons
+                $('div[id$=-languages]').addClass('hidden');
+                $('.languages-buttons').addClass('hidden');
             }
 
             // Manually open bootstrap modal while avoiding event propagation
             function openVariantSplitModal(e) {
-                // Note: This will stop bootstrap's default modal showing via data-toggle attribute.
-                // Reason: Without stopping propagation, event will buble up to the panel header
-                //    which will show/hide the panel body. That is undesired behavior.
+                // NOTE: This will stop bootstrap's default way of showing modal via data-toggle attribute.
+                // REASON: Without stopping propagation, the event on variant-splut button will bubble up
+                //    to the language table header. In other words, clicking the variant-split button will
+                //    not only show the modal, but also opens/closes language table body, which is an
+                //    undesired behavior.
                 e.stopPropagation();
-                $('#modal').modal({
+                $('#modal-sm').modal({
                     backdrop: true,
                     keyboard: true,
                     show: true

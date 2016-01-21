@@ -10,15 +10,15 @@ from django.db import models
 # ------------- #
 #    CHOICES    #
 # ------------- #
-METHODS = (
-    ('online', 'Online'),
-    ('offline', 'Offline'),
-    ('mast', 'MAST'),
-    ('d43', 'door43'),
-    ('ts', 'translationStudio'),
-    ('memoq', 'MemoQ'),
-    ('sovee', 'Sovee'),
-)
+# METHODS = (
+#     ('online', 'Online'),
+#     ('offline', 'Offline'),
+#     ('mast', 'MAST'),
+#     ('d43', 'door43'),
+#     ('ts', 'translationStudio'),
+#     ('memoq', 'MemoQ'),
+#     ('sovee', 'Sovee'),
+# )
 
 COMPLETION_RATE = (
     (2, '2%'),
@@ -30,7 +30,6 @@ COMPLETION_RATE = (
 )
 
 QA_LEVEL = (
-    (0, '0'),
     (1, '1'),
     (2, '2'),
     (3, '3'),
@@ -94,15 +93,20 @@ class Progress(models.Model):
 
     language = models.ForeignKey('td.Language', limit_choices_to={'gateway_flag': True})
     type = models.ForeignKey('Document')
-    is_online = models.NullBooleanField()
-    method = models.CharField(max_length=200, choices=METHODS, blank=True)
-    completion_rate = models.PositiveSmallIntegerField(choices=COMPLETION_RATE, null=True, blank=True)
-    completion_date = models.DateField(null=True, blank=True)
-    qa_level = models.PositiveSmallIntegerField(choices=QA_LEVEL, null=True, blank=True)
-    in_door43 = models.NullBooleanField()
-    in_uw = models.NullBooleanField()
+    is_online = models.NullBooleanField(verbose_name="Is Online?")
+    methods = models.ManyToManyField('Method', blank=True)
+    completion_rate = models.PositiveSmallIntegerField(choices=COMPLETION_RATE, null=True, blank=True, verbose_name="Completion Rate")
+    completion_date = models.DateField(null=True, blank=True, verbose_name="Completion Date")
+    qa_level = models.PositiveSmallIntegerField(choices=QA_LEVEL, null=True, blank=True, verbose_name="QA Level")
+    in_door43 = models.NullBooleanField(verbose_name="Available in Door43.org?")
+    in_uw = models.NullBooleanField(verbose_name="Available in UnfoldingWord.org?")
     partners = models.ManyToManyField('Partner', blank=True)
     notes = models.TextField(blank=True)
+    is_done = models.BooleanField(default=False)
+    created_at = models.DateTimeField(editable=False, null=True, default=None)
+    created_by = models.ForeignKey(User, related_name="created_by", null=True, blank=True, default=None)
+    modified_at = models.DateTimeField(null=True, default=None)
+    modified_by = models.ForeignKey(User, related_name="modified_by", null=True, blank=True, default=None)
 
     def __str__(self):
         return str(self.type)
@@ -141,7 +145,6 @@ class RegionalDirector(models.Model):
     first_name = models.CharField(max_length=200)
     middle_name = models.CharField(max_length=200, blank=True)
     last_name = models.CharField(max_length=200)
-    # user_account = models.ForeignKey(User, null=True, blank=True)
     user = models.OneToOneField(User, related_name="regdir", null=True, blank=True)
 
     def __str__(self):
@@ -149,3 +152,16 @@ class RegionalDirector(models.Model):
 
     class Meta:
         unique_together = ('first_name', 'middle_name', 'last_name')
+
+
+# ----------------------- #
+#    REGIONAL DIRECTOR    #
+# ----------------------- #
+@python_2_unicode_compatible
+class Method(models.Model):
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=50)
+
+    def __str__(self):
+        return self.name

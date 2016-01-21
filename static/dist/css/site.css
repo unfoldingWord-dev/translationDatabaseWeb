@@ -11380,3 +11380,24 @@ label.required {
 label.required:after {
   content: " *";
 }
+.placeholder-text {
+  color: #999;
+}
+.nav-tabs > li {
+  cursor: pointer;
+}
+.full-width {
+  width: 100%;
+}
+.half-width {
+  width: 50%;
+}
+.third-width {
+  width: 33.33%;
+}
+.quarter-width {
+  width: 25%;
+}
+.clickable {
+  cursor: pointer;
+}
