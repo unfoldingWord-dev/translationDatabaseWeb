@@ -9230,10 +9230,7 @@
 	            break;
 	        // Build translator element
 	        case 'translator':
-	            var elem = '<div class="inline inline-input clearfix">' + '<div class="translator-text clearfix">' + '<input name="translator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="translator-checkboxes">' +
-	            // '<div class="half-width"><input name="sof' + length + '" type="checkbox" class="form-control" /></div>' +
-	            // '<div class="half-width"><input name="tg' + length + '" type="checkbox" class="form-control" /></div>' +
-	            '<div class="full-width"><input name="docs_signed' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
+	            var elem = '<div class="inline inline-input clearfix">' + '<div class="translator-text clearfix">' + '<input name="translator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="translator-checkboxes">' + '<div class="full-width"><input name="docs_signed' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
 	            break;
 	        default:
 	            var elem = '';

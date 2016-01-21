@@ -1,28 +1,37 @@
 from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, Region
-from td.gl_tracking.models import Document
-from td.gl_tracking.forms import VariantSplitModalForm
+from td.gl_tracking.models import Document, Progress, Phase
+from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "gl_tracking/dashboard.html"
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context["phases"] = Phase.objects.all()
+        return context
 
-class PhaseProgressView(LoginRequiredMixin, TemplateView):
-    template_name = "gl_tracking/phase_progress.html"
+
+class PhaseView(LoginRequiredMixin, TemplateView):
+    template_name = "gl_tracking/_phase_view.html"
 
     def post(self, request, *args, **kwargs):
+        """
+        Overriden to allow POST and avoid error when doing so.
+        POST will be the default method of calling this view.
+        """
         context = self.get_context_data()
         return self.render_to_response(context)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(PhaseProgressView, self).get_context_data(**kwargs)
+        context = super(PhaseView, self).get_context_data(**kwargs)
         #
         regions = map_gls(Language.objects.filter(gateway_flag=True, variant_of=None))
         for key, region in regions.iteritems():
@@ -31,16 +40,20 @@ class PhaseProgressView(LoginRequiredMixin, TemplateView):
         context["phase"] = self.request.POST["phase"]
         context["regions"] = regions
         context["overall_progress"] = get_overall_progress(context["regions"])
-        context["documents"] = Document.objects.filter(category__phase__number=context["phase"])
+        context["can_edit"] = get_edit_privilege(self.request.user.username)
 
         return context
 
 
 class RegionDetailView(LoginRequiredMixin, DetailView):
     model = Region
-    template_name = "gl_tracking/region_detail.html"
+    template_name = "gl_tracking/_region_detail.html"
 
     def post(self, request, *args, **kwargs):
+        """
+        Overriden to allow POST and avoid error when doing so.
+        POST will be the default method of calling this view.
+        """
         context = self.get_context_data()
         return self.render_to_response(context)
 
@@ -67,6 +80,21 @@ class VariantSplitView(LoginRequiredMixin, FormView):
             "variant": variant,
         }
         return render(self.request, "gl_tracking/variant_split_modal_form.html", context)
+
+
+class ProgressEditView(LoginRequiredMixin, UpdateView):
+    model = Progress
+    form_class = ProgressForm
+    template_name_suffix = "_update_modal_form"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # Render the same form but with extra context for the template.
+        context = {
+            "success": True,
+            "object": self.object,
+        }
+        return render(self.request, "gl_tracking/progress_update_modal_form.html", context)
 
 
 # ---------------------- #
@@ -115,3 +143,18 @@ def get_overall_progress(regions):
         return round(total / count, 2)
     else:
         return 0.0
+
+
+def get_edit_privilege(username):
+    # Initialize default permission (all False)
+    permission = []
+
+    # Check if user is a gateway language coordinator
+    # If he is, get the region he is responsible for
+    # Append that region to the persmission list
+    for region in Region.objects.all():
+        permission.append(region.slug)
+
+    print '\nGETTING PRIVILEGE FOR: ', username, permission
+
+    return permission
