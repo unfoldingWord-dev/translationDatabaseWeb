@@ -169,10 +169,29 @@ class PublishRequestForm(forms.ModelForm):
             except:
                 pass
 
+        self.fields['rejected_at'].widget.attrs['readonly'] = True
+        self.fields['rejected_at'].widget.attrs['disabled'] = 'disabled'
+        self.fields['rejected_by'].widget.attrs['readonly'] = True
+        self.fields['rejected_by'].widget.attrs['disabled'] = 'disabled'
+
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
         if lang_id:
             return Language.objects.get(pk=lang_id)
+
+    def clean_rejected_at(self):
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            return instance.rejected_at
+        else:
+            return None
+
+    def clean_rejected_by(self):
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            return instance.rejected_by
+        else:
+            return None
 
     def clean(self):
         cleaned_data = super(PublishRequestForm, self).clean()

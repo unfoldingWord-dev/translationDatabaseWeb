@@ -17,7 +17,7 @@
                 <div class="panel-body">
                     <form action="" method="post" class="form" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <p>Are you sure you want to Reject (delete) this request for publication: ({{ object.pk }}) {{ object.resource_type }} in ({{ object.language.code }}) {{ object.language.name }}</p>
+                        <p>Are you sure you want to Reject this request for publication: ({{ object.pk }}) {{ object.resource_type }} in ({{ object.language.code }}) {{ object.language.name }}</p>
                         <div class="actions pull-right">
                             <button type="submit" class="btn btn-primary">Confirm</button>
                             <a href="{% url "publish_request_update" object.pk %}" class="btn btn-danger">Cancel</a>

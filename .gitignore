@@ -15,6 +15,7 @@ nosetests.xml
 
 # IDE stuff
 .idea
+*.iml
 
 # Mac OS X junk
 .DS_Store
