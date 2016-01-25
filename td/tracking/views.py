@@ -70,7 +70,7 @@ class CharterTableSourceView(DataTableSourceView):
             qs = self.queryset.filter(
                 reduce(
                     operator.or_,
-                    [Q(language__name__icontains=self.search_term)]
+                    [Q(language__name__icontains=self.search_term) | Q(language__code__icontains=self.search_term)]
                 )
             ).order_by("start_date")
             if qs.count():
@@ -119,6 +119,7 @@ class AjaxCharterListView(CharterTableSourceView):
     model = Charter
     fields = [
         "language__name",
+        "language__anglicized_name",
         "language__code",
         "start_date",
         "end_date",

@@ -4,7 +4,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 from td.models import Language
-from td.gl_tracking.models import Phase, DocumentCategory, Document, Progress, Partner, RegionalDirector, Method
+from td.gl_tracking.models import Phase, DocumentCategory, Document, Progress, Partner, Method, GLDirector
 
 
 class PhaseAdmin(admin.ModelAdmin):
@@ -17,6 +17,7 @@ class DocumentCategoryAdmin(admin.ModelAdmin):
 
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ("code", "name", "description", "category")
+    list_filter = ("category", )
 
 
 class ProgressResource(resources.ModelResource):
@@ -43,10 +44,17 @@ class ProgressResource(resources.ModelResource):
 class ProgressAdmin(ImportExportModelAdmin):
     resource_class = ProgressResource
     list_display = ("type", "language", "completion_rate", "completion_date", "notes")
+    list_filter = ("type", "language", "completion_rate", "completion_date", )
 
 
-class RegionalDirectorAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "middle_name", "last_name", "user")
+class GLDirectorAdmin(admin.ModelAdmin):
+    list_display = ("user", "regions_string")
+    list_filter = ("regions", )
+
+    def regions_string(self, obj):
+        return ", ".join([r.slug for r in obj.regions.all()])
+
+    regions_string.admin_order_field = "user__username"
 
 
 admin.site.register(Phase, PhaseAdmin)
@@ -54,5 +62,5 @@ admin.site.register(DocumentCategory, DocumentCategoryAdmin)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Progress, ProgressAdmin)
 admin.site.register(Partner)
-admin.site.register(RegionalDirector, RegionalDirectorAdmin)
 admin.site.register(Method)
+admin.site.register(GLDirector, GLDirectorAdmin)
