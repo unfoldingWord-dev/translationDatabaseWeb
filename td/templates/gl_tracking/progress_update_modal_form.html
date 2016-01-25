@@ -37,26 +37,31 @@
 </div>
 
 <script>
+
     $(document).ready(function() {
         
         // INITIAL SCRIPTS
         // ===============
-        // $('label[for="id_completion_rate"]').parent().append('<p>OH HELLO</p>');
         var completionRateGuide = '<ul>' + 
-            '<li>2% - Translation work initiated</li>' +
-            '<li>25% - Level 1 nearly complete</li>' +
-            '<li>50% - Level 1 complete, uploaded to Door43 including status & contributor info after publish request is accepted</li>' +
-            '<li>75% - Level 2 complete, uploaded to Door43 including status & contributor info after publish request is accepted</li>' +
-            '<li>99% - Level 3 complete, uploaded to Door43 including status & contributor info after publish request is accepted</li>' +
-            '<li>100% - Translation complete and posted to uW network</li>' +
-            '</ul>';
-        var questionCircle = '<i class="fa fa-question-circle icon-link" data-toggle="popover" data-content="' + completionRateGuide + '" data-placement="right" tabindex="0"></i>';
+            '<li><strong>2%</strong> - Translation work initiated</li>' +
+            '<li><strong>25%</strong> - Level 1 nearly complete</li>' +
+            '<li><strong>50%</strong> - Level 1 complete*</li>' +
+            '<li><strong>75%</strong> - Level 2 complete*</li>' +
+            '<li><strong>99%</strong> - Level 3 complete*</li>' +
+            '<li><strong>100%</strong> - Translation complete and posted to uW network</li>' +
+            '</ul>' +
+            '<p>* Uploaded to Door43 including status & contributor info after publish request is accepted</p>';
+        var questionCircle = '<span>&nbsp;</span><i class="fa fa-question-circle icon-link" data-toggle="popover" data-content="' + completionRateGuide + '" data-placement="right" tabindex="0"></i>';
         $(questionCircle).insertAfter('label[for="id_completion_rate"]');
         $('.modal-body').popover({
-                selector: '[data-toggle="popover"]',
-                trigger: 'focus',
-                html: true
-            });
+            selector: '[data-toggle="popover"]',
+            trigger: 'focus',
+            html: true
+        });
+        //
+        // $('.datepicker').parent('[class=" "]').addClass('input-group');
+        // $('<div class="input-group-addon dapicker-toggle"><span class="glyphicon glyphicon-th"></span></div>').insertAfter('.datepicker');
+
 
         // EVENT LISTENERS
         // ===============
@@ -82,5 +87,10 @@
                 }
             });
         });
+        //
+        // $('.datepicker-toggle').on('click', function(e) {
+
+        // });
     });
+
 </script>
