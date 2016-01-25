@@ -1,7 +1,5 @@
 from django import forms
 from td.gl_tracking.models import Progress
-from td.tracking.forms import determine_widget
-# from django.core.urlresolvers import reverse as urlReverse
 
 
 class VariantSplitModalForm(forms.Form):
@@ -34,6 +32,7 @@ class ProgressForm(forms.ModelForm):
                 "%m/%d/%Y",
                 "%m/%d/%y",
             ],
+            required=False,
         )
 
     class Meta:

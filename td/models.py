@@ -61,7 +61,6 @@ class Network(models.Model):
 class Region(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
-    wa_director = models.ForeignKey('gl_tracking.RegionalDirector', null=True, blank=True)
     tracker = FieldTracker()
 
     def __str__(self):

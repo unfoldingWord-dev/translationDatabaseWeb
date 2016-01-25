@@ -5,8 +5,6 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 
-# from td.models import Language
-
 
 # ----------- #
 #    PHASE    #
@@ -49,7 +47,7 @@ class DocumentCategory(models.Model):
 class Document(models.Model):
 
     name = models.CharField(max_length=200, unique=True)
-    code = models.SlugField(max_length=4, unique=True, default='')
+    code = models.SlugField(max_length=10, unique=True, default='')
     description = models.TextField(blank=True)
     category = models.ForeignKey('DocumentCategory', null=True)
 
@@ -128,27 +126,9 @@ class Partner(models.Model):
         return self.name
 
 
-# ----------------------- #
-#    REGIONAL DIRECTOR    #
-# ----------------------- #
-@python_2_unicode_compatible
-class RegionalDirector(models.Model):
-
-    first_name = models.CharField(max_length=200)
-    middle_name = models.CharField(max_length=200, blank=True)
-    last_name = models.CharField(max_length=200)
-    user = models.OneToOneField(User, related_name="regdir", null=True, blank=True)
-
-    def __str__(self):
-        return self.first_name + " " + self.last_name
-
-    class Meta:
-        unique_together = ('first_name', 'middle_name', 'last_name')
-
-
-# ----------------------- #
-#    REGIONAL DIRECTOR    #
-# ----------------------- #
+# ------------ #
+#    METHOD    #
+# ------------ #
 @python_2_unicode_compatible
 class Method(models.Model):
 
@@ -157,3 +137,13 @@ class Method(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@python_2_unicode_compatible
+class GLDirector(models.Model):
+
+    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
+    regions = models.ManyToManyField("td.Region", blank=True)
+
+    def __str__(self):
+        return self.user.username

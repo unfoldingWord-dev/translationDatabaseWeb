@@ -1,12 +1,11 @@
-from django.shortcuts import render, redirect
-# from django.core.urlresolvers import reverse
+from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import FormView, UpdateView
 
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, Region
-from td.gl_tracking.models import Document, Progress, Phase
+from td.gl_tracking.models import Progress, Phase
 from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm
 
 
@@ -40,7 +39,7 @@ class PhaseView(LoginRequiredMixin, TemplateView):
         context["phase"] = self.request.POST["phase"]
         context["regions"] = regions
         context["overall_progress"] = get_overall_progress(context["regions"])
-        context["can_edit"] = get_edit_privilege(self.request.user.username)
+        context["can_edit"] = get_edit_privilege(self.request.user)
 
         return context
 
@@ -56,6 +55,11 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
         """
         context = self.get_context_data()
         return self.render_to_response(context)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(RegionDetailView, self).get_context_data(**kwargs)
+        context["directors"] = self.object.gldirector_set.all()
+        return context
 
 
 class VariantSplitView(LoginRequiredMixin, FormView):
@@ -145,16 +149,11 @@ def get_overall_progress(regions):
         return 0.0
 
 
-def get_edit_privilege(username):
-    # Initialize default permission (all False)
+def get_edit_privilege(user):
     permission = []
 
-    # Check if user is a gateway language coordinator
-    # If he is, get the region he is responsible for
-    # Append that region to the persmission list
-    for region in Region.objects.all():
-        permission.append(region.slug)
-
-    print '\nGETTING PRIVILEGE FOR: ', username, permission
+    if hasattr(user, "gldirector"):
+        for region in user.gldirector.regions.all():
+            permission.append(region.slug)
 
     return permission

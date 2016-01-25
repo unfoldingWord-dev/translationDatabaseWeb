@@ -58,9 +58,6 @@
             trigger: 'focus',
             html: true
         });
-        //
-        // $('.datepicker').parent('[class=" "]').addClass('input-group');
-        // $('<div class="input-group-addon dapicker-toggle"><span class="glyphicon glyphicon-th"></span></div>').insertAfter('.datepicker');
 
 
         // EVENT LISTENERS
@@ -71,26 +68,18 @@
                 $('.modal').modal('hide');
             });
         });
-        // Using ajaxSubmit instead of ajaxForm because we have custom validation
-        $('#progress-update-form').on('submit', function(e) {
-            e.preventDefault();
-            // TODO: Validate here if needed
-            $(this).ajaxSubmit({
-                target: '.modal-content',
-                resetForm: true,
-                clearForm: true,
-                success: function() {
-                    setTimeout(function() {
-                        $('.modal').modal('hide');
-                        window.location.reload(false);
-                    }, 1500);
-                }
-            });
+        // Submit with a success call back when clicking "Submit" button
+        $('#progress-update-form').ajaxForm({
+            target: '.modal-content',
+            resetForm: true,
+            clearForm: true,
+            success: function() {
+                setTimeout(function() {
+                    $('.modal').modal('hide');
+                    window.location.reload(false);
+                }, 1500);
+            }
         });
-        //
-        // $('.datepicker-toggle').on('click', function(e) {
-
-        // });
     });
 
 </script>
