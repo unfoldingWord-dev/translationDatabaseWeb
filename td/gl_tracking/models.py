@@ -1,39 +1,11 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 
 # from td.models import Language
-
-
-# ------------- #
-#    CHOICES    #
-# ------------- #
-# METHODS = (
-#     ('online', 'Online'),
-#     ('offline', 'Offline'),
-#     ('mast', 'MAST'),
-#     ('d43', 'door43'),
-#     ('ts', 'translationStudio'),
-#     ('memoq', 'MemoQ'),
-#     ('sovee', 'Sovee'),
-# )
-
-COMPLETION_RATE = (
-    (2, '2%'),
-    (25, '25%'),
-    (50, '50%'),
-    (75, '75%'),
-    (99, '99%'),
-    (100, '100%'),
-)
-
-QA_LEVEL = (
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-)
 
 
 # ----------- #
@@ -90,6 +62,19 @@ class Document(models.Model):
 # -------------- #
 @python_2_unicode_compatible
 class Progress(models.Model):
+    COMPLETION_RATE = (
+        (2, '2%'),
+        (25, '25%'),
+        (50, '50%'),
+        (75, '75%'),
+        (99, '99%'),
+        (100, '100%'),
+    )
+    QA_LEVEL = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+    )
 
     language = models.ForeignKey('td.Language', limit_choices_to={'gateway_flag': True})
     type = models.ForeignKey('Document')
@@ -110,6 +95,13 @@ class Progress(models.Model):
 
     def __str__(self):
         return str(self.type)
+
+    def save(self, *args, **kwargs):
+        """ Update Timestamp on save """
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Progress, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ("language", "type")
