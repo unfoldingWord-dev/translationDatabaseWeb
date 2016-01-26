@@ -97,8 +97,8 @@ class Progress(models.Model):
     def save(self, *args, **kwargs):
         """ Update Timestamp on save """
         if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
+            self.created_at = timezone.now()
+        self.modified_at = timezone.now()
         return super(Progress, self).save(*args, **kwargs)
 
     class Meta:
