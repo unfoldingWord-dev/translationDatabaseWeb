@@ -5,10 +5,6 @@ from td.gl_tracking.models import (
     Phase,
     DocumentCategory,
     Document,
-    Progress,
-    Partner,
-    Method,
-    GLDirector,
 )
 # from td.models import Language
 
