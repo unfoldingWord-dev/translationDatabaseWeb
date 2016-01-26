@@ -5,18 +5,22 @@
 
 {% block head_title %}Tracking | Home{% endblock %}
 
+
+{% block extra_style %}
+    <style>
+        .btn.btn-primary {
+            margin-top: 1rem;
+        }
+    </style>
+{% endblock %}
+
 {% block body_class %}home{% endblock %}
 
 {% block body_base %}
     <section class="jumbotron">
         <div class="container">
             {% include "_messages.html" %}
-            <h1>{% blocktrans %}Tracking Dashboard{% endblocktrans %}</h1>
-            <p>
-                {% blocktrans %}
-                Every verse. Every tongue. Every heart.
-                {% endblocktrans %}
-            </p>
+            <h1>{% blocktrans %}Translation Projects{% endblocktrans %}</h1>
             {% if user.is_authenticated %}
                 {% url "tracking:charter_add" as url_add_charter %}
                 {% url "tracking:event_add" as url_add_event %}
