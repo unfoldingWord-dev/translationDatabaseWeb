@@ -296,8 +296,7 @@ def languages_autocomplete(request):
 def source_languages_autocomplete(request):
     term = request.GET.get("q")
     langs = PublishRequest.objects.filter(
-        Q(language__code__icontains=term)
-        | Q(language__name__icontains=term),
+        Q(language__code__icontains=term) | Q(language__name__icontains=term),
         checking_level=3
     ).order_by("language__code", "-approved_at").distinct("language__code")
     d = [

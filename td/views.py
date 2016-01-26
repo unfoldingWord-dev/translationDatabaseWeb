@@ -92,8 +92,8 @@ def languages_autocomplete(request):
             x
             for x in data
             if (
-                term in x["lc"] or term in x["ln"].lower()
-                or term in x["ang"].lower() or term in x["lr"].lower()
+                term in x["lc"] or term in x["ln"].lower() or
+                term in x["ang"].lower() or term in x["lr"].lower()
             )
         ])
     return JsonResponse({"results": d, "count": len(d), "term": term})
