@@ -26,10 +26,12 @@
                                 {% endfor %}
                             </ul>
                             </div>
-                            <div class="actions pull-right">
-                              <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Approve</button>
-                              <a href="{% url "publish_request_delete" form.instance.pk %}" class="btn btn-warning"><i class="fa fa-ban"></i> Reject</a>
-                            </div>
+                            {% if not form.instance.rejected_at %}
+                                <div class="actions pull-right">
+                                  <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Approve</button>
+                                  <a href="{% url "publish_request_delete" form.instance.pk %}" class="btn btn-warning"><i class="fa fa-ban"></i> Reject</a>
+                                </div>
+                            {% endif %}
                         {% else %}
                         <button type="submit" class="btn btn-primary pull-right">
                             {% if form.errors %}
