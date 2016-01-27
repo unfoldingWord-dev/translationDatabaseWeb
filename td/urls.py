@@ -62,6 +62,7 @@ urlpatterns = [
     url(r"^ajax/data-sources/imb/peoplegroups/$", AjaxIMBPeopleGroupListView.as_view(), name="ajax_ds_imb_peoplegroups"),
 
     url(r"^ac/langnames/", languages_autocomplete, name="names_autocomplete"),
+    url(r"^api/", include("td.urls_api")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

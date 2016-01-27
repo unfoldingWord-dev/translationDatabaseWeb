@@ -150,6 +150,7 @@ INSTALLED_APPS = [
     "storages",
     "formtools",
     "import_export",
+    "rest_framework",
 
     # project
     "td",
@@ -251,3 +252,11 @@ CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']   # for security reasons, don't allow pickle
 CELERY_RESULT_BACKEND = "redis://"
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
