@@ -1,0 +1,231 @@
+[
+    {
+        "model": "gl_tracking.phase",
+        "pk": 1,
+        "fields": {
+            "number": "1",
+            "name": "BT Phase 1",
+            "description": "Bible Translation Phase 1 (as determined by whom?)"
+        }
+    },
+    {
+        "model": "gl_tracking.phase",
+        "pk": 2,
+        "fields": {
+            "number": "2",
+            "name": "BT Phase 2",
+            "description": "Bible Translation Phase 2 (as determined by whom?)"
+        }
+    },
+
+    {
+        "model": "gl_tracking.documentcategory",
+        "pk": 1,
+        "fields": {
+            "name": "Tools/Metadata",
+            "phase": 1
+        }
+    },
+    {
+        "model": "gl_tracking.documentcategory",
+        "pk": 2,
+        "fields": {
+            "name": "Open Bible Stories",
+            "phase": 1
+        }
+    },
+    {
+        "model": "gl_tracking.documentcategory",
+        "pk": 3,
+        "fields": {
+            "name": "Scripture",
+            "phase": 2
+        }
+    },
+
+    {
+        "model": "gl_tracking.document",
+        "pk": 1,
+        "fields": {
+            "name": "Statement of Faith",
+            "code": "sof",
+            "category": 1
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 2,
+        "fields": {
+            "name": "CC-SA Licensing Agreement",
+            "code": "ccsa",
+            "category": 1
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 3,
+        "fields": {
+            "name": "Translation Guidelines",
+            "code": "tgl",
+            "category": 1
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 4,
+        "fields": {
+            "name": "Front/Back Matter",
+            "code": "fbm",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 5,
+        "fields": {
+            "name": "Mobile App Words",
+            "code": "maw",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 6,
+        "fields": {
+            "name": "translationAcademy Vol. 1",
+            "code": "ta1",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 7,
+        "fields": {
+            "name": "translationNotes",
+            "code": "tn",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 8,
+        "fields": {
+            "name": "translationWords Vol. 1",
+            "code": "tw1",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 9,
+        "fields": {
+            "name": "Open Bible Stories",
+            "code": "obs",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 10,
+        "fields": {
+            "name": "translationQuestions",
+            "code": "tq",
+            "category": 2
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 11,
+        "fields": {
+            "name": "translationAcademy Vol. 2",
+            "code": "ta2",
+            "category": 3
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 12,
+        "fields": {
+            "name": "translationNotes Bible",
+            "code": "tnb",
+            "category": 3
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 13,
+        "fields": {
+            "name": "translationWords Vol. 2",
+            "code": "tw2",
+            "category": 3
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 14,
+        "fields": {
+            "name": "translationQuestions Bible",
+            "code": "tqb",
+            "category": 3
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 15,
+        "fields": {
+            "name": "Unlocked Literal Bible",
+            "code": "ulb",
+            "category": 3
+        }
+    },
+    {
+        "model": "gl_tracking.document",
+        "pk": 16,
+        "fields": {
+            "name": "Unlocked Dynamic Bible",
+            "code": "udb",
+            "category": 3
+        }
+    },
+
+    {
+        "model": "gl_tracking.method",
+        "pk": 1,
+        "fields": {
+            "name": "MAST", 
+            "slug": "mast"
+        }
+    },
+    {
+        "model": "gl_tracking.method",
+        "pk": 2,
+        "fields": {
+            "name": "Door43", 
+            "slug": "door43"
+        }
+    },
+    {
+        "model": "gl_tracking.method",
+        "pk": 3,
+        "fields": {
+            "name": "translationStudio", 
+            "slug": "ts"
+        }
+    },
+    {
+        "model": "gl_tracking.method",
+        "pk": 4,
+        "fields": {
+            "name": "MemoQ", 
+            "slug": "memoq"
+        }
+    },
+    {
+        "model": "gl_tracking.method",
+        "pk": 5,
+        "fields": {
+            "name": "Sovee", 
+            "slug": "sovee"
+        }
+    }
+]

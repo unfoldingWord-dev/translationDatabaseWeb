@@ -6,6 +6,7 @@ window.jQuery = window.$ = require("jquery");
 require("./tracking_forms.js");
 
 require("bootstrap");
+require("bootstrap-datepicker");
 require("imports?define=>false!bootstrap-daterangepicker");
 require("eldarion-ajax");
 require("select2");

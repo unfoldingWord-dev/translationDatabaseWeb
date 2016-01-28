@@ -1,0 +1,85 @@
+{% load i18n %}
+{% load bootstrap %}
+
+<!-- This HTML will be loaded into div.modal-content -->
+
+<div class="modal-header">
+    <button name="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h4 class="modal-title" id="variantModalLabel">Edit <strong>{{ object.type }}</strong> for <strong>{{ object.language.ang|default:object.language.name }}</strong></h4>
+</div>
+
+    {% if success %}
+
+        <div class="modal-body">
+            <p class="success"><strong>{{ object.type }}</strong> for <strong>{{ object.language.ang|default:object.language.name }}</strong> has been modified. This page will reload...</p>
+        </div>
+        <div class="modal-footer">
+            <button name="cancel" type="button" class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+        </div>
+
+    {% else %}
+
+        <form id="progress-update-form" action="{% url 'gl:change_progress' object.pk %}" method="POST" class="form" role="form">
+            <div class="modal-body">
+                {% csrf_token %}
+				{{ form | bootstrap }}
+            </div>
+            <div class="modal-footer">
+                <button name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary pull-right">
+                    {% if form.errors %}Try again{% else %}Submit{% endif %}
+                </button>
+            </div>
+        </form>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+        
+        // INITIAL SCRIPTS
+        // ===============
+        var completionRateGuide = '<ul>' + 
+            '<li><strong>2%</strong> - Translation work initiated</li>' +
+            '<li><strong>25%</strong> - Level 1 nearly complete</li>' +
+            '<li><strong>50%</strong> - Level 1 complete*</li>' +
+            '<li><strong>75%</strong> - Level 2 complete*</li>' +
+            '<li><strong>99%</strong> - Level 3 complete*</li>' +
+            '<li><strong>100%</strong> - Translation complete and posted to uW network</li>' +
+            '</ul>' +
+            '<p>* Uploaded to Door43 including status & contributor info after publish request is accepted</p>';
+        var questionCircle = '<span>&nbsp;</span><i class="fa fa-question-circle icon-link" data-toggle="popover" data-content="' + completionRateGuide + '" data-placement="right" tabindex="0"></i>';
+        $(questionCircle).insertAfter('label[for="id_completion_rate"]');
+        $('.modal-body').popover({
+            selector: '[data-toggle="popover"]',
+            trigger: 'focus',
+            html: true
+        });
+
+
+        // EVENT LISTENERS
+        // ===============
+        // Hide button when clicking the X mark or Cancel button
+        ['button[name="cancel"]', 'button[name="close"]'].forEach(function(el) {
+            $(el).on('click', function() {
+                $('.modal').modal('hide');
+            });
+        });
+        // Submit with a success call back when clicking "Submit" button
+        $('#progress-update-form').ajaxForm({
+            target: '.modal-content',
+            resetForm: true,
+            clearForm: true,
+            success: function() {
+                setTimeout(function() {
+                    $('.modal').modal('hide');
+                    window.location.reload(false);
+                }, 1500);
+            }
+        });
+    });
+
+</script>
