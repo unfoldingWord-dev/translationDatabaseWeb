@@ -59,6 +59,19 @@ class PublishRequestFormNewRequestTestCase(TestCase):
         form = PublishRequestNoAuthForm({}, None)
         self.assertFalse('rejected_at' in form.fields)
 
+    def test_license_links(self):
+        form = PublishRequestNoAuthForm({}, None)
+        self.assertTrue('license_agreements' in form.fields)
+
+        self.assertTrue('https://unfoldingword.org/license' in
+                        form.fields['license_agreements'].help_text)
+
+        self.assertTrue('https://unfoldingword.org/faith' in
+                        form.fields['license_agreements'].help_text)
+
+        self.assertTrue('https://unfoldingword.org/guidelines' in
+                        form.fields['license_agreements'].help_text)
+
 
 class PublishRequestFormEditRequestTestCase(TestCase):
 
