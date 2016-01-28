@@ -143,7 +143,7 @@ class Method(models.Model):
 class GLDirector(models.Model):
 
     user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
-    regions = models.ManyToManyField("td.Region", blank=True)
+    regions = models.ManyToManyField("td.WARegion", blank=True)
 
     def __str__(self):
         return self.user.username

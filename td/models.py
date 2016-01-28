@@ -72,6 +72,20 @@ class Region(models.Model):
 
 
 @python_2_unicode_compatible
+class WARegion(models.Model):
+    name = models.CharField(max_length=100, db_index=True)
+    slug = models.SlugField(max_length=100, db_index=True)
+    tracker = FieldTracker()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'wa_region'
+        ordering = ['name']
+
+
+@python_2_unicode_compatible
 class Country(models.Model):
     code = models.CharField(max_length=2, unique=True)
     alpha_3_code = models.CharField(max_length=3, blank=True, default="")
@@ -156,6 +170,7 @@ class Language(models.Model):
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
     variant_of = models.ForeignKey("self", related_name="variants", null=True, blank=True)
+    wa_region = models.ForeignKey(WARegion, null=True, blank=True)
     extra_data = JSONField(default=dict)
     tracker = FieldTracker()
 

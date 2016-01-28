@@ -25,12 +25,9 @@ class ProgressResource(resources.ModelResource):
     def before_import(self, dataset, dry_run, **kwargs):
         language_ids = []
         type_ids = []
-        # date_objs = []
         for code in dataset["language_code"]:
-            print '\nLANGUAGE: ', code
             language_ids.append(Language.objects.get(code=code).id)
         for doc in dataset["document_slug"]:
-            print '\nDOCUMENT: ', doc
             type_ids.append(Document.objects.get(code=doc).id)
         dataset.insert_col(1, language_ids, "language")
         dataset.insert_col(2, type_ids, "type")
