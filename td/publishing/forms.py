@@ -27,7 +27,7 @@ class RecentComForm(forms.ModelForm):
         self.contact = kwargs.pop("contact")
         super(RecentComForm, self).__init__(*args, **kwargs)
 
-    def save(self):
+    def save(self, **kwargs):
         entry = super(RecentComForm, self).save(commit=False)
         entry.created_by = self.created_by
         entry.contact = self.contact
@@ -50,7 +50,7 @@ class ConnectionForm(forms.ModelForm):
         self.contact = kwargs.pop("contact")
         super(ConnectionForm, self).__init__(*args, **kwargs)
 
-    def save(self):
+    def save(self, **kwargs):
         entry = super(ConnectionForm, self).save(commit=False)
         entry.con_src = self.contact
         entry.save()
@@ -130,11 +130,25 @@ class PublishRequestForm(forms.ModelForm):
         required=False,
         min_num=0,
         max_file_size=5242880,
-        label="License, Statement of Faith, and Translation Guidelines Agreements",
+        label="License, Statement of Faith, and Translation Guidelines Agreements"
     )
 
     def __init__(self, *args, **kwargs):
         super(PublishRequestForm, self).__init__(*args, **kwargs)
+
+        links = {
+            'License Agreement': 'https://unfoldingword.org/license',
+            'Statement of Faith': 'https://unfoldingword.org/faith',
+            'Translation Guidelines': 'https://unfoldingword.org/guidelines'
+        }
+
+        help_links = []
+
+        for key in links:
+            help_links.append('<a href="' + links[key] + '" target="_blank">View ' + key + '</a><br>')
+
+        self.fields["license_agreements"].help_text = '\r\n'.join(help_links)
+
         self.fields["language"] = forms.CharField(
             widget=forms.TextInput(
                 attrs={
@@ -159,6 +173,7 @@ class PublishRequestForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-lr"] = lang.lr
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
         elif self.data.get("language", None):
+            # noinspection PyBroadException
             try:
                 lang = Language.objects.get(pk=self.data["language"])
                 self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
@@ -200,9 +215,9 @@ class PublishRequestForm(forms.ModelForm):
         if self.is_valid():
             lang = cleaned_data["language"]
             resource_type = cleaned_data["resource_type"]
-            ResourceTranslator = TRANSLATION_TYPES.get(resource_type.short_name, None)
-            if ResourceTranslator:
-                translation = ResourceTranslator(base_path="", lang_code=lang.code)
+            resource_translator = TRANSLATION_TYPES.get(resource_type.short_name, None)
+            if resource_translator:
+                translation = resource_translator(base_path="", lang_code=lang.code)
                 if not translation.qa_check():
                     error_list_html = "".join([
                         (
