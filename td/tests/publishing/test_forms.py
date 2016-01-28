@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from td.publishing.models import RecentCommunication, Contact
-from td.publishing.forms import RecentComForm
+from td.publishing.forms import RecentComForm, PublishRequestForm, PublishRequestNoAuthForm
 
 
 class RecentComFormTestCase(TestCase):
@@ -51,3 +51,17 @@ class RecentComFormTestCase(TestCase):
             form.cleaned_data["communication"],
             "New communication message"
         )
+
+
+class PublishRequestFormNewRequestTestCase(TestCase):
+
+    def test_rejected_fields(self):
+        form = PublishRequestNoAuthForm({}, None)
+        self.assertFalse('rejected_at' in form.fields)
+
+
+class PublishRequestFormEditRequestTestCase(TestCase):
+
+    def test_rejected_fields(self):
+        form = PublishRequestForm({}, None)
+        self.assertTrue('rejected_at' in form.fields)
