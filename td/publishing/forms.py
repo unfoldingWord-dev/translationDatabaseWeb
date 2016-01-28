@@ -169,10 +169,12 @@ class PublishRequestForm(forms.ModelForm):
             except:
                 pass
 
-        self.fields['rejected_at'].widget.attrs['readonly'] = True
-        self.fields['rejected_at'].widget.attrs['disabled'] = 'disabled'
-        self.fields['rejected_by'].widget.attrs['readonly'] = True
-        self.fields['rejected_by'].widget.attrs['disabled'] = 'disabled'
+        # these fields are not present when the user is creating a new publish request
+        if 'rejected_at' in self.fields:
+            self.fields['rejected_at'].widget.attrs['readonly'] = True
+            self.fields['rejected_at'].widget.attrs['disabled'] = 'disabled'
+            self.fields['rejected_by'].widget.attrs['readonly'] = True
+            self.fields['rejected_by'].widget.attrs['disabled'] = 'disabled'
 
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
