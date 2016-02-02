@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import migrations, models, connection
 from django.contrib.auth.models import User
 import django.db.models.deletion
@@ -13,9 +14,12 @@ def migrate_user(apps, schema_editor):
     cursor.execute("SELECT id, user_account_id FROM gl_tracking_regionaldirector")
     RegionalDirector = apps.get_model("gl_tracking", "RegionalDirector")
     for row in cursor.fetchall():
-        rd = RegionalDirector.objects.get(id=row[0])
-        rd.user_id = User.objects.get(id=row[1])
-        rd.save()
+        try:
+            rd = RegionalDirector.objects.get(id=row[0])
+            rd.user_id = User.objects.get(id=row[1])
+            rd.save()
+        except ObjectDoesNotExist:
+            print "\n" + row[1] + " cannot be found in the list of user. Data not migrated."
 
 
 class Migration(migrations.Migration):
