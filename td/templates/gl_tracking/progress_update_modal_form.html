@@ -22,7 +22,7 @@
         <form id="progress-update-form" action="{% url 'gl:change_progress' object.pk %}" method="POST" class="form" role="form">
             <div class="modal-body">
                 {% csrf_token %}
-				{{ form | bootstrap }}
+                {{ form | bootstrap }}
             </div>
             <div class="modal-footer">
                 <button name="cancel" type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>

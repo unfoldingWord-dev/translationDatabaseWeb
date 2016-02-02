@@ -215,10 +215,10 @@
 
             // Hide all region info when clicking on "Overall" bar
             $('#phase-view').on('click', '.overall', resetDisplay);
-            
+
             // Manually open modal form when clicking on the variant split button
             $('#phase-view').on('click', '.btn-variant-split', openVariantSplitModal);
-            
+
             // Auto-focus to the input box when the user opens a modal
             $('#modal').on('shown.bs.modal', function() {
                 $('#variant').focus();
