@@ -1,66 +1,7 @@
-<style>
-    .main-container {
-        display: flex;
-        margin-top: 2rem;
-        width: 100%;
-    }
-    .main-container.language-list {
-        flex-direction: column;
-    }
-    .panel.panel-default {
-        width: 100%;
-    }
-    .labels-container {
-        margin-right: 1rem;
-    }
-    .labels-container p,
-    .progress-bar-wrapper .progress,
-    .progress-percentage {
-        margin-bottom: 1rem;
-        cursor: pointer;
-    }
-    .labels-container p:first-child,
-    .progress-bar-wrapper:first-child .progress {
-        margin-bottom: 3rem;
-    }
-    .progress-bars-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    .progress-bar-wrapper {
-        display: flex;
-    }
-    .progress-bar {
-        background-color: #AAA;
-    }
-    .progress {
-        flex: 1;
-    }
-    .progress-bar-wrapper:hover .progress-bar,
-    .overall-progress,
-    .progress-bar.active {
-        background-color: #337AB7;
-    }
-    .progress-percentage {
-        flex: 0 0 4.5rem;
-        text-align: right;
-        margin-left: 1rem;
-    }
-    .language-list .panel-heading {
-        cursor: pointer;
-    }
-    .language-panel-body {
-        padding: 0;
-    }
-    .btn-link {
-        display: inline;
-    }
-</style>
-
-<!-- Progress Bars -->
+<!-- PROGRESS BARS -->
 <div class="main-container">
-    
+
+    <!-- LABELS -->
     <div class="labels-container">
         <p class="overall" data-region="overall">Overall</p>
         {% for region in regions %}
@@ -68,17 +9,18 @@
         {% endfor %}
     </div>
 
+    <!-- BARS AND PERCENTAGES -->
     <div class="progress-bars-container">
         <div class="progress-bar-wrapper">
             <div id="overall-progress" class="progress overall" data-region="overall">
-                <div class="progress-bar overall-progress" role="progressbar" aria-valuenow="{{overall_progress}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 0.2em; width: {{overall_progress}}%;"></div>
+                <div class="progress-bar overall-progress" role="progressbar" aria-valuenow="{{overall_progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{overall_progress}}%;"></div>
             </div>
             <span class="progress-percentage overall" data-region="{{key | lower}}">{{overall_progress}}%</span>
         </div>
         {% for key, region in regions.items %}
             <div class="progress-bar-wrapper">
                 <div id="{{key | lower}}-progress" class="progress" data-region="{{key | lower}}">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{{region.regional_progress}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 0.2em; width: {{region.regional_progress}}%;"></div>
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{region.regional_progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{region.regional_progress}}%;"></div>
                 </div>
                 <span class="progress-percentage" data-region="{{key | lower}}">{{region.regional_progress}}%</span>
             </div>
@@ -87,10 +29,10 @@
 
 </div>
 
-<!-- Region Detail -->
+<!-- REGION DETAIL -->
 <div class="main-container">
 
-    <div id="region-detail" class="panel panel-default">
+    <div id="region-detail" class="panel panel-default full-width">
         <div id="region-detail-header" class="panel-heading">
             <h1 class="panel-title">Region detail</h1>
         </div>
@@ -101,20 +43,22 @@
 
 </div>
 
-<!-- Button Links -->
+<!-- ACTION BUTTON LINKS -->
 <div class="languages-buttons btn-group-sm hidden">
     <button class="expand-all btn btn-sm btn-link">Expand All</button>
     <button class="collapse-all btn btn-sm btn-link">Collapse All</button>
 </div>
 
-<!-- Language List -->
+<!-- LANGUAGE LIST -->
 <div class="main-container language-list">
 
     {% for key, region in regions.items %}
         <div id="{{key | lower}}-languages" class="hidden">
         {% for language in region.gateway_languages %}
             <div class="panel panel-default">
-                <div class="panel-heading collapsed" data-toggle="collapse" data-target="#{{language.code}}">
+
+                <!-- PANEL/TABLE HEADING -->
+                <div class="panel-heading collapsed clickable" data-toggle="collapse" data-target="#{{language.code}}">
                     <span class="pull-right">
                         {% if phase == "1" %}
                             {{language.progress_phase_1}}%
@@ -124,19 +68,27 @@
                     </span>
                     <div style="display: flex;">
                         <h1 class="panel-title">
-                            {{language.ang|default:language.ln}} <span class="badge">{{language.code}}</span>
+                            {{language.ang | default:language.ln}} <span class="badge">{{language.code}}</span>
                             {% for variant in language.variant_codes %}
                                 <span class="badge">{{variant}}</span>
                             {% endfor %}
                         </h1>
                         {% if language.variant_codes|length > 0 %}
-                            <button class="btn-variant-split" data-language="{{language.code}}"><i class="fa fa-code-fork"></i></button>
+                                <button class="icon-button btn-variant-split" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{language.code}}" data-toggle="modal" data-target="#modal-sm" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i></button>
+                            </span>
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- PANEL/TABLE BODY -->
                 <div id="{{language.code}}" class="panel-body language-panel-body collapse">
-                    {% include "gl_tracking/language_progress.html" with language=language phase=phase %}
+                    {% if phase == "1" %}
+                        {% include "gl_tracking/_language_doc_table.html" with region=language.lr documents=language.documents_phase_1 can_edit=can_edit %}
+                    {% elif phase == "2" %}
+                        {% include "gl_tracking/_language_doc_table.html" with region=language.lr documents=language.documents_phase_2 can_edit=can_edit %}
+                    {% endif %}
                 </div>
+
             </div>
         {% endfor %}
         </div>

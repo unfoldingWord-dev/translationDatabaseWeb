@@ -30,6 +30,7 @@
     "select2": "^3.5.1",
     "style-loader": "^0.13.0",
     "topojson": "^1.6.19",
-    "webpack": "^1.10.5"
+    "webpack": "^1.10.5",
+    "bootstrap-datepicker": "~1.5.1"
   }
 }
