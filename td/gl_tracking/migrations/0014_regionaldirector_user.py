@@ -19,7 +19,7 @@ def migrate_user(apps, schema_editor):
             rd.user_id = User.objects.get(id=row[1])
             rd.save()
         except ObjectDoesNotExist:
-            print "\n" + row[1] + " cannot be found in the list of user. Data not migrated."
+            print "\n" + unicode(row[1]) + " cannot be found in the list of user. Data not migrated."
 
 
 class Migration(migrations.Migration):
