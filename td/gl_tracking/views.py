@@ -108,12 +108,12 @@ class ProgressEditView(LoginRequiredMixin, UpdateView):
 def map_gls(gls):
     regions = {}
     for lang in gls:
-        region = lang.wa_region.slug
+        region = lang.wa_region
         if region:
-            if region not in regions:
-                regions[region] = {"name": lang.wa_region.name}
-                regions[region]["gateway_languages"] = []
-            regions[region]["gateway_languages"].append(lang)
+            if region.slug not in regions:
+                regions[region.slug] = {"name": lang.wa_region.name}
+                regions[region.slug]["gateway_languages"] = []
+            regions[region.slug]["gateway_languages"].append(lang)
         else:
             if "unknown" not in regions:
                 regions["unknown"] = {"name": "Unknown"}
