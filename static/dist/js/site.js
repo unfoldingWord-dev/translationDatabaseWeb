@@ -138,6 +138,9 @@
 	      }, 3000);
 	    }
 	  });
+	  $('body').on("click", "[data-toggle='collapse']", function () {
+	    $(this).find('i').toggleClass("fa-expand fa-compress");
+	  });
 	});
 
 /***/ },

@@ -1,32 +1,49 @@
-<table class="table">
-    <tbody>
-        {% if data %}
+{% if user.is_authenticated %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-default btn-xs pull-right" href="{% url "language_edit" language.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i> Edit</a>
+            <h2 class="panel-title">Project Charter</h2>
+            <button class="icon-button" data-toggle="collapse" data-target=".charter-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+        </div>
+        <div class="panel-body no-padding charter-table collapse in">
+            <table class="table table-no-border no-margin">
+                <tbody>
+                    <tr><th class="col-md-2">Start Date</th><td>{{ data.start_date }}</td></tr>
+                    <tr><th>Completion Date</th><td>{{ data.end_date }}</td></tr>
+                    <tr><th>Lead Department</th><td>{{ data.lead_dept }}</td></tr>
+                    <tr><th>Contact Person</th><td>{{ data.contact_person }}</td></tr>
+                    <tr><th>Accounting Number</th><td>{{ data.number }}</td></tr>
+                    <tr><th>Created At</th><td>{{ data.created_at }}</td></tr>
+                    <tr><th>Created By</th><td>{{ data.created_by }}</td></tr>
+                    <tr><th>Modified At</th><td>{{ data.modified_at }}</td></tr>
+                    <tr><th>Modified By</th><td>{{ data.modified_by }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            <tr>
-                <th>Translation Project</th>
-                <td>
-                    <a class="btn btn-primary btn-xs" href="{% url "tracking:charter_update" charter.id %}">Edit</a>
-                </td>
-            </tr>
-            <tr><th>Start Date</th><td>{{ data.start_date }}</td></tr>
-            <tr><th>Completion Date</th><td>{{ data.end_date }}</td></tr>
-            <tr><th>Lead Department</th><td>{{ data.lead_dept }}</td></tr>
-            <tr><th>Contact Person</th><td>{{ data.contact_person }}</td></tr>
-            <tr><th>Accounting Number</th><td>{{ data.number }}</td></tr>
-            <tr><th>Created At</th><td>{{ data.created_at }}</td></tr>
-            <tr><th>Created By</th><td>{{ data.created_by }}</td></tr>
-            <tr><th>Modified At</th><td>{{ data.modified_at }}</td></tr>
-            <tr><th>Modified By</th><td>{{ data.modified_by }}</td></tr>
-
-        {% else %}
-
-            <tr>
-                <th>Translation Project</th>
-                <td>
-                    <a class="btn btn-primary btn-xs" href="{% url "tracking:charter_add" %}">Add</a>
-                </td>
-            </tr>
-
-        {% endif %}
-    </tbody>
-</table>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
+            <h2 class="panel-title">Translation Events/Workshops</h2>
+            <button class="icon-button" data-toggle="collapse" data-target=".event-table" title="Expand/Collapse" data-tooltip><i class="fa fa-expand"></i></button>
+        </div>
+        <div class="panel-body no-padding event-table collapse">
+            <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Location</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Lead Department</th>
+                        <th>Contact Person</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Will be populated by dataTables() -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

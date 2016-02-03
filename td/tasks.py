@@ -21,6 +21,18 @@ from .signals import languages_integrated
 
 
 @task()
+def update_alt_names(code):
+    try:
+        # Filter instead of get because diff langs may have the same
+        #    iso-639-3 code. Specific example: 'pt' and 'pt-br'.
+        for language in Language.objects.filter(iso_639_3=code):
+            language.alt_names = ", ".join(sorted(language.alt_name_all))
+            language.save()
+    except Language.DoesNotExist:
+        print "WARNING: update_alt_names() failed becase Language with code '" + code + "' doesn't exist."
+
+
+@task()
 def reset_langnames_cache():
     cache.set("langnames_fetching", True)
     cache.delete("langnames")

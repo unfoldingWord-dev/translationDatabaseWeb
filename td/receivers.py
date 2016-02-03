@@ -10,8 +10,8 @@ from account.signals import user_login_attempt, user_logged_in
 from pinax.eventlog.models import log
 
 from .models import AdditionalLanguage
-from td.models import Country, Language
-from .tasks import reset_langnames_cache
+from td.models import Country, Language, LanguageAltName
+from .tasks import reset_langnames_cache, update_alt_names
 from .signals import languages_integrated
 
 
@@ -45,6 +45,18 @@ def handle_language_save(sender, **kwargs):
 def handle_language_delete(sender, **kwargs):
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
+
+
+@receiver(post_save, sender=LanguageAltName)
+def handle_alt_name_save(sender, instance=None, **kwargs):
+    if instance is not None:
+        update_alt_names(instance.code)
+
+
+@receiver(post_delete, sender=LanguageAltName)
+def handle_alt_name_delete(sender, instance=None, **kwargs):
+    if instance is not None:
+        update_alt_names(instance.code)
 
 
 @receiver(post_save, sender=Country)

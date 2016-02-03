@@ -12,6 +12,11 @@ ENTITIES = [
     Language,
 ]
 
+# Prevent unnecessary creation of LanguageEAV objects
+DONT_CREATE = [
+    'alt_names'
+]
+
 
 @receiver(post_save)
 def handle_entity_save(sender, instance, *args, **kwargs):
@@ -23,9 +28,10 @@ def handle_entity_save(sender, instance, *args, **kwargs):
     if sender in ENTITIES:
         if getattr(instance, "source", None) is not None:
             for attribute in instance.tracker.changed().keys():
-                instance.attributes.get_or_create(
-                    attribute=attribute,
-                    value=getattr(instance, attribute) or "",
-                    source_ct=ContentType.objects.get_for_model(instance.source),
-                    source_id=instance.source.pk
-                )
+                if attribute not in DONT_CREATE:
+                    instance.attributes.get_or_create(
+                        attribute=attribute,
+                        value=getattr(instance, attribute) or "",
+                        source_ct=ContentType.objects.get_for_model(instance.source),
+                        source_id=instance.source.pk
+                    )
