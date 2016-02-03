@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import AdditionalLanguage, Region, Language, Country, Network
+from .models import AdditionalLanguage, Region, WARegion, Language, Country, Network
 from td.resources.admin import EntryTrackingAdmin
 
 admin.site.register(
@@ -43,6 +43,7 @@ class CountryAdmin(EntryTrackingAdmin):
 
 class LanguageAdmin(EntryTrackingAdmin):
     list_display = ["code", "name", "gateway_language", "direction", "native_speakers"]
+    list_filter = ["gateway_flag", "country__region", "wa_region", ]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -77,3 +78,5 @@ admin.site.register(
     Region,
     RegionAdmin
 )
+
+admin.site.register(WARegion)

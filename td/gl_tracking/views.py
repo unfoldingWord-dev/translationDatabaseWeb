@@ -4,7 +4,7 @@ from django.views.generic.edit import FormView, UpdateView
 
 from account.mixins import LoginRequiredMixin
 
-from td.models import Language, Region
+from td.models import Language, WARegion
 from td.gl_tracking.models import Progress, Phase
 from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm
 
@@ -45,7 +45,7 @@ class PhaseView(LoginRequiredMixin, TemplateView):
 
 
 class RegionDetailView(LoginRequiredMixin, DetailView):
-    model = Region
+    model = WARegion
     template_name = "gl_tracking/_region_detail.html"
 
     def post(self, request, *args, **kwargs):
@@ -108,15 +108,15 @@ class ProgressEditView(LoginRequiredMixin, UpdateView):
 def map_gls(gls):
     regions = {}
     for lang in gls:
-        region = lang.lr
+        region = lang.wa_region.slug
         if region:
             if region not in regions:
-                regions[region] = {}
+                regions[region] = {"name": lang.wa_region.name}
                 regions[region]["gateway_languages"] = []
             regions[region]["gateway_languages"].append(lang)
         else:
             if "unknown" not in regions:
-                regions["unknown"] = {}
+                regions["unknown"] = {"name": "Unknown"}
                 regions["unknown"]["gateway_languages"] = []
             regions["unknown"]["gateway_languages"].append(lang)
     return regions

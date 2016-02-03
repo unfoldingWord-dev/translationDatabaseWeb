@@ -1,0 +1,50 @@
+[
+    {
+        "model": "td.waregion",
+        "pk": 1,
+        "fields": {
+            "name": "Americas",
+            "slug": "americas"
+        }
+    },
+    {
+        "model": "td.waregion",
+        "pk": 2,
+        "fields": {
+            "name": "Africa",
+            "slug": "africa"
+        }
+    },
+    {
+        "model": "td.waregion",
+        "pk": 3,
+        "fields": {
+            "name": "Asia",
+            "slug": "asia"
+        }
+    },
+    {
+        "model": "td.waregion",
+        "pk": 4,
+        "fields": {
+            "name": "South Asia",
+            "slug": "southasia"
+        }
+    },
+    {
+        "model": "td.waregion",
+        "pk": 5,
+        "fields": {
+            "name": "Eurasia",
+            "slug": "eurasia"
+        }
+    },
+    {
+        "model": "td.waregion",
+        "pk": 6,
+        "fields": {
+            "name": "Pacific",
+            "slug": "pacific"
+        }
+    }
+]
