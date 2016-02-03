@@ -111,7 +111,7 @@ def map_gls(gls):
         region = lang.wa_region
         if region:
             if region.slug not in regions:
-                regions[region.slug] = {"name": lang.wa_region.name}
+                regions[region.slug] = {"name": region.name}
                 regions[region.slug]["gateway_languages"] = []
             regions[region.slug]["gateway_languages"].append(lang)
         else:

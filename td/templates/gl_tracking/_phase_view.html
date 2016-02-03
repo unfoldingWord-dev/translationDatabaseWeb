@@ -5,7 +5,7 @@
     <div class="labels-container">
         <p class="overall" data-region="overall">Overall</p>
         {% for key, region in regions.items %}
-            <p id="{{region | lower}}-label" data-region="{{region | lower}}">{{region.name}}</p>
+            <p id="{{region.name | lower}}-label" data-region="{{region.name | lower}}">{{region.name}}</p>
         {% endfor %}
     </div>
 
