@@ -1,3 +1,5 @@
+import requests
+
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
@@ -388,7 +390,7 @@ class LanguageTableSourceView(DataTableSourceView):
         behavior.
         """
         search_term = self.search_term.strip()
-        if search_term and len(search_term) <= 3:
+        if search_term and len(search_term) <= 1:
             qs = self.queryset.filter(code__startswith=search_term.lower())
             if qs.count():
                 return qs.order_by("code")
@@ -406,9 +408,9 @@ class AjaxLanguageListView(LanguageTableSourceView):
         "code",
         "iso_639_3",
         "name",
+        "alt_names",
         "anglicized_name",
         "country__name",
-        "native_speakers",
         "gateway_language__name",
         "gateway_flag"
     ]
@@ -423,10 +425,10 @@ class AjaxLanguageGatewayListView(LanguageTableSourceView):
         "code",
         "iso_639_3",
         "name",
-        "direction",
+        "anglicized_name",
+        "alt_names",
         "country__name",
         "native_speakers",
-        "gateway_flag"
     ]
     link_column = "code"
     link_url_name = "language_detail"
@@ -466,8 +468,14 @@ class LanguageDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
+        jp_resp = requests.get('http://joshuaproject.net/api/v2/languages', {
+            'api_key': '42rHh7ZBq3Yd',
+            'ROL3': self.object.iso_639_3,
+        })
         context.update({
             "country": self.object.country,
+            "countries": [Country.objects.get(code=c).name for c in self.object.cc_all],
+            "jp": jp_resp.json()['data'][0] if jp_resp.status_code == 200 else None
         })
         # For translation project integration
         # ---------------------------------------------------------
