@@ -5,7 +5,7 @@ from mock import patch, Mock
 
 from td.models import Language
 from td.publishing.models import OfficialResourceType, PublishRequest
-from td.publishing.tasks import approve_publish_request
+from td.publishing.tasks import approve_publish_request, reject_publish_request
 
 
 class PublishTasksTestCase(TestCase):
@@ -49,5 +49,19 @@ class PublishTasksTestCase(TestCase):
         # and that the PublishRequst.publish was called with the user object...
         mock_publish.assert_called_once_with(by_user=self.user)
         # and the notify_requestor_approved celery task was called with the
+        # PublishRequest.id
+        mock_task.delay.assert_called_once_with(self.request.id)
+
+    @patch("td.publishing.tasks.PublishRequest.reject")
+    @patch("td.publishing.tasks.notify_requestor_rejected")
+    def test_reject_publish_request(self, mock_task, mock_reject):
+        reject_publish_request(
+            self.request.id,
+            self.user.id
+        )
+
+        # assert that the PublishRequst.reject was called with the user object...
+        mock_reject.assert_called_once_with(by_user=self.user)
+        # and the notify_requestor_rejected celery task was called with the
         # PublishRequest.id
         mock_task.delay.assert_called_once_with(self.request.id)

@@ -78,6 +78,32 @@
         {% else %}
             <div class="panel-body">None, <a href="{% url "oresource_create" %}">add one</a>!</div>
         {% endif %}
+        <div class="panel-heading panel-heading-with-table">
+            <h2 class="panel-title">{% trans "Rejected Requests" %}</h2>
+        </div>
+        {% if rejected_requests %}
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Requestor</th>
+                    <th>Resource</th>
+                    <th>Language</th>
+                    <th>Contributors</th>
+                    <th>Rejected at</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for pr in rejected_requests %}
+                    <tr>
+                        {% include "publishing/_rejected_row_data.html" with pr=pr %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel-body">None</div>
+        {% endif %}
     </div>
 
 {% endblock %}

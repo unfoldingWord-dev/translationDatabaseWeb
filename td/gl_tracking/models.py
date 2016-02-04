@@ -1,40 +1,9 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-
-# from td.models import Language
-
-
-# ------------- #
-#    CHOICES    #
-# ------------- #
-METHODS = (
-    ('online', 'Online'),
-    ('offline', 'Offline'),
-    ('mast', 'MAST'),
-    ('d43', 'door43'),
-    ('ts', 'translationStudio'),
-    ('memoq', 'MemoQ'),
-    ('sovee', 'Sovee'),
-)
-
-COMPLETION_RATE = (
-    (2, '2%'),
-    (25, '25%'),
-    (50, '50%'),
-    (75, '75%'),
-    (99, '99%'),
-    (100, '100%'),
-)
-
-QA_LEVEL = (
-    (0, '0'),
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-)
 
 
 # ----------- #
@@ -78,7 +47,7 @@ class DocumentCategory(models.Model):
 class Document(models.Model):
 
     name = models.CharField(max_length=200, unique=True)
-    code = models.SlugField(max_length=4, unique=True, default='')
+    code = models.SlugField(max_length=10, unique=True, default='')
     description = models.TextField(blank=True)
     category = models.ForeignKey('DocumentCategory', null=True)
 
@@ -91,21 +60,46 @@ class Document(models.Model):
 # -------------- #
 @python_2_unicode_compatible
 class Progress(models.Model):
+    COMPLETION_RATE = (
+        (2, '2%'),
+        (25, '25%'),
+        (50, '50%'),
+        (75, '75%'),
+        (99, '99%'),
+        (100, '100%'),
+    )
+    QA_LEVEL = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+    )
 
     language = models.ForeignKey('td.Language', limit_choices_to={'gateway_flag': True})
     type = models.ForeignKey('Document')
-    is_online = models.NullBooleanField()
-    method = models.CharField(max_length=200, choices=METHODS, blank=True)
-    completion_rate = models.PositiveSmallIntegerField(choices=COMPLETION_RATE, null=True, blank=True)
-    completion_date = models.DateField(null=True, blank=True)
-    qa_level = models.PositiveSmallIntegerField(choices=QA_LEVEL, null=True, blank=True)
-    in_door43 = models.NullBooleanField()
-    in_uw = models.NullBooleanField()
+    is_online = models.NullBooleanField(verbose_name="Is Online?")
+    methods = models.ManyToManyField('Method', blank=True)
+    completion_rate = models.PositiveSmallIntegerField(choices=COMPLETION_RATE, null=True, blank=True, verbose_name="Completion Rate")
+    completion_date = models.DateField(null=True, blank=True, verbose_name="Completion Date")
+    qa_level = models.PositiveSmallIntegerField(choices=QA_LEVEL, null=True, blank=True, verbose_name="QA Level")
+    in_door43 = models.NullBooleanField(verbose_name="Available in Door43.org?")
+    in_uw = models.NullBooleanField(verbose_name="Available in UnfoldingWord.org?")
     partners = models.ManyToManyField('Partner', blank=True)
     notes = models.TextField(blank=True)
+    is_done = models.BooleanField(default=False)
+    created_at = models.DateTimeField(editable=False, null=True, default=None)
+    created_by = models.ForeignKey(User, related_name="created_by", null=True, blank=True, default=None)
+    modified_at = models.DateTimeField(null=True, default=None)
+    modified_by = models.ForeignKey(User, related_name="modified_by", null=True, blank=True, default=None)
 
     def __str__(self):
         return str(self.type)
+
+    def save(self, *args, **kwargs):
+        """ Update Timestamp on save """
+        if not self.id:
+            self.created_at = timezone.now()
+        self.modified_at = timezone.now()
+        return super(Progress, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ("language", "type")
@@ -132,19 +126,24 @@ class Partner(models.Model):
         return self.name
 
 
-# ----------------------- #
-#    REGIONAL DIRECTOR    #
-# ----------------------- #
+# ------------ #
+#    METHOD    #
+# ------------ #
 @python_2_unicode_compatible
-class RegionalDirector(models.Model):
+class Method(models.Model):
 
-    first_name = models.CharField(max_length=200)
-    middle_name = models.CharField(max_length=200, blank=True)
-    last_name = models.CharField(max_length=200)
-    user_account = models.ForeignKey(User, null=True, blank=True)
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=50)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.name
 
-    class Meta:
-        unique_together = ('first_name', 'middle_name', 'last_name')
+
+@python_2_unicode_compatible
+class GLDirector(models.Model):
+
+    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
+    regions = models.ManyToManyField("td.WARegion", blank=True)
+
+    def __str__(self):
+        return self.user.username

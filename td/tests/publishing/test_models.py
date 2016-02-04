@@ -62,3 +62,20 @@ Miriam Planas"""
         self.assertIsInstance(resource, OfficialResource)
         self.assertEqual(resource.language.code, "en")
         mock_ingest.assert_called_once_with(publish_request=r)
+
+    def test_publishrequest_reject(self):
+        r = PublishRequest.objects.create(
+            requestor="Wendy Colón",
+            resource_type=self.model.resource_type,
+            language=self.model.language,
+            checking_level=1,
+            source_text=self.model.source_text)
+
+        self.assertIsNone(r.rejected_at)
+        self.assertIsNone(r.rejected_by)
+
+        r.reject(by_user=self.user)
+        r = PublishRequest.objects.get(pk=r.pk)
+
+        self.assertIsNotNone(r.rejected_at)
+        self.assertIsNotNone(r.rejected_by)

@@ -54,6 +54,7 @@ def notify_requestor_approved(request_id):
               html_message=html_contents)
 
 
+@task()
 def notify_requestor_rejected(request_id):
     pr = PublishRequest.objects.get(pk=request_id)
     html_contents = render_to_string("./email/notify_requestor_rejected_html.html", {"publish_request": pr})
@@ -71,3 +72,10 @@ def approve_publish_request(request_id, user_id):
     oresource = pr.publish(by_user=user)
     notify_requestor_approved.delay(pr.pk)
     return oresource.pk
+
+
+def reject_publish_request(request_id, user_id):
+    pr = PublishRequest.objects.get(pk=request_id)
+    user = User.objects.get(pk=user_id)
+    pr.reject(by_user=user)
+    notify_requestor_rejected.delay(pr.pk)

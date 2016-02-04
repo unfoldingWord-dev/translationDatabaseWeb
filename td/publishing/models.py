@@ -219,6 +219,9 @@ class PublishRequest(models.Model):
                                         verbose_name="Requester email",
                                         help_text="email address to be notified of request status")
     license_title = models.TextField(default="CC BY-SA 4.0", blank=True, null=False)
+    rejected_at = models.DateTimeField(default=None, null=True, blank=True, verbose_name="Rejected at")
+    rejected_by = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, null=True, blank=True,
+                                    verbose_name="Rejected by")
 
     @property
     def version(self):
@@ -265,6 +268,11 @@ class PublishRequest(models.Model):
         self.save()
         resource.ingest(publish_request=self)
         return resource
+
+    def reject(self, by_user):
+        self.rejected_at = timezone.now()
+        self.rejected_by = by_user
+        self.save()
 
     def __str__(self):
         return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.resource_type), self.language.code)

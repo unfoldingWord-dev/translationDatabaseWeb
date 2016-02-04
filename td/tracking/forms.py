@@ -368,6 +368,7 @@ def check_text_input(form, field_name):
         return escape(text)
 
 
+# Function:
 def determine_widget(fields, names, limit):
     """
     Determine what widget should be used based on the given limit.

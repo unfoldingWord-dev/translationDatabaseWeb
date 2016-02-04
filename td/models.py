@@ -61,7 +61,6 @@ class Network(models.Model):
 class Region(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
-    wa_director = models.ForeignKey('gl_tracking.RegionalDirector', null=True, blank=True)
     tracker = FieldTracker()
 
     def __str__(self):
@@ -69,6 +68,20 @@ class Region(models.Model):
 
     class Meta:
         db_table = 'uw_region'
+        ordering = ['name']
+
+
+@python_2_unicode_compatible
+class WARegion(models.Model):
+    name = models.CharField(max_length=100, db_index=True)
+    slug = models.SlugField(max_length=100, db_index=True)
+    tracker = FieldTracker()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'wa_region'
         ordering = ['name']
 
 
@@ -157,6 +170,7 @@ class Language(models.Model):
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     iso_639_3 = models.CharField(max_length=3, default="", db_index=True, blank=True, verbose_name="ISO-639-3")
     variant_of = models.ForeignKey("self", related_name="variants", null=True, blank=True)
+    wa_region = models.ForeignKey(WARegion, null=True, blank=True)
     extra_data = JSONField(default=dict)
     tracker = FieldTracker()
 
@@ -198,25 +212,25 @@ class Language(models.Model):
 
     @property
     def progress_phase_1(self):
-        total = 0
+        total = 0.0
         doc_num = Document.objects.filter(category__phase__number="1").count()
         if doc_num == 0:
-            return 0.0
+            return total
         for doc in self.progress_set.filter(type__category__phase__number="1"):
             if type(doc.completion_rate) == int:
                 total = total + doc.completion_rate
-        return round(float(total) / float(doc_num), 2)
+        return round(total / doc_num, 2)
 
     @property
     def progress_phase_2(self):
-        total = 0
+        total = 0.0
         doc_num = Document.objects.filter(category__phase__number="2").count()
         if doc_num == 0:
-            return 0.0
+            return total
         for doc in self.progress_set.filter(type__category__phase__number="2"):
             if type(doc.completion_rate) == int:
                 total = total + doc.completion_rate
-        return round(float(total) / float(doc_num), 2)
+        return round(total / doc_num, 2)
 
     @property
     def documents_phase_1(self):

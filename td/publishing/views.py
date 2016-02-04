@@ -18,7 +18,7 @@ from td.publishing.forms import (
 from td.publishing.models import (
     Contact, Chapter, OfficialResource, PublishRequest, OfficialResourceType)
 from td.publishing.signals import published
-from td.publishing.tasks import send_request_email, approve_publish_request
+from td.publishing.tasks import send_request_email, approve_publish_request, reject_publish_request
 
 
 def resource_language_json(request, kind, lang):
@@ -69,15 +69,16 @@ def resource_language_json(request, kind, lang):
 
 def resource_catalog_json(request, kind=None):
     """
-    Return a catalog of published resources by languag.
+    Return a catalog of published resources by language.
 
     :param kind: OfficialResourceType short_name. Optional, in which case the
                     entire catalog of resources and languages will be listed.
-    :type kind: str
+    :type kind: str|None
     """
     # List all resources if a 'kind' isn't specified
     published_requests = PublishRequest.objects.filter(
-        approved_at__isnull=False
+        approved_at__isnull=False,
+        rejected_at__isnull=True
     ).order_by(
         "resource_type__short_name",
         "language__code",
@@ -220,7 +221,8 @@ class OfficialResourceListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(OfficialResourceListView, self).get_context_data(**kwargs)
-        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None)
+        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None, rejected_at__isnull=True)
+        context["rejected_requests"] = PublishRequest.objects.filter(rejected_at__isnull=False)
         return context
 
     def get_queryset(self, **kwargs):
@@ -276,11 +278,9 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("oresource_list")
 
     def delete(self, request, *args, **kwargs):
-        messages.info(self.request, "Publish Request Rejected/Deleted")
-        # todo: when we figure out how to indicate the request is rejected... send an email
-        # pr = self.get_object()
-        # notify_requestor_rejected(pr.pk)
-        return super(PublishRequestDeleteView, self).delete(request, *args, **kwargs)
+        reject_publish_request(kwargs['pk'], self.request.user.pk)
+        messages.info(self.request, "Publish Request Rejected")
+        return redirect("oresource_list")
 
 
 def languages_autocomplete(request):
@@ -296,8 +296,7 @@ def languages_autocomplete(request):
 def source_languages_autocomplete(request):
     term = request.GET.get("q")
     langs = PublishRequest.objects.filter(
-        Q(language__code__icontains=term)
-        | Q(language__name__icontains=term),
+        Q(language__code__icontains=term) | Q(language__name__icontains=term),
         checking_level=3
     ).order_by("language__code", "-approved_at").distinct("language__code")
     d = [

@@ -19,7 +19,8 @@ def remove_html_comments(soup):
     :param soup: BeautifulSoup html.parser
     :type soup: object
     """
-    is_html_comment = lambda text: isinstance(text, element.Comment)
+    def is_html_comment(text):
+        return isinstance(text, element.Comment)
     for html_comment in soup.find_all(text=is_html_comment):
         html_comment.extract()
 
