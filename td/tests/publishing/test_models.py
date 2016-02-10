@@ -79,3 +79,17 @@ Miriam Planas"""
 
         self.assertIsNotNone(r.rejected_at)
         self.assertIsNotNone(r.rejected_by)
+
+    def test_publishrequest_permalink(self):
+        r = PublishRequest.objects.create(
+            requestor="Permalink Test",
+            resource_type=self.model.resource_type,
+            language=self.model.language,
+            checking_level=1,
+            source_text=self.model.source_text)
+
+        permalink = r.permalink
+        decoded_pk = PublishRequest.pk_from_permalink(permalink)
+        decoded_pk2 = PublishRequest.pk_from_permalink(unicode(permalink))
+        self.assertEqual(r.pk, decoded_pk)
+        self.assertEqual(r.pk, decoded_pk2)

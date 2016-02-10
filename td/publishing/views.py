@@ -273,6 +273,28 @@ class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
         return request
 
 
+class PublishRequestResubmitView(UpdateView):
+    model = PublishRequest
+    form_class = PublishRequestNoAuthForm
+    permalink = None
+
+    def form_valid(self, form):
+        # noinspection PyAttributeOutsideInit
+        self.object = form.save()
+
+        # if the user is not logged in, redirect to the home page
+        if self.request.user.pk is None:
+            return redirect("home")
+        else:
+            return redirect("oresource_list")
+
+    def get_object(self, queryset=None):
+        pk = PublishRequest.pk_from_permalink(self.kwargs.get('permalink'))
+        request = get_object_or_404(self.model, id=pk)
+        self.permalink = self.kwargs.get('permalink')
+        return request
+
+
 class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
     model = PublishRequest
     success_url = reverse_lazy("oresource_list")
