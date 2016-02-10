@@ -1,3 +1,4 @@
+import base64
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -224,6 +225,13 @@ class PublishRequest(models.Model):
                                     verbose_name="Rejected by")
 
     @property
+    def permalink(self):
+        if self.pk is None:
+            return None
+
+        return base64.urlsafe_b64encode(unicode(self.pk).zfill(6))
+
+    @property
     def version(self):
         parts = self.source_version.split(".")
         if len(parts) == 3:
@@ -276,6 +284,17 @@ class PublishRequest(models.Model):
 
     def __str__(self):
         return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.resource_type), self.language.code)
+
+    @staticmethod
+    def pk_from_permalink(permalink):
+        try:
+            if type(permalink) is unicode:
+                decoded = base64.urlsafe_b64decode(permalink.encode('ascii', 'ignore'))
+            else:
+                decoded = base64.urlsafe_b64decode(permalink)
+            return int(decoded)
+        except (TypeError, Exception):
+            return None
 
 
 class LicenseAgreement(models.Model):

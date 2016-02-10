@@ -2,8 +2,9 @@ import datetime
 import json
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, Client
 from django.utils import timezone
 
 import requests_mock
@@ -11,11 +12,10 @@ import requests_mock
 from td.models import Language
 from td.publishing.models import (
     OfficialResource, OfficialResourceType, PublishRequest)
-from td.publishing.views import resource_language_json, resource_catalog_json, OfficialResourceListView
+from td.publishing.views import resource_language_json, resource_catalog_json
 
 
-class ResourceLanguageJsonTestCase(TestCase):
-
+class PublishingViewsBaseTestCase(TestCase):
     def setUp(self):
         now_dt = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
         # Create user
@@ -48,16 +48,43 @@ class ResourceLanguageJsonTestCase(TestCase):
         )
         # Create publish request
         self.pub_req, _ = PublishRequest.objects.get_or_create(
-            requestor=self.user,
+            requestor='Unit Tester',
             resource_type=self.resource_type,
             language=self.language,
             checking_level=3,
             source_text=self.language,
             source_version='1.3.2',
             contributors="requestor: Test User,\ncontributors: Users",
-            approved_at=now_dt,
         )
+        self.pub_req.save()
+        # create a rejected request
+        self.pub_rej, _ = PublishRequest.objects.get_or_create(
+            requestor="Unit Tester",
+            resource_type=self.resource_type,
+            language=self.language,
+            checking_level=3,
+            source_text=self.language,
+            source_version='1.3.2',
+            contributors="requestor: Test User,\ncontributors: Users",
+            rejected_at=now_dt,
+            rejected_by=self.user
+        )
+        self.pub_rej.save()
+        # create an approved request
+        self.pub_approved_req, _ = PublishRequest.objects.get_or_create(
+            requestor="Unit Tester",
+            resource_type=self.resource_type,
+            language=self.language,
+            checking_level=3,
+            source_text=self.language,
+            source_version="1.3.2",
+            contributors="requestor: Test User,\ncontributors: Users",
+            approved_at=now_dt
+        )
+        self.pub_approved_req.save()
 
+
+class ResourceLanguageJsonTestCase(PublishingViewsBaseTestCase):
     @requests_mock.mock()
     def test_chapters_and_meta(self, mock_requests):
         resp = resource_language_json(mock_requests, kind="obs", lang="en")
@@ -79,50 +106,7 @@ class ResourceLanguageJsonTestCase(TestCase):
             resource_language_json(mock_requests, kind="obs", lang="bar")
 
 
-class ResourceCatalogJsonTestCase(TestCase):
-
-    def setUp(self):
-        now_dt = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
-        # Create user
-        self.user, _ = User.objects.get_or_create(
-            first_name="Test",
-            last_name="User",
-            username="test_user",
-        )
-        self.user.set_password("test_password")
-        self.user.save()
-        # Create official resource type
-        self.resource_type, _ = OfficialResourceType.objects.get_or_create(
-            short_name="obs",
-            long_name="Open Bible Story"
-        )
-        # Create language
-        self.language, _ = Language.objects.get_or_create(
-            code="en",
-            name="English",
-        )
-        # Create official resource
-        self.resource, _ = OfficialResource.objects.get_or_create(
-            language=self.language,
-            resource_type=self.resource_type,
-            created_by=self.user,
-            checking_level=3,
-            date_started=now_dt,
-            publish_date=now_dt,
-            version="1.0",
-        )
-        # Create publish request
-        self.pub_req, _ = PublishRequest.objects.get_or_create(
-            requestor=self.user,
-            resource_type=self.resource_type,
-            language=self.language,
-            checking_level=3,
-            source_text=self.language,
-            source_version="1.3.2",
-            contributors="requestor: Test User,\ncontributors: Users",
-            approved_at=now_dt,
-        )
-
+class ResourceCatalogJsonTestCase(PublishingViewsBaseTestCase):
     @requests_mock.mock()
     def test_full_catalog_empty(self, mock_requests):
         expected = {
@@ -156,68 +140,28 @@ class ResourceCatalogJsonTestCase(TestCase):
         self.assertEqual(data, expected)
 
 
-class OfficialResourceListViewTestCase(TestCase):
-
-    def setUp(self):
-        now_dt = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
-        self.user, _ = User.objects.get_or_create(
-            username="test_user",
-            email="test@gmail.com",
-            password="test_password",
-        )
-        self.request = RequestFactory().get('/publishing/oresource/')
-        self.request.user = self.user
-
-        # Create official resource type
-        self.resource_type, _ = OfficialResourceType.objects.get_or_create(
-            short_name="obs",
-            long_name="Open Bible Story"
-        )
-        self.resource_type.save()
-        # Create language
-        self.language, _ = Language.objects.get_or_create(
-            code="en",
-            name="English",
-        )
-        self.language.save()
-        # Create official resource
-        self.resource, _ = OfficialResource.objects.get_or_create(
-            language=self.language,
-            resource_type=self.resource_type,
-            created_by=self.user,
-            checking_level=3,
-            date_started=now_dt,
-            publish_date=now_dt,
-            version="1.0",
-        )
-        self.resource.save()
-        # Create publish request
-        self.pub_req, _ = PublishRequest.objects.get_or_create(
-            requestor="Unit Tester",
-            resource_type=self.resource_type,
-            language=self.language,
-            checking_level=3,
-            source_text=self.language,
-            source_version='1.3.2',
-            contributors="requestor: Test User,\ncontributors: Users",
-        )
-        self.pub_req.save()
-
-        # create a rejected request
-        self.pub_rej, _ = PublishRequest.objects.get_or_create(
-            requestor="Unit Tester",
-            resource_type=self.resource_type,
-            language=self.language,
-            checking_level=3,
-            source_text=self.language,
-            source_version='1.3.2',
-            contributors="requestor: Test User,\ncontributors: Users",
-            rejected_at=now_dt,
-            rejected_by=self.user
-        )
-        self.pub_rej.save()
-
+class OfficialResourceListViewTestCase(PublishingViewsBaseTestCase):
     def test_get_context_data(self):
-        response = OfficialResourceListView.as_view()(self.request)
+        client = Client()
+        client.login(username='test_user', password='test_password')
+
+        response = client.get(reverse('oresource_list'))
+
         self.assertEqual(1, response.context_data['publish_requests'].count())
         self.assertEqual(1, response.context_data['rejected_requests'].count())
+
+
+class PublishRequestResubmitViewTestCase(PublishingViewsBaseTestCase):
+    def test_get_context_data(self):
+        client = Client()
+        response = client.get(reverse('publish_request_resubmit', args=[self.pub_req.permalink]))
+
+        self.assertIsNotNone(response.context_data['publishrequest'])
+
+        # check the permalink value to be sure it is the one we requested
+        found_permalink = response.context_data['publishrequest'].permalink
+        self.assertEqual(self.pub_req.permalink, found_permalink)
+
+        # check the method for decoding the permalink back to the pk
+        pk_from_permalink = PublishRequest.pk_from_permalink(found_permalink)
+        self.assertEqual(self.pub_req.pk, pk_from_permalink)

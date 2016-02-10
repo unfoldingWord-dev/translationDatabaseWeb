@@ -191,6 +191,11 @@ class PublishRequestForm(forms.ModelForm):
             self.fields['rejected_by'].widget.attrs['readonly'] = True
             self.fields['rejected_by'].widget.attrs['disabled'] = 'disabled'
 
+        if self.instance.pk:
+            self.fields['permalink'] = forms.CharField(widget=forms.TextInput())
+            self.fields['permalink'].widget.attrs['readonly'] = True
+            self.fields['permalink'].widget.attrs['value'] = self.instance.permalink
+
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
         if lang_id:
