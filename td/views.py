@@ -3,6 +3,7 @@ import requests
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
+from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -469,13 +470,16 @@ class LanguageDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
         jp_resp = requests.get('http://joshuaproject.net/api/v2/languages', {
-            'api_key': '42rHh7ZBq3Yd',
+            'api_key': settings.JP_API_KEY,
             'ROL3': self.object.iso_639_3,
         })
+        jp_status_code = jp_resp.json()['status']['status_code']
         context.update({
             "country": self.object.country,
-            "countries": [Country.objects.get(code=c).name for c in self.object.cc_all],
-            "jp": jp_resp.json()['data'][0] if jp_resp.status_code == 200 else None
+            "countries": [Country.objects.get(code=c).name
+                          for c in self.object.cc_all],
+            "jp_status_code": str(jp_status_code),
+            "jp": jp_resp.json()['data'][0] if jp_status_code == 200 else None,
         })
         # For translation project integration
         # ---------------------------------------------------------
