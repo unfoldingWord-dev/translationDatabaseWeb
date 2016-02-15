@@ -6,6 +6,10 @@ class VariantSplitModalForm(forms.Form):
     template_name = "gl_tracking/variant_split_modal_form.html"
 
 
+class RegionAssignmentModalForm(forms.Form):
+    template_name = "gl_tracking/region_assignment_modal_form.html"
+
+
 class ProgressForm(forms.ModelForm):
 
     # Overriden add custom initialize the form

@@ -85,6 +85,20 @@ class WARegion(models.Model):
         db_table = 'wa_region'
         ordering = ['name']
 
+    @property
+    def gl_directors(self):
+        return [d.user.username
+                for d in self.gldirector_set.filter(is_helper=False)]
+
+    @property
+    def gl_helpers(self):
+        return [d.user.username
+                for d in self.gldirector_set.filter(is_helper=True)]
+
+    @classmethod
+    def slug_all(cls):
+        return [r.slug for r in cls.objects.all()]
+
 
 @python_2_unicode_compatible
 class Country(models.Model):
@@ -160,7 +174,7 @@ class LanguageAltName(models.Model):
     name = models.CharField(max_length=200, db_index=True)
 
     class Meta:
-        unique_together = ("code", "name")
+        unique_together = (("code", "name"), )
 
     def __str__(self):
         return self.name

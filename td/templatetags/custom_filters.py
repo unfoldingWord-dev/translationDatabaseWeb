@@ -1,5 +1,9 @@
+from __future__ import absolute_import
+
 from django import template
 from django.template.defaultfilters import stringfilter
+
+from ..gl_tracking.models import GLDirector
 
 
 register = template.Library()
@@ -41,3 +45,11 @@ def percents(value):
     Appends a percentage sign
     """
     return ' '.join([value, '%']) if value else "-"
+
+
+@register.filter(name='is_super_gl_director')
+def is_super_gl_director(user):
+    """
+    Checks if the user is a GL director supervisor
+    """
+    return user.username in GLDirector.super_gl_directors()
