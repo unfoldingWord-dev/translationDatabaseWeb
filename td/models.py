@@ -176,7 +176,13 @@ class Language(models.Model):
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100, blank=True)
     anglicized_name = models.CharField(max_length=100, blank=True)
+    # alt_name is used to link Language to LanguageAltName one-by-one during
+    #    import. If there are multiple LanguageAltName, alt_name will be the
+    #    lastest linked LanguageAltName by default.
     alt_name = models.ForeignKey(LanguageAltName, null=True, blank=True, on_delete=models.SET_NULL)
+    # alt_names is programatically set to be the names of all LangAltName
+    #    objects linked to this language. It is modified whenever the
+    #    language instance is saved.
     alt_names = models.TextField(editable=False, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True)
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
