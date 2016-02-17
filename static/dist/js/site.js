@@ -138,7 +138,7 @@
 	      }, 3000);
 	    }
 	  });
-	  // Swapping expand and compress icons on element that toggles bootstrap collapse
+	  // Swap expand/collapse icons for button that toggle bootstrap collapse
 	  $('body').on("click", "[data-toggle='collapse']", function () {
 	    $(this).find('i').toggleClass("fa-expand fa-compress");
 	  });

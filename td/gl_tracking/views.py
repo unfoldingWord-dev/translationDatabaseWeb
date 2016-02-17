@@ -5,8 +5,8 @@ from django.views.generic.edit import FormView, UpdateView
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, WARegion
-from td.gl_tracking.models import Progress, Phase
-from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm
+from td.gl_tracking.models import Progress, Phase, GLDirector
+from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm, RegionAssignmentModalForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -99,6 +99,37 @@ class ProgressEditView(LoginRequiredMixin, UpdateView):
             "object": self.object,
         }
         return render(self.request, "gl_tracking/progress_update_modal_form.html", context)
+
+
+class RegionAssignmentView(LoginRequiredMixin, FormView):
+
+    template_name = "gl_tracking/region_assignment_modal_form.html"
+    form_class = RegionAssignmentModalForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(RegionAssignmentView, self).get_context_data(**kwargs)
+        context["wa_regions"] = WARegion.objects.all()
+        context["gl_directors"] = GLDirector.objects.filter(is_helper=False)
+        context["gl_helpers"] = GLDirector.objects.filter(is_helper=True)
+        return context
+
+    def form_valid(self, form):
+        # Clear any existing assignments
+        for director in GLDirector.objects.all():
+            director.regions.clear()
+        # Go through the form data and assign GLDirector to regions
+        for key in form.data:
+            region = key.split("_")[0]
+            if region in WARegion.slug_all():
+                region_obj = WARegion.objects.get(slug=region)
+                for user in form.data.getlist(key):
+                    gldirector = GLDirector.objects.get(user__username=user)
+                    gldirector.regions.add(region_obj)
+        # Render the same form but with extra context for the template.
+        context = {
+            "success": True
+        }
+        return render(self.request, "gl_tracking/region_assignment_modal_form.html", context)
 
 
 # ---------------------- #

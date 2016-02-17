@@ -304,7 +304,7 @@
             // Loads and displays appropriate region info and its language tables
             function loadRegion() {
                 // Display region name based on built-in attribute
-                var region = this.dataset.region;
+                var region = this.dataset.region.replace(/\ /g, '');
                 $('#region-detail-header h1').html(region.charAt(0).toUpperCase() + region.slice(1));
                 // Make an API call to load region info into the content container
                 $('#region-detail-content')
