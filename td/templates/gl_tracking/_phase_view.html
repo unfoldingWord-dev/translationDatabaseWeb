@@ -5,7 +5,7 @@
     <div class="labels-container">
         <p class="overall" data-region="overall">Overall</p>
         {% for key, region in regions.items %}
-            <p id="{{region.name | lower}}-label" data-region="{{region.name | lower}}">{{region.name}}</p>
+            <p id="{{ region.name|lower }}-label" data-region="{{ region.name|lower }}">{{ region.name }}</p>
         {% endfor %}
     </div>
 
@@ -13,16 +13,16 @@
     <div class="progress-bars-container">
         <div class="progress-bar-wrapper">
             <div id="overall-progress" class="progress overall" data-region="overall">
-                <div class="progress-bar overall-progress" role="progressbar" aria-valuenow="{{overall_progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{overall_progress}}%;"></div>
+                <div class="progress-bar overall-progress" role="progressbar" aria-valuenow="{{ overall_progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ overall_progress }}%;"></div>
             </div>
-            <span class="progress-percentage overall" data-region="{{key | lower}}">{{overall_progress}}%</span>
+            <span class="progress-percentage overall" data-region="{{ key|lower }}">{{overall_progress}}%</span>
         </div>
         {% for key, region in regions.items %}
             <div class="progress-bar-wrapper">
-                <div id="{{key | lower}}-progress" class="progress" data-region="{{key | lower}}">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{{region.regional_progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{region.regional_progress}}%;"></div>
+                <div id="{{ key|lower }}-progress" class="progress" data-region="{{ key|lower }}">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{ region.regional_progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ region.regional_progress }}%;"></div>
                 </div>
-                <span class="progress-percentage" data-region="{{key | lower}}">{{region.regional_progress}}%</span>
+                <span class="progress-percentage" data-region="{{ key|lower }}">{{ region.regional_progress }}%</span>
             </div>
         {% endfor %}
     </div>
@@ -53,35 +53,35 @@
 <div class="main-container language-list">
 
     {% for key, region in regions.items %}
-        <div id="{{key | lower}}-languages" class="hidden">
+        <div id="{{ key|lower }}-languages" class="hidden">
         {% for language in region.gateway_languages %}
             <div class="panel panel-default">
 
                 <!-- PANEL/TABLE HEADING -->
-                <div class="panel-heading collapsed clickable" data-toggle="collapse" data-target="#{{language.code}}">
+                <div class="panel-heading collapsed clickable" data-toggle="collapse" data-target="#{{ language.code }}">
                     <span class="pull-right">
                         {% if phase == "1" %}
-                            {{language.progress_phase_1}}%
+                            {{ language.progress_phase_1 }}%
                         {% elif phase == "2" %}
-                            {{language.progress_phase_2}}%
+                            {{ language.progress_phase_2 }}%
                         {% endif %}
                     </span>
                     <div style="display: flex;">
                         <h1 class="panel-title">
-                            {{language.ang | default:language.ln}} <span class="badge">{{language.code}}</span>
+                            {{ language.ang|default:language.ln }} <span class="badge">{{ language.code }}</span>
                             {% for variant in language.variant_codes %}
-                                <span class="badge">{{variant}}</span>
+                                <span class="badge">{{ variant }}</span>
                             {% endfor %}
                         </h1>
                         {% if language.variant_codes|length > 0 %}
-                                <button class="icon-button btn-variant-split" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{language.code}}" data-toggle="modal" data-target="#modal-sm" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i></button>
+                                <button class="icon-button btn-variant-split" href="{% url 'gl:ajax_modal_variant_split' language.code %}" data-language="{{ language.code }}" data-toggle="modal" data-target="#modal-sm" title="Split Variant" data-tooltip><i class="fa fa-code-fork"></i></button>
                             </span>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- PANEL/TABLE BODY -->
-                <div id="{{language.code}}" class="panel-body language-panel-body collapse">
+                <div id="{{ language.code }}" class="panel-body language-panel-body collapse">
                     {% if phase == "1" %}
                         {% include "gl_tracking/_language_doc_table.html" with region=language.lr documents=language.documents_phase_1 can_edit=can_edit %}
                     {% elif phase == "2" %}

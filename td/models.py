@@ -1,13 +1,14 @@
-from collections import defaultdict
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+
+from collections import defaultdict
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
-from td.gl_tracking.models import Document
+from .gl_tracking.models import Document
 
 
 @python_2_unicode_compatible
@@ -84,6 +85,20 @@ class WARegion(models.Model):
         db_table = 'wa_region'
         ordering = ['name']
 
+    @property
+    def gl_directors(self):
+        return [d.user.username
+                for d in self.gldirector_set.filter(is_helper=False)]
+
+    @property
+    def gl_helpers(self):
+        return [d.user.username
+                for d in self.gldirector_set.filter(is_helper=True)]
+
+    @classmethod
+    def slug_all(cls):
+        return [r.slug for r in cls.objects.all()]
+
 
 @python_2_unicode_compatible
 class Country(models.Model):
@@ -154,14 +169,35 @@ class Country(models.Model):
 
 
 @python_2_unicode_compatible
+class LanguageAltName(models.Model):
+    code = models.SlugField(max_length=50, db_index=True)
+    name = models.CharField(max_length=200, db_index=True)
+
+    class Meta:
+        unique_together = ("code", "name")
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
 class Language(models.Model):
     DIRECTION_CHOICES = (
         ("l", "ltr"),
         ("r", "rtl")
     )
+
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100, blank=True)
     anglicized_name = models.CharField(max_length=100, blank=True)
+    # alt_name is used to link Language to LanguageAltName one-by-one during
+    #    import. If there are multiple LanguageAltName, alt_name will be the
+    #    lastest linked LanguageAltName by default.
+    alt_name = models.ForeignKey(LanguageAltName, null=True, blank=True, on_delete=models.SET_NULL)
+    # alt_names is programatically set to be the names of all LangAltName
+    #    objects linked to this language. It is modified whenever the
+    #    language instance is saved.
+    alt_names = models.TextField(editable=False, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True)
     gateway_language = models.ForeignKey("self", related_name="gateway_to", null=True, blank=True)
     native_speakers = models.IntegerField(null=True, blank=True)
@@ -188,7 +224,9 @@ class Language(models.Model):
 
     @property
     def cc_all(self):
-        pks = [int(pk) for pk in self.attributes.filter(attribute="country_id").values_list("value", flat=True)]
+        pks = [int(pk)
+               for pk in self.attributes.filter(attribute="country_id")
+                                        .values_list("value", flat=True)]
         countries = Country.objects.filter(pk__in=pks)
         return [c.code.encode("utf-8") for c in countries]
 
@@ -244,6 +282,14 @@ class Language(models.Model):
     def variant_codes(self):
         return [lang.code for lang in self.variants.all()]
 
+    @property
+    def alt_name_all(self):
+        pks = [int(pk)
+               for pk in self.attributes.filter(attribute="alt_name_id")
+                                        .values_list("value", flat=True)]
+        alt_names = LanguageAltName.objects.filter(pk__in=pks)
+        return [n.name.encode("utf-8") for n in alt_names]
+
     @classmethod
     def codes_text(cls):
         return " ".join([
@@ -261,7 +307,9 @@ class Language(models.Model):
     @classmethod
     def names_data(cls):
         return [
-            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag, ld=x.get_direction_display())
+            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all,
+                 cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
+                 ld=x.get_direction_display())
             for x in cls.objects.all().order_by("code")
         ]
 
@@ -277,15 +325,23 @@ class EAVBase(models.Model):
         abstract = True
 
 
+@python_2_unicode_compatible
 class CountryEAV(EAVBase):
     entity = models.ForeignKey(Country, related_name="attributes")
+
+    def __str__(self):
+        return self.attribute
 
     class Meta:
         db_table = 'uw_countryeav'
 
 
+@python_2_unicode_compatible
 class LanguageEAV(EAVBase):
     entity = models.ForeignKey(Language, related_name="attributes")
+
+    def __str__(self):
+        return self.attribute
 
     class Meta:
         db_table = 'uw_languageeav'

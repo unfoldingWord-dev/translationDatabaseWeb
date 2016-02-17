@@ -1,0 +1,118 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<div class="well well-sm">
+    <span>See it on <a href="http://joshuaproject.net/languages/{{ data.ROL3 }}" target="_blank">Joshua Project</a></span>
+</div>
+
+<!-- BIBLE TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Bible</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-bible-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-bible-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <tr><th class="col-md-2">Bible Status</th><td>{{ data.BibleStatus|default:""|bible_status|capfirst }}</td></tr>
+                <tr><th>Questionable Translation Need</th><td>{% if data.TranslationNeedQuestionable == 'Y' %}Yes{% else %}No{% endif %}</td></tr>
+                <tr><th>Complete Bible</th><td>{{ data.BibleYear|default:"-" }}</td></tr>
+                <tr><th>New Testament</th><td>{{ data.NTYear|default:"-" }}</td></tr>
+                <tr><th>Portion Translation</th><td>{{ data.PortionsYear|default:"-" }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- LANGUAGE TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Language</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-lang-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-lang-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <tr><th class="col-md-2">Name</th><td>{{ data.Language|default:"-" }}</td></tr>
+                <tr><th>Code</th><td>{{ data.ROL3|default:"-" }}</td></tr>
+                <tr><th>Status</th><td>{{ data.Status|default:""|lang_status|capfirst }}</td></tr>
+                <tr><th>Unwritten/Oral</th><td>{% if data.Unwritten == 'Y' %}Yes{% else %}No{% endif %}</td></tr>
+                <tr><th>Code per Ethnologue 14</th><td>{{ data.ROL3Edition14|default:"-" }}, {{ data.ROL3Edition14Orig|default:"-" }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- COUNTRY TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Countries</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-country-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-country-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <tr><th class="col-md-2">Country Code</th><td>{{ data.ROG3|default:"-" }}</td></tr>
+                <tr><th>Hub Country</th><td>{{ data.HubCountry|default:"-" }}</td></tr>
+                <tr><th>Speaking Countries</th><td>{{ data.NbrCountries|default:"-"|intcomma }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- PEOPLE TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">People</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-people-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-people-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <tr><th class="col-md-2">World speakers (Est.)</th><td>{{ data.WorldSpeakers|default:"-"|intcomma }}</td></tr>
+                <tr><th>People Group's Primary Language</th><td>{{ data.NbrPGICs|default:"-"|intcomma }}</td></tr>
+                <tr><th>Population of Groups Speaking</th><td>{{ data.JPPopulation|default:"-"|intcomma }}</td></tr>
+                <tr><th>Least/un-reached</th><td>{% if data.LeastReached == 'Y' %}Yes{% else %}No{% endif %}</td></tr>
+                <tr><th>Primary Religion</th><td>{{ data.PrimaryReligion|default:"-" }}</td></tr>
+                <tr><th>Christian Adherents</th><td>{{ data.PercentAdherents|default:""|percents }}</td></tr>
+                <tr><th>Evangelicals</th><td>{{ data.PercentEvangelical|default:""|percents }}</td></tr>
+                <!-- <tr><th>Religion Code</th><td>{{ data.RLG3|default:"-" }}</td></tr> -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- RESOURCE TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Resources</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-resource-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-resource-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <tr><th class="col-md-2">Global Recordings</th><td>{% if data.GRN_URL %}<a href="{{ data.GRN_URL }}" target="_blank">Listen</a>{% else %}-{% endif %}</td></tr>
+                <tr><th>Jesus Film</th><td>{% if data.JF_URL %}<a href="{{ data.JF_URL }}" target="_blank">Watch</a>{% else %}-{% endif %}</td></tr>
+                <tr><th>4 Spiritual Laws</th><td>{% if data.4Laws_URL %}<a href="{{ data.4Laws_URL }}" target="_blank">View</a>{% else %}-{% endif %}</td></tr>
+                <tr><th>YouVersion Bible</th><td>{% if data.YouVersion_URL %}<a href="{{ data.YouVersion_URL }}" target="_blank">View</a>{% else %}-{% endif %}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- EXTRA TABLE -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Extra Info</h2>
+        <button class="icon-button" data-toggle="collapse" data-target=".jp-extra-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    </div>
+    <div class="panel-body no-padding jp-extra-table collapse in">
+        <table class="table table-no-border no-margin">
+            <tbody>
+                <!-- <tr><th>Online</th><td>{{ data.Online|default:"-" }}</td></tr> -->
+                <tr><th class="col-md-2">JPScale</th><td>{{ data.JPScale|default:"-" }}</td></tr>
+                <!-- <tr><th>YouVersion_ID</th><td>{{ data.YouVersion_ID|default:"-" }}</td></tr> -->
+             </tbody>
+        </table>
+    </div>
+</div>
