@@ -84,6 +84,7 @@
         <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
         {% endif %}
         <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
     </ul>
 
     <!-- TAB CONTENT -->
@@ -226,6 +227,18 @@
                 {% include "resources/_empty_div_overlay.html" with msg=msg action="" action_url="" %}
                 {% endwith %}
             {% endif %}
+            </div>
+        </div>
+
+        <!-- SOURCES VIEW -->
+        <div id="sources-view" class="row tab-pane">
+            <div class="col-md-12">
+                <ul>
+                    <li><a href="http://joshuaproject.net/languages/{{ language.iso_639_3 }}" target="_blank">Joshua Project</a></span>
+                    <li><a href="http://www.ethnologue.com/language/{{ language.iso_639_3 }}" target="_blank">Ethnologue</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Special:Search/{{ language.ang }}" target="_blank">Wikipedia</a></li>
+                    <li><a href="http://www.peoplegroups.org/explore/Explore.aspx?lang={{ language.iso_639_3 }}#topmenu" target="_blank">People Groups</a></li>
+                </ul>
             </div>
         </div>
 
