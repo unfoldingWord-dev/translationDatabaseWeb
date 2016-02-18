@@ -1,15 +1,20 @@
 import re
 from copy import deepcopy
-
+import time
+import html2text
 from bs4 import element, BeautifulSoup
 import requests
-
 from docutils.utils.smartquotes import smartyPants
-
 
 HTML_TAG_RE = re.compile(ur"<.*?>", re.UNICODE)
 LINK_TAG_RE = re.compile(ur"\[\[.*?\]\]", re.UNICODE)
 IMG_TAG_RE = re.compile(ur"{{.*?}}", re.UNICODE)
+H_ID_RE = re.compile(ur'(\s+id="[^"]*")', re.DOTALL | re.MULTILINE | re.UNICODE)
+FETCH_A_RE = re.compile(ur'<a class="media" href="/lib/exe/fetch\.php.*?(<img.*?)</a>',
+                        re.DOTALL | re.MULTILINE | re.UNICODE)
+FETCH_SRC_RE = re.compile(ur'src="/lib/exe/fetch\.php.*?&amp;media=.*?(assets.*?)"',
+                          re.DOTALL | re.MULTILINE | re.UNICODE)
+MEDIA_SRC_RE = re.compile(ur'src="/_media/en(.*?)(\?.*?)"', re.DOTALL | re.MULTILINE | re.UNICODE)
 
 
 def remove_html_comments(soup):
@@ -17,10 +22,12 @@ def remove_html_comments(soup):
     Remove HTML comments from incoming parsed html data
 
     :param soup: BeautifulSoup html.parser
-    :type soup: object
+    :type soup: PageElement
     """
+
     def is_html_comment(text):
         return isinstance(text, element.Comment)
+
     for html_comment in soup.find_all(text=is_html_comment):
         html_comment.extract()
 
@@ -31,7 +38,7 @@ def fix_dokuwiki_hyperlink_title_attr(soup):
     to the element text if the "en:ta:vol1:toc" type pattern is found.
 
     :param soup: BeautifulSoup html.parser
-    :type soup: object
+    :type soup: PageElement
 
     :returns: object -- BeautifulSoup
     """
@@ -43,10 +50,10 @@ def fix_dokuwiki_hyperlink_title_attr(soup):
 
 def clean_text(input_text):
     """
-    Cleans up text from possible dokuwiki and html tag polution
+    Cleans up text from possible dokuwiki and html tag pollution
 
     :param input_text:
-    :type input_text: str
+    :type input_text: str|unicode
 
     :returns: str
     """
@@ -65,17 +72,19 @@ class OpenBibleStory(object):
     title_re = re.compile(ur"======.*", re.UNICODE)
     ref_re = re.compile(ur"//.*//", re.UNICODE)
     frame_re = re.compile(ur"{{[^{]*", re.DOTALL | re.UNICODE)
-    frid_re = re.compile(ur"[0-5][0-9]-[0-9][0-9]", re.UNICODE)
+    frame_id_re = re.compile(ur"[0-5][0-9]-[0-9][0-9]", re.UNICODE)
     num_re = re.compile(ur"([0-5][0-9]).txt", re.UNICODE)
     chapter_numbers = ["{0:02}".format(x) for x in range(1, 51)]
     img_url = "https://api.unfoldingword.org/obs/jpg/1/{0}/360px/obs-{0}-{1}.jpg"
     source_url = "https://door43.org/{lang_code}/obs/{chapter}?do=export_raw"
 
-    def __init__(self, lang_code):
+    def __init__(self, lang_code, publish_request):
         self.lang_code = lang_code
         self.session = requests.session()
+        self.publish_request = publish_request
 
-    def _parse(self, regex, raw, replace):
+    @staticmethod
+    def _parse(regex, raw, replace):
         values = regex.search(raw)
         return values.group(0).replace(replace, "").strip() if values else "NOT FOUND"
 
@@ -83,7 +92,8 @@ class OpenBibleStory(object):
         links = self.img_link_re.search(link)
         return links.group(0) if links else self.img_url.format("en", frame_id)
 
-    def _parse_frame_text(self, lines):
+    @staticmethod
+    def _parse_frame_text(lines):
         text = u"".join([x for x in lines[1:] if u"//" not in x]).strip()
         text = text.replace(u"\\\\", u"").replace(u"**", u"").replace(u"__", u"")
         text = clean_text(text)
@@ -125,7 +135,7 @@ class OpenBibleStory(object):
             chapter_data["ref"] = self._parse(self.ref_re, chapter_raw, "/")
             for frame in self.frame_re.findall(chapter_raw):
                 frame_lines = frame.split("\n")
-                frame_ids = self.frid_re.search(frame)
+                frame_ids = self.frame_id_re.search(frame)
                 frame_id = frame_ids.group(0) if frame_ids else "NOT FOUND"
                 chapter_data["frames"].append({
                     "id": frame_id,
@@ -152,23 +162,21 @@ class TranslationAcademy(object):
     and then each topic and contents.
     """
 
-    # chapter document IDs in the table of contents
-    CHAPTERS = [
-        "plugin_include__en__ta__vol1__intro__toc_intro",
-        "plugin_include__en__ta__vol1__translate__toc_transvol1",
-        "plugin_include__en__ta__vol1__checking__toc_checkvol1",
-        "plugin_include__en__ta__vol1__tech__toc_techvol1",
-        "plugin_include__en__ta__vol1__process__toc_processvol1",
-    ]
-
     source_url = "https://door43.org{uri}"
-    chapters_uri = "/{lang_code}/ta/vol{vol_no}/toc"
+    chapters_uri = "/{lang_code}/ta/toc"
+    volume_number = ["1", "2"]
 
-    def __init__(self, lang_code, volume_number=1):
+    def __init__(self, lang_code, publish_request):
+        """
+
+        :param str lang_code:
+        :param PublishRequest publish_request:
+        :return:
+        """
         self.lang_code = lang_code
         self.session = requests.session()
         self.session.params = {"do": "export_xhtmlbody"}
-        self.volume_number = str(volume_number)
+        self.publish_request = publish_request
 
     def _parse_frames(self, soup):
         """
@@ -176,7 +184,7 @@ class TranslationAcademy(object):
         check for sub-frames in any child list elements.
 
         :param soup: HTML results of the TOC listing via BeautifulSoup
-        :type soup: object
+        :type soup: PageElement
 
         :returns: list
         """
@@ -187,7 +195,13 @@ class TranslationAcademy(object):
             # @TODO - There is a better way...
             li_classes = a_el.find_previous("li").get("class")
             li_lvl = int(li_classes[0].lstrip("level"))
-            frame = self.fetch_frame(a_el.get("href"))
+            href = a_el.get("href")
+            frame = self.fetch_frame(href)
+
+            # added this because there were non-existent pages in the TOC
+            if not frame:
+                raise Exception("Page not found: " + href)
+
             if li_lvl == 1:
                 if sub_frames:
                     frames[-1]["frames"] = deepcopy(sub_frames)
@@ -210,24 +224,43 @@ class TranslationAcademy(object):
         contents
 
         :param soup: HTML results of the TOC listing via BeautifulSoup
-        :type soup: object
+        :type soup: PageElement
 
         :returns: dict
         """
-        page_header_el = soup.find("h2")
-        toc = {
-            "title": page_header_el.text,
-            "id": page_header_el.get("id"),
-            "chapters": [],
+        status = {
+            "checking_entity": "",
+            "checking_level": self.publish_request.checking_level,
+            "contributors": self.publish_request.contributors,
+            "license": self.publish_request.license_title,
+            "publish_date": time.strftime("%Y-%m-%d"),
+            "source_text": self.publish_request.source_text.code,
+            "source_text_version": self.publish_request.source_version,
+            "version": ""
+        }
+
+        lang = self.publish_request.language
+
+        meta = {
+            "direction": "ltr" if lang.direction == "l" else "rtl",
+            "lc": lang.code,
+            "mod": int(time.time()),
+            "name": lang.name,
+            "anglicized_name": lang.anglicized_name,
+            "status": status
+        }
+
+        return_val = {
+            "meta": meta,
+            "toc": html2text.html2text(unicode(soup)),
+            "chapters": []
         }
 
         # Iterate over each section of the TOC, grabbing the header element's
         # text as the chapter's title, then fetching all links inside the
         # chapter.
-        for chapter_id in self.CHAPTERS:
-            chapter_el = soup.find(id=chapter_id)
-            if not chapter_el:
-                continue
+        chapters = soup.findAll("div", {"class": "plugin_include_content"})
+        for chapter_el in chapters:
 
             # Get the chapter's title
             title = chapter_el.find_next(("h4", "h3")).text
@@ -258,16 +291,16 @@ class TranslationAcademy(object):
             if sections:
                 chapter["sections"] = sections
 
-            toc["chapters"].append(chapter)
-        return toc
+            return_val["chapters"].append(chapter)
+        return return_val
 
     def fetch_frame(self, frame_uri):
         """
         Fetch the content from the `frame_uri`, parsing and formatting the
         input into one expected by the publishing module.
 
-        :param chapter_uri: URI for frame of translationAcademy
-        :type chapter_uri: string
+        :param frame_uri: URI for frame of translationAcademy
+        :type frame_uri: str
 
         :returns: dict
         """
@@ -285,11 +318,29 @@ class TranslationAcademy(object):
 
             # Find the page title header
             title_el = soup.find(("h1", "h2", "h3"))
+
+            text = unicode(soup).strip()
+
+            # remove id attributes added by the door43 toc plugin
+            text = re.sub(H_ID_RE, u'', text)
+
+            # convert fetch.php images to normal img tags
+            text = re.sub(FETCH_A_RE, ur'\1', text)
+            text = re.sub(FETCH_SRC_RE, lambda match: u'src="' + match.group(1).replace(u'%2F', u'/') + u'"', text)
+
+            # convert _media image urls
+            text = re.sub(MEDIA_SRC_RE, ur'src="/assets/img\1"', text)
+
+            # use the frame_uri to generate a unique ID
+            frame_id = frame_uri.replace(u'/en/ta/', u'').replace(u'/', u'_')
+
             return {
-                "id": title_el.get("id"),
+                "id": frame_id,
                 "ref": frame_uri,
                 "title": title_el.text.replace("Table of Contents - ", ""),
-                "text": soup.prettify(formatter="html"),
+                # Using `soup.prettify` inserts inappropriate blank space that causes the HTML to not render correctly.
+                # "text": soup.prettify(formatter="html"),
+                "text": text
             }
 
     def fetch_chapters(self):
@@ -299,8 +350,7 @@ class TranslationAcademy(object):
         :returns: dict
         """
         chapters_uri = self.chapters_uri.format(
-            lang_code=self.lang_code,
-            vol_no=self.volume_number
+            lang_code=self.lang_code
         )
         chapters_url = self.source_url.format(uri=chapters_uri)
         response = self.session.get(chapters_url)

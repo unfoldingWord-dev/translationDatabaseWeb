@@ -62,9 +62,9 @@ Create a new virtual environment with PyCharm/IntelliJ in ~/virtual_env/translat
 
 ### Install Gondor CLI
 
-    sudo curl -s https://storage.googleapis.com/gondor-cli/g3a-v0.7.1-linux-amd64 > /usr/local/bin/g3a 
-    sudo chmod +x /usr/local/bin/g3a
-    sudo g3a upgrade
+    sudo sh -c 'curl -s https://storage.googleapis.com/ec-cli/ec-v0.1.2-linux-amd64 > /usr/local/bin/ec'
+    sudo chmod +x /usr/local/bin/ec
+    sudo ec upgrade
 
 
 ### PGSQL settings
@@ -89,12 +89,12 @@ Now, restart the service: `sudo service postgresql restart`.
 
 Run this script to initialize the database with a dump from the production server:
 
-    g3a run db --instance=primary -- pg_dump --no-owner --no-acl | ./manage.py dbshell
+    ec run db --instance=primary -- pg_dump --no-owner --no-acl | ./manage.py dbshell
 
 If you get timeout errors running the above command, this is an alternative that has worked:
 
-    g3a run db --instance=primary -- pg_dump --no-owner --no-acl -T imports_* > dump.sql
-    g3a run db --instance=primary -- pg_dump --no-owner --no-acl -t imports_* > imports.sql
+    ec run db --instance=primary -- pg_dump --no-owner --no-acl -T imports_* > dump.sql
+    ec run db --instance=primary -- pg_dump --no-owner --no-acl -t imports_* > imports.sql
     ./manage.py dbshell < dump.sql
     ./manage.py dbshell < imports.sql
 
@@ -111,4 +111,35 @@ If you get timeout errors running the above command, this is an alternative that
 
   * Follow this to set up the PyCharm/IntelliJ terminal: http://stackoverflow.com/questions/22288569/how-do-i-activate-a-virtualenv-inside-pycharms-terminal
   * Run the site like this: python manage.py runserver
+  * To run a management script on td or td-demo server, first switch to master or develop branch and do it like this: 
+  ```ec run web python manage.py add_publishing_group```
+  If there are command line options for the script, do it like this:
+  ```ec run web --cli-option -- python manage.py --command-option add_publishing_group```
+  * PostgreSQL repository: `deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main`
+
+
+### Upgrade PostgreSQL 9.3 to 9.5 on Ubuntu 14.04
+
+This was required because the `publishing_publishrequest` contains a `jsonb` field, a new type that was introduced in PostgreSQL 9.4.
+
+First remove the old version.
+Source: http://stackoverflow.com/questions/2748607/how-to-thoroughly-purge-and-reinstall-postgresql-on-ubuntu
+```
+sudo service postgresql stop
+apt-get --purge remove postgresql\*
+rm -r /etc/postgresql/
+rm -r /etc/postgresql-common/
+rm -r /var/lib/postgresql/
+userdel -r postgres
+groupdel postgres
+```
+
+Now add the PostgreSQL repository and install the new version.
+Source: http://tecadmin.net/install-postgresql-server-on-ubuntu/
+```
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib
+```
   
