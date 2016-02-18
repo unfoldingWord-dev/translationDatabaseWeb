@@ -19,7 +19,8 @@ from .views import (
     PublishRequestDeleteView,
     source_languages_autocomplete,
     resource_language_json,
-    resource_catalog_json
+    resource_catalog_json,
+    PublishRequestResubmitView
 )
 
 
@@ -36,6 +37,7 @@ urlpatterns = [
     url(r"^oresource/(?P<pk>\d+)/update$", OfficialResourceUpdateView.as_view(), name="oresource_update"),
     url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request"),
     url(r"^publish/request/(?P<pk>\d+)/", PublishRequestUpdateView.as_view(), name="publish_request_update"),
+    url(r"^publish/request/(?P<permalink>\w+)/", PublishRequestResubmitView.as_view(), name="publish_request_resubmit"),
     url(r"^publish/request-reject/(?P<pk>\d+)/", PublishRequestDeleteView.as_view(), name="publish_request_delete"),
     url(r"^ac/langnames/", languages_autocomplete, name="names_autocomplete"),
     url(r"^ac/src-langnames/", source_languages_autocomplete, name="source_names_autocomplete"),
