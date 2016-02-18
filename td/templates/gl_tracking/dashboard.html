@@ -183,11 +183,15 @@
     <!-- BODY/CONTENT -->
     <section id="content_body">
         <div class="container">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Direct questions and comments to <a href="mailto:help@door43.org" class="alert-link">help@door43.org</a>
+            </div>
             <div id="progress-overview">
                 <ul id="phase-tabs" class="nav nav-tabs">
                     {% for phase in phases %}
-                        <li role="presentation" class="clickable {% if forloop.first %}active{% endif %}" data-phase="{{phase.number}}">
-                            <a>{% if phase.name %}{{phase.name}}{% else %}Phase {{phase.number}}{% endif %}</a>
+                        <li role="presentation" class="clickable {% if forloop.first %}active{% endif %}" data-phase="{{ phase.number }}">
+                            <a>{% if phase.name %}{{ phase.name }}{% else %}Phase {{ phase.number }}{% endif %}</a>
                         </li>
                     {% endfor %}
                 </ul>
