@@ -1,0 +1,47 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+
+    <h5><a href="{% url "gl:partner_list_view" %}">Back To List</a></h5>
+    <h1>
+    {{ partner.name }}
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary btn-xs" href="{% url "gl:partner_edit_view" partner.pk %}">Edit</a>
+    {% endif %}
+</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Details</h3>
+        <table class="table">
+            <tbody>
+                <tr><th>City</th><td>{{ partner.city }}</td></tr>
+                <tr><th>State/Region</th><td>{{ partner.province }}</td></tr>
+                <tr><th>Country</th><td>{{ partner.country|default:"" }}</td></tr>
+                <tr><th>Active Partner</th><td>{{ partner.is_active|yesno:"Yes,No" }}</td></tr>
+                <tr><th>Partner Start</th><td>{{ partner.partner_start|default:"" }}</td></tr>
+                <tr><th>Partner End</th><td>{{ partner.partner_end|default:"" }}</td></tr>
+            </tbody>
+        </table>
+        {% if user.is_authenticated %}
+        <h3>Contact Information</h3>
+        <table class="table">
+            <tbody>
+            <tr><th>Contact Name</th><td>{{ partner.contact_name }}</td></tr>
+            <tr><th>Contact Email</th><td><a href="mailto:{{ partner.contact_email }}">{{ partner.contact_email }}</a></td></tr>
+            <tr><th>Contact Phone</th><td>{{ partner.contact_phone }}</td></tr>
+            </tbody>
+        </table>
+        {% endif %}
+        <h3>Notes</h3>
+        <table class="table">
+            <tbody>
+            <tr><td>{{ partner.notes|linebreaks|urlize }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+{% endblock %}

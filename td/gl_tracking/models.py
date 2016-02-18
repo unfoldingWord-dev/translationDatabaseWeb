@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
+from django.core.urlresolvers import reverse
 
 
 # ----------- #
@@ -112,18 +113,27 @@ class Progress(models.Model):
 class Partner(models.Model):
 
     name = models.CharField(max_length=200, unique=True)
-    is_pseudo = models.BooleanField(default=False)
-    contact_person = models.CharField(max_length=200, blank=True)
-    contact_number = models.CharField(max_length=200, blank=True)
-    contact_person = models.EmailField(max_length=200, blank=True)
     address = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=200, blank=True)
-    state = models.CharField(max_length=200, blank=True)
-    province = models.CharField(max_length=200, blank=True)
-    country = models.CharField(max_length=200, blank=True)
+    province = models.CharField(max_length=200, blank=True)  # This is used for State also
+    country = models.ForeignKey("td.Country", on_delete=models.SET_NULL, null=True, blank=True)
+
+    partner_start = models.DateField(null=True, blank=True)
+    partner_end = models.DateField(null=True, blank=True)
+
+    # Contact Information
+    contact_name = models.CharField(max_length=200, blank=True)
+    contact_phone = models.CharField(max_length=200, blank=True)
+    contact_email = models.EmailField(max_length=200, blank=True)
+
+    is_active = models.BooleanField(default=True)
+    notes = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("gl:partner_detail_view", kwargs={"pk": self.pk})
 
 
 # ------------ #

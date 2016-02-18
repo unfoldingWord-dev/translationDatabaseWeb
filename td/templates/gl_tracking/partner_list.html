@@ -1,0 +1,38 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>{% blocktrans %}Translation Partners{% endblocktrans %}</h1>
+            {% url "gl:partner_create_view" as partner_create %}
+            {% if user.is_authenticated %}
+                {% blocktrans %}
+                    <a href="{{ partner_create }}" class="btn btn-primary large">Add a Partner</a>
+                {% endblocktrans %}
+            {% endif %}
+        </div>
+    </section>
+
+    <section id="content_body">
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h1 class="panel-title">Partners</h1></div>
+                <table class="table table-bordered" data-source="{% url "gl:ajax_partner_list" %}">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Active</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+{% endblock %}
