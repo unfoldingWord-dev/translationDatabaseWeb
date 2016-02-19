@@ -4,15 +4,25 @@ from django.contrib.auth.models import User
 from mock import Mock, patch
 
 from td.models import Language, WARegion
-from td.gl_tracking.models import Phase, DocumentCategory, Document, Progress
+from td.gl_tracking.models import (
+    Phase,
+    DocumentCategory,
+    Document,
+    Progress
+)
 from td.gl_tracking.views import (
     HomeView,
     PhaseView,
     RegionDetailView,
     VariantSplitView,
     ProgressEditView,
+    RegionAssignmentView,
 )
-from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm
+from td.gl_tracking.forms import (
+    VariantSplitModalForm,
+    ProgressForm,
+    RegionAssignmentModalForm,
+)
 
 
 def setup_view(view, request=None, *args, **kwargs):
@@ -236,4 +246,54 @@ class ProgressEditViewTestCase(TestCase):
         self.assertIn("success", context)
         self.assertIn("object", context)
         self.assertEqual(url, "gl_tracking/progress_update_modal_form.html")
+        self.assertEqual(mock_render.call_count, 1)
+
+
+class RegionAssignmentViewTestCase(TestCase):
+    def setUp(self):
+        self.request = RequestFactory().get('/region_assignment/')
+        self.request.user = create_user()
+        self.view = setup_view(RegionAssignmentView(), self.request)
+
+    def test_get_with_user(self):
+        """
+        Sanity check against errors when going requesting region assignment
+        """
+        # Language.objects.create(code="test")
+        response = RegionAssignmentView.as_view()(self.request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_config(self):
+        """
+        Sanity check for config
+        """
+        self.assertEqual(
+            self.view.template_name,
+            "gl_tracking/region_assignment_modal_form.html"
+        )
+        self.assertIs(self.view.form_class, RegionAssignmentModalForm)
+
+    def test_get_context_data(self):
+        """
+        wa_regions, gl_directors, and gl_helpers info should be in the context
+        """
+        context = self.view.get_context_data()
+        self.assertIn("wa_regions", context)
+        self.assertIn("gl_directors", context)
+        self.assertIn("gl_helpers", context)
+
+    @patch('td.gl_tracking.views.render')
+    def test_form_valid(self, mock_render):
+        """
+        Render should be called once with the right URL and context that
+           contains 'success' info
+        """
+        form = Mock()
+        form.data = {}
+        self.view.form_valid(form)
+
+        request, url, context = mock_render.call_args[0]
+
+        self.assertIn("success", context)
+        self.assertEqual(url, "gl_tracking/region_assignment_modal_form.html")
         self.assertEqual(mock_render.call_count, 1)
