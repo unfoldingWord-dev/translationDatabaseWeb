@@ -1,113 +1,247 @@
 {% extends "site_base.html" %}
-{% load render_dict %}
 
+{% load render_dict %}
 {% load humanize %}
 
+{% block extra_style %}
+    <style>
+        .center-text {
+            text-align: center;
+        }
+        .top-right-spaced {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        .jumbotron.jumbotron-custom {
+            margin-top: 20px;
+            position: relative;
+        }
+        .language-title {
+            margin-bottom: 20px;
+        }
+        .nav.nav-tabs.view-tabs .active a {
+            background-color: #EEE;
+        }
+        .multi-view-container {
+            min-height: 200px;
+            padding-top: 1.5rem;
+            padding-bottom: 1rem;
+            position: relative;
+        }
+        .multi-view-container > div {
+            min-height: 100%;
+        }
+        .table-no-border tbody > tr > th,
+        .table-no-border tbody > tr > td {
+            border-top: none;
+            border-bottom: 1px solid #DDD;
+        }
+        .table-no-border tbody > tr:last-child > th,
+        .table-no-border tbody > tr:last-child > td {
+            border: none;
+        }
+        .panel-title {
+            display: inline;
+            margin-right: 1rem;
+        }
+        .no-padding {
+            padding: 0;
+        }
+        .no-margin {
+            margin: 0;
+        }
+        .empty-div-overlay {
+            text-align: center;
+        }
+        .empty-div-msg {
+            padding: 2rem 0;
+            color: #AAA;
+        }
+    </style>
+{% endblock extra_style %}
 
 {% block body %}
-
+    
+    <!-- BREADCRUMBS -->
     {% include "resources/_breadcrumbs.html" with region=country.region %}
 
-<h1>
-    {{ language.name }}
-    {% if user.is_authenticated %}
-    <a class="btn btn-primary btn-xs" href="{% url "language_edit" language.pk %}">Edit</a>
-    {% endif %}
-</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <table class="table">
-            <tbody>
-                <tr><th>Code</th><td>{{ language.code }}</td></tr>
-                {% if language.anglicized_name %}
-                <tr><th>Anglicized Name</th><td>{{ language.anglicized_name }}</td></tr>
-                {% endif %}
-                <tr><th>ISO 639-3</th><td>{{ language.iso_639_3 }}</td></tr>
-                <tr><th>Direction</th><td><span class="label label-default">{{ language.get_direction_display }}</span></td></tr>
-                <tr><th>Gateway Language</th><td>{{ language.gateway_language }}</td></tr>
-                <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-    {% if user.is_authenticated %}
-        <div class="col-md-6">
-            {% include "resources/_project_detail.html" with data=charter %}
-        </div>
-        
-    {% endif %}
-</div>
-
-{% if user.is_authenticated and charter%}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
-            <h1 class="panel-title">Translation Events/Workshops</h1>
-        </div>
-        <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Location</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Lead Department</th>
-                    <th>Contact Person</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-{% endif %}
-
-<div class="panel panel-default">
-    <div class="panel-heading">
+    <!-- TITLE -->
+    <div class="jumbotron jumbotron-custom center-text">
+        <h1 class="language-title">{{ language.ln }}</h1>
+        {% if language.ang != language.ln %}<h2>{{ language.ang }}</h2>{% endif %}
         {% if user.is_authenticated %}
-        <a class="btn btn-primary btn-xs pull-right" href="{% url "resource_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
+        <span class="top-right-spaced">
+            <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}" title="Edit {{ language.ln }}"><i class="fa fa-pencil"></i> Edit</a>
+        </span>
         {% endif %}
-        <h2 class="panel-title">Resources</h2>
     </div>
-    <table class="table table-bordered">
-        <thead><tr><th></th><th>Title</th><th>Media</th><th>Published</th><th>Published Date</th><th>Copyright</th><th>Info</th></tr></thead>
-        <tbody>
-            {% for resource in language.resources.all %}
-                <tr>
-                    <td>
+
+    <!-- VIEW TABS -->
+    <ul class="nav nav-tabs view-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">General Info</a></li>
+        {% if user.is_authenticated %}
+        <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
+        {% endif %}
+        <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
+    </ul>
+
+    <!-- TAB CONTENT -->
+    <div class="multi-view-container tab-content">
+
+        <!-- GENERAL VIEW -->
+        <div id="general-view" class="row tab-pane active">
+            <div class="col-md-12">
+
+                <!-- GENERAL INFO -->
+                <table class="table table-no-border">
+                    <tbody>
+                        <tr><th class="col-md-2">Alternate Names</th><td>{{ language.alt_names }}</td><tr>
+                        <tr><th>Code</th><td>{{ language.code }}</td></tr>
+                        <tr><th>ISO 639-3</th><td>{{ language.iso_639_3 }}</td></tr>
+                        <tr>
+                            <th>Gateway Language</th>
+                            <td>
+                                {% if language.gateway_language %}
+                                <a href="{% url "language_detail" language.gateway_language.pk %}">{{ language.gateway_language }}</a>
+                                    {% if language.gateway_language.ang and language.gateway_language.ang != language.gateway_language.ln %}
+                                     ({{ language.gateway_language.anglicized_name }})
+                                    {% endif %}
+                                {% else %}
+                                <a>-</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Region</th>
+                            <td>
+                                <a {% if language.lr %}href="{% url "region_detail" language.country.region.slug %}"{% endif %}>{{ language.lr }}</a>
+                                {% if user.is_authenticated and language.gateway_flag %} (WA: {{ language.wa_region }}){% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Country</th>
+                            <td><a {% if language.lc %}href="{% url "country_detail" language.country.pk %}"{% endif %}>{{ language.country }}</a></td>
+                        </tr>
+                        <tr><th>Spoken in</th><td>{{ countries|join:", " }}</td></tr>
+                        <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
+                        <tr><th>Direction</th><td>{% if language.direction == "r" %}right-to-left{% else %}left-to-right{% endif %}</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- RESOURCE TABLE -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         {% if user.is_authenticated %}
-                        <a class="btn btn-default btn-xs" href="{% url "resource_edit" resource.pk %}"><i class="fa fa-pencil"></i> Edit</a>
+                        <a class="btn btn-primary btn-xs pull-right" href="{% url "resource_create" language.pk %}"><i class="fa fa-plus"></i> Add</a>
                         {% endif %}
-                    </td>
-                    <td>{{ resource.title }}</td>
-                    <td>{% for media in resource.medias.all %}<span class="label label-default">{{ media }}</span><br/>{% endfor %}</td>
-                    <td>{% if resource.published_flag %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
-                    <td>{{ resource.published_date|date:"Y-m" }}</td>
-                    <td>{{ resource.copyright_year|default:"" }}</td>
-                    <td>{{ resource.extra_data|dict_to_dl }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-    {% if language.gateway_to.count %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Gateway To:</h1></div>
-        <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages_gateway" language.pk %}">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>ISO-639-3</th>
-                    <th>Name</th>
-                    <th>Direction</th>
-                    <th>Country</th>
-                    <th># Native Speakers</th>
-                    <th>Gateway Flag</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+                        <h2 class="panel-title">Resources</h2>
+                        <button class="icon-button" data-toggle="collapse" data-target=".resource-table" title="Expand/Collapse" data-tooltip><i class="fa fa-expand"></i></button>
+                    </div>
+                    <div class="panel-body resource-table collapse no-padding">
+                        <table class="table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Title</th>
+                                    <th>Media</th>
+                                    <th>Published</th>
+                                    <th>Published Date</th>
+                                    <th>Copyright</th>
+                                    <th>Info</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for resource in language.resources.all %}
+                                    <tr>
+                                        <td>
+                                            {% if user.is_authenticated %}
+                                            <a class="btn btn-default btn-xs" href="{% url "resource_edit" resource.pk %}"><i class="fa fa-pencil"></i> Edit</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ resource.title }}</td>
+                                        <td>{% for media in resource.medias.all %}<span class="label label-default">{{ media }}</span><br/>{% endfor %}</td>
+                                        <td>{% if resource.published_flag %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                                        <td>{{ resource.published_date|date:"Y-m" }}</td>
+                                        <td>{{ resource.copyright_year|default:"" }}</td>
+                                        <td>{{ resource.extra_data|dict_to_dl }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CONNECTED LANGUAGE TABLE -->
+                {% if language.gateway_to.count %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">Languages Behind {{ language.ang|default:language.name }}</h1>
+                        <button class="icon-button" data-toggle="collapse" data-target=".other-languages-table" title="Expand/Collapse" data-tooltip><i class="fa fa-expand"></i></button>
+                    </div>
+                    <div class="panel-body other-languages-table collapse no-padding">
+                        <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages_gateway" language.pk %}">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>ISO-639-3</th>
+                                    <th>Name</th>
+                                    <th>Anglicized Name</th>
+                                    <th>Alternate Name</th>
+                                    <th>Country</th>
+                                    <th># Native Speakers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+        <!-- TRANSLATION VIEW -->
+        <div id="translation-view" class="row tab-pane">
+            <div class="col-md-12">
+                {% if charter %}
+                    {% include "resources/_project_detail.html" with data=charter %}
+                {% else %}
+                    {% url "tracking:charter_add" as action_url %}
+                    {% include "resources/_empty_div_overlay.html" with msg="Project has not been created" action="Create Project" action_url=action_url %}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- JOSHUA PROJECT VIEW -->
+        <div id="jp-view" class="row tab-pane">
+            <div class="col-md-12">
+            {% if jp %}
+                {% include "resources/_jp_view.html" with data=jp %}
+            {% else %}
+                {% with "No data received from Joshua Project (code: "|add:jp_status_code|add:")" as msg %}
+                {% include "resources/_empty_div_overlay.html" with msg=msg action="" action_url="" %}
+                {% endwith %}
+            {% endif %}
+            </div>
+        </div>
+
+        <!-- SOURCES VIEW -->
+        <div id="sources-view" class="row tab-pane">
+            <div class="col-md-12">
+                <ul>
+                    <li><a href="http://joshuaproject.net/languages/{{ language.iso_639_3 }}" target="_blank">Joshua Project</a></span>
+                    <li><a href="http://www.ethnologue.com/language/{{ language.iso_639_3 }}" target="_blank">Ethnologue</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Special:Search/{{ language.ang }}" target="_blank">Wikipedia</a></li>
+                    <li><a href="http://www.peoplegroups.org/explore/Explore.aspx?lang={{ language.iso_639_3 }}#topmenu" target="_blank">People Groups</a></li>
+                </ul>
+            </div>
+        </div>
+
     </div>
-    {% endif %}
 
 {% endblock %}

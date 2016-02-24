@@ -77,18 +77,14 @@ class DataTableSourceView(View):
         return [
             ("{0}__icontains".format(field), self.search_term)
             for field in self.fields
+            if field.split("__")[0] in self.model._meta.get_all_field_names()
         ]
 
     @property
     def filtered_data(self):
         return self.queryset.filter(
-            reduce(
-                operator.or_,
-                [Q(x) for x in self.filter_predicates]
-            )
-        ).order_by(
-            self.order_by
-        )
+            reduce(operator.or_, [Q(x) for x in self.filter_predicates])
+        ).order_by(self.order_by)
 
     @property
     def all_data(self):

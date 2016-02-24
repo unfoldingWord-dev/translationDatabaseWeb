@@ -260,3 +260,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+JP_API_KEY = os.environ.get("JP_API_KEY")

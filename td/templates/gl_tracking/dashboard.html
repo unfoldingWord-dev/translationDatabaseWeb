@@ -3,6 +3,7 @@
 
 {% load i18n %}
 {% load humanize %}
+{% load custom_filters %}
 
 
 {% block head_title %}GL Tracking{% endblock head_title %}
@@ -118,6 +119,23 @@
         .multiple-checkbox ul > li > label {
             font-weight: lighter;
         }
+        .table-no-border tbody > tr > th,
+        .table-no-border tbody > tr > td,
+        .table-no-border thead > tr > th {
+            border: none;
+        }
+        .border-bottom {
+            border-bottom: 1px solid #DDD;
+        }
+        tbody > tr > td.align-mid {
+            vertical-align: middle;
+        }
+        .select2-search-choice-close {
+            top: 3px;
+        }
+        .select2-container-multi .select2-choices {
+            background-image: none;
+        }
     </style>
 {% endblock extra_style %}
 
@@ -156,17 +174,24 @@
         <div class="container">
             {% include "_messages.html" %}
             <h1>{% blocktrans %}GL Tracking{% endblocktrans %}</h1>
+            {% if user.is_authenticated and user|is_super_gl_director %}
+            <a class="btn btn-primary large" href="{% url "gl:region_assignment" %}" data-toggle="modal" data-target="#modal-lg" title="Assign GL Director to Region" data-tooltip>Region Assignment</a>
+            {% endif %}
         </div>
     </section>
 
     <!-- BODY/CONTENT -->
     <section id="content_body">
         <div class="container">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Direct questions and comments to <a href="mailto:help@door43.org" class="alert-link">help@door43.org</a>
+            </div>
             <div id="progress-overview">
                 <ul id="phase-tabs" class="nav nav-tabs">
                     {% for phase in phases %}
-                        <li role="presentation" class="clickable {% if forloop.first %}active{% endif %}" data-phase="{{phase.number}}">
-                            <a>{% if phase.name %}{{phase.name}}{% else %}Phase {{phase.number}}{% endif %}</a>
+                        <li role="presentation" class="clickable {% if forloop.first %}active{% endif %}" data-phase="{{ phase.number }}">
+                            <a>{% if phase.name %}{{ phase.name }}{% else %}Phase {{ phase.number }}{% endif %}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -283,7 +308,7 @@
             // Loads and displays appropriate region info and its language tables
             function loadRegion() {
                 // Display region name based on built-in attribute
-                var region = this.dataset.region;
+                var region = this.dataset.region.replace(/\ /g, '');
                 $('#region-detail-header h1').html(region.charAt(0).toUpperCase() + region.slice(1));
                 // Make an API call to load region info into the content container
                 $('#region-detail-content')

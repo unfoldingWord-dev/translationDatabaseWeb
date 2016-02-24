@@ -18,7 +18,7 @@
                     <form action="" method="post" class="form" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|bootstrap }}
-                        {% if form.instance.pk %}
+                        {% if form.instance.pk and user.is_authenticated and not view.permalink %}
                             <div>
                             <ul class="list-unstyled">
                                 {% for la in form.instance.licenseagreement_set.all %}
@@ -33,13 +33,13 @@
                                 </div>
                             {% endif %}
                         {% else %}
-                        <button type="submit" class="btn btn-primary pull-right">
-                            {% if form.errors %}
-                                Re-Submit
+                            <button type="submit" class="btn btn-primary pull-right">
+                                {% if form.errors %}
+                                    Re-Submit
                                 {% else %}
-                            Submit
+                                    Submit
                                 {% endif %}
-                        </button>
+                            </button>
                         {% endif %}
                     </form>
                 </div>

@@ -144,6 +144,12 @@ class GLDirector(models.Model):
 
     user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
     regions = models.ManyToManyField("td.WARegion", blank=True)
+    is_helper = models.BooleanField(default=False)
+    is_super = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
+
+    @classmethod
+    def super_gl_directors(cls):
+        return [d.user.username for d in cls.objects.filter(is_super=True)]
