@@ -129,6 +129,11 @@
 	  $(".date-picker").daterangepicker({
 	    singleDatePicker: true
 	  });
+	  // Initialize bootstrap datepicker
+	  $(".datepicker").datepicker({
+	    autoclose: true,
+	    keyboardNavigation: true
+	  });
 	  $(document).on("eldarion-ajax:success", function (evt, $el) {
 	    if ($el.hasClass("navbar-form")) {
 	      var $el = $("<div>").addClass("alert").addClass("alert-info").html("<strong>Invite was sent!</sent>");

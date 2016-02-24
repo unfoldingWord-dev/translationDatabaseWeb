@@ -1,5 +1,7 @@
 from django import forms
+
 from td.gl_tracking.models import Progress
+from ..fields import BSDateField
 
 
 class VariantSplitModalForm(forms.Form):
@@ -12,26 +14,9 @@ class RegionAssignmentModalForm(forms.Form):
 
 class ProgressForm(forms.ModelForm):
 
-    # Overriden add custom initialize the form
     def __init__(self, *args, **kwargs):
         super(ProgressForm, self).__init__(*args, **kwargs)
-        self.fields["completion_date"] = forms.DateField(
-            widget=forms.DateInput(
-                attrs={
-                    "class": "datepicker",
-                    "data-provide": "datepicker",
-                    "data-autoclose": "true",
-                    "data-keyboard-navigation": "true",
-                }
-            ),
-            input_formats=[
-                "%Y-%m-%d",
-                "%m-%d-%Y",
-                "%Y/%m/%d",
-                "%m/%d/%Y",
-            ],
-            required=False,
-        )
+        self.fields["completion_date"] = BSDateField(required=False)
 
     class Meta:
         model = Progress
