@@ -29,7 +29,7 @@ def update_alt_names(code):
             language.alt_names = ", ".join(sorted(language.alt_name_all))
             language.save()
     except Language.DoesNotExist:
-        print "WARNING: update_alt_names() failed becase Language with code '" + code + "' doesn't exist."
+        print "WARNING: update_alt_names() failed because Language with code '" + code + "' doesn't exist."
 
 
 @task()
