@@ -1,7 +1,7 @@
 {% if user.is_authenticated %}
     <div class="panel panel-default">
         <div class="panel-heading">
-            <a class="btn btn-default btn-xs pull-right" href="{% url "language_edit" language.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i> Edit</a>
+            <a class="btn btn-default btn-xs pull-right" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i> Edit</a>
             <h2 class="panel-title">Project Charter</h2>
             <button class="icon-button" data-toggle="collapse" data-target=".charter-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
         </div>
