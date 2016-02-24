@@ -172,14 +172,12 @@ class CharterAddView(LoginRequiredMixin, CreateView):
     form_class = CharterForm
     template_name = "tracking/charter_form.html"
 
-    # Overidden to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
             "created_by": self.request.user.username
         }
 
-    # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
