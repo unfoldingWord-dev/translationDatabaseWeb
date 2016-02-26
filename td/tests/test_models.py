@@ -132,3 +132,37 @@ class LanguageIntegrationTests(TestCase):
         langs = {x["lc"]: x for x in data}
         self.assertTrue("zzz-r-test" in langs)
         self.assertEquals(langs["zzz-r-test"]["ld"], "rtl")
+
+
+class LanguageTestCase(TestCase):
+
+    def setUp(self):
+        Language.objects.create(code="tl", name="Test Language")
+
+    def test_names_data_short(self):
+        """
+        Only specified attributes should be returned by names_data (short version)
+        """
+        result = Language.names_data(short=True)
+        self.assertEqual(len(result), 1)
+        self.assertIn("pk", result[0])
+        self.assertIn("lc", result[0])
+        self.assertIn("ln", result[0])
+        self.assertIn("ang", result[0])
+        self.assertIn("lr", result[0])
+        self.assertNotIn("alt", result[0])
+        self.assertNotIn("ld", result[0])
+        self.assertNotIn("gw", result[0])
+        self.assertEqual(result[0].get("lc"), "tl")
+        self.assertEqual(result[0].get("ln"), "Test Language")
+
+    def test_names_data(self):
+        """
+        Default version of Language.names_data should contain more attributes
+        """
+        result = Language.names_data()
+        self.assertEqual(len(result), 1)
+        self.assertIn("alt", result[0])
+        self.assertIn("ld", result[0])
+        self.assertIn("gw", result[0])
+        self.assertIn("cc", result[0])
