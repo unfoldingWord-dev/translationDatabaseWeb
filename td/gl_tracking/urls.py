@@ -1,6 +1,11 @@
 from django.conf.urls import url
 
-from td.gl_tracking.views import HomeView, PhaseView, RegionDetailView, VariantSplitView, ProgressEditView, RegionAssignmentView
+from td.gl_tracking.views import(
+    HomeView, PhaseView, RegionDetailView, VariantSplitView,
+    ProgressEditView, PartnerListView, PartnerDetailView,
+    PartnerEditView, PartnerCreateView, AjaxPartnerListView,
+    RegionAssignmentView
+)
 
 urlpatterns = [
 
@@ -14,4 +19,10 @@ urlpatterns = [
 
     url(r"^progress/change/(?P<pk>[\d+]+)/$", ProgressEditView.as_view(), name="change_progress"),
     url(r"^region_assignment/$", RegionAssignmentView.as_view(), name="region_assignment"),
+    url(r"^partners/$", PartnerListView.as_view(), name="partner_list_view"),
+    url(r"^partners/(?P<pk>[0-9]+)$", PartnerDetailView.as_view(), name="partner_detail_view"),
+    url(r"^partners/(?P<pk>[0-9]+)/edit$", PartnerEditView.as_view(), name="partner_edit_view"),
+    url(r"^partners/new$", PartnerCreateView.as_view(), name="partner_create_view"),
+    url(r"^ajax/partners/$", AjaxPartnerListView.as_view(), name="ajax_partner_list"),
+
 ]
