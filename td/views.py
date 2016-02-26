@@ -28,7 +28,7 @@ from td.forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
 from td.resources.models import transform_country_data
 from td.resources.tasks import get_map_gateways
 from td.resources.views import EntityTrackingMixin
-from .tasks import reset_langnames_cache
+from .tasks import reset_langnames_cache, reset_langnames_short_cache
 from .utils import DataTableSourceView, svg_to_pdf
 
 
@@ -70,23 +70,30 @@ def get_langnames():
     return data
 
 
+def get_langnames_short():
+    print "***get_langnames_short() is called"
+    data = cache.get("langnames_short", [])
+    print "***data returned is", len(data)
+    if not data and cache.get("langnames_short_fetching", False) is False:
+        print "***refreshing langnames_short_cache"
+        reset_langnames_short_cache.delay()
+    print "***returning data", len(data)
+    return data
+
+
 def languages_autocomplete(request):
     term = request.GET.get("q").lower()
-    data = get_langnames()
+    data = get_langnames_short()
+    print "***in languages_autocomplete, the length of data returned is", len(data)
     d = []
     if len(term) <= 3:
         term = term.encode("utf-8")
-        # search: cc, lc
+        # search: lc
         # first do a *starts with* style search of language code (lc)
         d.extend([
             x
             for x in data
             if term == x["lc"].lower()[:len(term)]
-        ])
-        d.extend([
-            x
-            for x in data
-            if term in [y.lower() for y in x["cc"]]
         ])
     if len(term) >= 3:
         # search: lc, ln, lr

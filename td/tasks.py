@@ -41,6 +41,16 @@ def reset_langnames_cache():
 
 
 @task()
+def reset_langnames_short_cache():
+    print "***langnames_short_cache is called"
+    cache.set("langnames_short_fetching", True)
+    cache.delete("langnames_short")
+    cache.set("langnames_short", Language.names_data_short(), None)
+    cache.set("langnames_short_fetching", False)
+    print "***langnames_short_cache is done. langnames_short_fetching is set to FALSE"
+
+
+@task()
 def integrate_imports():
     """
     Integrate imported language data into the language model

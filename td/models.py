@@ -313,6 +313,14 @@ class Language(models.Model):
             for x in cls.objects.all().order_by("code")
         ]
 
+    @classmethod
+    def names_data_short(cls):
+        print "***names_data_short is called"
+        return [
+            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr)
+            for x in cls.objects.all().order_by("code")
+        ]
+
 
 class EAVBase(models.Model):
     attribute = models.CharField(max_length=100)
