@@ -33,21 +33,13 @@ def update_alt_names(code):
 
 
 @task()
-def reset_langnames_cache():
-    cache.set("langnames_fetching", True)
-    cache.delete("langnames")
-    cache.set("langnames", Language.names_data(), None)
-    cache.set("langnames_fetching", False)
-
-
-@task()
-def reset_langnames_short_cache():
-    print "***langnames_short_cache is called"
-    cache.set("langnames_short_fetching", True)
-    cache.delete("langnames_short")
-    cache.set("langnames_short", Language.names_data_short(), None)
-    cache.set("langnames_short_fetching", False)
-    print "***langnames_short_cache is done. langnames_short_fetching is set to FALSE"
+def reset_langnames_cache(short=False):
+    key = "langnames_short" if short else "langnames"
+    fetching = "_".join([key, "fetching"])
+    cache.set(fetching, True)
+    cache.delete(key)
+    cache.set(key, Language.names_data(short=short), None)
+    cache.set(fetching, False)
 
 
 @task()
