@@ -1,9 +1,10 @@
 from django.contrib import admin
 
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
+from import_widgets import NullableForeignKeyWidget
 
-from td.models import Language
+from td.models import Language, Country
 from td.gl_tracking.models import Phase, DocumentCategory, Document, Progress, Partner, Method, GLDirector
 
 
@@ -54,10 +55,23 @@ class GLDirectorAdmin(admin.ModelAdmin):
     regions_string.admin_order_field = "user__username"
 
 
+class PartnerResource(resources.ModelResource):
+    country = fields.Field("country", "country", NullableForeignKeyWidget(Country, "name"), None)
+
+    class Meta:
+        model = Partner
+        fields = ("id", "name", "country", "city", "province")
+        report_skipped = True
+
+
+class PartnerAdmin(ImportExportModelAdmin):
+    resource_class = PartnerResource
+    list_display = ("name", "country", "city", "is_active")
+
 admin.site.register(Phase, PhaseAdmin)
 admin.site.register(DocumentCategory, DocumentCategoryAdmin)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Progress, ProgressAdmin)
-admin.site.register(Partner)
+admin.site.register(Partner, PartnerAdmin)
 admin.site.register(Method)
 admin.site.register(GLDirector, GLDirectorAdmin)
