@@ -146,9 +146,9 @@
                 <li><a href="{% url "network_list" %}">Networks</a></li>
                 <li><a href="{% url "title_list" %}">Titles</a></li>
                 <li><a href="{% url "publisher_list" %}">Publishers</a></li>
-                <li><a href="{% url "gl:partner_list_view" %}">Translation Partners</a></li>
                 {% if request.user.is_authenticated %}
                     <li class="divider"></li>
+                    <li><a href="{% url "gl:partner_list_view" %}">Translation Partners</a></li>
                     <li><a href="{% url "tracking:project_list" %}">Translation Projects</a></li>
                     <li><a href="{% url "gl:home" %}">GL Tracker</a></li>
                     <li class="divider"></li>
