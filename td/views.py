@@ -63,30 +63,27 @@ def cache_get_or_set(key, acallable):
     return data
 
 
-def get_langnames():
-    data = cache.get("langnames", [])
-    if not data and cache.get("langnames_fetching", False) is False:
-        reset_langnames_cache.delay()
+def get_langnames(short=False):
+    key = "langnames_short" if short else "langnames"
+    fetching = "_".join([key, "fetching"])
+    data = cache.get(key, [])
+    if not data and cache.get(fetching, False) is False:
+        reset_langnames_cache.delay(short=short)
     return data
 
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower()
-    data = get_langnames()
+    data = get_langnames(short=True)
     d = []
     if len(term) <= 3:
         term = term.encode("utf-8")
-        # search: cc, lc
+        # search: lc
         # first do a *starts with* style search of language code (lc)
         d.extend([
             x
             for x in data
             if term == x["lc"].lower()[:len(term)]
-        ])
-        d.extend([
-            x
-            for x in data
-            if term in [y.lower() for y in x["cc"]]
         ])
     if len(term) >= 3:
         # search: lc, ln, lr

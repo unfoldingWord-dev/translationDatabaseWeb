@@ -1,5 +1,7 @@
 from django import forms
-from td.gl_tracking.models import Progress
+from django.core.exceptions import ValidationError
+from td.gl_tracking.models import Progress, Partner
+from td.models import Country
 
 
 class VariantSplitModalForm(forms.Form):
@@ -39,4 +41,61 @@ class ProgressForm(forms.ModelForm):
         widgets = {
             "notes": forms.Textarea(attrs={"rows": "4"}),
             "methods": forms.CheckboxSelectMultiple(),
+        }
+
+
+class PartnerForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(PartnerForm, self).__init__(*args, **kwargs)
+        self.fields["partner_start"] = forms.DateField(
+            widget=forms.DateInput(
+                attrs={
+                    "class": "datepicker",
+                    "data-provide": "datepicker",
+                    "data-autoclose": "true",
+                    "data-keyboard-navigation": "true",
+                },
+                format="%m/%d/%Y",
+            ),
+            input_formats=[
+                "%m/%d/%Y",
+            ],
+            required=False,
+        )
+        self.fields["partner_end"] = forms.DateField(
+            widget=forms.DateInput(
+                attrs={
+                    "class": "datepicker",
+                    "data-provide": "datepicker",
+                    "data-autoclose": "true",
+                    "data-keyboard-navigation": "true",
+                },
+                format="%m/%d/%Y",
+            ),
+            input_formats=[
+                "%m/%d/%Y",
+            ],
+            required=False,
+        )
+        self.fields["country"].queryset = Country.objects.all().order_by("name")
+
+    def clean_partner_end(self):
+        partner_start = self.cleaned_data["partner_start"]
+        partner_end = self.cleaned_data["partner_end"]
+        if partner_start is not None and partner_start > partner_end:
+            raise ValidationError("Partner end must be after partner start")
+        return partner_end
+
+    class Meta:
+        model = Partner
+        fields = "__all__"
+        labels = {
+            "contact_phone": "Contact Phone Number",
+            "contact_email": "Contact Email",
+            "province": "State/Region",
+            "is_active": "Active Partner",
+            "contact_name": "Contact Name",
+            "partner_start": "Partner Start",
+            "partner_end": "Partner End"
         }

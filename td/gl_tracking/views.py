@@ -1,12 +1,14 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView
+from django.core.urlresolvers import reverse_lazy
 
 from account.mixins import LoginRequiredMixin
 
 from td.models import Language, WARegion
-from td.gl_tracking.models import Progress, Phase, GLDirector
-from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm, RegionAssignmentModalForm
+from td.utils import DataTableSourceView
+from td.gl_tracking.models import Progress, Phase, GLDirector, Partner
+from td.gl_tracking.forms import VariantSplitModalForm, ProgressForm, RegionAssignmentModalForm, PartnerForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -130,6 +132,35 @@ class RegionAssignmentView(LoginRequiredMixin, FormView):
             "success": True
         }
         return render(self.request, "gl_tracking/region_assignment_modal_form.html", context)
+
+
+class PartnerListView(LoginRequiredMixin, TemplateView):
+    template_name = "gl_tracking/partner_list.html"
+
+
+class PartnerDetailView(LoginRequiredMixin, DetailView):
+    model = Partner
+    context_object_name = "partner"
+
+
+class PartnerEditView(LoginRequiredMixin, UpdateView):
+    model = Partner
+    form_class = PartnerForm
+
+
+class PartnerCreateView(LoginRequiredMixin, CreateView):
+    model = Partner
+    form_class = PartnerForm
+    success_url = reverse_lazy("gl:partner_list_view")
+
+
+class AjaxPartnerListView(LoginRequiredMixin, DataTableSourceView):
+    model = Partner
+
+    fields = ["name", "country__name", "is_active"]
+    link_column = "name"
+    link_url_name = "gl:partner_detail_view"
+    link_url_field = "pk"
 
 
 # ---------------------- #

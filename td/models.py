@@ -305,13 +305,20 @@ class Language(models.Model):
         ])
 
     @classmethod
-    def names_data(cls):
-        return [
-            dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all,
-                 cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
-                 ld=x.get_direction_display())
-            for x in cls.objects.all().order_by("code")
-        ]
+    def names_data(cls, short=False):
+        languages = cls.objects.all().order_by("code")
+        if short:
+            data = [
+                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr)
+                for x in languages
+            ]
+        else:
+            data = [
+                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
+                     ld=x.get_direction_display())
+                for x in languages
+            ]
+        return data
 
 
 class EAVBase(models.Model):
