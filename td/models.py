@@ -314,7 +314,7 @@ class Language(models.Model):
             ]
         else:
             data = [
-                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
+                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
                      ld=x.get_direction_display())
                 for x in languages
             ]
