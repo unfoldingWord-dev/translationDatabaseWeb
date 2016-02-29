@@ -37,7 +37,7 @@ class ResetLangnamesCacheTestCase(TestCase):
             self.assertIn("lr", result)
             self.assertIn("ang", result)
             self.assertNotIn("cc", result)
-            # self.assertNotIn("alt", result)
+            self.assertNotIn("alt", result)
             self.assertEqual(result["lc"], "tl")
             self.assertEqual(result["ln"], "Test Language")
 
@@ -69,6 +69,6 @@ class ResetLangnamesCacheTestCase(TestCase):
             self.assertIn("cc", result)
             self.assertIn("gw", result)
             self.assertIn("ang", result)
-            # self.assertIn("alt", result)
+            self.assertIn("alt", result)
             self.assertEqual(result["lc"], "tl")
             self.assertEqual(result["ln"], "Test Language")

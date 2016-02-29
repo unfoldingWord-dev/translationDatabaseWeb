@@ -42,7 +42,8 @@ def names_text_export(request):
 
 def names_json_export(request):
     # Set safe to False to allow list instead of dict to be returned
-    data = get_langnames()
+    # data = get_langnames()
+    data = Language.names_data()
     return JsonResponse(data, safe=False)
 
 
