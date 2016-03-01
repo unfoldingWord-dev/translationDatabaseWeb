@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from mock import patch
 
-from ..models import Language
-from ..tasks import reset_langnames_cache
+from td.models import Language, JSONData
+from td.tasks import reset_langnames_cache, update_langnames_data
 
 
 class ResetLangnamesCacheTestCase(TestCase):
@@ -37,7 +37,7 @@ class ResetLangnamesCacheTestCase(TestCase):
             self.assertIn("lr", result)
             self.assertIn("ang", result)
             self.assertNotIn("cc", result)
-            # self.assertNotIn("alt", result)
+            self.assertNotIn("alt", result)
             self.assertEqual(result["lc"], "tl")
             self.assertEqual(result["ln"], "Test Language")
 
@@ -69,6 +69,30 @@ class ResetLangnamesCacheTestCase(TestCase):
             self.assertIn("cc", result)
             self.assertIn("gw", result)
             self.assertIn("ang", result)
-            # self.assertIn("alt", result)
+            self.assertIn("alt", result)
             self.assertEqual(result["lc"], "tl")
             self.assertEqual(result["ln"], "Test Language")
+
+
+class UpdateLangnamesDataTestCase(TestCase):
+    def setUp(self):
+        Language.objects.create(code="tl", name="Test Language")
+
+    def test_update_langnames_data(self):
+        """
+        After update_langnames_data() is called, there should be one JSONData object created called "langnames", which
+        content has the expected attributes.
+        """
+        update_langnames_data()
+        result = JSONData.objects.filter(name="langnames")
+        json = result[0].data[0]
+        self.assertEqual(len(result), 1)
+        self.assertIn("pk", json)
+        self.assertIn("lc", json)
+        self.assertIn("ln", json)
+        self.assertIn("ang", json)
+        self.assertIn("alt", json)
+        self.assertIn("lc", json)
+        self.assertIn("lr", json)
+        self.assertIn("gw", json)
+        self.assertIn("ld", json)

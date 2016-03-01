@@ -150,7 +150,7 @@ class LanguageTestCase(TestCase):
         self.assertIn("ln", result[0])
         self.assertIn("ang", result[0])
         self.assertIn("lr", result[0])
-        # self.assertNotIn("alt", result[0])
+        self.assertNotIn("alt", result[0])
         self.assertNotIn("ld", result[0])
         self.assertNotIn("gw", result[0])
         self.assertEqual(result[0].get("lc"), "tl")
@@ -162,7 +162,7 @@ class LanguageTestCase(TestCase):
         """
         result = Language.names_data()
         self.assertEqual(len(result), 1)
-        # self.assertIn("alt", result[0])
+        self.assertIn("alt", result[0])
         self.assertIn("ld", result[0])
         self.assertIn("gw", result[0])
         self.assertIn("cc", result[0])
