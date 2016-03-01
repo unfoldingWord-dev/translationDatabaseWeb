@@ -16,7 +16,7 @@ from td.imports.models import (
 )
 from td.resources.models import Title, Resource, Media
 
-from .models import AdditionalLanguage, Country, Language, Region
+from .models import AdditionalLanguage, Country, Language, Region, JSONData
 from .signals import languages_integrated
 
 
@@ -30,6 +30,16 @@ def update_alt_names(code):
             language.save()
     except Language.DoesNotExist:
         print "WARNING: update_alt_names() failed because Language with code '" + code + "' doesn't exist."
+
+
+@task()
+def update_langnames_data():
+    """
+    Temporary way (using DB and management command) to solve langnames.json problem
+    """
+    langnames, created = JSONData.objects.get_or_create(name="langnames")
+    langnames.data = Language.names_data()
+    langnames.save()
 
 
 @task()

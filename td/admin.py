@@ -5,6 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     AdditionalLanguage,
+    JSONData,
     Region,
     WARegion,
     Language,
@@ -14,7 +15,7 @@ from .models import (
     CountryEAV,
     LanguageEAV,
 )
-from td.resources.admin import EntryTrackingAdmin
+from .resources.admin import EntryTrackingAdmin
 
 
 class AdditionalLanguageAdmin(EntryTrackingAdmin):
@@ -119,5 +120,6 @@ admin.site.register(Language, LanguageAdmin)
 admin.site.register(LanguageAltName, LanguageAltNameAdmin)
 admin.site.register(Region, RegionAdmin)
 admin.site.register(WARegion)
+admin.site.register(JSONData)
 admin.site.register(CountryEAV, CountryEAVAdmin)
 admin.site.register(LanguageEAV, LanguageEAVAdmin)
