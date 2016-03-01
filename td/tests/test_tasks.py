@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from mock import patch
 
-from ..models import Language, JSONData
-from ..tasks import reset_langnames_cache, update_langnames_data
+from td.models import Language, JSONData
+from td.tasks import reset_langnames_cache, update_langnames_data
 
 
 class ResetLangnamesCacheTestCase(TestCase):

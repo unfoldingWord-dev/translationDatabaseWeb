@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand
 
-from ....tasks import update_langnames_data
+from td.tasks import update_langnames_data
 
 
 class Command(BaseCommand):

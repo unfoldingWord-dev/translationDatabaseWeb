@@ -13,20 +13,13 @@ from .gl_tracking.models import Document
 
 @python_2_unicode_compatible
 class JSONData(models.Model):
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     name = models.SlugField(max_length=50)
     data = JSONField()
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        """ Update Timestamps """
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(JSONData, self).save(*args, **kwargs)
 
 
 @python_2_unicode_compatible
