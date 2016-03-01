@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 
-from td.imports.models import (
+from .imports.models import (
     EthnologueCountryCode,
     EthnologueLanguageCode,
     EthnologueLanguageIndex,
@@ -21,13 +21,12 @@ from td.imports.models import (
     WikipediaISOLanguage,
     IMBPeopleGroup
 )
-from td.tracking.models import Event
-from td.models import Language, Country, Region, Network
-from .models import AdditionalLanguage
-from td.forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
-from td.resources.models import transform_country_data
-from td.resources.tasks import get_map_gateways
-from td.resources.views import EntityTrackingMixin
+from .tracking.models import Event
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData
+from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
+from .resources.models import transform_country_data
+from .resources.tasks import get_map_gateways
+from .resources.views import EntityTrackingMixin
 from .tasks import reset_langnames_cache
 from .utils import DataTableSourceView, svg_to_pdf
 
@@ -41,10 +40,15 @@ def names_text_export(request):
 
 
 def names_json_export(request):
-    # Set safe to False to allow list instead of dict to be returned
+    # NOTE: Temp solution to langnames.json caching problem
+    # NOTE: This is the caching way
     # data = get_langnames()
-    data = Language.names_data()
-    return JsonResponse(data, safe=False)
+    # NOTE: This is the direct, snychronous way
+    # data = Language.names_data()
+    # NOTE: This is the DB/management command way
+    langnames = JSONData.objects.get(name="langnames")
+    # Set safe to False to allow list instead of dict to be returned
+    return JsonResponse(langnames.data, safe=False)
 
 
 @csrf_exempt

@@ -12,6 +12,24 @@ from .gl_tracking.models import Document
 
 
 @python_2_unicode_compatible
+class JSONData(models.Model):
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+    name = models.SlugField(max_length=50)
+    data = JSONField()
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """ Update Timestamps """
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(JSONData, self).save(*args, **kwargs)
+
+
+@python_2_unicode_compatible
 class AdditionalLanguage(models.Model):
     DIRECTION_CHOICES = (
         ("l", "ltr"),
@@ -314,7 +332,7 @@ class Language(models.Model):
             ]
         else:
             data = [
-                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_names, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
+                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
                      ld=x.get_direction_display())
                 for x in languages
             ]
