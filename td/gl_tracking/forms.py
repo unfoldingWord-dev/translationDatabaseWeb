@@ -62,6 +62,7 @@ class PartnerForm(forms.ModelForm):
                 "%m/%d/%Y",
             ],
             required=False,
+            label="Partnership Start Date",
         )
         self.fields["partner_end"] = forms.DateField(
             widget=forms.DateInput(
@@ -77,6 +78,7 @@ class PartnerForm(forms.ModelForm):
                 "%m/%d/%Y",
             ],
             required=False,
+            label="Partnership End Date",
         )
         self.fields["country"].queryset = Country.objects.all().order_by("name")
 
@@ -96,6 +98,4 @@ class PartnerForm(forms.ModelForm):
             "province": "State/Region",
             "is_active": "Active Partner",
             "contact_name": "Contact Name",
-            "partner_start": "Partner Start",
-            "partner_end": "Partner End"
         }
