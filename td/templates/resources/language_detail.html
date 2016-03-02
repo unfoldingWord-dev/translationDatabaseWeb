@@ -48,16 +48,6 @@
         .no-padding {
             padding: 0;
         }
-        .no-margin {
-            margin: 0;
-        }
-        .empty-div-overlay {
-            text-align: center;
-        }
-        .empty-div-msg {
-            padding: 2rem 0;
-            color: #AAA;
-        }
     </style>
 {% endblock extra_style %}
 
@@ -97,35 +87,31 @@
                 <!-- GENERAL INFO -->
                 <table class="table table-no-border">
                     <tbody>
-                        <tr><th class="col-md-2">Alternate Names</th><td>{{ language.alt_names }}</td><tr>
+                        <tr><th class="col-md-2">Alternate Names</th><td>{{ language.alt_names|default:"-" }}</td><tr>
                         <tr><th>Code</th><td>{{ language.code }}</td></tr>
-                        <tr><th>ISO 639-3</th><td>{{ language.iso_639_3 }}</td></tr>
+                        <tr><th>ISO 639-3</th><td>{{ language.iso_639_3|default:"-" }}</td></tr>
                         <tr>
                             <th>Gateway Language</th>
                             <td>
-                                {% if language.gateway_language %}
-                                <a href="{% url "language_detail" language.gateway_language.pk %}">{{ language.gateway_language }}</a>
-                                    {% if language.gateway_language.ang and language.gateway_language.ang != language.gateway_language.ln %}
-                                     ({{ language.gateway_language.anglicized_name }})
-                                    {% endif %}
-                                {% else %}
-                                <a>-</a>
+                                {% if language.gateway_language %}<a href="{% url "language_detail" language.gateway_language.pk %}">{% endif %}{{ language.gateway_language|default:"-" }}</a>
+                                {% if language.gateway_language and language.gateway_language.ang and language.gateway_language.ang != language.gateway_language.ln %}
+                                 ({{ language.gateway_language.ang }})
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
                             <th>Region</th>
                             <td>
-                                <a {% if language.lr %}href="{% url "region_detail" language.country.region.slug %}"{% endif %}>{{ language.lr }}</a>
+                                {% if language.lr %}<a href="{% url "region_detail" language.country.region.slug %}">{% endif %}{{ language.lr|default:"-" }}</a>
                                 {% if user.is_authenticated and language.gateway_flag %} (WA: {{ language.wa_region }}){% endif %}
                             </td>
                         </tr>
                         <tr>
                             <th>Country</th>
-                            <td><a {% if language.lc %}href="{% url "country_detail" language.country.pk %}"{% endif %}>{{ language.country }}</a></td>
+                            <td>{% if language.country %}<a href="{% url "country_detail" language.country.pk %}">{% endif %}{{ language.country|default:"-" }}</a></td>
                         </tr>
-                        <tr><th>Spoken in</th><td>{{ countries|join:", " }}</td></tr>
-                        <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:""|intcomma }}</td></tr>
+                        <tr><th>Spoken in</th><td>{{ countries|join:", "|default:"-" }}</td></tr>
+                        <tr><th># of Native Speakers</th><td>{{ language.native_speakers|default:"-"|intcomma }}</td></tr>
                         <tr><th>Direction</th><td>{% if language.direction == "r" %}right-to-left{% else %}left-to-right{% endif %}</td></tr>
                     </tbody>
                 </table>
@@ -234,7 +220,7 @@
         <div id="sources-view" class="row tab-pane">
             <div class="col-md-12">
                 <ul>
-                    <li><a href="http://joshuaproject.net/languages/{{ language.iso_639_3 }}" target="_blank">Joshua Project</a></span>
+                    <li><a href="http://joshuaproject.net/languages/{{ language.iso_639_3 }}" target="_blank">Joshua Project</a></li>
                     <li><a href="http://www.ethnologue.com/language/{{ language.iso_639_3 }}" target="_blank">Ethnologue</a></li>
                     <li><a href="https://en.wikipedia.org/wiki/Special:Search/{{ language.ang }}" target="_blank">Wikipedia</a></li>
                     <li><a href="http://www.peoplegroups.org/explore/Explore.aspx?lang={{ language.iso_639_3 }}#topmenu" target="_blank">People Groups</a></li>
