@@ -117,6 +117,7 @@ class Country(models.Model):
     alpha_3_code = models.CharField(max_length=3, blank=True, default="")
     name = models.CharField(max_length=75)
     region = models.ForeignKey(Region, null=True, blank=True, related_name="countries")
+    wa_region = models.ForeignKey(WARegion, null=True, blank=True)
     population = models.IntegerField(null=True, blank=True)
     primary_networks = models.ManyToManyField(Network, blank=True, db_table='uw_country_primary_networks')
     extra_data = JSONField(default=dict)

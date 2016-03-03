@@ -22,7 +22,7 @@ from .imports.models import (
     IMBPeopleGroup
 )
 from .tracking.models import Event
-from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion
 from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
 from .resources.models import transform_country_data
 from .resources.tasks import get_map_gateways
@@ -401,6 +401,33 @@ class LanguageTableSourceView(DataTableSourceView):
         return super(LanguageTableSourceView, self).filtered_data
 
 
+class CountryTableSourceView(DataTableSourceView):
+
+    @property
+    def queryset(self):
+        if "pk" in self.kwargs:
+            return Country.objects.filter(gateway_language=self.kwargs["pk"])
+        elif "slug" in self.kwargs:
+            return Country.objects.filter(wa_region__slug=self.kwargs["slug"])
+        else:
+            return self.model._default_manager.all()
+
+
+class AjaxCountryListView(CountryTableSourceView):
+    model = Country
+    fields = [
+        "code",
+        "alpha_3_code",
+        "name",
+        "region__name",
+        "wa_region__name",
+        "population",
+    ]
+    link_column = "name"
+    link_url_name = "country_detail"
+    link_url_field = "pk"
+
+
 class LanguageListView(TemplateView):
     template_name = "resources/language_list.html"
 
@@ -567,4 +594,23 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
         context.update({
             "language": self.language
         })
+        return context
+
+
+class WARegionListView(LoginRequiredMixin, ListView):
+    model = WARegion
+    context_object_name = "wa_regions"
+    template_name = "resources/waregion_list.html"
+
+
+class WARegionDetailView(LoginRequiredMixin, DetailView):
+    model = WARegion
+    context_object_name = "wa_region"
+    template_name = "resources/waregion_detail.html"
+
+    def get_context_data(self, **kwargs):
+        wa_region = self.get_object()
+        context = super(WARegionDetailView, self).get_context_data(**kwargs)
+        context["gl_directors"] = wa_region.gldirector_set.filter(is_helper=False)
+        context["gl_helpers"] = wa_region.gldirector_set.filter(is_helper=True)
         return context

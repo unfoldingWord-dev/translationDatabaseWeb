@@ -30,7 +30,8 @@ class NetworkAdmin(EntryTrackingAdmin):
 
 
 class CountryAdmin(EntryTrackingAdmin):
-    list_display = ["code", "name", "region", "population"]
+    list_display = ["code", "name", "region", "wa_region", "population"]
+    search_fields = ["code", "name", "region__name", "wa_region__name"]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -49,6 +50,7 @@ class LanguageAdmin(EntryTrackingAdmin):
         return self.readonly_fields
 
 
+# NOTE: This is superseded by  management command language_alt_names
 class LanguageAltNameResource(resources.ModelResource):
     # source is needed to create LanguageEAV
     source = None
