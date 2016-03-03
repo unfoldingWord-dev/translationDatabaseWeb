@@ -24,7 +24,7 @@ from .views import (
     names_text_export,
     names_json_export,
     export_svg,
-    languages_autocomplete
+    languages_autocomplete,
 )
 
 urlpatterns = [

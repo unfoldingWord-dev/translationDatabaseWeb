@@ -6,6 +6,13 @@
         {% else %}
             <li class="active">{{ region.name }}</li>
         {% endif %}
+    {% elif wa_region %}
+        <li><a href="{% url "wa_region_list" %}">WA Regions</a></li>
+        {% if country %}
+            <li><a href="{% url "wa_region_detail" region.slug|lower %}">{{ wa_region.name }}</a></li>
+        {% else %}
+            <li class="active">{{ wa_region.name }}</li>
+        {% endif %}
     {% endif %}
 
     {% if country_form %}
