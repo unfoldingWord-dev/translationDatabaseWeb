@@ -19,6 +19,7 @@ from .views import (
     NewItemView,
     MultiCharterAddView,
     HomeView,
+    AjaxCharterPartnerLookup
 )
 
 urlpatterns = [
@@ -42,6 +43,7 @@ urlpatterns = [
     url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
     url(r"^ajax/charters/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
+    url(r"^ajax/charter/partnerlookup/$", AjaxCharterPartnerLookup.as_view(), name="charter_partner_lookup"),
 
     # Auto-complete
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),

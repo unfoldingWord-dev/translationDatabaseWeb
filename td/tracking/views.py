@@ -15,7 +15,8 @@ from django.views.generic import (
     UpdateView,
     TemplateView,
     DetailView,
-    FormView
+    FormView,
+    View
 )
 
 from .forms import (
@@ -681,6 +682,15 @@ class NewItemView(LoginRequiredMixin, FormView):
                         except:
                             # If "Other" is no longer a part of the answer, just skip through
                             pass
+
+
+class AjaxCharterPartnerLookup(LoginRequiredMixin,View):
+
+    def get(self, request, *args, **kwargs):
+        c = Charter.objects.get(pk=request.GET["pk"])
+        if c is None or c.partner_id is None:
+            return HttpResponse("")
+        return HttpResponse(c.partner_id)
 
 
 # -------------------- #
