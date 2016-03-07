@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.html import escape
 
 from td.models import Country, Language
+from td.gl_tracking.models import Partner
 from .models import (
     Charter,
     Department,
@@ -38,6 +39,7 @@ class CharterForm(forms.ModelForm):
         # Alphabetize selections
         self.fields["countries"].queryset = Country.objects.order_by("name")
         self.fields["lead_dept"].queryset = Department.objects.order_by("name")
+        self.fields["partner"].queryset = Partner.objects.order_by("name")
         # Add custom class and range of selection
         year = datetime.datetime.now().year
         self.fields["start_date"] = forms.DateField(
@@ -132,6 +134,7 @@ class EventForm(forms.ModelForm):
         self.fields["translation_methods"].queryset = TranslationMethod.objects.order_by("name")
         self.fields["output_target"].queryset = Output.objects.order_by("name")
         self.fields["publication"].queryset = Publication.objects.order_by("name")
+        self.fields["partner"].queryset = Partner.objects.order_by("name")
         # Add custom class and determine the range of selection
         year = datetime.datetime.now().year
         self.fields["start_date"] = forms.DateField(

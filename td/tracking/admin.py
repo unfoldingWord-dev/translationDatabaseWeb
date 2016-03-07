@@ -56,7 +56,7 @@ class CharterAdmin(ImportExportModelAdmin):
     fieldsets = [
         ("General", {"fields": ["language", "countries"]}),
         ("Timing", {"fields": [("start_date", "end_date")]}),
-        ("Internal", {"fields": ["number", "lead_dept", "contact_person"]}),
+        ("Internal", {"fields": ["number", "lead_dept", "contact_person", "partner"]}),
         ("Submission Info", {"fields": [("created_at", "created_by"), ("modified_at", "modified_by")]}),
     ]
     filter_horizontal = ('countries', )
@@ -67,7 +67,7 @@ class EventAdmin(ImportExportModelAdmin):
     resource_class = EventResource
     fieldsets = [
         ("General", {"fields": (("charter", "number"), "location", ("start_date", "end_date"), "lead_dept", "contact_person")}),
-        ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks"]}),
+        ("Parties Involved", {"fields": ["translators", "facilitators", "departments", "networks", "partner"]}),
         ("Resources", {"fields": ["software", "hardware", "translation_methods", "materials"]}),
         ("Misc", {"fields": ["output_target", "publication", "current_check_level", "target_check_level", "comment"]}),
         ("Submission Info", {"fields": [("created_at", "created_by"), ("modified_at", "modified_by")]}),

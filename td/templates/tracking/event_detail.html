@@ -24,6 +24,7 @@
                 <tr><th>End Date</th><td>{{ object.end_date }}</td></tr>
                 <tr><th>Lead Department</th><td>{{ object.lead_dept }}</td></tr>
                 <tr><th>Contact Person</th><td>{{ object.contact_person }}</td></tr>
+                <tr><th>Partner</th><td>{{ object.partner }}</td></tr>
                 <tr><th>Checking Level (start, end)</th><td>{{ object.current_check_level | default:"n/a" }}, {{ object.target_check_level | default:"n/a" }}</td></tr>
                 <tr><th>Created At</th><td>{{ object.created_at }}</td></tr>
                 <tr><th>Created By</th><td>{{ object.created_by }}</td></tr>
@@ -53,13 +54,6 @@
                     <td>
                         {% for dept in object.departments.all %}
                             {% if not forloop.first %}<br/>{% endif %}{{ dept.name | capfirst }}
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr><th>Networks Translating</th>
-                    <td>
-                        {% for network in object.networks.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ network.name | capfirst }}
                         {% endfor %}
                     </td>
                 </tr>
