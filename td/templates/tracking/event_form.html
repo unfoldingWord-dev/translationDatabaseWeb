@@ -242,14 +242,25 @@
     <!-- Custom script for new charter modal -->
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script type="text/javascript">
-        $("#id_charter").change(function(){
-            var charter_id = $("#id_charter").val();
-            $.ajax({url:"{% url "tracking:charter_partner_lookup" %}?pk=" + charter_id}).done(function(data){
-                if ($("#id_partner").val() == "")
-                {
-                    $("#id_partner").val(data);
-                }
+
+        document.onreadystatechange = function() {
+            var charter = $("#id_charter");
+            // Populate partner from charter's partner
+            if (charter.val()) { updatePartner(); }
+            // Also populate when charter is changed
+            charter.off("change", updatePartner).on("change", updatePartner);
+        };
+
+        function updatePartner() {
+            var partner = $('#id_partner');
+            if (partner.val()) { return false; }
+
+            var charter = $('#id_charter');
+            var charterId = charter.data('charter-pk') || charter.val();
+
+            $.ajax({url:'{% url "tracking:charter_partner_lookup" %}?pk=' + charterId}).done(function(data) {
+                partner.val(data);
             });
-        });
+        }
     </script>
 {% endblock custom_bottom_script %}
