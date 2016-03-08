@@ -15,7 +15,8 @@ from django.views.generic import (
     UpdateView,
     TemplateView,
     DetailView,
-    FormView
+    FormView,
+    View
 )
 
 from .forms import (
@@ -393,17 +394,18 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         "1": {"start_date": timezone.now().date()}
     }
 
-    # Overriden to get the context for the dynamic data in step 2
+    # Overridden to get the context for the dynamic data in step 2
     def get_context_data(self, form, **kwargs):
         context = super(MultiCharterEventView, self).get_context_data(form=form, **kwargs)
         if self.steps.current == "1":
             context["translators"] = get_translator_data(self)
             context["facilitators"] = get_facilitator_data(self)
             context["materials"] = get_material_data(self)
+            context["charter_lookup"] = self.get_cleaned_data_for_step("0").get("0-language_0", "")
             context["view"] = "create"
         return context
 
-    # Overriden to send a dynamic form based on user's input in step 1
+    # Overridden to send a dynamic form based on user's input in step 1
     def get_form(self, step=None, data=None, files=None):
         if step is None:
             step = self.steps.current
@@ -681,6 +683,16 @@ class NewItemView(LoginRequiredMixin, FormView):
                         except:
                             # If "Other" is no longer a part of the answer, just skip through
                             pass
+
+
+class AjaxCharterPartnerLookup(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            c = Charter.objects.get(pk=request.GET["pk"])
+            return HttpResponse(c.partner_id or "")
+        except Charter.DoesNotExist:
+            return HttpResponse("")
 
 
 # -------------------- #

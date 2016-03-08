@@ -125,6 +125,7 @@
                         {{ form.location | bootstrap }}
                         {{ form.lead_dept | bootstrap }}
                         {{ form.contact_person | bootstrap }}
+                        {{ form.partner | bootstrap }}
                         {{ form.current_check_level | bootstrap }}
                         {{ form.target_check_level | bootstrap }}
 
@@ -211,7 +212,6 @@
                         </div>
 
                         {{ form.departments | bootstrap }}
-                        {{ form.networks | bootstrap }}
                         {{ form.translation_methods | bootstrap }}
                         {{ form.software | bootstrap }}
                         {{ form.hardware | bootstrap }}
@@ -241,4 +241,26 @@
 {% block custom_bottom_script %}
     <!-- Custom script for new charter modal -->
     <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script type="text/javascript">
+
+        document.onreadystatechange = function() {
+            var charter = $("#id_charter");
+            // Populate partner from charter's partner
+            if (charter.val()) { updatePartner(); }
+            // Also populate when charter is changed
+            charter.off("change", updatePartner).on("change", updatePartner);
+        };
+
+        function updatePartner() {
+            var partner = $('#id_partner');
+            if (partner.val()) { return false; }
+
+            var charter = $('#id_charter');
+            var charterId = charter.data('charter-pk') || charter.val();
+
+            $.ajax({url:'{% url "tracking:charter_partner_lookup" %}?pk=' + charterId}).done(function(data) {
+                partner.val(data);
+            });
+        }
+    </script>
 {% endblock custom_bottom_script %}

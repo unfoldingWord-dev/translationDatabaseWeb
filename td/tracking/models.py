@@ -49,6 +49,12 @@ class Charter(models.Model):
         max_length=200,
         verbose_name="Follow-up Person",
     )
+    partner = models.ForeignKey(
+        "gl_tracking.Partner",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(
         default=timezone.now,
     )
@@ -165,6 +171,12 @@ class Event(models.Model):
     networks = models.ManyToManyField(
         Network,
         blank=True,
+    )
+    partner = models.ForeignKey(
+        "gl_tracking.Partner",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
     )
     departments = models.ManyToManyField(
         "Department",
