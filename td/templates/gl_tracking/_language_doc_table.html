@@ -33,7 +33,7 @@
                         {% if doc.is_online %}<i class="fa fa-globe"></i>{% else %}-{% endif %}
                     </td>
                     <td>
-                        {{ doc.method | default:"-" }}
+                        {{ doc.methods.all | join:", " | default:"-" }}
                     </td>
                     <td>
                         {{ doc.completion_rate | default_if_none:"-" }}
