@@ -151,6 +151,7 @@
                             {{ wizard.form.end_date | bootstrap }}
                             {{ wizard.form.lead_dept | bootstrap }}
                             {{ wizard.form.contact_person | bootstrap }}
+                            {{ wizard.form.partner | bootstrap }}
                             {{ wizard.form.current_check_level | bootstrap }}
                             {{ wizard.form.target_check_level | bootstrap }}
 
@@ -237,7 +238,6 @@
                             </div>
 
                             {{ wizard.form.departments | bootstrap }}
-                            {{ wizard.form.networks | bootstrap }}
                             {{ wizard.form.translation_methods | bootstrap }}
                             {{ wizard.form.software | bootstrap }}
                             {{ wizard.form.hardware | bootstrap }}
@@ -248,6 +248,7 @@
                             <input type="hidden" name="translator-count" value="0" />
                             <input type="hidden" name="facilitator-count" value="0" />
                             <input type="hidden" name="material-count" value="0" />
+                            <input type="hidden" name="charter-lookup" value="{{ charter_lookup }}" />
                         {% endif %}
                         
                         {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
@@ -281,8 +282,8 @@
     <script>
         // Will affect step 1
         $(document).ready(function() {
-            // Initial scripts
-            // 
+            // INITIAL SCRIPTS
+            // ===============
             var list = document.querySelectorAll('input.language-selector-marked');
             if (list.length) {
                 var number = 0;
@@ -292,11 +293,13 @@
                     }
                 }
             }
-            // 
+            // Late/delayed initialization of language selectors
             $('.language-selector-marked').languageSelector();
+            // Populate partner from charter's partner
+            if (document.querySelector('input[name="charter-lookup"]')) { updatePartner(); }
 
-            // Event listeners
-            // 
+            // EVENT LISTENERS
+            // ===============
             $('.add-charter-link').on('click', function(e) {
                 e.preventDefault();
                 addCharter();
@@ -306,10 +309,10 @@
                 removeCharter(this);
             });
 
-            // Function defs
-            // 
+            // FUNCTION DEFS
+            // =============
             function addCharter() {
-                // Incrememnt number to get unique id
+                // Increment number to get unique id
                 number += 1;
                 // Define element
                 var el = '<div class="entry">' +
@@ -331,6 +334,18 @@
                 // Remove the container element of the selected element
                 $(el.parentElement).detach();
             }
+
+            function updatePartner() {
+                var partner = document.querySelector('#id_1-partner');
+                if (partner.value) { return false; }
+
+                var charterId = document.querySelector('input[name="charter-lookup"]');
+                if (charterId.value) {
+                    $.ajax({url:'{% url "tracking:charter_partner_lookup" %}?pk=' + charterId.value}).done(function(data) {
+                        partner.value = data;
+                    });
+                }
+        }
         });
 
         // Will affect step 2

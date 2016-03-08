@@ -867,6 +867,7 @@ class MultiCharterEventViewTestCase(TestCase):
         self.view.steps = lambda: None
         setattr(self.view.steps, "current", "1")
         self.view.prefix = "multi_charter_event_form"
+        self.view.get_cleaned_data_for_step = Mock(return_value={})
         #
         context = self.view.get_context_data(mock_form_2)
         #
@@ -874,6 +875,7 @@ class MultiCharterEventViewTestCase(TestCase):
         self.assertEqual(context["translators"][0], {"name": "Test Translator", "docs_signed": True})
         self.assertEqual(context["facilitators"][0], {"name": "Test Facilitator", "is_lead": True, "speaks_gl": True})
         self.assertEqual(context["materials"][0], {"name": "Test Material", "licensed": True})
+        self.assertIn("charter_lookup", context)
 
     @patch("td.tracking.views.Language.objects.get")
     def test_get_form(self, mock_get):

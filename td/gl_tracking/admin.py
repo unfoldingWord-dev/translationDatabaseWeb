@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from import_export import resources, fields
+from import_export import resources, fields, widgets
 from import_export.admin import ImportExportModelAdmin
 from import_widgets import NullableForeignKeyWidget
 
@@ -22,26 +22,20 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 class ProgressResource(resources.ModelResource):
-
-    def before_import(self, dataset, dry_run, **kwargs):
-        language_ids = []
-        type_ids = []
-        for code in dataset["language_code"]:
-            language_ids.append(Language.objects.get(code=code).id)
-        for doc in dataset["document_slug"]:
-            type_ids.append(Document.objects.get(code=doc).id)
-        dataset.insert_col(1, language_ids, "language")
-        dataset.insert_col(2, type_ids, "type")
-        return super(ProgressResource, self).before_import(dataset, dry_run, **kwargs)
+    language = fields.Field("language", "language", widgets.ForeignKeyWidget(Language, "code"), None)
+    type = fields.Field("type", "type", widgets.ForeignKeyWidget(Document, "code"), None)
+    methods = fields.Field("methods", "methods", widgets.ManyToManyWidget(Method, ",", "name"), None)
+    partners = fields.Field("partners", "partners", widgets.ManyToManyWidget(Partner, ",", "name"), None)
 
     class Meta:
         model = Progress
-        fields = ('id', 'language', 'type', 'completion_rate', 'completion_date', 'is_online', 'in_door43', 'in_uw', 'notes', 'is_done')
+        fields = ("id", "language", "type", "is_online", "methods", "completion_rate", "completion_date", "qa_level",
+                  "in_door43", "in_uw", "partners", "notes", "is_done")
 
 
 class ProgressAdmin(ImportExportModelAdmin):
     resource_class = ProgressResource
-    list_display = ("type", "language", "completion_rate", "completion_date", "notes")
+    list_display = ("type", "language", "completion_rate", "completion_date", "notes", )
     list_filter = ("type", "language", "completion_rate", "completion_date", )
 
 
