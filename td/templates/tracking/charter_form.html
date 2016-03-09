@@ -8,6 +8,21 @@
 
 {% block extra_style %}
 	<style>
+		form .form-group::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
+		.date-input {
+			width: calc(33.33% - 3px);
+			display: inline-block;
+			float: left;
+			margin-right: 3px;
+		}
+		.date-input:last-child {
+			width: 33.33%;
+			margin-right: 0;
+		}
 		.form-notice-container {
 			padding: 1rem;
 			margin-bottom: 2rem;
@@ -33,6 +48,7 @@
 						<p class="form-notice">Note: Searching for a language for the first time may take a while.</p>
 						<p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
 					</div>
+
 					<form action="{% url 'tracking:charter_add' %}" method="POST" class="form">
 						{% csrf_token %}
 						{{ form | bootstrap }}
@@ -46,3 +62,6 @@
 	</div>
 
 {% endblock body%}
+
+{% block extra_script %}
+{% endblock extra_script %}

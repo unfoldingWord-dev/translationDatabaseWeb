@@ -7,82 +7,96 @@
 {% block head_title %}Tracking | New Charter{% endblock head_title %}
 
 {% block extra_style %}
-    <style>
-        .form-notice-container {
-            padding: 1rem;
-            margin-bottom: 2rem;
-            background-color: rgba(0,0,0,0.075);
-            border-radius: 5px;
-        }
-        .form-notice {
-            font-weight: lighter;
-            cursor: pointer;
-        }
-        .form-instance .panel-body {
-            background-color: #FFF;
-            transition: background-color 666ms ease-in-out;
-        }
-        .form-instance .panel-body.new-form {
-            background-color: #F0FCF0;
-        }
-    </style>
+	<style>
+		form .form-group::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
+		.date-input {
+			width: calc(33.33% - 3px);
+			display: inline-block;
+			float: left;
+			margin-right: 3px;
+		}
+		.date-input:last-child {
+			width: 33.33%;
+			margin-right: 0;
+		}
+		.form-notice-container {
+			padding: 1rem;
+			margin-bottom: 2rem;
+			background-color: rgba(0,0,0,0.075);
+			border-radius: 5px;
+		}
+		.form-notice {
+			font-weight: lighter;
+			cursor: pointer;
+		}
+		.form-instance .panel-body {
+			background-color: #FFF;
+			transition: background-color 666ms ease-in-out;
+		}
+		.form-instance .panel-body.new-form {
+			background-color: #F0FCF0;
+		}
+	</style>
 {% endblock extra_style %}	
 
 {% block body %}
-    <div class="form-notice-container">
-        <p class="form-notice">Note: Searching for a languagefor the first time may take a while.</p>
-        <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
-    </div>
-    <form action="" method="POST" class="form">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        <div class="form-list">
-            {% for form in formset %}
-                <div class="row form-instance">
-                    <div class="col-md-6">
-                        <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h2 class="panel-title">New Translation Project Charter</h2>
-                                </div>
-                            <div class="panel-body">
-                                {{ form | bootstrap}}
-                                <a href="" class="remove-form-link" style="margin-top: -2rem; font-weight: lighter;">Remove this entry</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+	<div class="form-notice-container">
+		<p class="form-notice">Note: Searching for a languagefor the first time may take a while.</p>
+		<p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+	</div>
+	<form action="" method="POST" class="form">
+		{% csrf_token %}
+		{{ formset.management_form }}
+		<div class="form-list">
+			{% for form in formset %}
+				<div class="row form-instance">
+					<div class="col-md-6">
+						<div class="panel panel-default">
+								<div class="panel-heading">
+									<h2 class="panel-title">New Translation Project Charter</h2>
+								</div>
+							<div class="panel-body">
+								{{ form | bootstrap}}
+								<a href="" class="remove-form-link" style="margin-top: -2rem; font-weight: lighter;">Remove this entry</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
 
-        <button type="button" class="add-form-link btn btn-default" style="margin: 1rem 0;">More Charters</button>
+		<button type="button" class="add-form-link btn btn-default" style="margin: 1rem 0;">More Charters</button>
 
-        <div class="row">
-            <div class="col-md-6">
-                <button type="submit" class="btn btn-primary btn-block">
-                    {% if form.errors %}Try again{% else %}Add Project(s){% endif %}
-                </button>
-            </div>
-        </div>
-    </form>
+		<div class="row">
+			<div class="col-md-6">
+				<button type="submit" class="btn btn-primary btn-block">
+					{% if form.errors %}Try again{% else %}Add Project(s){% endif %}
+				</button>
+			</div>
+		</div>
+	</form>
 
 {% endblock body %}
 
 {% block custom_bottom_script %}
-    <script>
+	<script>
 
-        $(document).ready(function() {
-            // INITIAL SCRIPTS
-            // ===============
-            // Clone the first form before we do anything to it
-            var form = $('.form-instance:first').clone();
-            // Get the latest form ID number in the page
-            var formNumber = parseInt($('.form-instance:last').find('.panel-body').children().eq(0).prop('id').substring(8, 9));
-            // Turn all language fields into Select2 search fields
-            $('.language-selector-marked').languageSelector();
+		$(document).ready(function() {
+			// INITIAL SCRIPTS
+			//
+			// Clone the first form before we do anything to it
+			var form = $('.form-instance:first').clone();
+			// Get the latest form ID number in the page
+			var formNumber = parseInt($('.form-instance:last').find('.panel-body').children().eq(0).prop('id').substring(8, 9));
+			// Turn all language fields into Select2 search fields
+			$('.language-selector-marked').languageSelector();
 
-
-            // EVENT LISTENERS
-            // ===============
+			// EVENT LISTENERS
+            // 
             $('.add-form-link').on('click', function(e) {
                 e.preventDefault();
                 addForm();
@@ -94,117 +108,116 @@
             });
 
             // FUNCTION DEFINITIONS
-            // ====================
-            function addForm() {
-                // Update ID number for the new form
-                formNumber++;
-                // Create a clone of the clone and prep it to be added to the page
-                var clone = updateIndex(form.clone(), formNumber);
-                clone = updateValue(clone, formNumber);
-                clone = cleanError(clone, formNumber);
-                clone.find('.language-selector-marked').languageSelector();
-                clone.find('.datepicker').datepicker();
-                clone.appendTo('.form-list');
-                markRequired(clone, ['language', 'countries', 'start_date', 'end_date', 'lead_dept', 'contact_person']);
-                //
-                scrollToLast();
-                // Make the new form's background to glow green for a bit
-                var last = $('.form-instance:last .panel-body');
-                last.addClass('new-form');
-                window.setTimeout(function() {
-                    last.removeClass('new-form');
-                }, 1500);
-                // Update Django's numbering system
-                var total = $('#id_form-TOTAL_FORMS');
-                total.val(parseInt(total.val()) + 1);
-                // Mark required fields
-            }
-            //
-            function markRequired(el, required_fields) {
-                required_fields.forEach(function(field) {
-                    var field = el.find('label[for*="' + field + '"]');
-                    if (field) {
-                        field.addClass('required');
-                    }
-                });
-            }
-            //
-            function removeForm(el) {
-                //
-                $(el).parents('.form-instance').detach();
-                //
-                renumberForms($('.form-instance'));
-                // Update ID number for the next form
-                formNumber--;
-                // Update Django's numbering system
-                var total = $('#id_form-TOTAL_FORMS');
-                total.val(parseInt(total.val()) - 1);
-                //
-                scrollToLast();
-            }
-            //
-            function updateIndex(form, number) {
-                // Set up what to look for and what to change the ID to
-                var currentId = new RegExp('form' + '-(\\d+)-');
-                var replacement = 'form-' + number + '-';
-                // Search for elements and change their identifications to the appropriate number
-                form.find('input').each(function(index, el) {
-                    $(el).prop('id', $(el).prop('id').replace(currentId, replacement));
-                    $(el).prop('name', $(el).prop('name').replace(currentId, replacement));
-                });
-                form.find('select').each(function(index, el) {
-                    $(el).prop('id', $(el).prop('id').replace(currentId, replacement));
-                    $(el).prop('name', $(el).prop('name').replace(currentId, replacement));
-                });
-                form.find('label').each(function(index, el) {
-                    $(el).prop('for', $(el).prop('for').replace(currentId, replacement));
-                });
-                return form;
-            }
-            //
-            function renumberForms(forms) {
-                // Collect all the form instance and renumber them from 0 up
-                $(forms).each(function(index, form) {
-                    form = updateIndex($(form), index);
-                });
-            }
-            //
-            function updateValue(form, number) {
-                // Setup ID selector
-                var idPrefixSelector = '#id_form-' + number + '-';
-                // Clear the values of the following fields
-                form.find(idPrefixSelector + 'language').val("");
-                form.find(idPrefixSelector + 'countries').val([]);
-                form.find(idPrefixSelector + 'number').val("");
-                // If there's at least 1 form in the page...
-                if (number > 0) {
-                    // Setup the previous form's ID selector
-                    var idPrefixPrevious = '#id_form-' + (number - 1) + '-';
-                    // Duplicate the value of the following fields
-                    var selects = ['start_date_month', 'start_date_day', 'start_date_year', 'end_date_month', 'end_date_day', 'end_date_year', 'lead_dept'];
-                    selects.forEach(function(field) {
-                        form.find(idPrefixSelector + field).prop('selectedIndex', $(document).find(idPrefixPrevious + field).prop('selectedIndex'));
-                    });
-                    form.find(idPrefixSelector + 'contact_person').val($(document).find(idPrefixPrevious + 'contact_person').val());
-                }
-                return form
-            }
-            //
-            function cleanError(form) {
-                // Remove error classes and messages
-                form.find('.has-error').removeClass('has-error');
-                form.find('span.help-block').remove();
-                return form
-            }
-            //
-            function scrollToLast() {
-                // Scroll to the latest form (usually means the one that's just created)
-                var target = $('.form-instance:last').offset().top - 80;
-                $('body').animate({
-                    scrollTop: target
-                }, 333, 'swing');
-            }
+            // 
+			function addForm() {
+				// Update ID number for the new form
+				formNumber++;
+				// Create a clone of the clone and prep it to be added to the page
+				var clone = updateIndex(form.clone(), formNumber);
+				clone = updateValue(clone, formNumber);
+				clone = cleanError(clone, formNumber);
+				clone.find('.language-selector-marked').languageSelector();
+				clone.appendTo('.form-list');
+				markRequired(clone, ['language', 'countries', 'start_date', 'end_date', 'lead_dept', 'contact_person']);
+				// 
+				scrollToLast();
+				// Make the new form's background to glow green for a bit
+				var last = $('.form-instance:last .panel-body');
+				last.addClass('new-form');
+				window.setTimeout(function() {
+					last.removeClass('new-form');
+				}, 1500);
+				// Update Django's numbering system
+				var total = $('#id_form-TOTAL_FORMS');
+				total.val(parseInt(total.val()) + 1);
+				// Mark required fields
+			}
+			//
+			function markRequired(el, required_fields) {
+				required_fields.forEach(function(field) {
+					var field = el.find('label[for*="' + field + '"]');
+					if (field) {
+						field.addClass('required');
+					}
+				});
+			}
+			// 
+			function removeForm(el) {
+				// 
+				$(el).parents('.form-instance').detach();
+				// 
+				renumberForms($('.form-instance'));
+				// Update ID number for the next form
+				formNumber--;
+				// Update Django's numbering system
+				var total = $('#id_form-TOTAL_FORMS');
+				total.val(parseInt(total.val()) - 1);
+				// 
+				scrollToLast();
+			}
+			// 
+			function updateIndex(form, number) {
+				// Set up what to look for and what to change the ID to
+				var currentId = new RegExp('form' + '-(\\d+)-');
+				var replacement = 'form-' + number + '-';
+				// Search for elements and change their identifications to the appropriate number
+				form.find('input').each(function(index, el) {
+					$(el).prop('id', $(el).prop('id').replace(currentId, replacement));
+					$(el).prop('name', $(el).prop('name').replace(currentId, replacement));
+				});
+				form.find('select').each(function(index, el) {
+					$(el).prop('id', $(el).prop('id').replace(currentId, replacement));
+					$(el).prop('name', $(el).prop('name').replace(currentId, replacement));
+				});
+				form.find('label').each(function(index, el) {
+					$(el).prop('for', $(el).prop('for').replace(currentId, replacement));
+				});
+				return form;
+			}
+			// 
+			function renumberForms(forms) {
+				// Collect all the form instance and renumber them from 0 up 
+				$(forms).each(function(index, form) {
+					form = updateIndex($(form), index);
+				});
+			}
+			// 
+			function updateValue(form, number) {
+				// Setup ID selector
+				var idPrefixSelector = '#id_form-' + number + '-';
+				// Clear the values of the following fields
+				form.find(idPrefixSelector + 'language').val("");
+				form.find(idPrefixSelector + 'countries').val([]);
+				form.find(idPrefixSelector + 'number').val("");
+				// If there's at least 1 form in the page...
+				if (number > 0) {
+					// Setup the previous form's ID selector
+					var idPrefixPrevious = '#id_form-' + (number - 1) + '-';
+					// Duplicate the value of the following fields
+					var selects = ['start_date_month', 'start_date_day', 'start_date_year', 'end_date_month', 'end_date_day', 'end_date_year', 'lead_dept'];
+					selects.forEach(function(field) {
+						form.find(idPrefixSelector + field).prop('selectedIndex', $(document).find(idPrefixPrevious + field).prop('selectedIndex'));
+					});
+					form.find(idPrefixSelector + 'contact_person').val($(document).find(idPrefixPrevious + 'contact_person').val());
+				}
+				return form
+			}
+			// 
+			function cleanError(form) {
+				// Remove error classes and messages
+				form.find('.has-error').removeClass('has-error');
+				form.find('span.help-block').remove();
+				return form
+			}
+			// 
+			function scrollToLast() {
+				// Scroll to the latest form (usually means the one that's just created)
+				var target = $('.form-instance:last').offset().top - 80;
+				$('body').animate({
+					scrollTop: target
+				}, 333, 'swing');
+			}
 
-        });
-    </script>
+		});
+	</script>
 {% endblock custom_bottom_script %}

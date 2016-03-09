@@ -1,10 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-
+from td.gl_tracking.models import Progress, Partner
 from td.models import Country
-from td.fields import BSDateField
-
-from .models import Progress, Partner
 
 
 class VariantSplitModalForm(forms.Form):
@@ -17,9 +14,26 @@ class RegionAssignmentModalForm(forms.Form):
 
 class ProgressForm(forms.ModelForm):
 
+    # Overriden add custom initialize the form
     def __init__(self, *args, **kwargs):
         super(ProgressForm, self).__init__(*args, **kwargs)
-        self.fields["completion_date"] = BSDateField(required=False)
+        self.fields["completion_date"] = forms.DateField(
+            widget=forms.DateInput(
+                attrs={
+                    "class": "datepicker",
+                    "data-provide": "datepicker",
+                    "data-autoclose": "true",
+                    "data-keyboard-navigation": "true",
+                }
+            ),
+            input_formats=[
+                "%Y-%m-%d",
+                "%m-%d-%Y",
+                "%Y/%m/%d",
+                "%m/%d/%Y",
+            ],
+            required=False,
+        )
 
     class Meta:
         model = Progress
@@ -34,8 +48,38 @@ class PartnerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PartnerForm, self).__init__(*args, **kwargs)
-        self.fields["partner_start"] = BSDateField(required=False, label="Partnership Start Date")
-        self.fields["partner_end"] = BSDateField(required=False, label="Partnership End Date")
+        self.fields["partner_start"] = forms.DateField(
+            widget=forms.DateInput(
+                attrs={
+                    "class": "datepicker",
+                    "data-provide": "datepicker",
+                    "data-autoclose": "true",
+                    "data-keyboard-navigation": "true",
+                },
+                format="%m/%d/%Y",
+            ),
+            input_formats=[
+                "%m/%d/%Y",
+            ],
+            required=False,
+            label="Partnership Start Date",
+        )
+        self.fields["partner_end"] = forms.DateField(
+            widget=forms.DateInput(
+                attrs={
+                    "class": "datepicker",
+                    "data-provide": "datepicker",
+                    "data-autoclose": "true",
+                    "data-keyboard-navigation": "true",
+                },
+                format="%m/%d/%Y",
+            ),
+            input_formats=[
+                "%m/%d/%Y",
+            ],
+            required=False,
+            label="Partnership End Date",
+        )
         self.fields["country"].queryset = Country.objects.all().order_by("name")
 
     def clean_partner_end(self):
