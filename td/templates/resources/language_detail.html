@@ -208,7 +208,7 @@
                 {% if charter %}
                     {% include "resources/_project_detail.html" with data=charter %}
                 {% else %}
-                    {% url "tracking:charter_add" as action_url %}
+                    {% url "tracking:charter_add_specific" language.pk as action_url %}
                     {% include "resources/_empty_div_overlay.html" with msg="Project has not been created" action="Create Project" action_url=action_url %}
                 {% endif %}
             </div>

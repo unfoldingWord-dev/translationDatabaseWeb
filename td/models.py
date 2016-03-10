@@ -98,13 +98,11 @@ class WARegion(models.Model):
 
     @property
     def gl_directors(self):
-        return [d.user.username
-                for d in self.gldirector_set.filter(is_helper=False)]
+        return [d.name for d in self.gldirector_set.filter(is_helper=False)]
 
     @property
     def gl_helpers(self):
-        return [d.user.username
-                for d in self.gldirector_set.filter(is_helper=True)]
+        return [d.name for d in self.gldirector_set.filter(is_helper=True)]
 
     @classmethod
     def slug_all(cls):
