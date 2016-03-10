@@ -60,7 +60,8 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
-        context["directors"] = self.object.gldirector_set.all()
+        context["directors"] = self.object.gl_directors
+        context["helpers"] = self.object.gl_helpers
         return context
 
 

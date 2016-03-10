@@ -130,6 +130,7 @@ class AjaxCharterListView(CharterTableSourceView):
         "end_date",
         "contact_person",
         "language__wa_region__name",
+        "partner__name",
     ]
     # link is on column because name can't handle non-roman characters
     link_column = "language__code"
@@ -178,8 +179,9 @@ class CharterAddView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         return {
+            "language": self.kwargs.get("pk", None),
             "start_date": timezone.now().date(),
-            "created_by": self.request.user.username
+            "created_by": self.request.user.username,
         }
 
     def form_valid(self, form):

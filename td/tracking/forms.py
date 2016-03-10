@@ -42,16 +42,17 @@ class CharterForm(forms.ModelForm):
         self.fields["language"] = LanguageCharField(urlReverse("names_autocomplete"))
         # Fill out the necessary attribute to display the selected language info
         #    if the form already has it.
-        if self.instance.pk:
-            lang = self.instance.language
-            if lang:
-                fill_search_language(self, "language", lang)
-        elif self.data.get("language", None):
-            try:
+        try:
+            lang = None
+            if self.instance.pk:
+                lang = self.instance.language
+            elif self.data.get("language", None):
                 lang = Language.objects.get(pk=self.data["language"])
-                fill_search_language(self, "language", lang)
-            except Language.DoesNotExist:
-                pass
+            elif kwargs.get("initial") is not None and kwargs["initial"].get("language") is not None:
+                lang = Language.objects.get(pk=kwargs["initial"]["language"])
+            fill_search_language(self, "language", lang)
+        except Language.DoesNotExist:
+            pass
 
     def clean_end_date(self):
         return check_end_date(self.cleaned_data)
@@ -294,11 +295,12 @@ def fill_search_charter(form, field_name, object):
 
 # Function: Assigns attributes for language selector CharterForm
 def fill_search_language(form, field_name, object):
-    form.fields[field_name].widget.attrs["data-lang-pk"] = object.id
-    form.fields[field_name].widget.attrs["data-lang-ln"] = object.ln
-    form.fields[field_name].widget.attrs["data-lang-lc"] = object.lc
-    form.fields[field_name].widget.attrs["data-lang-lr"] = object.lr
-    form.fields[field_name].widget.attrs["data-lang-gl"] = object.gateway_flag
+    if object is not None:
+        form.fields[field_name].widget.attrs["data-lang-pk"] = object.id
+        form.fields[field_name].widget.attrs["data-lang-ln"] = object.ln
+        form.fields[field_name].widget.attrs["data-lang-lc"] = object.lc
+        form.fields[field_name].widget.attrs["data-lang-lr"] = object.lr
+        form.fields[field_name].widget.attrs["data-lang-gl"] = object.gateway_flag
 
 
 # Function: Raises error if start date is later than end date. Returns the end date.
