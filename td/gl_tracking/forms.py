@@ -41,7 +41,7 @@ class PartnerForm(forms.ModelForm):
     def clean_partner_end(self):
         partner_start = self.cleaned_data["partner_start"]
         partner_end = self.cleaned_data["partner_end"]
-        if partner_start is not None and partner_start > partner_end:
+        if partner_start is not None and partner_end is not None and partner_start > partner_end:
             raise ValidationError("Partner end must be after partner start")
         return partner_end
 
