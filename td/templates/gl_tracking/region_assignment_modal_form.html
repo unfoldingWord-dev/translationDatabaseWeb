@@ -40,14 +40,14 @@
                         <td>
                             <select id="{{ region.slug }}_director" name="{{ region.slug }}_director" class="form-control select2-multiple" multiple="multiple">
                                 {% for director in gl_directors %}
-                                    <option value="{{ director.user.username }}" {% if director.user.username in region.gl_directors %}selected="true"{% endif %}>{{ director.user.username }}</option>
+                                    <option value="{{ director.name }}" {% if director.name in region.gl_directors %}selected="true"{% endif %}>{{ director.name }}</option>
                                 {% endfor %}
                             </select>
                         </td>
                         <td>
                             <select id="{{ region.slug }}_helper" name="{{ region.slug }}_helper" class="form-control select2-multiple" multiple="multiple">
                                 {% for helper in gl_helpers %}
-                                    <option value="{{ helper.user.username }}" {% if helper.user.username in region.gl_helpers %}selected="true"{% endif %}>{{ helper.user.username }}</option>
+                                    <option value="{{ helper.name }}" {% if helper.name in region.gl_helpers %}selected="true"{% endif %}>{{ helper.name }}</option>
                                 {% endfor %}
                             </select>
                         </td>

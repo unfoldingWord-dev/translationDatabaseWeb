@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import datetime
+
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -118,7 +120,7 @@ class Partner(models.Model):
     province = models.CharField(max_length=200, blank=True)  # This is used for State also
     country = models.ForeignKey("td.Country", on_delete=models.SET_NULL, null=True, blank=True)
 
-    partner_start = models.DateField(null=True, blank=True)
+    partner_start = models.DateField(blank=True, default=datetime.date(1900, 1, 1))
     partner_end = models.DateField(null=True, blank=True)
 
     # Contact Information
@@ -131,6 +133,13 @@ class Partner(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # The "default" arg in DateField() seems to only work for existing record, not new ones.
+        # There's need to set initial value in the form after this.
+        if self.partner_start is None:
+            self.partner_start = datetime.date(1900, 1, 1)
+        super(Partner, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("gl:partner_detail_view", kwargs={"pk": self.pk})
@@ -159,6 +168,11 @@ class GLDirector(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    @property
+    def name(self):
+        full_name = " ".join([self.user.first_name, self.user.last_name])
+        return full_name if full_name != " " else self.user.username
 
     @classmethod
     def super_gl_directors(cls):

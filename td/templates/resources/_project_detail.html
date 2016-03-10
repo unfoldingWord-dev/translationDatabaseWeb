@@ -8,15 +8,16 @@
         <div class="panel-body no-padding charter-table collapse in">
             <table class="table table-no-border no-margin">
                 <tbody>
-                    <tr><th class="col-md-2">Start Date</th><td>{{ data.start_date }}</td></tr>
-                    <tr><th>Completion Date</th><td>{{ data.end_date }}</td></tr>
-                    <tr><th>Lead Department</th><td>{{ data.lead_dept }}</td></tr>
-                    <tr><th>Contact Person</th><td>{{ data.contact_person }}</td></tr>
-                    <tr><th>Accounting Number</th><td>{{ data.number }}</td></tr>
-                    <tr><th>Created At</th><td>{{ data.created_at }}</td></tr>
-                    <tr><th>Created By</th><td>{{ data.created_by }}</td></tr>
-                    <tr><th>Modified At</th><td>{{ data.modified_at }}</td></tr>
-                    <tr><th>Modified By</th><td>{{ data.modified_by }}</td></tr>
+                    <tr><th class="col-md-2">Start Date</th><td>{{ data.start_date|default:"-" }}</td></tr>
+                    <tr><th>Completion Date</th><td>{{ data.end_date|default:"-" }}</td></tr>
+                    <tr><th>Lead Department</th><td>{{ data.lead_dept|default:"-" }}</td></tr>
+                    <tr><th>Contact Person</th><td>{{ data.contact_person|default:"-" }}</td></tr>
+                    <tr><th>Accounting Number</th><td>{{ data.number|default:"-" }}</td></tr>
+                    <tr><th>Partner</th><td>{{ data.partner.name|default:"-" }}</td></tr>
+                    <tr><th>Created At</th><td>{{ data.created_at|default:"-" }}</td></tr>
+                    <tr><th>Created By</th><td>{{ data.created_by|default:"-" }}</td></tr>
+                    <tr><th>Modified At</th><td>{{ data.modified_at|default:"-" }}</td></tr>
+                    <tr><th>Modified By</th><td>{{ data.modified_by|default:"-" }}</td></tr>
                 </tbody>
             </table>
         </div>
