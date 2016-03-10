@@ -1,6 +1,8 @@
+import requests_mock
+import time
+
 from django.contrib.auth.models import User
 from django.test import TestCase
-import requests_mock
 
 from td.models import Language
 from td.publishing.models import PublishRequest, OfficialResourceType
@@ -109,7 +111,7 @@ class TranslationAcademyTestCase(TestCase):
                 'status': {
                     'source_text': 'arc',
                     'version': '',
-                    'publish_date': '2016-03-08',
+                    'publish_date': time.strftime("%Y-%m-%d"),
                     'license': 'CC BY-SA 4.0',
                     'contributors': u'',
                     'checking_level': 1,

@@ -19,11 +19,10 @@ from .resources.admin import EntryTrackingAdmin
 
 
 class AdditionalLanguageAdmin(EntryTrackingAdmin):
-    list_display = ["ietf_tag", "common_name", "two_letter", "three_letter",
-                    "native_name", "direction", "comment", "created_at",
-                    "updated_at", ]
-    list_filter = ["created_at", "updated_at", ]
-    search_fields = ["ietf_tag", "comment_name", "comment", ]
+    list_display = ["ietf_tag", "common_name", "two_letter", "three_letter", "native_name", "direction", "comment",
+                    "created_at", "updated_at"]
+    list_filter = ["created_at", "updated_at", "direction"]
+    search_fields = ["ietf_tag", "common_name", "two_letter", "three_letter", "native_name", "comment"]
 
 
 class NetworkAdmin(EntryTrackingAdmin):
