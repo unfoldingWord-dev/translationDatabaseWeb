@@ -43,6 +43,7 @@ class DataTableSourceView(View):
 
     @property
     def search_term(self):
+        # return dict(self.request.GET.iterlists()).get("search[value]", [])[0]
         return self.request.GET.get("search[value]")
 
     @property
@@ -74,10 +75,10 @@ class DataTableSourceView(View):
 
     @property
     def filter_predicates(self):
+        model_fields = [l.name for l in self.model._meta.fields if hasattr(l, "name")]
         return [
             ("{0}__icontains".format(field), self.search_term)
-            for field in self.fields
-            if field.split("__")[0] in self.model._meta.get_all_field_names()
+            for field in self.fields if field.split("__")[0] in model_fields
         ]
 
     @property
@@ -118,18 +119,28 @@ class DataTableSourceView(View):
                         row.append('<i class="fa fa-times text-danger"></i>')
                 else:
                     if hasattr(self, "link_column") and self.link_column == field:
-                        # NOTE: Added if statement and the first conditional code to make this work with linking project list to language detail.
-                        #   The problems with the original one (under else) are:
-                        #       1. Charter model has 'lang_id' attribute that gets the related language's pk, but then the reverse() finds no match since
-                        #          'uw/language_detail/' looks for a "pk" as an argument, not a "lang_id".
-                        #       2. Charter model should not have more than one "pk" as attributes (one refers to itself, one refers to the related language's pk)
+                        # NOTE: Added if statement and the first conditional code to make this work with linking project
+                        #    list to language detail. The problems with the original one (under else) are:
+                        #    1. Charter model has 'lang_id' attribute that gets the related language's pk, but then the
+                        #       reverse() finds no match since 'uw/language_detail/' looks for a "pk" as an argument,
+                        #       not a "lang_id".
+                        #    2. Charter model should not have more than one "pk" as attributes (one refers to itself,
+                        #       one refers to the related language's pk)
                         #   Solution:
                         #       1. Rename the kwargs key to "pk" if the link_url_field is "lang_id"
                         # NOTE by Vicky Leong, 10.12.15
                         if (self.link_url_field == "lang_id"):
-                            row.append('<a href="{0}">{1}</a>'.format(reverse(self.link_url_name, kwargs={"pk": getattr(obj, self.link_url_field)}), v))
+                            row.append('<a href="{0}">{1}</a>'.format(reverse(
+                                self.link_url_name,
+                                kwargs={"pk": getattr(obj, self.link_url_field)}),
+                                v
+                            ))
                         else:
-                            row.append('<a href="{0}">{1}</a>'.format(reverse(self.link_url_name, kwargs={self.link_url_field: getattr(obj, self.link_url_field)}), v))
+                            row.append('<a href="{0}">{1}</a>'.format(reverse(
+                                self.link_url_name,
+                                kwargs={self.link_url_field: getattr(obj, self.link_url_field)}),
+                                v
+                            ))
                     else:
                         row.append(v)
         return row

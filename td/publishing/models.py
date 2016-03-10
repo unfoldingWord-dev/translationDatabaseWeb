@@ -97,7 +97,7 @@ class OfficialResourceType(models.Model):
     def ingest(self, language, publish_request):
         ResourceIngestor = RESOURCE_TYPES.get(self.short_name)
         if ResourceIngestor:
-            resource_ingestor = ResourceIngestor(language.code)
+            resource_ingestor = ResourceIngestor(language.code, publish_request)
             chapters = resource_ingestor.fetch_chapters()
             resource_doc = ResourceDocument()
             resource_doc.json_data = chapters

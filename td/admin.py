@@ -19,11 +19,10 @@ from .resources.admin import EntryTrackingAdmin
 
 
 class AdditionalLanguageAdmin(EntryTrackingAdmin):
-    list_display = ["ietf_tag", "common_name", "two_letter", "three_letter",
-                    "native_name", "direction", "comment", "created_at",
-                    "updated_at", ]
-    list_filter = ["created_at", "updated_at", ]
-    search_fields = ["ietf_tag", "comment_name", "comment", ]
+    list_display = ["ietf_tag", "common_name", "two_letter", "three_letter", "native_name", "direction", "comment",
+                    "created_at", "updated_at"]
+    list_filter = ["created_at", "updated_at", "direction"]
+    search_fields = ["ietf_tag", "common_name", "two_letter", "three_letter", "native_name", "comment"]
 
 
 class NetworkAdmin(EntryTrackingAdmin):
@@ -31,7 +30,8 @@ class NetworkAdmin(EntryTrackingAdmin):
 
 
 class CountryAdmin(EntryTrackingAdmin):
-    list_display = ["code", "name", "region", "population"]
+    list_display = ["code", "name", "region", "wa_region", "population"]
+    search_fields = ["code", "name", "region__name", "wa_region__name"]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -50,6 +50,7 @@ class LanguageAdmin(EntryTrackingAdmin):
         return self.readonly_fields
 
 
+# NOTE: This is superseded by  management command language_alt_names
 class LanguageAltNameResource(resources.ModelResource):
     # source is needed to create LanguageEAV
     source = None

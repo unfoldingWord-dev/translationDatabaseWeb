@@ -1,5 +1,3 @@
-import datetime
-
 from django import forms
 from django.core.urlresolvers import reverse as urlReverse
 from django.forms.extras.widgets import SelectDateWidget
@@ -18,6 +16,7 @@ from .models import (
     TranslationMethod,
     Software,
 )
+from ..fields import BSDateField, LanguageCharField
 
 CHECKING_LEVEL = (
     ('', '---'),
@@ -33,37 +32,14 @@ CHECKING_LEVEL = (
 
 class CharterForm(forms.ModelForm):
 
-    # Overriden add custom initialize the form
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
-        # Alphabetize selections
         self.fields["countries"].queryset = Country.objects.order_by("name")
         self.fields["lead_dept"].queryset = Department.objects.order_by("name")
         self.fields["partner"].queryset = Partner.objects.order_by("name")
-        # Add custom class and range of selection
-        year = datetime.datetime.now().year
-        self.fields["start_date"] = forms.DateField(
-            widget=SelectDateWidget(
-                years=range(year - 2, year + 10),
-                attrs={"class": "date-input"}
-            )
-        )
-        self.fields["end_date"] = forms.DateField(
-            widget=MySelectDateWidget(
-                years=range(year - 2, year + 10),
-                attrs={"class": "date-input"}
-            )
-        )
-        # Prep for jQuery select2 transformation
-        self.fields["language"] = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    "class": "language-selector",
-                    "data-source-url": urlReverse("names_autocomplete")
-                }
-            ),
-            required=True
-        )
+        self.fields["start_date"] = BSDateField()
+        self.fields["end_date"] = BSDateField()
+        self.fields["language"] = LanguageCharField(urlReverse("names_autocomplete"))
         # Fill out the necessary attribute to display the selected language info
         #    if the form already has it.
         if self.instance.pk:
@@ -74,14 +50,12 @@ class CharterForm(forms.ModelForm):
             try:
                 lang = Language.objects.get(pk=self.data["language"])
                 fill_search_language(self, "language", lang)
-            except:
+            except Language.DoesNotExist:
                 pass
 
-    # Overriden to enforce date logic
     def clean_end_date(self):
-        return check_end_date(self)
+        return check_end_date(self.cleaned_data)
 
-    # Overriden to trim spaces
     def clean_contact_person(self):
         return check_text_input(self, "contact_person")
 
@@ -96,19 +70,10 @@ class CharterForm(forms.ModelForm):
 
 
 class MultiCharterForm(CharterForm):
-    # Overriden add custom initialize the form
+
     def __init__(self, *args, **kwargs):
         super(MultiCharterForm, self).__init__(*args, **kwargs)
-        #
-        self.fields["language"] = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    "class": "language-selector-marked",
-                    "data-source-url": urlReverse("names_autocomplete")
-                }
-            ),
-            required=True
-        )
+        self.fields["language"] = LanguageCharField(urlReverse("names_autocomplete"), "language-selector-marked")
 
     def has_changed(self):
         changed_data = super(MultiCharterForm, self).has_changed()
@@ -122,12 +87,10 @@ class MultiCharterForm(CharterForm):
 
 class EventForm(forms.ModelForm):
 
-    # Overriden to add custom initialization
-    # Argument pk is set to -1 by default
     def __init__(self, pk="-1", *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        # Alphabetize items in selection
-        self.fields = determine_widget(self.fields, ["departments", "hardware", "software", "translation_methods", "output_target", "publication"], 9)
+        self.fields = determine_widget(self.fields, ["departments", "hardware", "software", "translation_methods",
+                                                     "output_target", "publication"], 9)
         self.fields["departments"].queryset = Department.objects.order_by("name")
         self.fields["hardware"].queryset = Hardware.objects.order_by("name")
         self.fields["software"].queryset = Software.objects.order_by("name")
@@ -135,20 +98,8 @@ class EventForm(forms.ModelForm):
         self.fields["output_target"].queryset = Output.objects.order_by("name")
         self.fields["publication"].queryset = Publication.objects.order_by("name")
         self.fields["partner"].queryset = Partner.objects.order_by("name")
-        # Add custom class and determine the range of selection
-        year = datetime.datetime.now().year
-        self.fields["start_date"] = forms.DateField(
-            widget=SelectDateWidget(
-                years=range(year - 2, year + 10),
-                attrs={"class": "date-input"}
-            )
-        )
-        self.fields["end_date"] = forms.DateField(
-            widget=MySelectDateWidget(
-                years=range(year - 2, year + 10),
-                attrs={"class": "date-input"}
-            )
-        )
+        self.fields["start_date"] = BSDateField()
+        self.fields["end_date"] = BSDateField()
         # Prep charter field for jQuery select2 transformation
         # Preserve the "pk" arg in the element's data attr if there's any
         self.fields["charter"] = forms.CharField(
@@ -188,7 +139,7 @@ class EventForm(forms.ModelForm):
                 # If there's no charter, there's nothing to do
                 pass
 
-    # Overriden to strip all custom fields
+    # Overridden to strip all custom fields
     def _clean_fields(self):
         original_state = self.data._mutable
         self.data._mutable = True
@@ -197,7 +148,7 @@ class EventForm(forms.ModelForm):
         self.data._mutable = original_state
         return super(EventForm, self)._clean_fields()
 
-    # Overriden to return a charter instance
+    # Overridden to return a charter instance
     def clean_charter(self):
         pk = self.fields["charter"].widget.attrs["data-charter-pk"]
         if pk == "":
@@ -205,12 +156,11 @@ class EventForm(forms.ModelForm):
         charter = Charter.objects.get(pk=int(pk))
         return charter
 
-    # Overriden to enforce date logic
+    # Overridden to enforce date logic
     def clean_end_date(self):
-        end_date = check_end_date(self)
-        return end_date
+        return check_end_date(self.cleaned_data)
 
-    # Overriden to trim spaces
+    # Overridden to trim spaces
     def clean_contact_person(self):
         name = check_text_input(self, "contact_person")
         return name
@@ -248,7 +198,7 @@ class EventForm(forms.ModelForm):
 class MultiCharterStarter(forms.Form):
     template_name = 'tracking/multi_charter_event_form.html'
 
-    # Overriden to add custom initialization
+    # Overridden to add custom initialization
     def __init__(self, *args, **kwargs):
         super(MultiCharterStarter, self).__init__(*args, **kwargs)
         # Add initial language field. This field's HTML name will be prefixed with "0-"
@@ -271,7 +221,7 @@ class MultiCharterStarter(forms.Form):
 class MultiCharterEventForm1(forms.Form):
     template_name = 'tracking/multi_charter_event_form.html'
 
-    # Overriden to add custom initialization
+    # Overridden to add custom initialization
     def __init__(self, *args, **kwargs):
         super(MultiCharterEventForm1, self).__init__(*args, **kwargs)
         # self.fields will be a dictionary of names and CharField objects.
@@ -301,7 +251,7 @@ class MultiCharterEventForm2(EventForm):
         # Since charter is not a part of this step, there's no need in validating it
         pass
 
-    # Overriden EventForm's custom field validation
+    # Overridden EventForm's custom field validation
     def _clean_fields(self):
         # Notice we're not storing self.data._mutable in a temp var. For some reason,
         #    the program's complaining that self.data has no attr '_mutable'. But the
@@ -312,7 +262,7 @@ class MultiCharterEventForm2(EventForm):
         self.data._mutable = False
         return super(EventForm, self)._clean_fields()
 
-    # Overriden EvenForm's Meta class to adapt this form into MultiCharterEventView step 2
+    # Overridden EvenForm's Meta class to adapt this form into MultiCharterEventView step 2
     class Meta:
         model = Event
         exclude = ["created_at", "created_by", "modified_at", "modified_by", "charter", "translators", "facilitators", "materials"]
@@ -352,13 +302,14 @@ def fill_search_language(form, field_name, object):
 
 
 # Function: Raises error if start date is later than end date. Returns the end date.
-def check_end_date(form):
-    end_date = form.cleaned_data["end_date"]
-    start_date = form.cleaned_data["start_date"]
+def check_end_date(cleaned_data):
+    start_date = cleaned_data.get("start_date")
+    end_date = cleaned_data.get("end_date")
+    if not start_date:
+        raise forms.ValidationError(_("Start date is required"), "invalid_input")
     if end_date <= start_date:
         raise forms.ValidationError(_("End date must be later than start date"), "invalid_input")
-    else:
-        return end_date
+    return end_date
 
 
 # Function: Raises error if required fields contain empty string; Returns cleaned text

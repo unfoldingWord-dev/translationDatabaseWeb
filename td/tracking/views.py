@@ -62,6 +62,8 @@ class CharterTableSourceView(DataTableSourceView):
     def queryset(self):
         if "pk" in self.kwargs:
             return Charter.objects.filter(language=self.kwargs["pk"])
+        elif "slug" in self.kwargs:
+            return Charter.objects.filter(Q(language__wa_region__slug=self.kwargs["slug"]))
         else:
             return self.model._default_manager.all()
 
@@ -126,7 +128,8 @@ class AjaxCharterListView(CharterTableSourceView):
         "language__code",
         "start_date",
         "end_date",
-        "contact_person"
+        "contact_person",
+        "language__wa_region__name",
     ]
     # link is on column because name can't handle non-roman characters
     link_column = "language__code"
@@ -173,14 +176,12 @@ class CharterAddView(LoginRequiredMixin, CreateView):
     form_class = CharterForm
     template_name = "tracking/charter_form.html"
 
-    # Overidden to set initial values
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
             "created_by": self.request.user.username
         }
 
-    # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         return redirect("tracking:charter_add_success", obj_type="charter", pk=self.object.id)
