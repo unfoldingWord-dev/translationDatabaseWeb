@@ -1,0 +1,114 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block extra_style %}
+    <style>
+        .center-text {
+            text-align: center;
+        }
+        .jumbotron.jumbotron-custom {
+            margin-top: 20px;
+            position: relative;
+        }
+        .language-title {
+            margin-bottom: 20px;
+        }
+        .nav.nav-tabs.view-tabs .active a {
+            background-color: #EEE;
+        }
+        .multi-view-container {
+            min-height: 200px;
+            padding-top: 1.5rem;
+            padding-bottom: 1rem;
+            position: relative;
+        }
+        .multi-view-container > div {
+            min-height: 100%;
+        }
+        .table-no-border tbody > tr > th,
+        .table-no-border tbody > tr > td {
+            border-top: none;
+            border-bottom: 1px solid #DDD;
+        }
+        .table-no-border tbody > tr:last-child > th,
+        .table-no-border tbody > tr:last-child > td {
+            border: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% include "resources/_breadcrumbs.html" %}
+
+    <!-- TITLE -->
+    <div class="jumbotron jumbotron-custom center-text">
+        <h1 class="language-title">{{ wa_region.name }}</h1>
+    </div>
+
+    <!-- VIEW TABS -->
+    <ul class="nav nav-tabs view-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">Info</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#countries-view">Countries</a></li>
+    </ul>
+
+    <!-- TAB CONTENT -->
+    <div class="multi-view-container tab-content">
+
+        <!-- GENERAL VIEW -->
+        <div id="general-view" class="row tab-pane active">
+            <div class="col-md-12">
+                <table class="table table-no-border">
+                    <tbody>
+                        <tr><th class="col-md-2">Slug</th><td>{{ wa_region.slug|lower }}</td><tr>
+                        <tr><th>GL Director(s)</th><td>{{ gl_directors|join:", "|default:"-" }}</td></tr>
+                        <tr><th>GL Helper(s)</th><td>{{ gl_helpers|join:", "|default:"-" }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PROJECTS VIEW -->
+        <div id="projects-view" class="row tab-pane">
+            <div class="col-md-12">
+                <table class="table table-bordered" data-source="{% url 'tracking:ajax_wa_region_charter_list' wa_region.slug|lower %}">
+                    <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Contact Person</th>
+                        <th>WA Region</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COUNTRIES VIEW -->
+        <div id="countries-view" class="row tab-pane">
+            <div class="col-md-12">
+                <table class="table table-bordered" data-source="{% url 'ajax_wa_region_country_list' wa_region.slug|lower %}">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Alpha 3 Code</th>
+                            <th>Name</th>
+                            <th>Region</th>
+                            <th>WA Region</th>
+                            <th>Population</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body %}
+    <h1>Wycliffe Associates Regions</h1>
+    <ul>
+        {% for wa_region in wa_regions %}
+            <li><a href="{% url "wa_region_detail" wa_region.slug|lower %}">{{ wa_region }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

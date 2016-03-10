@@ -62,6 +62,8 @@ class CharterTableSourceView(DataTableSourceView):
     def queryset(self):
         if "pk" in self.kwargs:
             return Charter.objects.filter(language=self.kwargs["pk"])
+        elif "slug" in self.kwargs:
+            return Charter.objects.filter(Q(language__wa_region__slug=self.kwargs["slug"]))
         else:
             return self.model._default_manager.all()
 
@@ -126,7 +128,8 @@ class AjaxCharterListView(CharterTableSourceView):
         "language__code",
         "start_date",
         "end_date",
-        "contact_person"
+        "contact_person",
+        "language__wa_region__name",
     ]
     # link is on column because name can't handle non-roman characters
     link_column = "language__code"
