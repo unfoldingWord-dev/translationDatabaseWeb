@@ -74,10 +74,10 @@ class DataTableSourceView(View):
 
     @property
     def filter_predicates(self):
+        model_fields = [l.name for l in self.model._meta.fields if hasattr(l, "name")]
         return [
             ("{0}__icontains".format(field), self.search_term)
-            for field in self.fields
-            if field.split("__")[0] in self.model._meta.get_all_field_names()
+            for field in self.fields if field.split("__")[0] in model_fields
         ]
 
     @property
