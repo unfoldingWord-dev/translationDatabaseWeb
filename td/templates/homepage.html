@@ -1,36 +1,42 @@
 {% extends "banner_base.html" %}
-{% load staticfiles %}
 
+{% load staticfiles %}
 {% load i18n %}
 
-{% block head_title %}{% trans "Welcome" %}{% endblock %}
 
-{% block extra_style %}
-    <style>
-    div.jumbotron {margin-top: 0px; margin-bottom: 10px;}
-    div.datamaps-legend {margin-top: 36%;}
-    </style>
-{% endblock %}
+{% block head_title %}{% trans "Home" %}{% endblock %}
+
 
 {% block body_class %}home{% endblock %}
 
 
 {% block content %}
- <div id="maprow" class="row maprow">
-    <h2 class="floating-map-title">gateway languages</h2>
-    <div id="mapcontainer" class="col-lg-11 col-md-11 col-sm-11">
+    <div class="center-text">
+        <h2><label for="query">Search for a Language</label></h2>
+        <form action="{% url "language_list" %}" method="GET">
+            <input name="q" class="giant-search-input" type="text" placeholder="any keyword" required>
+            <button type="submit" class="giant-search-submit"><i class="fa fa-search fa-lg"></i></button>
+        </form>
     </div>
- </div>
-<div class="exportbutton">
-    <button class="pull-right btn btn-success btn-export-map"><i class="fa fa-download"></i> PDF</button>
-</div>
+
+    <hr>
+
+    <div class="center-text clearfix">
+        <h2 class="floating-map-title center-text">Gateway Languages</h2>
+        <p>Download as <a class="link clickable btn-export-map">PDF <i class="fa fa-download"></i></a></p>
+        <div id="mapcontainer" class="col-lg-12 col-md-12 col-sm-12">
+        </div>
+    </div>
+
+    <hr>
 {% endblock %}
 
+
 {% block banner %}
-    <h1>{% trans "end the spiritual famine." %}</h1>
+    <h2>{% trans "End the spiritual famine" %}</h2>
     {% blocktrans %}
-        <div class="actions">
-            help <a href="http://door43.org/en/get-started" class="btn btn-default">translate</a> or <a href="https://unfoldingword.org/give/" class="btn btn-default">donate</a> to a project.
+        <div>
+            Help <a href="http://door43.org/en/get-started" class="btn btn-primary">translate</a> or <a href="https://unfoldingword.org/give/" class="btn btn-primary">donate</a> to a project.
         </div>
     {% endblocktrans %}
 {% endblock %}
@@ -44,3 +50,5 @@
       <input type="hidden" id="data" name="data" value="">
     </form>
 {% endblock %}
+
+

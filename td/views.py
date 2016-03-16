@@ -375,15 +375,12 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
 
 class LanguageTableSourceView(DataTableSourceView):
 
-    def __init__(self, **kwargs):
-        super(LanguageTableSourceView, self).__init__(**kwargs)
-
     @property
     def queryset(self):
         if "pk" in self.kwargs:
             return Language.objects.filter(gateway_language=self.kwargs["pk"])
         else:
-            return self.model._default_manager.all()
+            return self.model.objects.all()
 
     @property
     def filtered_data(self):
@@ -430,6 +427,11 @@ class AjaxCountryListView(CountryTableSourceView):
 
 class LanguageListView(TemplateView):
     template_name = "resources/language_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LanguageListView, self).get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
 
 
 class AjaxLanguageListView(LanguageTableSourceView):

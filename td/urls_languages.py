@@ -46,6 +46,7 @@ urlpatterns = [
     url(r"countries/(?P<pk>\d+)/languages/create/$", LanguageCreateView.as_view(), name="language_create"),
 
     url(r"ajax/languages/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
+    url(r"ajax/languages/(?P<q>[\w\d ]+)/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
     url(r"ajax/languages_gateway/(?P<pk>\d+)/$", AjaxLanguageGatewayListView.as_view(), name="ajax_ds_uw_languages_gateway"),
     url(r"languages/$", LanguageListView.as_view(), name="language_list"),
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),

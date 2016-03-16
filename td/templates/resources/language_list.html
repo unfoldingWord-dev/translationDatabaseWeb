@@ -2,24 +2,29 @@
 
 {% load humanize %}
 
+
+{% block head_title %}Languages{% endblock %}
+
+
 {% block body %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Languages</h1></div>
-        <table class="table table-bordered" data-source="{% url "ajax_ds_uw_languages" %}" width="100%">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>ISO-639-3</th>
-                    <th>Name</th>
-                    <th>Alternate Name</th>
-                    <th>Anglicized Name</th>
-                    <th>Country</th>
-                    <th>Gateway Language</th>
-                    <th>GW</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
+    <h2>Languages</h2>
+    <hr>
+    <table id="language-list-table" class="table table-bordered"
+           data-source="{% if query %}{% url "ajax_ds_uw_languages" q=query %}{% else %}{% url "ajax_ds_uw_languages" %}{% endif %}"
+           width="100%">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>ISO-639-3</th>
+                <th>Name</th>
+                <th>Alternate Name</th>
+                <th>Anglicized Name</th>
+                <th>Country</th>
+                <th>Gateway Language</th>
+                <th>GW</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 {% endblock %}
