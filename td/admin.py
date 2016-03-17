@@ -5,6 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     AdditionalLanguage,
+    TempLanguage,
     JSONData,
     Region,
     WARegion,
@@ -23,6 +24,12 @@ class AdditionalLanguageAdmin(EntryTrackingAdmin):
                     "created_at", "updated_at"]
     list_filter = ["created_at", "updated_at", "direction"]
     search_fields = ["ietf_tag", "common_name", "two_letter", "three_letter", "native_name", "comment"]
+
+
+class TempLanguageAdmin(EntryTrackingAdmin):
+    list_display = ["ietf_tag", "common_name", "native_name", "lang_assigned", "status", "created_at", "modified_at"]
+    list_filter = ["status", "source_app", "source_name", "created_at", "modified_at"]
+    search_fields = ["ietf_tag", "common_name", "native_name", "comment"]
 
 
 class NetworkAdmin(EntryTrackingAdmin):
@@ -124,3 +131,4 @@ admin.site.register(WARegion)
 admin.site.register(JSONData)
 admin.site.register(CountryEAV, CountryEAVAdmin)
 admin.site.register(LanguageEAV, LanguageEAVAdmin)
+admin.site.register(TempLanguage, TempLanguageAdmin)
