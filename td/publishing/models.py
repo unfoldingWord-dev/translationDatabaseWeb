@@ -356,6 +356,6 @@ class Frame(models.Model):
 class ResourceDocument(models.Model):
     publish_request = models.ForeignKey(PublishRequest, related_name="documents")
     resource_type = models.ForeignKey(OfficialResourceType)
-    language = models.ForeignKey(Language)
+    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     json_data = JSONField(default=dict)

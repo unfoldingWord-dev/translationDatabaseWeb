@@ -55,14 +55,22 @@ class TempLanguage(models.Model):
     lang_assigned = models.OneToOneField("Language", on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="templanguage_created", null=True,
-                                   blank=True)
+                                   blank=True, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="templanguage_modified", null=True,
-                                    blank=True)
+                                    blank=True, editable=False)
     tracker = FieldTracker()
 
     def __str__(self):
-        return self.name
+        return self.ln
+
+    @property
+    def ln(self):
+        return self.native_name or self.common_name
+
+    @property
+    def ang(self):
+        return self.common_name if self.common_name != self.native_name else ""
 
     @property
     def pending(self):

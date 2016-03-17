@@ -31,6 +31,12 @@ class TempLanguageAdmin(EntryTrackingAdmin):
     list_filter = ["status", "source_app", "source_name", "created_at", "modified_at"]
     search_fields = ["ietf_tag", "common_name", "native_name", "comment"]
 
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.modified_by = request.user
+        obj.save()
+
 
 class NetworkAdmin(EntryTrackingAdmin):
     list_display = ["name"]

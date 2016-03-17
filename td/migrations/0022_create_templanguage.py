@@ -30,9 +30,9 @@ class Migration(migrations.Migration):
                 ('status_comment', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='templanguage_created', to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='templanguage_created', to=settings.AUTH_USER_MODEL)),
                 ('lang_assigned', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='td.Language')),
-                ('modified_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='templanguage_modified', to=settings.AUTH_USER_MODEL)),
+                ('modified_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='templanguage_modified', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
