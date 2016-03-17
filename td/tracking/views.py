@@ -56,6 +56,16 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
 
 
+class TempCodeView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/temporary_code.html"
+
+
+class AjaxTemporaryCode(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("test-code")
+
+
 class CharterTableSourceView(DataTableSourceView):
 
     @property
