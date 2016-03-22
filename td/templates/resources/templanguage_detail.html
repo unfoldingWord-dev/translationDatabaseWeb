@@ -1,0 +1,38 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block body %}
+    <h1>{{ object.common_name }}</h1>
+    <h2>{{ object.native_name }}</h2>
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <table class="table">
+                <tbody>
+                    <tr><th>IETF tag</th><td>{{ object.ietf_tag }}</td></tr>
+                    <tr><th>Direction</th><td>{{ object.get_direction_display }}</td></tr>
+                    <tr>
+                        <th>Language Assigned</th>
+                        <td>{% if object.lang_assigned_url %}<a href="{{ object.lang_assigned_url }}">{{ object.lang_assigned }}</a>{% else %}-{% endif %}</td>
+                    </tr>
+                    <tr><th>Source App</th><td>{{ object.get_source_app_display }}</td></tr>
+                    <tr><th>Source Name</th><td>{{ object.source_name }}</td></tr>
+                    <tr><th>Comment</th><td>{{ object.comment|default:"-" }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <table class="table">
+                <tbody>
+                    <tr><th>Status</th><td>{{ object.get_status_display }}</td></tr>
+                    <tr><th>Status Comment</th><td>{{ object.status_comment|default:"-" }}</td></tr>
+                    <tr><th>Created at</th><td>{{ object.created_at }}</td></tr>
+                    <tr><th>Created by</th><td>{{ object.created_by }}</td></tr>
+                    <tr><th>Modified at</th><td>{{ object.modified_at }}</td></tr>
+                    <tr><th>Modified by</th><td>{{ object.modified_by }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

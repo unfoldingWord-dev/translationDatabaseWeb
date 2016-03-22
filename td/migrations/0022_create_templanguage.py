@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='TempLanguage',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ietf_tag', models.CharField(max_length=12)),
+                ('ietf_tag', models.CharField(max_length=12, unique=True)),
                 ('common_name', models.CharField(max_length=100)),
                 ('native_name', models.CharField(blank=True, max_length=100)),
                 ('direction', models.CharField(choices=[(b'l', b'ltr'), (b'r', b'rtl')], default=b'l', max_length=1)),

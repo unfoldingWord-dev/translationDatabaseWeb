@@ -1,9 +1,14 @@
+import requests
+
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 from celery import task
-import requests
 from pinax.eventlog.models import log
+
 from .models import Title, Media
 from td.models import Country, Language
 
@@ -92,3 +97,12 @@ def check_map_gateways():
     if cache.get("map_gateways_refresh", True):
         cache.set("map_gateways_refresh", False)
         update_map_gateways()
+
+
+def notify_templanguage_created(templanguage, language):
+    plain_content = render_to_string("resources/email/templanguage_notify_plain.html",
+                                     {"object": templanguage, "language": language})
+    send_mail("Temporary Language #{0}".format(str(templanguage.pk)),
+              plain_content,
+              settings.EMAIL_FROM,
+              settings.TEMPLANGUAGE_NOTIFY_LIST)

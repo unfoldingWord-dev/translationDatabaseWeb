@@ -225,6 +225,7 @@ FIXTURE_DIRS = [
 
 # Email settings
 
+TEMPLANGUAGE_NOTIFY_LIST = ["vicky_leong@wycliffeassociates.org"]
 EMAIL_NOTIFY_LIST = ["publishing@unfoldingword.org"]
 EMAIL_FROM = "uwadmin@unfoldingword.org"
 

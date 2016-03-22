@@ -43,7 +43,7 @@ class TempLanguage(models.Model):
         ("r", "Rejected"),
     )
     # TODO: Associate with a questionnaire
-    ietf_tag = models.CharField(max_length=12)
+    ietf_tag = models.CharField(max_length=12, unique=True)
     common_name = models.CharField(max_length=100)
     native_name = models.CharField(max_length=100, blank=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
@@ -63,6 +63,13 @@ class TempLanguage(models.Model):
 
     def __str__(self):
         return self.ln
+
+    def get_absolute_url(self):
+        return reverse('templanguage_detail', args=[str(self.id)])
+
+    @property
+    def lang_assigned_url(self):
+        return reverse('language_detail', args=[str(self.lang_assigned_id)]) if self.lang_assigned_id else ""
 
     @property
     def ln(self):

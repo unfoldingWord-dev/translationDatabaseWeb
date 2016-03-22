@@ -401,6 +401,16 @@ class LanguageTableSourceView(DataTableSourceView):
         return super(LanguageTableSourceView, self).filtered_data
 
 
+class TempLanguageTableSourceView(DataTableSourceView):
+
+    @property
+    def queryset(self):
+        if "pk" in self.kwargs:
+            return Language.objects.filter(gateway_language=self.kwargs["pk"])
+        else:
+            return self.model.objects.all()
+
+
 class CountryTableSourceView(DataTableSourceView):
 
     @property
@@ -624,7 +634,7 @@ class WARegionDetailView(LoginRequiredMixin, DetailView):
 class TempLanguageCreateView(LoginRequiredMixin, CreateView):
     model = TempLanguage
     form_class = TempLanguageForm
-    template_name = "tracking/templanguage_form.html"
+    template_name = "resources/templanguage_form.html"
 
     def get_context_data(self, **kwargs):
         context = super(TempLanguageCreateView, self).get_context_data(**kwargs)
@@ -641,7 +651,33 @@ class TempLanguageCreateView(LoginRequiredMixin, CreateView):
         return super(TempLanguageCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("language_list")
+        return self.object.get_absolute_url()
+
+
+class TempLanguageDetailView(LoginRequiredMixin, DetailView):
+    model = TempLanguage
+    template_name = "resources/templanguage_detail.html"
+
+
+class TempLanguageListView(LoginRequiredMixin, ListView):
+    model = TempLanguage
+    template_name = "resources/templanguage_list.html"
+
+
+class AjaxTempLanguageListView(TempLanguageTableSourceView):
+    model = TempLanguage
+    fields = [
+        "ietf_tag",
+        "native_name",
+        "common_name",
+        "lang_assigned__name",
+        "status",
+        "source_app",
+        "source_name",
+    ]
+    link_column = "ietf_tag"
+    link_url_name = "templanguage_detail"
+    link_url_field = "pk"
 
 
 class AjaxTemporaryCode(LoginRequiredMixin, View):

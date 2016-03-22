@@ -1,0 +1,24 @@
+{% load absoluteuri %}
+
+Temporary Language #{{ object.pk }}
+===================================
+
+Details:
+IETF Tag             {{ object.ietf_tag }}
+Native Name          {{ object.native_name }}
+Common Name          {{ object.common_name }}
+Direction            {{ object.direction }}
+Language Assigned    {{ object.lang_assigned }}
+Source Application   {{ object.source_app }}
+Source Person        {{ object.source_name }}
+Comment              {{ object.comment }}
+Status               {{ object.status }}
+Status Comment       {{ object.status_comment }}
+Created At           {{ object.created_at }}
+Created By           {{ object.created_by }}
+Modified At          {{ object.modified_at }}
+Modified By          {{ object.modified_by }}
+
+Url:
+Temporary Language   {% absoluteuri "templanguage_detail" object.pk %}
+Assigned Language    {% absoluteuri "language_detail" language.pk %}

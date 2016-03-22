@@ -1,0 +1,28 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block body %}
+    <h1>Temporary Languages</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="templanguage-list-table" class="table" data-source="{% url "ajax_dt_templanguage_list" %}"
+           width="100%">
+                <thead>
+                    <tr>
+                        <th>IETF Tag</th>
+                        <th>Native Name</th>
+                        <th>Common Name</th>
+                        <th>Language Assigned</th>
+                        <th>Status</th>
+                        <th>Source App</th>
+                        <th>Source Name</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
