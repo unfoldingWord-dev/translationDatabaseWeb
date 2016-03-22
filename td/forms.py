@@ -1,5 +1,5 @@
 from django import forms
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from td.resources.forms import EntityTrackingForm
 from .models import Network, Language, Country, TempLanguage
 
@@ -7,16 +7,22 @@ from .models import Network, Language, Country, TempLanguage
 class TempLanguageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        print "TempLanguageForm.__init__(): self.request is", self.request
         super(TempLanguageForm, self).__init__(*args, **kwargs)
+        self.fields["common_name"].widget.attrs["class"] = "required"
+        self.fields["direction"].widget.attrs["class"] = "required"
+        self.fields["comment"].widget.attrs["rows"] = "4"
 
-    def save(self, commit=True, *args, **kwargs):
-        print "TempLanguageForm.save() is called. self is", self
-        print dir(self)
-        obj = super(TempLanguageForm, self).save(commit=False, *args, **kwargs)
-        obj.created_by = self.request
-        return obj.save()
+    class Meta:
+        model = TempLanguage
+        exclude = ["lang_assigned", "status", "status_comment", "source_name", "source_app"]
+        labels = {
+            "ietf_tag": "IETF tag",
+            "common_name": "Common Name",
+            "native_name": "Native Name",
+        }
+        widgets = {
+            "source_app": forms.HiddenInput()
+        }
 
 
 class NetworkForm(EntityTrackingForm):

@@ -1,4 +1,7 @@
 import requests
+import uuid
+import time
+import hashlib
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
@@ -7,10 +10,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView
+from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 
 from .imports.models import (
@@ -22,8 +25,8 @@ from .imports.models import (
     IMBPeopleGroup
 )
 from .tracking.models import Event
-from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion
-from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion, TempLanguage
+from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm, TempLanguageForm
 from .resources.models import transform_country_data
 from .resources.tasks import get_map_gateways
 from .resources.views import EntityTrackingMixin
@@ -616,3 +619,46 @@ class WARegionDetailView(LoginRequiredMixin, DetailView):
         context["gl_directors"] = wa_region.gldirector_set.filter(is_helper=False)
         context["gl_helpers"] = wa_region.gldirector_set.filter(is_helper=True)
         return context
+
+
+class TempLanguageCreateView(LoginRequiredMixin, CreateView):
+    model = TempLanguage
+    form_class = TempLanguageForm
+    template_name = "tracking/templanguage_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TempLanguageCreateView, self).get_context_data(**kwargs)
+        # Manually passing ietf_tag along because the form input was rendered manually
+        context["ietf_tag"] = self.request.POST.get("ietf_tag", "")
+        return context
+
+    def form_valid(self, form):
+        full_name = " ".join([self.request.user.first_name, self.request.user.last_name])
+        form.instance.source_app = "td"
+        form.instance.source_name = self.request.user.username if full_name == " " else full_name
+        form.instance.created_by = self.request.user
+        form.instance.modified_by = self.request.user
+        return super(TempLanguageCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse("language_list")
+
+
+class AjaxTemporaryCode(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.generate_temp_code())
+
+    def generate_temp_code(self):
+        """
+        Generate a temporary language code from UUID and Time Since Epoch
+        :return: A code with "qaa-x-" and the first 6 letters of the hash
+        """
+        stamp = "".join([str(uuid.uuid1()), str(time.time())])
+        stamp_hash = hashlib.sha1(stamp).hexdigest()
+        temp_code = "-".join(["qaa", "x", stamp_hash[:6]])
+        try:
+            TempLanguage.objects.get(ietf_tag=temp_code)
+            return self.generate_temp_code()
+        except TempLanguage.DoesNotExist:
+            return temp_code

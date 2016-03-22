@@ -20,8 +20,6 @@ from .views import (
     MultiCharterAddView,
     HomeView,
     AjaxCharterPartnerLookup,
-    TempCodeView,
-    AjaxTemporaryCode,
 )
 
 urlpatterns = [
@@ -48,7 +46,6 @@ urlpatterns = [
     url(r"^ajax/charters/(?P<slug>\w+)/$", AjaxCharterListView.as_view(), name="ajax_wa_region_charter_list"),
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
     url(r"^ajax/charter/partner_lookup/$", AjaxCharterPartnerLookup.as_view(), name="charter_partner_lookup"),
-    url(r"^ajax/temporary_code/$", AjaxTemporaryCode.as_view(), name="ajax_temporary_code"),
 
     # Auto-complete
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),
@@ -62,6 +59,5 @@ urlpatterns = [
     url(r"^new_item/$", NewItemView.as_view(), name="new_item"),
     url(r"^downloads/$", FileDownloadView.as_view(), name="file_download"),
     url(r"^downloads/(?P<file_name>[A-Za-z_.]+)/$", downloadPDF, name="download_file"),
-    url(r"^temporary_code/$", TempCodeView.as_view(), name="temporary_code"),
 
 ]

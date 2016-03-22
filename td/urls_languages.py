@@ -23,7 +23,9 @@ from .views import (
     NetworkCreateView,
     NetworkDetailView,
     NetworkEditView,
-    NetworkListView
+    NetworkListView,
+    TempLanguageCreateView,
+    AjaxTemporaryCode,
 )
 
 urlpatterns = [
@@ -48,11 +50,14 @@ urlpatterns = [
     url(r"ajax/languages/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
     url(r"ajax/languages/(?P<q>[\w\d ]+)/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
     url(r"ajax/languages_gateway/(?P<pk>\d+)/$", AjaxLanguageGatewayListView.as_view(), name="ajax_ds_uw_languages_gateway"),
+    url(r"^ajax/templanguage/code/get/$", AjaxTemporaryCode.as_view(), name="ajax_temporary_code"),
+
     url(r"languages/$", LanguageListView.as_view(), name="language_list"),
     url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
     url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
     url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
     url(r"languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
+    url(r"^templanguage/create/$", TempLanguageCreateView.as_view(), name="templanguage_create"),
 
     url(r"gateway_language_flag/update/$", upload_gateway_flag_file, name="gateway_flag_update"),
     url(r"rtl_languages/update/$", upload_rtl_list, name="rtl_languages_update"),
@@ -60,3 +65,7 @@ urlpatterns = [
     url(r"country_gateways.json$", country_tree_data, name="country_tree_data"),
     url(r"country_map_data.json$", country_map_data, name="country_map_data"),
 ]
+
+
+
+

@@ -40,7 +40,7 @@ from .models import (
     Output,
     Publication,
 )
-from td.models import Language
+from td.models import Language, TempLanguage
 
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
@@ -54,16 +54,6 @@ from extra_views import ModelFormSetView
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
-
-
-class TempCodeView(LoginRequiredMixin, TemplateView):
-    template_name = "tracking/temporary_code.html"
-
-
-class AjaxTemporaryCode(LoginRequiredMixin, View):
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse("test-code")
 
 
 class CharterTableSourceView(DataTableSourceView):

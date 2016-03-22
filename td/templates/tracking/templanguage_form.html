@@ -1,0 +1,55 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block body %}
+    <h1>Create a temporary language</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group flex {% if form.ietf_tag.errors %}has-error{% endif %}">
+                    <label class="control-label">{{ form.ietf_tag.label }}</label>
+                    <div class=" ">
+                        <button class="btn btn-primary get-code" data-url="{% url 'ajax_temporary_code' %}">Get Code</button>
+                        <input id="fake-ietf-tag" class="form-control temp-code required" name="fake-ietf-tag" type="text" maxlength="12" value="{{ form.ietf_tag.value|default:"" }}" disabled>
+                        <input id="real-ietf-tag" name="{{ form.ietf_tag.html_name }}" type="hidden" value="{{ form.ietf_tag.value|default:"" }}">
+                    </div>
+                    <span class="help-block">{{ form.ietf_tag.errors.0 }}</span>
+                </div>
+                {{ form.common_name|bootstrap }}
+                {{ form.native_name|bootstrap }}
+                {{ form.direction|bootstrap }}
+                {{ form.comment|bootstrap }}
+                <button type="submit" class="btn btn-primary pull-right">Create</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_bottom_script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //
+            var getCodeBtn = document.querySelector('.get-code');
+            getCodeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    method: 'GET',
+                    url: getCodeBtn.dataset.url,
+                    success: function(code, status, jqXHR) {
+                        document.querySelector('#fake-ietf-tag').value = code;
+                        document.querySelector('#real-ietf-tag').value = code;
+                    },
+                    error: function(jqXHR, status, error) {
+                        console.log('Unable to get temporary code', status, error);
+                    }
+                });
+            });
+        });
+
+    </script>
+{% endblock %}
