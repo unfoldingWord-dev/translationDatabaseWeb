@@ -10,6 +10,7 @@ from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, Ethno
 
 from ..models import AdditionalLanguage
 from td.models import Language
+from td.gl_tracking.models import Phase, Document, DocumentCategory, Progress
 from ..tasks import integrate_imports, update_countries_from_imports
 
 
@@ -137,7 +138,17 @@ class LanguageIntegrationTests(TestCase):
 class LanguageTestCase(TestCase):
 
     def setUp(self):
-        Language.objects.create(code="tl", name="Test Language")
+        self.lang = Language.objects.create(code="tl", name="Test Language", gateway_flag=True)
+        self.phase_one = Phase.objects.create(number=1)
+        self.phase_two = Phase.objects.create(number=2)
+        self.cat_one = DocumentCategory.objects.create(name="Category One", phase=self.phase_one)
+        self.cat_two = DocumentCategory.objects.create(name="Category Two", phase=self.phase_two)
+        self.doc_one = Document.objects.create(name="Document One", code="one", category=self.cat_one)
+        self.doc_two = Document.objects.create(name="Document Two", code="two", category=self.cat_two)
+        self.progress_one = Progress.objects.create(language=self.lang, type=self.doc_one)
+        self.progress_two = Progress.objects.create(language=self.lang, type=self.doc_two)
+        self.lang.progress_set.add(self.progress_one)
+        self.lang.progress_set.add(self.progress_two)
 
     def test_names_data_short(self):
         """
@@ -166,3 +177,9 @@ class LanguageTestCase(TestCase):
         self.assertIn("ld", result[0])
         self.assertIn("gw", result[0])
         self.assertIn("cc", result[0])
+
+    def test_documents_ordered(self):
+        tmp = self.lang.documents_ordered
+        self.assertEqual(len(tmp), 2)
+        self.assertEqual(tmp[0].pk, self.progress_one.pk)
+        self.assertEqual(tmp[1].pk, self.progress_two.pk)

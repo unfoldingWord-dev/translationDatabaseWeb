@@ -289,6 +289,10 @@ class Language(models.Model):
         return self.progress_set.filter(type__category__phase__number="2")
 
     @property
+    def documents_ordered(self):
+        return self.progress_set.order_by("type__category__phase__number")
+
+    @property
     def variant_codes(self):
         return [lang.code for lang in self.variants.all()]
 
