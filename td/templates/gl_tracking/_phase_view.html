@@ -58,7 +58,7 @@
             <div class="panel panel-default">
 
                 <!-- PANEL/TABLE HEADING -->
-                <div class="panel-heading collapsed clickable" data-toggle="collapse" data-target="#{{ language.code }}">
+                <div class="panel-heading collapsed" >
                     <span class="pull-right">
                         {% if phase == "1" %}
                             {{ language.progress_phase_1 }}%
@@ -68,7 +68,8 @@
                     </span>
                     <div style="display: flex;">
                         <h1 class="panel-title">
-                            {{ language.ang|default:language.ln }} <span class="badge">{{ language.code }}</span>
+                            <button class="icon-button" data-toggle="collapse" data-target="#{{ language.code }}" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+                            <a href="{% url "language_detail" language.pk %}">{{ language.ang|default:language.ln }}</a> <span class="badge">{{ language.code }}</span>
                             {% for variant in language.variant_codes %}
                                 <span class="badge">{{ variant }}</span>
                             {% endfor %}
