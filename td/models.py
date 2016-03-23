@@ -79,17 +79,25 @@ class TempLanguage(models.Model):
     def ang(self):
         return self.common_name if self.common_name != self.native_name else ""
 
-    @property
-    def pending(self):
-        return self.objects.filter(status="p")
+    @classmethod
+    def pending(cls):
+        return cls.objects.filter(status="p")
 
-    @property
-    def approved(self):
-        return self.objects.filter(status="a")
+    @classmethod
+    def approved(cls):
+        return cls.objects.filter(status="a")
 
-    @property
-    def rejected(self):
-        return self.objects.filter(status="r")
+    @classmethod
+    def rejected(cls):
+        return cls.objects.filter(status="r")
+
+    @classmethod
+    def lang_assigned_map(cls):
+        return [{x.ietf_tag: x.lang_assigned.lc} for x in cls.objects.all()]
+
+    @classmethod
+    def lang_assigned_changed_map(cls):
+        return [{x.ietf_tag: x.lang_assigned.lc} for x in cls.objects.all() if x.ietf_tag != x.lang_assigned.lc]
 
 
 @python_2_unicode_compatible

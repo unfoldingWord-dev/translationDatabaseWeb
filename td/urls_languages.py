@@ -27,6 +27,7 @@ from .views import (
     TempLanguageListView,
     TempLanguageDetailView,
     TempLanguageCreateView,
+    TempLanguageUpdateView,
     AjaxTempLanguageListView,
     AjaxTemporaryCode,
 )
@@ -62,6 +63,7 @@ urlpatterns = [
 
     url(r"^templanguages/$", TempLanguageListView.as_view(), name="templanguage_list"),
     url(r"^templanguages/(?P<pk>\d+)/$", TempLanguageDetailView.as_view(), name="templanguage_detail"),
+    url(r"^templanguages/(?P<pk>\d+)/edit/$", TempLanguageUpdateView.as_view(), name="templanguage_edit"),
     url(r"^templanguage/create/$", TempLanguageCreateView.as_view(), name="templanguage_create"),
     url(r"^ajax/templanguage/code/get/$", AjaxTemporaryCode.as_view(), name="ajax_temporary_code"),
     url(r"^ajax/templanguage/list/", AjaxTempLanguageListView.as_view(), name="ajax_dt_templanguage_list"),

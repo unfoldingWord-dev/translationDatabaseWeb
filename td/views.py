@@ -631,6 +631,16 @@ class WARegionDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class TempLanguageListView(LoginRequiredMixin, ListView):
+    model = TempLanguage
+    template_name = "resources/templanguage_list.html"
+
+
+class TempLanguageDetailView(LoginRequiredMixin, DetailView):
+    model = TempLanguage
+    template_name = "resources/templanguage_detail.html"
+
+
 class TempLanguageCreateView(LoginRequiredMixin, CreateView):
     model = TempLanguage
     form_class = TempLanguageForm
@@ -654,14 +664,24 @@ class TempLanguageCreateView(LoginRequiredMixin, CreateView):
         return self.object.get_absolute_url()
 
 
-class TempLanguageDetailView(LoginRequiredMixin, DetailView):
+class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
     model = TempLanguage
-    template_name = "resources/templanguage_detail.html"
+    form_class = TempLanguageForm
+    template_name = "resources/templanguage_form.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(TempLanguageUpdateView, self).get_context_data(**kwargs)
+        # Manually passing ietf_tag along because the form input was rendered manually
+        context["ietf_tag"] = self.request.POST.get("ietf_tag", "")
+        context["edit"] = True
+        return context
 
-class TempLanguageListView(LoginRequiredMixin, ListView):
-    model = TempLanguage
-    template_name = "resources/templanguage_list.html"
+    def form_valid(self, form):
+        form.instance.modified_by = self.request.user
+        return super(TempLanguageUpdateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 class AjaxTempLanguageListView(TempLanguageTableSourceView):

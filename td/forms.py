@@ -20,9 +20,6 @@ class TempLanguageForm(forms.ModelForm):
             "common_name": "Common Name",
             "native_name": "Native Name",
         }
-        widgets = {
-            "source_app": forms.HiddenInput()
-        }
 
 
 class NetworkForm(EntityTrackingForm):

@@ -4,7 +4,7 @@
 
 
 {% block body %}
-    <h1>Create a temporary language</h1>
+    <h1>{% if edit %}Edit {{ object.native_name }}{% else %}Create a temporary language{% endif %}</h1>
     <hr>
     <div class="row">
         <div class="col-md-6">
@@ -13,7 +13,7 @@
                 <div class="form-group flex {% if form.ietf_tag.errors %}has-error{% endif %}">
                     <label class="control-label">{{ form.ietf_tag.label }}</label>
                     <div class=" ">
-                        <button class="btn btn-primary get-code" data-url="{% url 'ajax_temporary_code' %}">Get Code</button>
+                        <button class="btn btn-primary get-code" data-url="{% url 'ajax_temporary_code' %}" {% if edit %}disabled{% endif %}>Get Code</button>
                         <input id="fake-ietf-tag" class="form-control temp-code required" name="fake-ietf-tag" type="text" maxlength="12" value="{{ form.ietf_tag.value|default:"" }}" disabled>
                         <input id="real-ietf-tag" name="{{ form.ietf_tag.html_name }}" type="hidden" value="{{ form.ietf_tag.value|default:"" }}">
                     </div>
