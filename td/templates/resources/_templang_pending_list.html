@@ -1,0 +1,53 @@
+<div id="accordion" class="status__list panel-group" role="tablist" aria-multiselectable="true">
+    <!-- FOR LOOP HERE TO RENDER PENDING REQUESTS-->
+    <div class="panel panel-default">
+        <div id="templang-heading-1" class="panel-heading templang-summary" role="tab">
+            <h4 class="panel-title templang-summary__code">
+                <a class="btn-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#templang-body-1" aria-expanded="true" aria-controls="collapseOne">
+                    qaa-x-abcdef
+                </a>
+            </h4>
+            <h4 class="panel-title templang-summary__name">Bahasa Satu (Language One)</h4>
+            <h4 class="panel-title templang-summary__modified">Mar. 3, 2016, 5:20 p.m</h4>
+        </div>
+        <div id="templang-body-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="templang-heading-1">
+            <div class="panel-body templang-info">
+                <div class="templang-info__detail">
+                    <div class=" col-md-6 col-sm-12">
+                        <table class="table table-condensed table-borderless">
+                            <tbody>
+                                <tr><th class="col-md-3">IETF tag</th><td>{{ object.ietf_tag|default:"-" }}</td></tr>
+                                <tr><th>Direction</th><td>{{ object.get_direction_display|default:"-" }}</td></tr>
+                                <tr>
+                                    <th>Language Assigned</th>
+                                    <td>{% if object.lang_assigned_url %}<a href="{{ object.lang_assigned_url }}">{{ object.lang_assigned }}</a>{% else %}-{% endif %}</td>
+                                </tr>
+                                <tr><th>Source App</th><td>{{ object.get_source_app_display|default:"-" }}</td></tr>
+                                <tr><th>Source Name</th><td>{{ object.source_name|default:"-" }}</td></tr>
+                                <tr><th>Comment</th><td>{{ object.comment|default:"-" }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <table class="table table-condensed table-borderless">
+                            <tbody>
+                                <tr><th class="col-md-3">Status</th><td>{{ object.get_status_display|default:"-" }}</td></tr>
+                                <tr><th>Status Comment</th><td>{{ object.status_comment|default:"-" }}</td></tr>
+                                <tr><th>Created at</th><td>{{ object.created_at|default:"-" }}</td></tr>
+                                <tr><th>Created by</th><td>{{ object.created_by|default:"-" }}</td></tr>
+                                <tr><th>Modified at</th><td>{{ object.modified_at|default:"-" }}</td></tr>
+                                <tr><th>Modified by</th><td>{{ object.modified_by|default:"-" }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="templang-info__actions">
+                    <button class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve</button>
+                    <button class="btn btn-sm btn-default"><i class="fa fa-pencil"></i> Edit</button>
+                    <button class="btn btn-sm btn-warning"><i class="fa fa-clone"></i> Merge</button>
+                    <button class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

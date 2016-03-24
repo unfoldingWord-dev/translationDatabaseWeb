@@ -718,3 +718,7 @@ class AjaxTemporaryCode(LoginRequiredMixin, View):
             return self.generate_temp_code()
         except TempLanguage.DoesNotExist:
             return temp_code
+
+
+class TempLanguageAdminView(LoginRequiredMixin, TemplateView):
+    template_name = "resources/templanguage_admin.html"

@@ -1,0 +1,100 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block extra_style %}
+    <style>
+        .status {
+            margin-bottom: 5rem;
+        }
+        .templang-summary {
+            padding: 2rem;
+            display: flex;
+        }
+        .templang-summary__code {
+            flex: 0 1 auto;
+            color: #2aabd2;
+        }
+        .templang-summary__name {
+            flex: 1 1 auto;
+            margin-left: 2rem;  // Matches .templang-summary padding
+        }
+        .templang-summary__modified {
+            flex: 0 1 auto;
+        }
+        .templang-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .templang-info__detail {
+            flex: 1 1 auto;
+        }
+        .templang-info__actions{
+            flex: 0 1 auto;
+        }
+        .table-borderless > tbody > tr > th,
+        .table-borderless > tbody > tr > td {
+            border-top: none;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <h1>Temporary Languages - Admin</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="status">
+                <h2 class="status__title">Pending</h2>
+                <hr>
+                {% include "resources/_templang_pending_list.html" %}
+            </div>
+
+            <div class="status">
+                <h2 class="status__title">Approved</h2>
+                <hr>
+                <!-- TODO: Make data source that only lists approved temporary languages -->
+                <table id="approved-templanguage-list-table" class="table" data-source="{% url "ajax_dt_templanguage_list" %}"
+                       width="100%">
+                    <thead>
+                        <tr>
+                            <th>IETF Tag</th>
+                            <th>Native Name</th>
+                            <th>Common Name</th>
+                            <th>Language Assigned</th>
+                            <th>Status</th>
+                            <th>Source App</th>
+                            <th>Source Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="status">
+                <h2 class="status__title">Rejected</h2>
+                <hr>
+                <!-- TODO: Make data source that only lists rejected temporary languages -->
+                <table id="rejected-templanguage-list-table" class="table" data-source="{% url "ajax_dt_templanguage_list" %}"
+                       width="100%">
+                    <thead>
+                        <tr>
+                            <th>IETF Tag</th>
+                            <th>Native Name</th>
+                            <th>Common Name</th>
+                            <th>Language Assigned</th>
+                            <th>Status</th>
+                            <th>Source App</th>
+                            <th>Source Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
