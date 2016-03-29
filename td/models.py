@@ -61,7 +61,7 @@ class TempLanguage(models.Model):
                                     blank=True, editable=False)
 
     def __str__(self):
-        return self.ln
+        return self.code
 
     def get_absolute_url(self):
         return reverse('templanguage_detail', args=[str(self.id)])
