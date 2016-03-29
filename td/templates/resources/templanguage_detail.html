@@ -10,15 +10,16 @@
         <div class="col-md-6 col-sm-12">
             <table class="table">
                 <tbody>
-                    <tr><th>IETF tag</th><td>{{ object.ietf_tag }}</td></tr>
+                    <tr><th>Language Code</th><td>{{ object.code }}</td></tr>
                     <tr><th>Direction</th><td>{{ object.get_direction_display }}</td></tr>
                     <tr>
                         <th>Language Assigned</th>
                         <td>{% if object.lang_assigned_url %}<a href="{{ object.lang_assigned_url }}">{{ object.lang_assigned }}</a>{% else %}-{% endif %}</td>
                     </tr>
-                    <tr><th>Source App</th><td>{{ object.get_source_app_display }}</td></tr>
-                    <tr><th>Source Name</th><td>{{ object.source_name }}</td></tr>
-                    <tr><th>Comment</th><td>{{ object.comment|default:"-" }}</td></tr>
+                    <tr><th>Source</th><td>{{ object.get_app_display }}</td></tr>
+                    <tr><th>Requester</th><td>{{ object.requester }}</td></tr>
+                    <tr><th>Request ID</th><td>{{ object.request_id }}</td></tr>
+                    <tr><th>Questionaire</th><td>{{ object.questionnaire }}</td></tr>
                 </tbody>
             </table>
         </div>
