@@ -10,6 +10,7 @@ from jsonfield import JSONField
 from model_utils import FieldTracker
 
 from .gl_tracking.models import Document
+# from .resources.models import Questionnaire
 
 
 DIRECTION_CHOICES = (
@@ -33,8 +34,8 @@ class JSONData(models.Model):
 class TempLanguage(models.Model):
     APP_CHOICES = (
         ("td", "translationDatabase"),
-        ("ts", "translationStudio"),
-        ("ts-d", "translationStudio Desktop"),
+        ("ts-android", "translationStudio Android"),
+        ("ts-desktop", "translationStudio Desktop"),
         ("tr", "translationRecorder"),
     )
     STATUS_CHOICES = (
@@ -42,14 +43,13 @@ class TempLanguage(models.Model):
         ("a", "Approved"),
         ("r", "Rejected"),
     )
-    # TODO: Associate with a questionnaire
-    ietf_tag = models.CharField(max_length=12, unique=True)
-    common_name = models.CharField(max_length=100)
-    native_name = models.CharField(max_length=100, blank=True)
+    code = models.CharField(max_length=12, unique=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
-    source_app = models.CharField(max_length=5, choices=APP_CHOICES)
-    source_name = models.CharField(max_length=100)
-    comment = models.TextField(blank=True)
+    app = models.CharField(max_length=5, choices=APP_CHOICES, blank=True)
+    requester = models.CharField(max_length=100)
+    questionnaire = models.ForeignKey("resources.Questionnaire", on_delete=models.PROTECT, null=True)
+    answers = JSONField(blank=True)
+    request_id = models.SlugField(max_length=50, blank=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="p")
     status_comment = models.TextField(blank=True)
     lang_assigned = models.OneToOneField("Language", on_delete=models.SET_NULL, null=True, blank=True)
@@ -59,7 +59,6 @@ class TempLanguage(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="templanguage_modified", null=True,
                                     blank=True, editable=False)
-    tracker = FieldTracker()
 
     def __str__(self):
         return self.ln
@@ -72,12 +71,8 @@ class TempLanguage(models.Model):
         return reverse('language_detail', args=[str(self.lang_assigned_id)]) if self.lang_assigned_id else ""
 
     @property
-    def ln(self):
-        return self.native_name or self.common_name
-
-    @property
-    def ang(self):
-        return self.common_name if self.common_name != self.native_name else ""
+    def name(self):
+        return self.code
 
     @classmethod
     def pending(cls):
@@ -93,11 +88,11 @@ class TempLanguage(models.Model):
 
     @classmethod
     def lang_assigned_map(cls):
-        return [{x.ietf_tag: x.lang_assigned.lc} for x in cls.objects.all()]
+        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all()]
 
     @classmethod
     def lang_assigned_changed_map(cls):
-        return [{x.ietf_tag: x.lang_assigned.lc} for x in cls.objects.all() if x.ietf_tag != x.lang_assigned.lc]
+        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all() if x.code != x.lang_assigned.lc]
 
 
 @python_2_unicode_compatible

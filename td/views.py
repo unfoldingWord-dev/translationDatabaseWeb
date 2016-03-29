@@ -649,13 +649,13 @@ class TempLanguageCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(TempLanguageCreateView, self).get_context_data(**kwargs)
         # Manually passing ietf_tag along because the form input was rendered manually
-        context["ietf_tag"] = self.request.POST.get("ietf_tag", "")
+        context["code"] = self.request.POST.get("code", "")
         return context
 
     def form_valid(self, form):
         full_name = " ".join([self.request.user.first_name, self.request.user.last_name])
-        form.instance.source_app = "td"
-        form.instance.source_name = self.request.user.username if full_name == " " else full_name
+        form.instance.app = "td"
+        form.instance.requester = self.request.user.username if full_name == " " else full_name
         form.instance.created_by = self.request.user
         form.instance.modified_by = self.request.user
         return super(TempLanguageCreateView, self).form_valid(form)
@@ -672,7 +672,7 @@ class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(TempLanguageUpdateView, self).get_context_data(**kwargs)
         # Manually passing ietf_tag along because the form input was rendered manually
-        context["ietf_tag"] = self.request.POST.get("ietf_tag", "")
+        context["code"] = self.request.POST.get("code", "")
         context["edit"] = True
         return context
 
@@ -687,15 +687,13 @@ class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
 class AjaxTempLanguageListView(TempLanguageTableSourceView):
     model = TempLanguage
     fields = [
-        "ietf_tag",
-        "native_name",
-        "common_name",
+        "code",
         "lang_assigned__name",
         "status",
-        "source_app",
-        "source_name",
+        "app",
+        "requester",
     ]
-    link_column = "ietf_tag"
+    link_column = "code"
     link_url_name = "templanguage_detail"
     link_url_field = "pk"
 

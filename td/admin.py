@@ -27,9 +27,9 @@ class AdditionalLanguageAdmin(EntryTrackingAdmin):
 
 
 class TempLanguageAdmin(EntryTrackingAdmin):
-    list_display = ["ietf_tag", "common_name", "native_name", "lang_assigned", "status", "created_at", "modified_at"]
-    list_filter = ["status", "source_app", "source_name", "created_at", "modified_at"]
-    search_fields = ["ietf_tag", "common_name", "native_name", "comment"]
+    list_display = ["code", "lang_assigned", "status", "created_at", "modified_at"]
+    list_filter = ["status", "app", "requester", "created_at", "modified_at"]
+    search_fields = ["code", ]
 
     def save_model(self, request, obj, form, change):
         if not change:
