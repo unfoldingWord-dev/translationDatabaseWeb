@@ -36,4 +36,7 @@
             </table>
         </div>
     </div>
+    {% for question in object.questions_and_answers|dictsort:"id" %}
+        <p><b>{{ question.id }}. {{ question.question }}</b> {{ question.answer }} </p>
+    {% endfor %}
 {% endblock %}

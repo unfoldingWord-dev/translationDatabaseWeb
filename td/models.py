@@ -71,6 +71,24 @@ class TempLanguage(models.Model):
         return reverse('language_detail', args=[str(self.lang_assigned_id)]) if self.lang_assigned_id else ""
 
     @property
+    def questions_and_answers(self):
+        answers = {}
+        if self.answers is not None:
+            for a in self.answers:
+                answers[a["question_id"]] = a["answer"]
+        questions = []
+        # Build a list of questions
+        for q in self.questionnaire.questions:
+            if q["id"] in answers:
+                question_answer = answers[q["id"]]
+            else:
+                question_answer = ""
+            questions.append({"id":q["id"],"question":q["text"],"answer": question_answer})
+        # Now match in the answers
+        return questions
+
+
+    @property
     def name(self):
         return self.code
 
