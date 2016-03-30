@@ -60,4 +60,3 @@ urlpatterns = [
     url(r"^downloads/(?P<file_name>[A-Za-z_.]+)/$", downloadPDF, name="download_file"),
 
 ]
-

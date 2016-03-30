@@ -19,6 +19,7 @@ from django.views.generic import (
     View
 )
 
+from td.models import Language
 from .forms import (
     CharterForm,
     EventForm,
@@ -40,7 +41,6 @@ from .models import (
     Output,
     Publication,
 )
-from td.models import Language, TempLanguage
 
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
