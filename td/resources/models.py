@@ -121,3 +121,16 @@ class Questionnaire(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    @property
+    def grouped_questions(self):
+        group = []
+        ret = []
+        for q in self.questions:
+            if q["depends_on"] is None and len(group) != 0:
+                ret.append(group)
+                group = [q]
+            else:
+                group.append(q)
+        ret.append(group)
+        return ret

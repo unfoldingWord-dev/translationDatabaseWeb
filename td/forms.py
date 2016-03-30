@@ -1,25 +1,23 @@
 from django import forms
-from django.core.urlresolvers import reverse, reverse_lazy
-from td.resources.forms import EntityTrackingForm
+from django.core.urlresolvers import reverse
+
 from .models import Network, Language, Country, TempLanguage
+from td.resources.forms import EntityTrackingForm
+from td.resources.models import Questionnaire
 
 
 class TempLanguageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TempLanguageForm, self).__init__(*args, **kwargs)
-        self.fields["common_name"].widget.attrs["class"] = "required"
-        self.fields["direction"].widget.attrs["class"] = "required"
-        self.fields["comment"].widget.attrs["rows"] = "4"
+        questionnaire_pk = Questionnaire.objects.latest('created_at').pk
+        self.fields["questionnaire"].widget = forms.HiddenInput(attrs={"value": questionnaire_pk})
 
     class Meta:
         model = TempLanguage
-        exclude = ["lang_assigned", "status", "status_comment", "source_name", "source_app"]
-        labels = {
-            "ietf_tag": "IETF tag",
-            "common_name": "Common Name",
-            "native_name": "Native Name",
-        }
+        fields = ["code", "questionnaire"]
+        labels = {"code": "Temporary Tag"}
+        widgets = {"code": forms.HiddenInput()}
 
 
 class NetworkForm(EntityTrackingForm):

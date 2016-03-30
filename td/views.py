@@ -6,11 +6,13 @@ import hashlib
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
+from formtools.wizard.views import SessionWizardView
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
@@ -27,7 +29,7 @@ from .imports.models import (
 from .tracking.models import Event
 from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion, TempLanguage
 from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm, TempLanguageForm
-from .resources.models import transform_country_data
+from .resources.models import transform_country_data, Questionnaire
 from .resources.tasks import get_map_gateways
 from .resources.views import EntityTrackingMixin
 from .tasks import reset_langnames_cache
@@ -641,27 +643,48 @@ class TempLanguageDetailView(LoginRequiredMixin, DetailView):
     template_name = "resources/templanguage_detail.html"
 
 
-class TempLanguageCreateView(LoginRequiredMixin, CreateView):
-    model = TempLanguage
-    form_class = TempLanguageForm
-    template_name = "resources/templanguage_form.html"
+class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
+    # form_list is defined here because WizardView demands it. It will be replaced by the actual form that we'll create
+    #    in get_form_list()
+    form_list = [forms.Form]
+    template_name = "resources/templanguage_wizard_form.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(TempLanguageCreateView, self).get_context_data(**kwargs)
-        # Manually passing ietf_tag along because the form input was rendered manually
-        context["code"] = self.request.POST.get("code", "")
-        return context
+    def get_form_list(self):
+        # Update form_list with dynamically-created forms based on the questions in the latest questionnaire
+        grouped_questions = Questionnaire.objects.latest('created_at').grouped_questions
+        step = 0
+        for group in grouped_questions:
+            fields = {}
+            for question in group:
+                label = question["text"]
+                help_text = question["help"]
+                required = question["required"]
+                widget_attrs = {"class": str(required), "required": required, "autofocus": "true"}
+                if question["input_type"] == "boolean":
+                    field = forms.ChoiceField(label=label, help_text=help_text, required=required,
+                                              choices=(("", ""), ("Yes", "Yes"), ("No", "No")),
+                                              widget=forms.Select(attrs=widget_attrs))
+                else:
+                    field = forms.CharField(label=label, help_text=help_text, required=required,
+                                            widget=forms.TextInput(attrs=widget_attrs))
+                fields.update({"question-" + str(question["id"]): field})
+            new_form = type("NewForm" + str(step), (forms.Form, ), fields)
+            self.form_list.update({unicode(step): new_form})
+            step += 1
+        # At the end, add TempLanguageForm that contains temp code generator
+        self.form_list.update({unicode(step): TempLanguageForm})
+        return self.form_list
 
-    def form_valid(self, form):
-        full_name = " ".join([self.request.user.first_name, self.request.user.last_name])
-        form.instance.app = "td"
-        form.instance.requester = self.request.user.username if full_name == " " else full_name
-        form.instance.created_by = self.request.user
-        form.instance.modified_by = self.request.user
-        return super(TempLanguageCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    def done(self, form_list, **kwargs):
+        data = self.get_all_cleaned_data()
+        user = self.request.user
+        answers = [{"text": value, "question_id": key.split("-")[1]}
+                   for key, value in data.iteritems() if key.startswith("question-")]
+        obj = TempLanguage(request_id=uuid.uuid1(), app="td", answers=answers, created_by=user, modified_by=user,
+                           code=data["code"], questionnaire=data["questionnaire"],
+                           requester=(user.first_name + " " + user.last_name).strip() or user.username)
+        obj.save()
+        return redirect(obj.get_absolute_url())
 
 
 class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
@@ -712,7 +735,7 @@ class AjaxTemporaryCode(LoginRequiredMixin, View):
         stamp_hash = hashlib.sha1(stamp).hexdigest()
         temp_code = "-".join(["qaa", "x", stamp_hash[:6]])
         try:
-            TempLanguage.objects.get(ietf_tag=temp_code)
+            TempLanguage.objects.get(code=temp_code)
             return self.generate_temp_code()
         except TempLanguage.DoesNotExist:
             return temp_code

@@ -26,7 +26,7 @@ from .views import (
     NetworkListView,
     TempLanguageListView,
     TempLanguageDetailView,
-    TempLanguageCreateView,
+    TempLanguageWizardView,
     TempLanguageUpdateView,
     TempLanguageAdminView,
     AjaxTempLanguageListView,
@@ -65,7 +65,7 @@ urlpatterns = [
     url(r"^templanguages/$", TempLanguageListView.as_view(), name="templanguage_list"),
     url(r"^templanguages/(?P<pk>\d+)/$", TempLanguageDetailView.as_view(), name="templanguage_detail"),
     url(r"^templanguages/(?P<pk>\d+)/edit/$", TempLanguageUpdateView.as_view(), name="templanguage_edit"),
-    url(r"^templanguages/create/$", TempLanguageCreateView.as_view(), name="templanguage_create"),
+    url(r"^templanguages/create/$", TempLanguageWizardView.as_view(), name="templanguage_create"),
     url(r"^templanguages/admin/$", TempLanguageAdminView.as_view(), name="templanguage_admin"),
     url(r"^ajax/templanguage/code/get/$", AjaxTemporaryCode.as_view(), name="ajax_temporary_code"),
     url(r"^ajax/templanguage/list/", AjaxTempLanguageListView.as_view(), name="ajax_dt_templanguage_list"),
@@ -76,7 +76,3 @@ urlpatterns = [
     url(r"country_gateways.json$", country_tree_data, name="country_tree_data"),
     url(r"country_map_data.json$", country_map_data, name="country_map_data"),
 ]
-
-
-
-
