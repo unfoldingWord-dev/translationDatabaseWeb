@@ -17,8 +17,8 @@ from td.resources.tasks import notify_templanguage_created
 
 @receiver(post_save, sender=TempLanguage)
 def handle_templanguage_save(sender, instance, **kwargs):
-    lang, created = Language.objects.get_or_create(code=instance.code)
-    if created:
+    if kwargs["created"]:
+        lang = Language.objects.create(code=instance.code)
         lang.name = instance.code
         lang.direction = instance.direction
         lang.save()
