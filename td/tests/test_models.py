@@ -10,6 +10,7 @@ from mock import patch
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3, WikipediaISOCountry
 
 from td.models import Language, AdditionalLanguage, TempLanguage
+from td.resources.models import Questionnaire
 from td.tasks import integrate_imports, update_countries_from_imports
 
 
@@ -18,6 +19,26 @@ class TempLanguageTestCase(TestCase):
     def setUp(self):
         self.obj = TempLanguage(code="qaa-x-abcdef")
         self.obj.save()
+        self.language = Language.objects.create(code = "test")
+        self.questions = Questionnaire.objects.create(language=self.language, questions="""
+        [
+            {
+               'id': 0,
+               'text': 'What do you call your language?',
+               'help': 'Test help text',
+               'required': true,
+               'input_type': 'string',
+               'sort': 1,
+               'depends_on': null
+            }
+        ]""")
+        self.obj.questionnaire=self.questions
+        self.obj.answers="""
+        [
+            'question_id':'0',
+            'answer': 'wonderful'
+        ]
+        """
 
     def test_string_representation(self):
         """ __str__() should returned the model's code """
@@ -74,6 +95,11 @@ class TempLanguageTestCase(TestCase):
         l.code = "abc"
         l.save()
         self.assertListEqual(self.obj.lang_assigned_changed_map(), [{"qaa-x-abcdef": "abc"}])
+
+    def test_questions_answers(self):
+        tmp = self.obj.questions_and_answers
+        self.assertEqual(tmp[0]["id"],0)
+        pass
 
 
 class AdditionalLanguageTestCase(TestCase):
