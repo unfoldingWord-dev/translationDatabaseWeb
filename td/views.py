@@ -684,7 +684,7 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                            code=data["code"], questionnaire=data["questionnaire"],
                            requester=(user.first_name + " " + user.last_name).strip() or user.username)
         obj.save()
-        return redirect(obj.get_absolute_url())
+        return redirect(obj.lang_assigned_url)
 
 
 class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
