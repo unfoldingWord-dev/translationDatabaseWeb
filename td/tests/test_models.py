@@ -3,14 +3,77 @@ import os
 
 from django.core import management
 from django.test import TestCase
+from django.core.urlresolvers import reverse
 
 from mock import patch
 
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3, WikipediaISOCountry
 
-from ..models import AdditionalLanguage
-from td.models import Language
-from ..tasks import integrate_imports, update_countries_from_imports
+from td.models import Language, AdditionalLanguage, TempLanguage
+from td.tasks import integrate_imports, update_countries_from_imports
+
+
+class TempLanguageTestCase(TestCase):
+
+    def setUp(self):
+        self.obj = TempLanguage(code="qaa-x-abcdef")
+        self.obj.save()
+
+    def test_string_representation(self):
+        """ __str__() should returned the model's code """
+        self.assertEquals(str(self.obj), "qaa-x-abcdef")
+
+    def test_get_absolute_url(self):
+        """ get_absolute_url should return the URL to the detail page """
+        self.assertEquals(self.obj.get_absolute_url(), reverse("templanguage_detail", args=[str(self.obj.id)]))
+
+    def test_lang_assigned_url_property(self):
+        """ lang_assigned_url should return the URL to the detail page of model's lang_assigned related object """
+        self.assertEquals(self.obj.lang_assigned_url, reverse("language_detail", args=[str(self.obj.lang_assigned_id)]))
+
+    def test_name_property(self):
+        """ object.name should return its code """
+        self.assertEquals(self.obj.name, "qaa-x-abcdef")
+
+    def test_pending_method(self):
+        """ object.pending should return a list of objects with status 'p' """
+        returned = self.obj.pending()
+        self.assertEqual(len(returned), 1)
+        self.assertIn(self.obj, returned)
+
+    def test_approved_method(self):
+        """ object.approved should return a list of objects with status 'a' """
+        self.assertEqual(len(self.obj.approved()), 0)
+        a = TempLanguage(code="qaa-x-ghijkl", status="a")
+        a.save()
+        returned = self.obj.approved()
+        self.assertEqual(len(returned), 1)
+        self.assertIn(a, returned)
+
+    def test_rejected_method(self):
+        """ object.rejected should return a list of objects with status 'r' """
+        self.assertEqual(len(self.obj.rejected()), 0)
+        r = TempLanguage(code="qaa-x-ghijkl", status="r")
+        r.save()
+        returned = self.obj.rejected()
+        self.assertEqual(len(returned), 1)
+        self.assertIn(r, returned)
+
+    def test_lang_assigned_map_method(self):
+        """ lang_assigned_map should return a list of dictionary of object.code: object.lang_assigned.code """
+        self.assertListEqual(self.obj.lang_assigned_map(), [{"qaa-x-abcdef": "qaa-x-abcdef"}])
+        TempLanguage(code="qaa-x-123456").save()
+        returned = self.obj.lang_assigned_map()
+        self.assertEquals(len(returned), 2)
+        self.assertIn({"qaa-x-abcdef": "qaa-x-abcdef"}, returned)
+        self.assertIn({"qaa-x-123456": "qaa-x-123456"}, returned)
+
+    def test_lang_assigned_changed_map(self):
+        """ lang_assigned_map should return a list of dictionary of object.code: object.lang_assigned.code """
+        l = self.obj.lang_assigned
+        l.code = "abc"
+        l.save()
+        self.assertListEqual(self.obj.lang_assigned_changed_map(), [{"qaa-x-abcdef": "abc"}])
 
 
 class AdditionalLanguageTestCase(TestCase):
