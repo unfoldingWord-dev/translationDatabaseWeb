@@ -75,12 +75,12 @@ class TempLanguage(models.Model):
         answers = {}
         if self.answers is not None:
             for a in self.answers:
-                answers[a["question_id"]] = a["text"]
+                answers[str(a["question_id"])] = a["text"]
         questions = []
         # Build a list of questions
         for q in self.questionnaire.questions:
-            if q["id"] in answers:
-                question_answer = answers[q["id"]]
+            if str(q["id"]) in answers:
+                question_answer = answers[str(q["id"])]
             else:
                 question_answer = ""
             questions.append({"id": q["id"], "question": q["text"], "answer": question_answer})
