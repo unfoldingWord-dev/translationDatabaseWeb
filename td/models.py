@@ -75,7 +75,7 @@ class TempLanguage(models.Model):
         answers = {}
         if self.answers is not None:
             for a in self.answers:
-                answers[a["question_id"]] = a["answer"]
+                answers[a["question_id"]] = a["text"]
         questions = []
         # Build a list of questions
         for q in self.questionnaire.questions:
@@ -83,7 +83,7 @@ class TempLanguage(models.Model):
                 question_answer = answers[q["id"]]
             else:
                 question_answer = ""
-            questions.append({"id":q["id"],"question":q["text"],"answer": question_answer})
+            questions.append({"id": q["id"], "question": q["text"], "answer": question_answer})
         # Now match in the answers
         return questions
 
