@@ -4,8 +4,7 @@
 
 
 {% block body %}
-    <h1>{{ object.common_name }}</h1>
-    <h2>{{ object.native_name }}</h2>
+    <h1>{{ object.code }}</h1>
     <div class="row">
         <div class="col-md-6 col-sm-12">
             <table class="table">
@@ -37,6 +36,8 @@
         </div>
     </div>
     {% for question in object.questions_and_answers|dictsort:"id" %}
-        <p><b>{{ question.id }}. {{ question.question }}</b> {{ question.answer }} </p>
+        <p><b>{{ question.id }}. {{ question.question }}</b> </p>
+        <p>{{ question.answer }}</p>
+        <br/>
     {% endfor %}
 {% endblock %}
