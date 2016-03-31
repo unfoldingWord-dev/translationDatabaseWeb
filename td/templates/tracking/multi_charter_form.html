@@ -31,7 +31,7 @@
 {% block body %}
     <div class="form-notice-container">
         <p class="form-notice">Note: Searching for a languagefor the first time may take a while.</p>
-        <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Email <a>help@door43.org</a> for more info.</p>
+        <p class="form-notice">Note: If your language doesn't show up on the search, it's because that language is not in our database yet. Request its creation <a href="{% url "templanguage_create" %}">here</a></p>
     </div>
     <form action="" method="POST" class="form">
         {% csrf_token %}
