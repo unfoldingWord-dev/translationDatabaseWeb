@@ -558,6 +558,22 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
         return context
 
 
+class LanguageEditModalView(LanguageEditView):
+    template_name = "resources/language_modal_form.html"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # Render the same form but with extra context for the template.
+        context = {
+            "success": True,
+            "object": self.object,
+        }
+        temp_lang = self.object.templanguage
+        temp_lang.status = "a"
+        temp_lang.save()
+        return render(self.request, "resources/language_modal_form.html", context)
+
+
 class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, CreateView):
     model = Network
     form_class = NetworkForm
@@ -713,8 +729,8 @@ class AjaxTempLanguageListView(TempLanguageTableSourceView):
         "code",
         "lang_assigned__name",
         "status",
-        "app",
         "requester",
+        "created_at",
     ]
     link_column = "code"
     link_url_name = "templanguage_detail"
@@ -743,3 +759,8 @@ class AjaxTemporaryCode(LoginRequiredMixin, View):
 
 class TempLanguageAdminView(LoginRequiredMixin, TemplateView):
     template_name = "resources/templanguage_admin.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TempLanguageAdminView, self).get_context_data(**kwargs)
+        context["pending"] = TempLanguage.pending()
+        return context

@@ -20,6 +20,7 @@ from .views import (
     LanguageCreateView,
     LanguageDetailView,
     LanguageEditView,
+    LanguageEditModalView,
     NetworkCreateView,
     NetworkDetailView,
     NetworkEditView,
@@ -59,6 +60,7 @@ urlpatterns = [
     url(r"^languages/$", LanguageListView.as_view(), name="language_list"),
     url(r"^languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
     url(r"^languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
+    url(r"^languages/(?P<pk>\d+)/edit/modal/$", LanguageEditModalView.as_view(), name="language_edit_modal"),
     url(r"^languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
     url(r"^languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
 

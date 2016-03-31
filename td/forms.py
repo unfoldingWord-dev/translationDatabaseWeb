@@ -20,6 +20,13 @@ class TempLanguageForm(forms.ModelForm):
         widgets = {"code": forms.HiddenInput()}
 
 
+class TempLanguageAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = TempLanguage
+        fields = "__all__"
+
+
 class NetworkForm(EntityTrackingForm):
 
     required_css_class = "required"
@@ -109,16 +116,7 @@ class LanguageForm(EntityTrackingForm):
 
     class Meta:
         model = Language
-        fields = [
-            "code",
-            "iso_639_3",
-            "name",
-            "anglicized_name",
-            "direction",
-            "gateway_language",
-            "native_speakers",
-            "networks_translating"
-        ]
+        exclude = ["alt_name", "alt_names", "variant_of", "extra_data", "tracker"]
 
 
 class UploadGatewayForm(forms.Form):
