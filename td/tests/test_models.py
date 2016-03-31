@@ -20,25 +20,34 @@ class TempLanguageTestCase(TestCase):
         self.obj = TempLanguage(code="qaa-x-abcdef")
         self.obj.save()
         self.language = Language.objects.create(code = "test")
-        self.questions = Questionnaire.objects.create(language=self.language, questions="""
-        [
+        self.questions = Questionnaire.objects.create(language=self.language, questions= [
             {
-               'id': 0,
-               'text': 'What do you call your language?',
-               'help': 'Test help text',
-               'required': true,
-               'input_type': 'string',
-               'sort': 1,
-               'depends_on': null
+               "id": 0,
+               "text": "What do you call your language?",
+               "help": "Test help text",
+               "required": True,
+               "input_type": "string",
+               "sort": 1,
+               "depends_on": None
+            },
+            {
+                "id": 1,
+                "text": "Second Question",
+                "help": "Test help text",
+                "required": True,
+                "input_type": "string",
+                "sort": 2,
+                "depends_on": None
             }
-        ]""")
-        self.obj.questionnaire=self.questions
-        self.obj.answers="""
-        [
-            'question_id':'0',
-            'answer': 'wonderful'
+        ])
+        self.obj.questionnaire = self.questions
+        self.obj.answers =[
+            {
+                'question_id': 0,
+                'text': 'wonderful'
+            }
         ]
-        """
+        self.obj.save()
 
     def test_string_representation(self):
         """ __str__() should returned the model's code """
@@ -98,8 +107,16 @@ class TempLanguageTestCase(TestCase):
 
     def test_questions_answers(self):
         tmp = self.obj.questions_and_answers
-        self.assertEqual(tmp[0]["id"],0)
-        pass
+        self.assertEqual(tmp[0]["id"], 0)
+        self.assertEqual(tmp[0]["question"], "What do you call your language?")
+        self.assertEqual(tmp[0]["answer"], "wonderful")
+        self.assertEqual(tmp[1]["answer"], "")
+        self.obj.answers = None
+        tmp = self.obj.questions_and_answers
+        self.assertEqual(len(tmp),len(self.obj.questionnaire.questions))
+        self.assertEqual(tmp[0]["answer"], "")
+        self.assertEqual(tmp[1]["answer"], "")
+        
 
 
 class AdditionalLanguageTestCase(TestCase):
