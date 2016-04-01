@@ -7,6 +7,7 @@ from td.resources.models import Questionnaire
 
 
 class TempLanguageForm(forms.ModelForm):
+    required_css_class = "required"
 
     def __init__(self, *args, **kwargs):
         super(TempLanguageForm, self).__init__(*args, **kwargs)
@@ -20,11 +21,11 @@ class TempLanguageForm(forms.ModelForm):
         widgets = {"code": forms.HiddenInput()}
 
 
-class TempLanguageAdminForm(forms.ModelForm):
-
-    class Meta:
-        model = TempLanguage
-        fields = "__all__"
+# class TempLanguageAdminForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = TempLanguage
+#         fields = "__all__"
 
 
 class NetworkForm(EntityTrackingForm):

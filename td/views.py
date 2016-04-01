@@ -685,6 +685,7 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                                             widget=forms.TextInput(attrs=widget_attrs))
                 fields.update({"question-" + str(question["id"]): field})
             new_form = type("NewForm" + str(step), (forms.Form, ), fields)
+            new_form.required_css_class = "required"
             self.form_list.update({unicode(step): new_form})
             step += 1
         # At the end, add TempLanguageForm that contains temp code generator
