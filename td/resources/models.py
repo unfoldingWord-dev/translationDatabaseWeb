@@ -117,6 +117,7 @@ class Resource(models.Model):
 class Questionnaire(models.Model):
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
     questions = JSONField()
+    field_mapping = JSONField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

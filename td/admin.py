@@ -27,7 +27,7 @@ class AdditionalLanguageAdmin(EntryTrackingAdmin):
 
 
 class TempLanguageAdmin(EntryTrackingAdmin):
-    list_display = ["code", "lang_assigned", "status", "created_at", "modified_at"]
+    list_display = ["code", "name", "lang_assigned", "status", "created_at", "modified_at"]
     list_filter = ["status", "app", "requester", "created_at", "modified_at"]
     search_fields = ["code", ]
 

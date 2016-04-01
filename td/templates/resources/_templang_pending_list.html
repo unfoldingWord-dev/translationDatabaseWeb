@@ -3,14 +3,14 @@
     <div class="panel panel-default">
 
         <div id="templang-heading-{{ forloop.counter }}" class="panel-heading templang-summary" role="tab">
-            <h4 class="panel-title col-md-4">
+            <h4 class="panel-title col-md-3">
                 <a class="btn-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#templang-body-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseOne">
                     {{ obj.code }}
                 </a>
             </h4>
-            </h4>
-            <h4 class="panel-title col-md-4">{{ obj.requester }}</h4>
-            <h4 class="panel-title col-md-4">{{ obj.modified_at }}</h4>
+            <h4 class="panel-title col-md-3">{{ obj.name }}</h4>
+            <h4 class="panel-title col-md-3">{{ obj.requester }}</h4>
+            <h4 class="panel-title col-md-3">{{ obj.modified_at }}</h4>
         </div>
 
         <div id="templang-body-{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="templang-heading-1">
@@ -49,7 +49,7 @@
 
                 <div class="templang-info__actions col-md-12">
                     <a class="approve-button" href="{% url "language_edit_modal" obj.lang_assigned.pk %}" data-toggle="modal" data-target="#modal" title="Hello" data-tooltip>
-                        <button class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve</button>
+                        <button class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve...</button>
                     </a>
                     <button class="btn btn-sm btn-default disabled"><i class="fa fa-pencil"></i> Edit</button>
                     <button class="btn btn-sm btn-warning disabled"><i class="fa fa-clone"></i> Merge</button>

@@ -44,6 +44,8 @@ class TempLanguage(models.Model):
         ("r", "Rejected"),
     )
     code = models.CharField(max_length=12, unique=True)
+    name = models.CharField(max_length=200, blank=True)
+    country = models.ForeignKey("Country", on_delete=models.SET_NULL, null=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
     app = models.CharField(max_length=5, choices=APP_CHOICES, blank=True)
     requester = models.CharField(max_length=100)
@@ -87,9 +89,9 @@ class TempLanguage(models.Model):
         # Now match in the answers
         return questions
 
-    @property
-    def name(self):
-        return self.code
+    # @property
+    # def name(self):
+    #     return self.code
 
     @classmethod
     def pending(cls):

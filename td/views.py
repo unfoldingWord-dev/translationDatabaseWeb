@@ -568,9 +568,11 @@ class LanguageEditModalView(LanguageEditView):
             "success": True,
             "object": self.object,
         }
+        print "- self.object is ", self.object
         temp_lang = self.object.templanguage
         temp_lang.status = "a"
         temp_lang.save()
+        print "- templang.lang_assigned is ", temp_lang.lang_assigned
         return render(self.request, "resources/language_modal_form.html", context)
 
 
@@ -664,12 +666,12 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     #    in get_form_list()
     form_list = [forms.Form]
     template_name = "resources/templanguage_wizard_form.html"
+    questionnaire = Questionnaire.objects.latest('created_at')
 
     def get_form_list(self):
         # Update form_list with dynamically-created forms based on the questions in the latest questionnaire
-        grouped_questions = Questionnaire.objects.latest('created_at').grouped_questions
         step = 0
-        for group in grouped_questions:
+        for group in self.questionnaire.grouped_questions:
             fields = {}
             for question in group:
                 label = question["text"]
@@ -695,11 +697,33 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     def done(self, form_list, **kwargs):
         data = self.get_all_cleaned_data()
         user = self.request.user
+        field_mapping = self.questionnaire.field_mapping
+
         answers = [{"text": value, "question_id": key.split("-")[1]}
                    for key, value in data.iteritems() if key.startswith("question-")]
+
         obj = TempLanguage(request_id=uuid.uuid1(), app="td", answers=answers, created_by=user, modified_by=user,
                            code=data["code"], questionnaire=data["questionnaire"],
                            requester=(user.first_name + " " + user.last_name).strip() or user.username)
+
+        for a in answers:
+            print "- checking answer", a
+            qid = a["question_id"]
+            if qid in field_mapping:
+                print "- qid found in field_mapping", qid
+                try:
+                    if field_mapping[qid] == "country":
+                        print "- field_mapping[qid] is country", field_mapping[qid]
+                        obj.country = Country.objects.get(name__iexact=a["text"])
+                    else:
+                        print "- field_mapping[qid] is something else", field_mapping[qid]
+                        obj.__dict__[field_mapping[qid]] = a["text"]
+                except Country.DoesNotExist:
+                    # NOTE: what's the best way to handle non-existing country? maybe if it's a selectbox, we don't need
+                    #    to check this
+                    print "- ERR! Country %s doesn't exist."
+                    pass
+
         obj.save()
         return redirect(obj.lang_assigned_url)
 

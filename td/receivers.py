@@ -19,8 +19,9 @@ from td.resources.tasks import notify_templanguage_created
 def handle_templanguage_save(sender, instance, **kwargs):
     if kwargs["created"]:
         lang = Language.objects.create(code=instance.code)
-        lang.name = instance.code
+        lang.name = instance.name
         lang.direction = instance.direction
+        lang.country = instance.country
         lang.save()
         instance.lang_assigned = lang
         instance.save()
