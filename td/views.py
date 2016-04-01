@@ -666,7 +666,10 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     #    in get_form_list()
     form_list = [forms.Form]
     template_name = "resources/templanguage_wizard_form.html"
-    questionnaire = Questionnaire.objects.latest('created_at')
+
+    def __init__(self, *args, **kwargs):
+        super(TempLanguageWizardView, self).__init__(*args, **kwargs)
+        self.questionnaire = Questionnaire.objects.latest('created_at')
 
     def get_form_list(self):
         # Update form_list with dynamically-created forms based on the questions in the latest questionnaire
@@ -707,16 +710,12 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                            requester=(user.first_name + " " + user.last_name).strip() or user.username)
 
         for a in answers:
-            print "- checking answer", a
             qid = a["question_id"]
             if qid in field_mapping:
-                print "- qid found in field_mapping", qid
                 try:
                     if field_mapping[qid] == "country":
-                        print "- field_mapping[qid] is country", field_mapping[qid]
                         obj.country = Country.objects.get(name__iexact=a["text"])
                     else:
-                        print "- field_mapping[qid] is something else", field_mapping[qid]
                         obj.__dict__[field_mapping[qid]] = a["text"]
                 except Country.DoesNotExist:
                     # NOTE: what's the best way to handle non-existing country? maybe if it's a selectbox, we don't need
