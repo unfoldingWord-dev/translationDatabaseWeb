@@ -17,10 +17,9 @@ from td.tasks import integrate_imports, update_countries_from_imports
 class TempLanguageTestCase(TestCase):
 
     def setUp(self):
-        self.obj = TempLanguage(code="qaa-x-abcdef")
+        self.obj = TempLanguage(code="qaa-x-abcdef", name="Temporary Language")
         self.obj.save()
-        self.language = Language.objects.create(code="test")
-        self.questions = Questionnaire.objects.create(language=self.language, questions=[
+        self.obj.questionnaire = Questionnaire.objects.create(questions=[
             {
                 "id": 0,
                 "text": "What do you call your language?",
@@ -40,7 +39,6 @@ class TempLanguageTestCase(TestCase):
                 "depends_on": None
             }
         ])
-        self.obj.questionnaire = self.questions
         self.obj.answers = [
             {
                 'question_id': 0,
@@ -62,8 +60,8 @@ class TempLanguageTestCase(TestCase):
         self.assertEquals(self.obj.lang_assigned_url, reverse("language_detail", args=[str(self.obj.lang_assigned_id)]))
 
     def test_name_property(self):
-        """ object.name should return its code """
-        self.assertEquals(self.obj.name, "qaa-x-abcdef")
+        """ object.name should return its name """
+        self.assertEquals(self.obj.name, "Temporary Language")
 
     def test_pending_method(self):
         """ object.pending should return a list of objects with status 'p' """
