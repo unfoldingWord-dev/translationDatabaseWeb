@@ -19,16 +19,16 @@ class TempLanguageTestCase(TestCase):
     def setUp(self):
         self.obj = TempLanguage(code="qaa-x-abcdef")
         self.obj.save()
-        self.language = Language.objects.create(code = "test")
-        self.questions = Questionnaire.objects.create(language=self.language, questions= [
+        self.language = Language.objects.create(code="test")
+        self.questions = Questionnaire.objects.create(language=self.language, questions=[
             {
-               "id": 0,
-               "text": "What do you call your language?",
-               "help": "Test help text",
-               "required": True,
-               "input_type": "string",
-               "sort": 1,
-               "depends_on": None
+                "id": 0,
+                "text": "What do you call your language?",
+                "help": "Test help text",
+                "required": True,
+                "input_type": "string",
+                "sort": 1,
+                "depends_on": None
             },
             {
                 "id": 1,
@@ -41,7 +41,7 @@ class TempLanguageTestCase(TestCase):
             }
         ])
         self.obj.questionnaire = self.questions
-        self.obj.answers =[
+        self.obj.answers = [
             {
                 'question_id': 0,
                 'text': 'wonderful'
@@ -113,10 +113,9 @@ class TempLanguageTestCase(TestCase):
         self.assertEqual(tmp[1]["answer"], "")
         self.obj.answers = None
         tmp = self.obj.questions_and_answers
-        self.assertEqual(len(tmp),len(self.obj.questionnaire.questions))
+        self.assertEqual(len(tmp), len(self.obj.questionnaire.questions))
         self.assertEqual(tmp[0]["answer"], "")
         self.assertEqual(tmp[1]["answer"], "")
-        
 
 
 class AdditionalLanguageTestCase(TestCase):
