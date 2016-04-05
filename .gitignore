@@ -24,7 +24,7 @@ node_modules
 td/site_media
 
 # generated files
-static/dist/*
-!static/dist/files
-td/templates/_scripts.html
-td/templates/_styles.html
+# static/dist/*
+# !static/dist/files
+# td/templates/_scripts.html
+# td/templates/_styles.html
