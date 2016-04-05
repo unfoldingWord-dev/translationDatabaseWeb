@@ -82,6 +82,7 @@
         <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">General Info</a></li>
         {% if user.is_authenticated %}
         <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#translation-progress">Translation Progress</a></li>
         {% endif %}
         <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
@@ -211,6 +212,12 @@
                     {% url "tracking:charter_add_specific" language.pk as action_url %}
                     {% include "resources/_empty_div_overlay.html" with msg="Project has not been created" action="Create Project" action_url=action_url %}
                 {% endif %}
+            </div>
+        </div>
+
+        <div id="translation-progress" class="row tab-pane">
+            <div class="col-md-12">
+                {% include "gl_tracking/_language_doc_table.html" with documents=language.documents_ordered %}
             </div>
         </div>
         {% endif %}
