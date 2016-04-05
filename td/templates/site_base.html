@@ -93,22 +93,6 @@
 {% endblock %}
 
 
-{% block extra_head_base %}
-    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
-    {% block extra_head %}{% endblock %}
-{% endblock %}
-
-
-{% block footer %}
-    {% include "_footer.html" %}
-{% endblock %}
-
-
-{% block extra_body_base %}
-    {% analytics %}
-    {% block extra_body %}{% endblock %}
-{% endblock %}
-
 {% block nav %}
     <ul class="nav navbar-nav">
         <li class="dropdown data-sources">
@@ -184,6 +168,23 @@
         {% endif %}
     </ul>
     {% invite_form request.user %}
+{% endblock %}
+
+
+{% block extra_head_base %}
+    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
+    {% block extra_head %}{% endblock %}
+{% endblock %}
+
+
+{% block extra_body_base %}
+    {% analytics %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
+
+
+{% block footer %}
+    {% include "_footer.html" %}
 {% endblock %}
 
 

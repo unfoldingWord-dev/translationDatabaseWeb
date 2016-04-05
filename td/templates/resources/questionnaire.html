@@ -1,0 +1,35 @@
+{% extends "theme_bootstrap/base.html" %}
+
+{% load bootstrap %}
+
+
+{% block styles %}
+    <link href='http://fonts.googleapis.com/css?family=Merriweather+Sans:400,700,300' rel='stylesheet' type='text/css'>
+    {% include "_styles.html" %}
+    <style>
+        body {
+            padding-top: 0;
+        }
+        .qna {
+            margin-top: 2.5rem;
+        }
+        .qna__answer {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+
+{% block topbar_base %}
+{% endblock %}
+
+
+{% block body %}
+    <h1 class="title">{{ obj.code }} questionnaire</h1>
+    <hr>
+    <div class="qna">
+        {% for q in obj.questions_and_answers|dictsort:"id" %}
+            <p><span class="qna__number">{{ q.id|add:1 }}. </span><span class="qna__question">{{ q.question }}</span><span class="qna__answer"> {{ q.answer }}</span></p>
+        {% endfor %}
+    </div>
+{% endblock %}

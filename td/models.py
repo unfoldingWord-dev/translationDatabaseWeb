@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -9,6 +10,13 @@ from jsonfield import JSONField
 from model_utils import FieldTracker
 
 from .gl_tracking.models import Document
+# from .resources.models import Questionnaire
+
+
+DIRECTION_CHOICES = (
+    ("l", "ltr"),
+    ("r", "rtl")
+)
 
 
 @python_2_unicode_compatible
@@ -23,11 +31,91 @@ class JSONData(models.Model):
 
 
 @python_2_unicode_compatible
-class AdditionalLanguage(models.Model):
-    DIRECTION_CHOICES = (
-        ("l", "ltr"),
-        ("r", "rtl")
+class TempLanguage(models.Model):
+    APP_CHOICES = (
+        ("td", "translationDatabase"),
+        ("ts-android", "translationStudio Android"),
+        ("ts-desktop", "translationStudio Desktop"),
+        ("tr", "translationRecorder"),
     )
+    STATUS_CHOICES = (
+        ("p", "Pending"),
+        ("a", "Approved"),
+        ("r", "Rejected"),
+    )
+    code = models.CharField(max_length=12, unique=True)
+    name = models.CharField(max_length=200, blank=True)
+    country = models.ForeignKey("Country", on_delete=models.SET_NULL, null=True)
+    direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
+    app = models.CharField(max_length=5, choices=APP_CHOICES, blank=True)
+    requester = models.CharField(max_length=100)
+    questionnaire = models.ForeignKey("resources.Questionnaire", on_delete=models.PROTECT, null=True)
+    answers = JSONField(blank=True)
+    request_id = models.SlugField(max_length=50, blank=True)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="p")
+    status_comment = models.TextField(blank=True)
+    lang_assigned = models.OneToOneField("Language", on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="templanguage_created", null=True,
+                                   blank=True, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="templanguage_modified", null=True,
+                                    blank=True, editable=False)
+
+    def __str__(self):
+        return self.code
+
+    def get_absolute_url(self):
+        return reverse('templanguage_detail', args=[str(self.id)])
+
+    @property
+    def lang_assigned_url(self):
+        return reverse('language_detail', args=[str(self.lang_assigned_id)]) if self.lang_assigned_id else ""
+
+    @property
+    def questions_and_answers(self):
+        answers = {}
+        if self.answers is not None:
+            for a in self.answers:
+                answers[str(a["question_id"])] = a["text"]
+        questions = []
+        # Build a list of questions
+        for q in self.questionnaire.questions:
+            if str(q["id"]) in answers:
+                question_answer = answers[str(q["id"])]
+            else:
+                question_answer = ""
+            questions.append({"id": q["id"], "question": q["text"], "answer": question_answer})
+        # Now match in the answers
+        return questions
+
+    # @property
+    # def name(self):
+    #     return self.code
+
+    @classmethod
+    def pending(cls):
+        return cls.objects.filter(status="p")
+
+    @classmethod
+    def approved(cls):
+        return cls.objects.filter(status="a")
+
+    @classmethod
+    def rejected(cls):
+        return cls.objects.filter(status="r")
+
+    @classmethod
+    def lang_assigned_map(cls):
+        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all()]
+
+    @classmethod
+    def lang_assigned_changed_map(cls):
+        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all() if x.code != x.lang_assigned.lc]
+
+
+@python_2_unicode_compatible
+class AdditionalLanguage(models.Model):
     ietf_tag = models.CharField(max_length=100)
     common_name = models.CharField(max_length=100)
     two_letter = models.CharField(max_length=2, blank=True)

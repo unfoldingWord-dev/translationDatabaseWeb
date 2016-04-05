@@ -1,0 +1,69 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block extra_style %}
+    <style>
+        .questionnaire-drawer h3 {
+            margin-top: 0;
+        }
+        .status {
+            margin-bottom: 5rem;
+        }
+        .templang-summary {
+            padding: 2rem;
+            display: flex;
+        }
+        .templang-summary .btn-link {
+            color: #2aabd2;
+        }
+        .table-borderless > tbody > tr > th,
+        .table-borderless > tbody > tr > td {
+            border-top: none;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        .checkbox input[type="checkbox"] {
+            width: 20px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+
+    <!-- MODAL (MEDIUM)-->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalMedium" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <h1>Temporary Languages - Admin</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="status">
+                <h2 class="status__title">Pending</h2>
+                {% include "resources/_templang_pending_list.html" with pending=pending%}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_bottom_script %}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script>
+        $(function() {
+           $('body').on('hidden.bs.modal', '.modal', function() {
+               $(this).removeData('bs.modal');
+           });
+        });
+    </script>
+{% endblock %}

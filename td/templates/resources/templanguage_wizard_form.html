@@ -1,0 +1,87 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+
+
+{% block head %}{{ wizard.form.media }}{% endblock %}
+
+
+{% block head_title %}Create Temporary Language{% endblock %}
+
+
+{% block extra_style %}
+    <style>
+{#        TODO: make required label bolder#}
+        .btn-prev {
+            margin-right: 1rem;
+        }
+        .btns {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <h1>{% if edit %}Edit {{ object.native_name }}{% else %}Create a temporary language{% endif %}</h1>
+    <h3>{{ wizard.steps.step1 }} of {{ wizard.steps.count }}</h3>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="" method="post">
+                {{ wizard.management_form }}
+                {% csrf_token %}
+
+                {% if wizard.steps.current != wizard.steps.last%}
+                    {{ wizard.form|bootstrap }}
+                {% else %}
+                    {{ form.questionnaire }}
+                    <div class="form-group flex {% if form.code.errors %}has-error{% endif %}">
+                        <label class="control-label">{{ form.code.label }}</label>
+                        <div class=" ">
+                            <button class="btn btn-primary get-code" data-url="{% url 'ajax_temporary_code' %}" {% if edit %}disabled{% endif %}>Get Code</button>
+                            <input id="fake-ietf-tag" class="form-control temp-code required" name="fake-code" type="text" maxlength="12" value="{{ form.code.value|default:"" }}" disabled>
+                            <input id="real-ietf-tag" name="{{ form.code.html_name }}" type="hidden" value="{{ form.code.value|default:"" }}">
+                        </div>
+                        <span class="help-block">{{ form.code.errors.0 }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="btns">
+                    <button type="submit" class="btn btn-primary pull-right">{% if wizard.steps.next %}Next&nbsp;&nbsp;<i class="fa fa-angle-right"></i>{% else %}Submit{% endif %}</button>
+                    {% if wizard.steps.prev %}
+                        <button name="wizard_goto_step" type="submit" class="btn btn-default pull-right btn-prev" value="{{ wizard.steps.prev }}"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;Prev</button>
+                        <button name="wizard_goto_step" type="submit" class="btn btn-default" value="{{ wizard.steps.first }}">First Step</button>
+                    {% endif %}
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_bottom_script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //
+            var getCodeBtn = document.querySelector('.get-code');
+            if (getCodeBtn) {
+                getCodeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        method: 'GET',
+                        url: getCodeBtn.dataset.url,
+                        success: function(code, status, jqXHR) {
+                            document.querySelector('#fake-ietf-tag').value = code;
+                            document.querySelector('#real-ietf-tag').value = code;
+                        },
+                        error: function(jqXHR, status, error) {
+                            console.log('Unable to get temporary code', status, error);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+{% endblock %}
