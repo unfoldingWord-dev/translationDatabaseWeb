@@ -1,14 +1,19 @@
+import importlib
 import re
 
-from mock import patch
+from mock import patch, Mock
 
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from djcelery.tests.req import RequestFactory
 
 from td.models import TempLanguage
-from td.views import TempLanguageListView, TempLanguageDetailView, AjaxTemporaryCode, TempLanguageAdminView
+from td.resources.models import Questionnaire
+from td.views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
+    TempLanguageAdminView, TempLanguageWizardView
+from td.forms import TempLanguageForm
 
 
 def setup_view(view, request=None, *args, **kwargs):
@@ -74,6 +79,114 @@ class TempLanguageDetailViewTestCase(TestCase):
         """
         self.assertIs(self.view.model, TempLanguage)
         self.assertEqual(self.view.template_name, "resources/templanguage_detail.html")
+
+
+class TempLanguageWizardViewTestCase(TestCase):
+    def setUp(self):
+        self.request = RequestFactory().get("/uw/templanguages/create/")
+        self.request.user = create_user()
+        self.questionnaire = Questionnaire.objects.create(questions=[
+            {"id": 0, "text": "question 1", "help": "", "required": True, "input_type": "string", "depends_on": None},
+            {"id": 1, "text": "question 2", "help": "", "required": True, "input_type": "string", "depends_on": 0},
+            {"id": 2, "text": "question 3", "help": "", "required": True, "input_type": "string", "depends_on": None}
+        ])
+        self.view = setup_view(TempLanguageWizardView(), self.request)
+        # WizardView will look to use session
+        engine = importlib.import_module(settings.SESSION_ENGINE)
+        store = engine.SessionStore()
+        store.save()
+        setattr(self.request, "session", store)
+
+    def test_get_with_user(self):
+        """
+        Requesting temporary language creation form should return a success response
+        """
+        response = TempLanguageWizardView.as_view()(self.request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_init(self):
+        """
+        __init__() should create TempLanguageWizardView.questionnaire
+        """
+        self.view.__init__()
+        self.assertIsInstance(self.view.questionnaire, Questionnaire)
+        self.assertEqual(self.view.questionnaire, self.questionnaire)
+
+    def test_get_form_list(self):
+        """
+        get_form_list() should return an OrderedDict containing 3 forms. The last form should be TempLanguageForm
+        """
+        # For some reason WizardView turns the form_list from list into an ordered dict. Since I cannot find where and
+        #     when it does this, I manually convert the list into a dictionary before running get_form_list. If not, it
+        #     will still be a list and will complain that 'list' has no property 'update'.
+        self.view.form_list = dict([(str(step), form) for step, form in enumerate(self.view.form_list)])
+        result = self.view.get_form_list()
+        self.assertEqual(len(result), 3)
+        self.assertIn("0", result)
+        self.assertIn("1", result)
+        self.assertIn("2", result)
+        self.assertIs(result["2"], TempLanguageForm)
+
+    @patch("td.views.TempLanguage.save")
+    @patch("td.views.redirect")
+    def test_done(self, mock_redirect, mock_save):
+        """
+        done() should save TempLanguage and return a redirect
+        """
+        # Look at the note in test_get_form_list()
+        self.view.form_list = dict([(str(step), form) for step, form in enumerate(self.view.form_list)])
+        mock_cleaned_data = {
+            "code": "tst",
+            "questionnaire": self.questionnaire,
+        }
+        self.view.get_all_cleaned_data = Mock(return_value=mock_cleaned_data)
+        self.view.done(self.view.get_form_list)
+        self.assertEqual(mock_save.call_count, 1)
+        self.assertEqual(mock_redirect.call_count, 1)
+
+
+class TempLanguageUpdateViewTestCase(TestCase):
+    def setUp(self):
+        questionnaire = Questionnaire.objects.create(questions=[{"id": 0, "text": "question"}])
+        self.obj = TempLanguage.objects.create(pk=999, code="tst", questionnaire=questionnaire)
+        self.request = RequestFactory().get("/uw/templanguages/999/edit")
+        self.request.user = create_user()
+        self.view = setup_view(TempLanguageUpdateView(), self.request)
+
+    def test_get_with_user(self):
+        """
+        Requesting TempLanguage update view should return successful response
+        """
+        response = TempLanguageUpdateView.as_view()(self.request, pk=999)
+        self.assertEqual(response.status_code, 200)
+
+    def test_config(self):
+        """
+        Sanity check for view config
+        """
+        self.assertIs(self.view.model, TempLanguage)
+        self.assertIs(self.view.form_class, TempLanguageForm)
+        self.assertEqual(self.view.template_name, "resources/templanguage_form.html")
+
+    def test_get_context_data(self):
+        """
+        Context must contain "code" and "edit" keys. Context["edit"] must be True
+        """
+        self.view.object = self.obj
+        context = self.view.get_context_data()
+        self.assertIn("code", context)
+        self.assertIn("edit", context)
+        self.assertTrue(context["edit"])
+
+    def test_form_valid(self):
+        """
+        form.instance.modified_by must be a user object, represented by his username
+        """
+        form = Mock()
+        form.cleaned_data = Mock()
+        self.view.form_valid(form)
+        self.assertIsInstance(form.instance.modified_by, User)
+        self.assertEqual(form.instance.modified_by, self.request.user)
 
 
 class AjaxTemporaryCodeTestCase(TestCase):
