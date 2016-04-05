@@ -20,10 +20,18 @@ from .views import (
     LanguageCreateView,
     LanguageDetailView,
     LanguageEditView,
+    LanguageEditModalView,
     NetworkCreateView,
     NetworkDetailView,
     NetworkEditView,
-    NetworkListView
+    NetworkListView,
+    TempLanguageListView,
+    TempLanguageDetailView,
+    TempLanguageWizardView,
+    TempLanguageUpdateView,
+    TempLanguageAdminView,
+    AjaxTempLanguageListView,
+    AjaxTemporaryCode,
 )
 
 urlpatterns = [
@@ -46,12 +54,23 @@ urlpatterns = [
     url(r"countries/(?P<pk>\d+)/languages/create/$", LanguageCreateView.as_view(), name="language_create"),
 
     url(r"ajax/languages/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
+    url(r"ajax/languages/(?P<q>[\w\d ]+)/$", AjaxLanguageListView.as_view(), name="ajax_ds_uw_languages"),
     url(r"ajax/languages_gateway/(?P<pk>\d+)/$", AjaxLanguageGatewayListView.as_view(), name="ajax_ds_uw_languages_gateway"),
-    url(r"languages/$", LanguageListView.as_view(), name="language_list"),
-    url(r"languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
-    url(r"languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
-    url(r"languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
-    url(r"languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
+
+    url(r"^languages/$", LanguageListView.as_view(), name="language_list"),
+    url(r"^languages/(?P<pk>\d+)/$", LanguageDetailView.as_view(), name="language_detail"),
+    url(r"^languages/(?P<pk>\d+)/edit/$", LanguageEditView.as_view(), name="language_edit"),
+    url(r"^languages/(?P<pk>\d+)/edit/modal/$", LanguageEditModalView.as_view(), name="language_edit_modal"),
+    url(r"^languages/(?P<pk>\d+)/resources/create/$", ResourceCreateView.as_view(), name="resource_create"),
+    url(r"^languages/(?P<pk>\d+)/resources/edit/$", ResourceEditView.as_view(), name="resource_edit"),
+
+    url(r"^templanguages/$", TempLanguageListView.as_view(), name="templanguage_list"),
+    url(r"^templanguages/(?P<pk>\d+)/$", TempLanguageDetailView.as_view(), name="templanguage_detail"),
+    url(r"^templanguages/(?P<pk>\d+)/edit/$", TempLanguageUpdateView.as_view(), name="templanguage_edit"),
+    url(r"^templanguages/create/$", TempLanguageWizardView.as_view(), name="templanguage_create"),
+    url(r"^templanguages/admin/$", TempLanguageAdminView.as_view(), name="templanguage_admin"),
+    url(r"^ajax/templanguage/code/get/$", AjaxTemporaryCode.as_view(), name="ajax_temporary_code"),
+    url(r"^ajax/templanguage/list/", AjaxTempLanguageListView.as_view(), name="ajax_dt_templanguage_list"),
 
     url(r"gateway_language_flag/update/$", upload_gateway_flag_file, name="gateway_flag_update"),
     url(r"rtl_languages/update/$", upload_rtl_list, name="rtl_languages_update"),

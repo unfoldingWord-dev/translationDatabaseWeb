@@ -1,0 +1,28 @@
+{% load absoluteuri %}
+
+===================================
+Temporary Language #{{ object.pk }}
+===================================
+
+Details:
+-----------------------------------------------------------------------
+Private IETF Tag     {{ object.code }}
+Name                 {{ object.name }}
+Country              {{ object.country }}
+Direction            {{ object.get_direction_display }}
+Language Assigned    {{ object.lang_assigned }}
+Status               {{ object.get_status_display }}
+Status Comment       {{ object.status_comment }}
+-----------------------------------------------------------------------
+Requester            {{ object.requester }}
+Application          {{ object.app }}
+Created At           {{ object.created_at }}
+Created By           {{ object.created_by }}
+Modified At          {{ object.modified_at }}
+Modified By          {{ object.modified_by }}
+
+Links:
+-----------------------------------------------------------------------
+View admin page      {% absoluteuri "templanguage_admin" %}
+Temporary Language   {% absoluteuri "templanguage_detail" object.pk %}
+Assigned Language    {% absoluteuri "language_detail" language.pk %}

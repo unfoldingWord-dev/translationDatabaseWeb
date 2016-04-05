@@ -1,8 +1,13 @@
 import requests
+import uuid
+import time
+import hashlib
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from pinax.eventlog.mixins import EventLogMixin
+from formtools.wizard.views import SessionWizardView
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -10,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView
+from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 
 from .imports.models import (
@@ -22,9 +27,9 @@ from .imports.models import (
     IMBPeopleGroup
 )
 from .tracking.models import Event
-from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion
-from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm
-from .resources.models import transform_country_data
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion, TempLanguage
+from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm, TempLanguageForm
+from .resources.models import transform_country_data, Questionnaire
 from .resources.tasks import get_map_gateways
 from .resources.views import EntityTrackingMixin
 from .tasks import reset_langnames_cache
@@ -375,15 +380,12 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
 
 class LanguageTableSourceView(DataTableSourceView):
 
-    def __init__(self, **kwargs):
-        super(LanguageTableSourceView, self).__init__(**kwargs)
-
     @property
     def queryset(self):
         if "pk" in self.kwargs:
             return Language.objects.filter(gateway_language=self.kwargs["pk"])
         else:
-            return self.model._default_manager.all()
+            return self.model.objects.all()
 
     @property
     def filtered_data(self):
@@ -399,6 +401,16 @@ class LanguageTableSourceView(DataTableSourceView):
                 return qs.order_by("code")
 
         return super(LanguageTableSourceView, self).filtered_data
+
+
+class TempLanguageTableSourceView(DataTableSourceView):
+
+    @property
+    def queryset(self):
+        if "pk" in self.kwargs:
+            return Language.objects.filter(gateway_language=self.kwargs["pk"])
+        else:
+            return self.model.objects.all()
 
 
 class CountryTableSourceView(DataTableSourceView):
@@ -430,6 +442,11 @@ class AjaxCountryListView(CountryTableSourceView):
 
 class LanguageListView(TemplateView):
     template_name = "resources/language_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LanguageListView, self).get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
 
 
 class AjaxLanguageListView(LanguageTableSourceView):
@@ -541,6 +558,24 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
         return context
 
 
+class LanguageEditModalView(LanguageEditView):
+    template_name = "resources/language_modal_form.html"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # Render the same form but with extra context for the template.
+        context = {
+            "success": True,
+            "object": self.object,
+        }
+        print "- self.object is ", self.object
+        temp_lang = self.object.templanguage
+        temp_lang.status = "a"
+        temp_lang.save()
+        print "- templang.lang_assigned is ", temp_lang.lang_assigned
+        return render(self.request, "resources/language_modal_form.html", context)
+
+
 class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, CreateView):
     model = Network
     form_class = NetworkForm
@@ -613,4 +648,143 @@ class WARegionDetailView(LoginRequiredMixin, DetailView):
         context = super(WARegionDetailView, self).get_context_data(**kwargs)
         context["gl_directors"] = wa_region.gldirector_set.filter(is_helper=False)
         context["gl_helpers"] = wa_region.gldirector_set.filter(is_helper=True)
+        return context
+
+
+class TempLanguageListView(LoginRequiredMixin, ListView):
+    model = TempLanguage
+    template_name = "resources/templanguage_list.html"
+
+
+class TempLanguageDetailView(LoginRequiredMixin, DetailView):
+    model = TempLanguage
+    template_name = "resources/templanguage_detail.html"
+
+
+class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
+    # form_list is defined here because WizardView demands it. It will be replaced by the actual form that we'll create
+    #    in get_form_list()
+    form_list = [forms.Form]
+    template_name = "resources/templanguage_wizard_form.html"
+
+    def __init__(self, *args, **kwargs):
+        super(TempLanguageWizardView, self).__init__(*args, **kwargs)
+        self.questionnaire = Questionnaire.objects.latest('created_at')
+
+    def get_form_list(self):
+        # Update form_list with dynamically-created forms based on the questions in the latest questionnaire
+        step = 0
+        for group in self.questionnaire.grouped_questions:
+            fields = {}
+            for question in group:
+                label = question["text"]
+                help_text = question["help"]
+                required = question["required"]
+                widget_attrs = {"class": str(required), "required": required, "autofocus": "true"}
+                if question["input_type"] == "boolean":
+                    field = forms.ChoiceField(label=label, help_text=help_text, required=required,
+                                              choices=(("", ""), ("Yes", "Yes"), ("No", "No")),
+                                              widget=forms.Select(attrs=widget_attrs))
+                else:
+                    field = forms.CharField(label=label, help_text=help_text, required=required,
+                                            widget=forms.TextInput(attrs=widget_attrs))
+                fields.update({"question-" + str(question["id"]): field})
+            new_form = type("NewForm" + str(step), (forms.Form, ), fields)
+            new_form.required_css_class = "required"
+            self.form_list.update({unicode(step): new_form})
+            step += 1
+        # At the end, add TempLanguageForm that contains temp code generator
+        self.form_list.update({unicode(step): TempLanguageForm})
+        return self.form_list
+
+    def done(self, form_list, **kwargs):
+        data = self.get_all_cleaned_data()
+        user = self.request.user
+        field_mapping = self.questionnaire.field_mapping
+
+        answers = [{"text": value, "question_id": key.split("-")[1]}
+                   for key, value in data.iteritems() if key.startswith("question-")]
+
+        obj = TempLanguage(request_id=uuid.uuid1(), app="td", answers=answers, created_by=user, modified_by=user,
+                           code=data["code"], questionnaire=data["questionnaire"],
+                           requester=(user.first_name + " " + user.last_name).strip() or user.username)
+
+        for a in answers:
+            qid = a["question_id"]
+            if qid in field_mapping:
+                try:
+                    if field_mapping[qid] == "country":
+                        obj.country = Country.objects.get(name__iexact=a["text"])
+                    else:
+                        obj.__dict__[field_mapping[qid]] = a["text"]
+                except Country.DoesNotExist:
+                    # NOTE: what's the best way to handle non-existing country? maybe if it's a selectbox, we don't need
+                    #    to check this
+                    print "- ERR! Country %s doesn't exist."
+                    pass
+
+        obj.save()
+        return redirect(obj.lang_assigned_url)
+
+
+class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
+    model = TempLanguage
+    form_class = TempLanguageForm
+    template_name = "resources/templanguage_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TempLanguageUpdateView, self).get_context_data(**kwargs)
+        # Manually passing ietf_tag along because the form input was rendered manually
+        context["code"] = self.request.POST.get("code", "")
+        context["edit"] = True
+        return context
+
+    def form_valid(self, form):
+        form.instance.modified_by = self.request.user
+        return super(TempLanguageUpdateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+class AjaxTempLanguageListView(TempLanguageTableSourceView):
+    model = TempLanguage
+    fields = [
+        "code",
+        "lang_assigned__name",
+        "status",
+        "requester",
+        "created_at",
+    ]
+    link_column = "code"
+    link_url_name = "templanguage_detail"
+    link_url_field = "pk"
+
+
+class AjaxTemporaryCode(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.generate_temp_code())
+
+    def generate_temp_code(self):
+        """
+        Generate a temporary language code from UUID and Time Since Epoch
+        :return: A code with "qaa-x-" and the first 6 letters of the hash
+        """
+        stamp = "".join([str(uuid.uuid1()), str(time.time())])
+        stamp_hash = hashlib.sha1(stamp).hexdigest()
+        temp_code = "-".join(["qaa", "x", stamp_hash[:6]])
+        try:
+            TempLanguage.objects.get(code=temp_code)
+            return self.generate_temp_code()
+        except TempLanguage.DoesNotExist:
+            return temp_code
+
+
+class TempLanguageAdminView(LoginRequiredMixin, TemplateView):
+    template_name = "resources/templanguage_admin.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TempLanguageAdminView, self).get_context_data(**kwargs)
+        context["pending"] = TempLanguage.pending()
         return context
