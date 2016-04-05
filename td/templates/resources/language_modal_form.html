@@ -32,7 +32,7 @@
 
 <script>
 
-    $(document).ready(function() {
+    $().ready(function() {
         // Initial scripts
         //
         $('.language-selector').languageSelector();
@@ -64,19 +64,6 @@
                 $('.modal').modal('hide');
             });
         });
-{#        // Submit with a success call back when clicking "Submit" button#}
-{#        $('#language-edit-form').ajaxForm({#}
-{#            target: '.modal-content',#}
-{#            resetForm: true,#}
-{#            clearForm: true,#}
-{#            success: function() {#}
-{#                console.log('success');#}
-{#                setTimeout(function() {#}
-{#                    $('.modal').modal('hide');#}
-{#                    window.location.reload(false);#}
-{#                }, 1500);#}
-{#            }#}
-{#        });#}
     });
 
 </script>

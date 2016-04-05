@@ -9,5 +9,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // NOTE: DataTables will append "_wrapper" to the table's ID
     var searchBox = document.querySelector('#language-list-table_wrapper input[type="search"]'),
         q = util.getParamByName('q') || '';
-    searchBox && q ? util.dtTriggerSearch(searchBox, q) : undefined;
+    if (searchBox && q) { util.dtTriggerSearch(searchBox, q); }
 });
