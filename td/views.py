@@ -5,6 +5,7 @@ import hashlib
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from pinax.eventlog.mixins import EventLogMixin
 from formtools.wizard.views import SessionWizardView
 from django import forms
@@ -783,6 +784,12 @@ class AjaxTemporaryCode(LoginRequiredMixin, View):
 
 class TempLanguageAdminView(LoginRequiredMixin, TemplateView):
     template_name = "resources/templanguage_admin.html"
+
+    def get(self, request, *args, **kwargs):
+        allowed_group = Group.objects.get(name="IETF")
+        if allowed_group not in request.user.groups.all():
+            return redirect("home")
+        return super(TempLanguageAdminView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(TempLanguageAdminView, self).get_context_data(**kwargs)

@@ -4,7 +4,7 @@ import re
 from mock import patch, Mock
 
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from djcelery.tests.req import RequestFactory
@@ -47,7 +47,7 @@ class TempLanguageListViewTestCase(TestCase):
         """
         Requesting TempLanguage list should return successful response
         """
-        response = TempLanguageAdminView.as_view()(self.request)
+        response = TempLanguageListView.as_view()(self.request)
         self.assertEqual(response.status_code, 200)
 
     def test_config(self):
@@ -205,18 +205,28 @@ class AjaxTemporaryCodeTestCase(TestCase):
 
 class TempLanguageAdminViewTestCase(TestCase):
     def setUp(self):
+        self.group = Group.objects.create(name="IETF")
         self.request = RequestFactory().get('/region_assignment/')
         self.request.user = create_user()
+        self.request.user.groups.add(self.group)
         self.view = setup_view(TempLanguageAdminView(), self.request)
 
-    @patch("td.views.TempLanguageAdminView.get_context_data")
-    def test_get_with_user(self, mock_get_context_data):
+    @patch("td.views.TempLanguageAdminView.get_context_data", return_value={})
+    def test_get_with_user_and_group(self, mock_get_context_data):
         """
         Requesting TempLanguage - Admin should return successful response
         """
-        mock_get_context_data.return_value = {}
         response = TempLanguageAdminView.as_view()(self.request)
         self.assertEqual(response.status_code, 200)
+
+    @patch("td.views.TempLanguageAdminView.get_context_data", return_value={})
+    def test_get_without_group(self, mock_get_context_data):
+        """
+        Requesting TempLanguage - Admin without the right group should return redirect
+        """
+        self.request.user.groups.remove(self.group)
+        response = TempLanguageAdminView.as_view()(self.request)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
