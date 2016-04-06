@@ -4,7 +4,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import gettext as _
 from django.utils.html import escape
 
-from td.models import Country, Language
+from td.models import Language
 from td.gl_tracking.models import Partner
 from .models import (
     Charter,
