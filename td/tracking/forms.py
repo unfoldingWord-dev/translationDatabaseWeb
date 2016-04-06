@@ -34,7 +34,6 @@ class CharterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
-        self.fields["countries"].queryset = Country.objects.order_by("name")
         self.fields["lead_dept"].queryset = Department.objects.order_by("name")
         self.fields["partner"].queryset = Partner.objects.order_by("name")
         self.fields["start_date"] = BSDateField()
@@ -62,7 +61,7 @@ class CharterForm(forms.ModelForm):
 
     class Meta:
         model = Charter
-        exclude = ["created_at", "modified_at"]
+        exclude = ["created_at", "modified_at", "countries", "number"]
         widgets = {
             "created_by": forms.HiddenInput(),
             "modified_by": forms.HiddenInput(),
