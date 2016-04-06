@@ -1,10 +1,9 @@
 from django import forms
 from django.core.urlresolvers import reverse as urlReverse
-from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import gettext as _
 from django.utils.html import escape
 
-from td.models import Country, Language
+from td.models import Language
 from td.gl_tracking.models import Partner
 from .models import (
     Charter,
@@ -34,7 +33,6 @@ class CharterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CharterForm, self).__init__(*args, **kwargs)
-        self.fields["countries"].queryset = Country.objects.order_by("name")
         self.fields["lead_dept"].queryset = Department.objects.order_by("name")
         self.fields["partner"].queryset = Partner.objects.order_by("name")
         self.fields["start_date"] = BSDateField()
@@ -62,7 +60,7 @@ class CharterForm(forms.ModelForm):
 
     class Meta:
         model = Charter
-        exclude = ["created_at", "modified_at"]
+        exclude = ["created_at", "modified_at", "countries", "number"]
         widgets = {
             "created_by": forms.HiddenInput(),
             "modified_by": forms.HiddenInput(),
@@ -334,19 +332,3 @@ def determine_widget(fields, names, limit):
     for name in names:
         fields[name].widget = forms.SelectMultiple() if len(fields[name].queryset) > limit else forms.CheckboxSelectMultiple()
     return fields
-
-
-# ------------------- #
-#    CUSTOM WIDGET    #
-# ------------------- #
-
-
-# Lets the form render empty value for required DateField
-class MySelectDateWidget(SelectDateWidget):
-
-    def create_select(self, *args, **kwargs):
-        old_state = self.is_required
-        self.is_required = False
-        result = super(MySelectDateWidget, self).create_select(*args, **kwargs)
-        self.is_required = old_state
-        return result
