@@ -5,7 +5,21 @@ from td.resources.models import Questionnaire
 
 
 def questionnaire_json(request):
-    return JsonResponse(Questionnaire.objects.latest('created_at').questions, safe=False)
+    # In the future, when we're ready to accommodate translations of the questionnaires, we should iterate through the
+    #    queryset and construct the data content appropriately.
+    questionnaire = Questionnaire.objects.latest('created_at')
+    data = {
+        "languages": [
+            {
+                "name": questionnaire.language.ln,
+                "dir": questionnaire.language.direction,
+                "slug": questionnaire.language.lc,
+                "questionnaire_id": questionnaire.id,
+                "questions": questionnaire.questions,
+            }
+        ]
+    }
+    return JsonResponse(data, safe=False)
 
 
 def templanguages_json(request):
