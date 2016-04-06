@@ -14,7 +14,7 @@ from .models import (
     Title,
     Publisher
 )
-from td.models import Language, TempLanguage
+from td.models import Language
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -130,13 +130,4 @@ class ResourceEditView(LoginRequiredMixin, UpdateView):
         context.update({
             "language": self.object.language,
         })
-        return context
-
-
-class TempLanguageQuestionnaireView(LoginRequiredMixin, TemplateView):
-    template_name = "resources/questionnaire.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(TempLanguageQuestionnaireView, self).get_context_data(**kwargs)
-        context["obj"] = TempLanguage.objects.get(pk=kwargs["temp_language"])
         return context

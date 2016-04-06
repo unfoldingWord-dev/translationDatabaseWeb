@@ -1,31 +1,7 @@
 from django import forms
 from django.core.urlresolvers import reverse
-
-from .models import Network, Language, Country, TempLanguage
 from td.resources.forms import EntityTrackingForm
-from td.resources.models import Questionnaire
-
-
-class TempLanguageForm(forms.ModelForm):
-    required_css_class = "required"
-
-    def __init__(self, *args, **kwargs):
-        super(TempLanguageForm, self).__init__(*args, **kwargs)
-        questionnaire_pk = Questionnaire.objects.latest('created_at').pk
-        self.fields["questionnaire"].widget = forms.HiddenInput(attrs={"value": questionnaire_pk})
-
-    class Meta:
-        model = TempLanguage
-        fields = ["code", "questionnaire"]
-        labels = {"code": "Temporary Tag"}
-        widgets = {"code": forms.HiddenInput()}
-
-
-# class TempLanguageAdminForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = TempLanguage
-#         fields = "__all__"
+from .models import Network, Language, Country
 
 
 class NetworkForm(EntityTrackingForm):
@@ -117,7 +93,16 @@ class LanguageForm(EntityTrackingForm):
 
     class Meta:
         model = Language
-        exclude = ["alt_name", "alt_names", "variant_of", "extra_data", "tracker"]
+        fields = [
+            "code",
+            "iso_639_3",
+            "name",
+            "anglicized_name",
+            "direction",
+            "gateway_language",
+            "native_speakers",
+            "networks_translating"
+        ]
 
 
 class UploadGatewayForm(forms.Form):

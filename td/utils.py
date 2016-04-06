@@ -39,10 +39,11 @@ class DataTableSourceView(View):
 
     @property
     def queryset(self):
-        return self.model.objects.all()
+        return self.model._default_manager.all()
 
     @property
     def search_term(self):
+        # return dict(self.request.GET.iterlists()).get("search[value]", [])[0]
         return self.request.GET.get("search[value]")
 
     @property

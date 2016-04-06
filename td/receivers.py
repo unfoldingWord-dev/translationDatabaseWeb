@@ -9,23 +9,10 @@ from account.signals import user_login_attempt, user_logged_in
 
 from pinax.eventlog.models import log
 
-from .models import Country, Language, LanguageAltName, AdditionalLanguage, TempLanguage
+from .models import AdditionalLanguage
+from td.models import Country, Language, LanguageAltName
 from .tasks import reset_langnames_cache, update_alt_names
 from .signals import languages_integrated
-from td.resources.tasks import notify_templanguage_created
-
-
-@receiver(post_save, sender=TempLanguage)
-def handle_templanguage_save(sender, instance, **kwargs):
-    if kwargs["created"]:
-        lang = Language.objects.create(code=instance.code)
-        lang.name = instance.name
-        lang.direction = instance.direction
-        lang.country = instance.country
-        lang.save()
-        instance.lang_assigned = lang
-        instance.save()
-        notify_templanguage_created(instance, lang)
 
 
 @receiver(post_save, sender=AdditionalLanguage)

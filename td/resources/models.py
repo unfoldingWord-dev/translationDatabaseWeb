@@ -111,27 +111,3 @@ class Resource(models.Model):
     class Meta:
         db_table = 'uw_resource'
         unique_together = ("title", "language")
-
-
-@python_2_unicode_compatible
-class Questionnaire(models.Model):
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-    questions = JSONField()
-    field_mapping = JSONField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.pk)
-
-    @property
-    def grouped_questions(self):
-        group = []
-        ret = []
-        for q in self.questions:
-            if q["depends_on"] is None and len(group) != 0:
-                ret.append(group)
-                group = [q]
-            else:
-                group.append(q)
-        ret.append(group)
-        return ret

@@ -40,240 +40,119 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(89);
+	__webpack_require__(87);
 
-	window.jQuery = window.$ = __webpack_require__(118);
+	window.jQuery = window.$ = __webpack_require__(116);
 
-	__webpack_require__(119);
+	// Requirements for td.tracking
+	__webpack_require__(117);
+
+	__webpack_require__(118);
+	__webpack_require__(131);
 	__webpack_require__(132);
-	__webpack_require__(133);
+	__webpack_require__(135);
 	__webpack_require__(136);
 	__webpack_require__(137);
 	__webpack_require__(138);
-	__webpack_require__(139);
 
-	// Custom scripts for specific web pages
-	__webpack_require__(140);
-	__webpack_require__(145);
-	__webpack_require__(147);
+	var glmap = __webpack_require__(139);
 
-	// Custom initialization for select2 language search input
-	$.fn.languageSelector = function (options) {
+	(function ($) {
+	  $('[data-toggle="tooltip"]').tooltip();
+	  $('[data-toggle="popover"]').popover();
+	  if (document.getElementById('mapcontainer') !== null) glmap.drawMap();
+	  $(document).on("click", ".btn-export-map", function () {
+	    glmap.submitDownloadForm("pdf");
+	  });
+	  $.fn.languageSelector = function (options) {
 	    var settings = $.extend({}, options);
 	    return this.each(function () {
-	        var $input = $(this);
-	        $input.select2({
-	            placeholder: "Search for a language...",
-	            minimumInputLength: 2,
-	            ajax: {
-	                url: $input.data("source-url"),
-	                dataType: "json",
-	                quietMillis: 250,
-	                data: function (term, page) {
-	                    return { q: term };
-	                },
-	                results: function (data, page) {
-	                    return { results: data.results };
-	                },
-	                cache: true
-	            },
-	            initSelection: function (element, callback) {
-	                var data = {
-	                    "pk": element.data("lang-pk"),
-	                    "ln": element.data("lang-ln"),
-	                    "lc": element.data("lang-lc"),
-	                    "lr": element.data("lang-lr")
-	                };
-	                callback(data);
-	            },
-	            id: function (lang) {
-	                return lang.pk;
-	            },
-	            formatResult: function (lang) {
-	                return "<strong>" + lang.ln + "</strong> <code>" + lang.lc + "</code> [" + lang.lr + "]";
-	            },
-	            formatSelection: function (lang) {
-	                return "<strong>" + lang.ln + "</strong> <code>" + lang.lc + "</code> [" + lang.lr + "]";
-	            },
-	            escapeMarkup: function (m) {
-	                return m;
-	            }
-	        });
+	      var $input = $(this);
+	      $input.select2({
+	        placeholder: "Search for a language...",
+	        minimumInputLength: 2,
+	        ajax: {
+	          url: $input.data("source-url"),
+	          dataType: "json",
+	          quietMillis: 250,
+	          data: function (term, page) {
+	            return { q: term };
+	          },
+	          results: function (data, page) {
+	            return { results: data.results };
+	          },
+	          cache: true
+	        },
+	        initSelection: function (element, callback) {
+	          var data = {
+	            "pk": element.data("lang-pk"),
+	            "ln": element.data("lang-ln"),
+	            "lc": element.data("lang-lc"),
+	            "lr": element.data("lang-lr")
+	          };
+	          callback(data);
+	        },
+	        id: function (lang) {
+	          return lang.pk;
+	        },
+	        formatResult: function (lang) {
+	          return "<strong>" + lang.ln + "</strong> <code>" + lang.lc + "</code> [" + lang.lr + "]";
+	        },
+	        formatSelection: function (lang) {
+	          return "<strong>" + lang.ln + "</strong> <code>" + lang.lc + "</code> [" + lang.lr + "]";
+	        },
+	        escapeMarkup: function (m) {
+	          return m;
+	        }
+	      });
 	    });
-	};
-
-	// Initialize components
-	(function ($) {
-
-	    // Initialize bootstrap components
-	    $('[data-toggle="tooltip"]').tooltip();
-	    $('[data-toggle="popover"]').popover();
-	    $(".date-picker").daterangepicker({
-	        singleDatePicker: true
-	    });
-
-	    // Initialize select2 components
-	    $(".select2-multiple").select2();
-	    $(".language-selector").languageSelector();
-
-	    // Initialize DataTables
-	    $("table[data-source]").each(function () {
-	        var $el = $(this);
-	        $el.DataTable({
-	            serverSide: true,
-	            ajax: $el.data("source"),
-	            stateSave: true
-	        });
-	    });
+	  };
 	})(jQuery);
 
-	// Register event listeners
 	$(function () {
-	    // Display invite confirmation when it's sent
-	    $(document).on("eldarion-ajax:success", function (evt, $el) {
-	        if ($el.hasClass("navbar-form")) {
-	            var $el = $("<div>").addClass("alert").addClass("alert-info").html("<strong>Invite was sent!</sent>");
-	            $("body").prepend($el);
-	            setTimeout(function () {
-	                $el.remove();
-	            }, 3000);
-	        }
+	  $("table[data-source]").each(function () {
+	    var $el = $(this);
+	    $el.DataTable({
+	      serverSide: true,
+	      ajax: $el.data("source"),
+	      stateSave: true
 	    });
-
-	    // Swap expand/collapse icons for button that toggle bootstrap collapse
-	    $('body').on("click", "[data-toggle='collapse']", function () {
-	        $(this).find('i').toggleClass("fa-expand fa-compress");
-	    });
+	  });
+	  $(".select2-multiple").select2();
+	  $(".language-selector").languageSelector();
+	  $(".date-picker").daterangepicker({
+	    singleDatePicker: true
+	  });
+	  $(document).on("eldarion-ajax:success", function (evt, $el) {
+	    if ($el.hasClass("navbar-form")) {
+	      var $el = $("<div>").addClass("alert").addClass("alert-info").html("<strong>Invite was sent!</sent>");
+	      $("body").prepend($el);
+	      setTimeout(function () {
+	        $el.remove();
+	      }, 3000);
+	    }
+	  });
+	  // Swap expand/collapse icons for button that toggle bootstrap collapse
+	  $('body').on("click", "[data-toggle='collapse']", function () {
+	    $(this).find('i').toggleClass("fa-expand fa-compress");
+	  });
 	});
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */,
-/* 22 */,
-/* 23 */,
-/* 24 */,
-/* 25 */,
-/* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */,
-/* 30 */,
-/* 31 */,
-/* 32 */,
-/* 33 */,
-/* 34 */,
-/* 35 */,
-/* 36 */,
-/* 37 */,
-/* 38 */,
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */,
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */,
-/* 59 */,
-/* 60 */,
-/* 61 */,
-/* 62 */,
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */
+
+/***/ 87:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */,
-/* 97 */,
-/* 98 */,
-/* 99 */,
-/* 100 */,
-/* 101 */,
-/* 102 */,
-/* 103 */,
-/* 104 */,
-/* 105 */,
-/* 106 */,
-/* 107 */,
-/* 108 */,
-/* 109 */,
-/* 110 */,
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */,
-/* 117 */,
-/* 118 */
+
+/***/ 116:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -9694,10 +9573,109 @@
 	});
 
 /***/ },
-/* 119 */
+
+/***/ 117:
+/***/ function(module, exports) {
+
+	/* @@@ rewrite this */
+	document.addEventListener('DOMContentLoaded', function (event) {
+
+	    // Array containing field names to be passed as an argument
+	    var fields;
+
+	    // For the following fields...
+	    fields = ['translator', 'facilitator', 'material'];
+	    fields.forEach(function (field) {
+	        // ... add the first row if there isn't any
+	        if (!$('[name="' + field + '0"]').length) addInline(field);
+
+	        // ... attach click event handler
+	        $("#add-" + field).on("click", function (event) {
+	            event.preventDefault();
+	            addInline(field);
+	        });
+	    });
+	    // ... add pasting capability
+	    addPasteFunction(fields);
+
+	    // Add class:required to the label of the following fields
+	    var fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person', 'countries', 'language'];
+	    markRequired(fields);
+	});
+
+	// ================
+	// CUSTOM FUNCTIONS
+	// ================
+
+	//    addInline
+	//    ---------
+	function addInline(label) {
+	    var list = $('#' + label + '-list');
+	    var length = list.children().length;
+	    switch (label) {
+	        // Build facilitator element
+	        case 'facilitator':
+	            var elem = '<div class="inline inline-input clearfix">' + '<div class="facilitator-text clearfix">' + '<input name="facilitator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="facilitator-checkboxes">' + '<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' + '<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
+	            break;
+	        // Build material element
+	        case 'material':
+	            var elem = '<div class="inline inline-input clearfix">' + '<div class="material-text clearfix">' + '<input name="material' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="material-checkboxes">' + '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' + '</div>' + '</div>';
+	            break;
+	        // Build translator element
+	        case 'translator':
+	            var elem = '<div class="inline inline-input clearfix">' + '<div class="translator-text clearfix">' + '<input name="translator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="translator-checkboxes">' + '<div class="full-width"><input name="docs_signed' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
+	            break;
+	        default:
+	            var elem = '';
+	            break;
+	    }
+	    list.append(elem);
+	    addCount(label);
+	}
+
+	//    addCount
+	//    --------
+	function addCount(label) {
+	    var elem = document.getElementsByName(label + '-count');
+	    if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
+	}
+
+	//    markRequired
+	//    ------------
+	function markRequired(fields) {
+	    fields.forEach(function (field) {
+	        var field = document.querySelector('label[for*="' + field + '"]');
+	        if (field) {
+	            field.classList.add('required');
+	        }
+	    });
+	}
+
+	//    addPasteFunction
+	//    ----------------
+	function addPasteFunction(fields) {
+	    fields.forEach(function (field) {
+	        $('form').on('paste', 'input[name*="' + field + '"]', function (e) {
+	            e.preventDefault();
+	            var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
+	            var fields = $('input[type="text"][name*="' + field + '"]');
+	            for (var i = 0; i < text.length - fields.length; i++) {
+	                addInline(field);
+	            }
+	            $('input[type="text"][name*="' + field + '"]').each(function (index) {
+	                this.value = text[index] || "";
+	            });
+	        });
+	    });
+	}
+
+/***/ },
+
+/***/ 118:
 /***/ function(module, exports, __webpack_require__) {
 
 	// This file is autogenerated via the `commonjs` Grunt task. You can require() this file in a CommonJS environment.
+	__webpack_require__(119);
 	__webpack_require__(120);
 	__webpack_require__(121);
 	__webpack_require__(122);
@@ -9709,10 +9687,10 @@
 	__webpack_require__(128);
 	__webpack_require__(129);
 	__webpack_require__(130);
-	__webpack_require__(131);
 
 /***/ },
-/* 120 */
+
+/***/ 119:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -9778,7 +9756,8 @@
 	}(jQuery);
 
 /***/ },
-/* 121 */
+
+/***/ 120:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -9868,7 +9847,8 @@
 	}(jQuery);
 
 /***/ },
-/* 122 */
+
+/***/ 121:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -9985,7 +9965,8 @@
 	}(jQuery);
 
 /***/ },
-/* 123 */
+
+/***/ 122:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -10216,7 +10197,8 @@
 	}(jQuery);
 
 /***/ },
-/* 124 */
+
+/***/ 123:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -10399,7 +10381,8 @@
 	}(jQuery);
 
 /***/ },
-/* 125 */
+
+/***/ 124:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -10554,7 +10537,8 @@
 	}(jQuery);
 
 /***/ },
-/* 126 */
+
+/***/ 125:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -10863,7 +10847,8 @@
 	}(jQuery);
 
 /***/ },
-/* 127 */
+
+/***/ 126:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -11347,7 +11332,8 @@
 	}(jQuery);
 
 /***/ },
-/* 128 */
+
+/***/ 127:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -11451,7 +11437,8 @@
 	}(jQuery);
 
 /***/ },
-/* 129 */
+
+/***/ 128:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -11607,7 +11594,8 @@
 	}(jQuery);
 
 /***/ },
-/* 130 */
+
+/***/ 129:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -11740,7 +11728,8 @@
 	}(jQuery);
 
 /***/ },
-/* 131 */
+
+/***/ 130:
 /***/ function(module, exports) {
 
 	/* ========================================================================
@@ -11897,7 +11886,8 @@
 	}(jQuery);
 
 /***/ },
-/* 132 */
+
+/***/ 131:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11908,7 +11898,7 @@
 	 * Licensed under the Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 	 */(function (factory) {
 		if (true) {
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(118)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(116)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 		} else if (typeof exports === 'object') {
 			factory(require('jquery'));
 		} else {
@@ -13749,7 +13739,8 @@
 	});
 
 /***/ },
-/* 133 */
+
+/***/ 132:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*** IMPORTS FROM imports-loader ***/
@@ -13770,11 +13761,11 @@
 	            root.daterangepicker = factory(root, exports, momentjs, $);
 	        });
 	    } else if (true) {
-	        var momentjs = __webpack_require__(134);
+	        var momentjs = __webpack_require__(133);
 	        var jQuery = typeof window != 'undefined' ? window.jQuery : undefined; //isomorphic issue
 	        if (!jQuery) {
 	            try {
-	                jQuery = __webpack_require__(118);
+	                jQuery = __webpack_require__(116);
 	                if (!jQuery.fn) jQuery.fn = {}; //isomorphic issue
 	            } catch (err) {
 	                if (!jQuery) throw new Error('jQuery dependency not found');
@@ -15103,7 +15094,8 @@
 
 
 /***/ },
-/* 134 */
+
+/***/ 133:
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {//! moment.js
@@ -18607,10 +18599,11 @@
 
 	    return _moment;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(135)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(134)(module)))
 
 /***/ },
-/* 135 */
+
+/***/ 134:
 /***/ function(module, exports) {
 
 	module.exports = function (module) {
@@ -18625,7 +18618,8 @@
 	};
 
 /***/ },
-/* 136 */
+
+/***/ 135:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* ====================================================================
@@ -18675,7 +18669,7 @@
 	  }, window.setInterval.isPolyfill = !0;
 	}!function (e, t) {
 	  "use strict";
-	   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(118)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : t("object" == typeof exports ? require("jquery") : e.jQuery);
+	   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(116)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : t("object" == typeof exports ? require("jquery") : e.jQuery);
 	}(this, function (e) {
 	  "use strict";
 	  var t = function () {};t.prototype._ajax = function (t, o, a, n) {
@@ -18721,7 +18715,7 @@
 	  });
 	}), function (e, t) {
 	  "use strict";
-	   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(118)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : t("object" == typeof exports ? require("jquery") : e.jQuery);
+	   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(116)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : t("object" == typeof exports ? require("jquery") : e.jQuery);
 	}(this, function (e) {
 	  "use strict";
 	  var t = function () {};t.prototype.redirect = function (e, t, o) {
@@ -18774,7 +18768,8 @@
 	});
 
 /***/ },
-/* 137 */
+
+/***/ 136:
 /***/ function(module, exports) {
 
 	/*
@@ -22338,7 +22333,8 @@
 	})(jQuery);
 
 /***/ },
-/* 138 */
+
+/***/ 137:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables 1.10.9
@@ -22374,7 +22370,7 @@
 
 			if (true) {
 				// Define as an AMD module if possible
-				!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(118)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+				!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(116)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 			} else if (typeof exports === 'object') {
 				// Node/CommonJS
 				module.exports = factory(require('jquery'));
@@ -36123,7 +36119,8 @@
 	})(window, document);
 
 /***/ },
-/* 139 */
+
+/***/ 138:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables Bootstrap 3 integration
@@ -36273,7 +36270,7 @@
 
 	    // Define as an AMD module if possible
 	    if (true) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(118), __webpack_require__(138)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(116), __webpack_require__(137)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof exports === 'object') {
 	        // Node/CommonJS
 	        factory(require('jquery'), require('datatables'));
@@ -36284,31 +36281,13 @@
 	})(window, document);
 
 /***/ },
-/* 140 */
+
+/***/ 139:
 /***/ function(module, exports, __webpack_require__) {
 
-	var glmap = __webpack_require__(141);
-
-	document.addEventListener('DOMContentLoaded', function () {
-
-	    // Initialize GL map on the home screen
-	    if (document.querySelector('#mapcontainer')) {
-	        glmap.drawMap();
-	    }
-
-	    // Listen for download trigger
-	    $(document).on("click", ".btn-export-map", function () {
-	        glmap.submitDownloadForm("pdf");
-	    });
-	});
-
-/***/ },
-/* 141 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $ = __webpack_require__(118);
-	var d3 = __webpack_require__(142);
-	var Datamap = __webpack_require__(143);
+	var $ = __webpack_require__(116);
+	var d3 = __webpack_require__(140);
+	var Datamap = __webpack_require__(141);
 
 	var m_width = $("#mapcontainer").width(),
 	    m_ratio = .42,
@@ -36356,7 +36335,6 @@
 	            });
 	        });
 	    },
-
 	    submitDownloadForm: function (output_format) {
 	        // Get the d3js SVG element
 	        var tmp = document.getElementById("mapcontainer");
@@ -36374,7 +36352,8 @@
 	};
 
 /***/ },
-/* 142 */
+
+/***/ 140:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function () {
@@ -47357,7 +47336,8 @@
 	}();
 
 /***/ },
-/* 143 */
+
+/***/ 141:
 /***/ function(module, exports, __webpack_require__) {
 
 	(function () {
@@ -49578,8 +49558,8 @@
 
 	    // expose library
 	    if (true) {
-	        d3 = __webpack_require__(142);
-	        topojson = __webpack_require__(144);
+	        d3 = __webpack_require__(140);
+	        topojson = __webpack_require__(142);
 	        module.exports = Datamap;
 	    } else if (typeof define === "function" && define.amd) {
 	        define("datamaps", ["require", "d3", "topojson"], function (require) {
@@ -49606,7 +49586,8 @@
 	})();
 
 /***/ },
-/* 144 */
+
+/***/ 142:
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (global, factory) {
@@ -50196,163 +50177,6 @@
 	  exports.presimplify = presimplify;
 	});
 
-/***/ },
-/* 145 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Created by leongv on 3/15/2016.
-	 */
-
-	var util = __webpack_require__(146);
-
-	document.addEventListener('DOMContentLoaded', function () {
-	    // Enter the search term passed through the URL into the search box
-	    // NOTE: DataTables will append "_wrapper" to the table's ID
-	    var searchBox = document.querySelector('#language-list-table_wrapper input[type="search"]'),
-	        q = util.getParamByName('q') || '';
-	    if (searchBox && q) {
-	        util.dtTriggerSearch(searchBox, q);
-	    }
-	});
-
-/***/ },
-/* 146 */
-/***/ function(module, exports) {
-
-	/**
-	 * Created by leongv on 3/15/2016.
-	 */
-
-	var util = {
-	    /*
-	     * Returns the value of a specified parameter in the URL
-	     * @param name: The name of parameter in string
-	     * @param url: URL string (optional)
-	     * :return: Retrieved value, or empty string, or null
-	     */
-	    getParamByName: function (name, url) {
-	        var url = (url || window.location.href).toLowerCase(),
-	            name = name.replace(/[\[\]]/g, "\\$&").toLowerCase(),
-	            regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-	            results = regex.exec(url);
-	        if (!results) {
-	            return null;
-	        }
-	        if (!results[2]) {
-	            return '';
-	        }
-	        return decodeURIComponent(results[2].replace(/\+/g, " "));
-	    },
-
-	    dtTriggerSearch: function (s, q) {
-	        if (!s || !q) {
-	            return;
-	        }
-	        s.value = q;
-	        // DataTables listens to 'search' event (https://datatables.net/reference/event/)
-	        // If event is cancelled, dispatchEvent will return false.
-	        return s.dispatchEvent(new Event('search'));
-	    }
-	};
-
-	module.exports = util;
-
-/***/ },
-/* 147 */
-/***/ function(module, exports) {
-
-	/* @@@ rewrite this */
-	document.addEventListener('DOMContentLoaded', function (event) {
-
-	    // Array containing field names to be passed as an argument
-	    var fields;
-
-	    // For the following fields...
-	    fields = ['translator', 'facilitator', 'material'];
-	    fields.forEach(function (field) {
-	        // ... add the first row if there isn't any
-	        if (!$('[name="' + field + '0"]').length) addInline(field);
-
-	        // ... attach click event handler
-	        $("#add-" + field).on("click", function (event) {
-	            event.preventDefault();
-	            addInline(field);
-	        });
-	    });
-	    // ... add pasting capability
-	    addPasteFunction(fields);
-
-	    // Add class:required to the label of the following fields
-	    var fields = ['charter', 'start_date', 'end_date', 'location', 'lead_dept', 'contact_person', 'countries', 'language'];
-	    markRequired(fields);
-	});
-
-	// ================
-	// CUSTOM FUNCTIONS
-	// ================
-
-	//    addInline
-	//    ---------
-	function addInline(label) {
-	    var list = $('#' + label + '-list');
-	    var length = list.children().length;
-	    switch (label) {
-	        // Build facilitator element
-	        case 'facilitator':
-	            var elem = '<div class="inline inline-input clearfix">' + '<div class="facilitator-text clearfix">' + '<input name="facilitator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="facilitator-checkboxes">' + '<div class="half-width"><input name="is_lead' + length + '" type="checkbox" class="form-control" /></div>' + '<div class="half-width"><input name="speaks_gl' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
-	            break;
-	        // Build material element
-	        case 'material':
-	            var elem = '<div class="inline inline-input clearfix">' + '<div class="material-text clearfix">' + '<input name="material' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="material-checkboxes">' + '<div class="full-width"><input name="licensed' + length + '" type="checkbox" class="form-control" checked /></div>' + '</div>' + '</div>';
-	            break;
-	        // Build translator element
-	        case 'translator':
-	            var elem = '<div class="inline inline-input clearfix">' + '<div class="translator-text clearfix">' + '<input name="translator' + length + '" type="text" class="form-control" />' + '</div>' + '<div class="translator-checkboxes">' + '<div class="full-width"><input name="docs_signed' + length + '" type="checkbox" class="form-control" /></div>' + '</div>' + '</div>';
-	            break;
-	        default:
-	            var elem = '';
-	            break;
-	    }
-	    list.append(elem);
-	    addCount(label);
-	}
-
-	//    addCount
-	//    --------
-	function addCount(label) {
-	    var elem = document.getElementsByName(label + '-count');
-	    if (elem.length) elem[0].value = parseInt(elem[0].value) + 1;
-	}
-
-	//    markRequired
-	//    ------------
-	function markRequired(fields) {
-	    fields.forEach(function (field) {
-	        var field = document.querySelector('label[for*="' + field + '"]');
-	        if (field) {
-	            field.classList.add('required');
-	        }
-	    });
-	}
-
-	//    addPasteFunction
-	//    ----------------
-	function addPasteFunction(fields) {
-	    fields.forEach(function (field) {
-	        $('form').on('paste', 'input[name*="' + field + '"]', function (e) {
-	            e.preventDefault();
-	            var text = e.originalEvent.clipboardData.getData('Text').split(/[,\t\n]/);
-	            var fields = $('input[type="text"][name*="' + field + '"]');
-	            for (var i = 0; i < text.length - fields.length; i++) {
-	                addInline(field);
-	            }
-	            $('input[type="text"][name*="' + field + '"]').each(function (index) {
-	                this.value = text[index] || "";
-	            });
-	        });
-	    });
-	}
-
 /***/ }
-/******/ ]);
+
+/******/ });

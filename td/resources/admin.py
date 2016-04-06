@@ -3,8 +3,7 @@ from django.contrib import admin
 from .models import (
     Resource,
     Media,
-    Title,
-    Questionnaire,
+    Title
 )
 
 
@@ -29,11 +28,19 @@ class MediaAdmin(EntryTrackingAdmin):
     prepopulated_fields = {"slug": ["name"]}
 
 
-class QuestionnaireAdmin(admin.ModelAdmin):
-    list_display = ["id", "created_at", "language"]
+admin.site.register(
+    Resource,
+    ResourceAdmin
+)
 
 
-admin.site.register(Resource, ResourceAdmin)
-admin.site.register(Title, TitleAdmin)
-admin.site.register(Media, MediaAdmin)
-admin.site.register(Questionnaire, QuestionnaireAdmin)
+admin.site.register(
+    Title,
+    TitleAdmin
+)
+
+
+admin.site.register(
+    Media,
+    MediaAdmin
+)

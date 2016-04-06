@@ -11960,8 +11960,8 @@ body {
 #content_body {
   padding-top: 10px;
 }
-.jumbotron {
-  clear: both;
+div.jumbotron {
+  margin-top: 60px;
 }
 label {
   font-weight: normal;
@@ -12001,53 +12001,4 @@ label.required:after {
 }
 .center-text {
   text-align: center;
-}
-.giant-search-input {
-  width: 20rem;
-  display: inline;
-  border: none;
-  border-bottom: 1px solid #AAA;
-  text-align: center;
-  font-size: 18px;
-  color: #337AB7;
-}
-.giant-search-input:focus {
-  outline: none;
-  border-bottom-color: #337AB7;
-}
-@media screen and (min-width: 768px) {
-  .giant-search-input {
-    width: 30rem;
-  }
-}
-.giant-search-submit {
-  border: none;
-  background-color: transparent;
-  color: #337Ab7;
-}
-.giant-search-submit:focus {
-  outline: none;
-}
-.giant-search-submit:hover {
-  color: #286090;
-}
-.hoverinfo .flag {
-  margin: 0 auto;
-}
-.datamaps-legend {
-  margin-top: 36%;
-}
-#mapcontainer {
-  padding-bottom: 0 !important;
-  margin: 2rem 0 1rem 0;
-}
-#mapcontainer > svg {
-  position: relative !important;
-}
-.form-group.flex > div {
-  display: flex;
-}
-.form-group.flex > div .btn {
-  flex: 0;
-  margin-right: 1rem;
 }

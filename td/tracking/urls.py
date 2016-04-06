@@ -22,7 +22,6 @@ from .views import (
     AjaxCharterPartnerLookup,
 )
 
-
 urlpatterns = [
 
     # Home

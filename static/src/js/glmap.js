@@ -54,7 +54,6 @@ module.exports = {
             })
         })
     },
-
     submitDownloadForm: function(output_format) {
         // Get the d3js SVG element
         var tmp = document.getElementById("mapcontainer");

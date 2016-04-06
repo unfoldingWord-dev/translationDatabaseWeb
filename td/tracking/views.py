@@ -19,7 +19,6 @@ from django.views.generic import (
     View
 )
 
-from td.models import Language
 from .forms import (
     CharterForm,
     EventForm,
@@ -41,6 +40,7 @@ from .models import (
     Output,
     Publication,
 )
+from td.models import Language
 
 from td.utils import DataTableSourceView
 from account.mixins import LoginRequiredMixin
@@ -54,20 +54,6 @@ from extra_views import ModelFormSetView
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
-
-
-class FileDownloadView(LoginRequiredMixin, TemplateView):
-    template_name = "tracking/file_download.html"
-
-
-def downloadPDF(request, file_name):
-    if request.user.is_authenticated():
-        file = open('static/dist/files/{}'.format(file_name), 'rb')
-        response = HttpResponse(file, content_type="application/pdf")
-        response["Content-Disposition"] = "attachment; filename={}".format(file_name)
-        return response
-    else:
-        return HttpResponseRedirect(urlReverse("tracking:project_list"))
 
 
 class CharterTableSourceView(DataTableSourceView):
@@ -134,10 +120,6 @@ class EventTableSourceView(DataTableSourceView):
         )
 
 
-# ------------------------------- #
-#            AJAX VIEWS           #
-# ------------------------------- #
-
 class AjaxCharterListView(CharterTableSourceView):
     model = Charter
     fields = [
@@ -171,9 +153,24 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_url_field = "pk"
 
 
+class FileDownloadView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/file_download.html"
+
+
+def downloadPDF(request, file_name):
+    if request.user.is_authenticated():
+        file = open('static/dist/files/{}'.format(file_name), 'rb')
+        response = HttpResponse(file, content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename={}".format(file_name)
+        return response
+    else:
+        return HttpResponseRedirect(urlReverse("tracking:project_list"))
+
+
 # ---------------------------------- #
 #            CHARTER VIEWS           #
 # ---------------------------------- #
+
 
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
@@ -263,6 +260,7 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 # -------------------------------- #
 #            EVENT VIEWS           #
 # -------------------------------- #
+
 
 class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
@@ -521,6 +519,7 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
 # ---------------------------------- #
 #            SUCCESS VIEWS           #
 # ---------------------------------- #
+
 
 class SuccessView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/charter_add_success.html"

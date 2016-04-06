@@ -9,7 +9,6 @@ from .views import (
     TitleDetailView,
     TitleEditView,
     TitleCreateView,
-    TempLanguageQuestionnaireView,
 )
 
 urlpatterns = [
@@ -21,6 +20,4 @@ urlpatterns = [
     url(r"titles/create/$", TitleCreateView.as_view(), name="title_create"),
     url(r"titles/(?P<slug>[-\w\d]+)/$", TitleDetailView.as_view(), name="title_detail"),
     url(r"titles/(?P<slug>[-\w\d]+)/edit/$", TitleEditView.as_view(), name="title_edit"),
-
-    url(r"^questionnaire/(?P<temp_language>\d+)/$", TempLanguageQuestionnaireView.as_view(), name="templanguage_questionnaire"),
 ]
