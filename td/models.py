@@ -10,7 +10,6 @@ from jsonfield import JSONField
 from model_utils import FieldTracker
 
 from .gl_tracking.models import Document
-# from .resources.models import Questionnaire
 
 
 DIRECTION_CHOICES = (
@@ -89,10 +88,6 @@ class TempLanguage(models.Model):
         # Now match in the answers
         return questions
 
-    # @property
-    # def name(self):
-    #     return self.code
-
     @classmethod
     def pending(cls):
         return cls.objects.filter(status="p")
@@ -104,6 +99,13 @@ class TempLanguage(models.Model):
     @classmethod
     def rejected(cls):
         return cls.objects.filter(status="r")
+
+    @classmethod
+    def lang_assigned_data(cls):
+        print "LANG_ASSIGNED_DATA", cls.objects.all()
+        return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned.ang, "alt": x.lang_assigned.alt_name_all,
+                 "cc": [x.country.code] or [], "lr": x.lang_assigned.lr, "gw": x.lang_assigned.gateway_flag,
+                 "ld": x.get_direction_display()} for x in cls.objects.all()]
 
     @classmethod
     def lang_assigned_map(cls):
@@ -410,16 +412,19 @@ class Language(models.Model):
     def names_data(cls, short=False):
         languages = cls.objects.all().order_by("code")
         if short:
-            data = [
-                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr)
-                for x in languages
-            ]
+            data = [dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr) for x in languages]
         else:
-            data = [
-                dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr, gw=x.gateway_flag,
-                     ld=x.get_direction_display())
-                for x in languages
-            ]
+            # Filter out languages that have pending or rejected temporary language
+            # NOTE: Can this be simplified or turned into a list comprehension?
+            data = []
+            for lang in languages:
+                try:
+                    x = lang if lang.templanguage.status == "a" else None
+                except TempLanguage.DoesNotExist:
+                    x = lang
+                if x:
+                    data.append(dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr,
+                                gw=x.gateway_flag, ld=x.get_direction_display()))
         return data
 
 
