@@ -1,6 +1,5 @@
 from django import forms
 from django.core.urlresolvers import reverse as urlReverse
-from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import gettext as _
 from django.utils.html import escape
 
@@ -333,19 +332,3 @@ def determine_widget(fields, names, limit):
     for name in names:
         fields[name].widget = forms.SelectMultiple() if len(fields[name].queryset) > limit else forms.CheckboxSelectMultiple()
     return fields
-
-
-# ------------------- #
-#    CUSTOM WIDGET    #
-# ------------------- #
-
-
-# Lets the form render empty value for required DateField
-class MySelectDateWidget(SelectDateWidget):
-
-    def create_select(self, *args, **kwargs):
-        old_state = self.is_required
-        self.is_required = False
-        result = super(MySelectDateWidget, self).create_select(*args, **kwargs)
-        self.is_required = old_state
-        return result
