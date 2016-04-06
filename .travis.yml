@@ -2,11 +2,20 @@ language: python
 sudo: false
 python:
   - "2.7"
+
+node_js:
+  - "4"
+
 cache:
   directories:
     - $HOME/.pip-cache/
 install:
   - pip install tox coveralls
+
+before_script:
+  - npm install
+  - npm run build
+
 script:
   - tox -e py${TRAVIS_PYTHON_VERSION//[.]/}
 after_success:

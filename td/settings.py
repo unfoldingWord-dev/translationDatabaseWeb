@@ -159,6 +159,7 @@ INSTALLED_APPS = [
     "td.publishing",
     "td.tracking",
     "td.gl_tracking",
+    "td.api",
 ]
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
@@ -225,6 +226,7 @@ FIXTURE_DIRS = [
 
 # Email settings
 
+TEMPLANGUAGE_NOTIFY_LIST = ["ietf@unfoldingword.org"]
 EMAIL_NOTIFY_LIST = ["publishing@unfoldingword.org"]
 EMAIL_FROM = "uwadmin@unfoldingword.org"
 
