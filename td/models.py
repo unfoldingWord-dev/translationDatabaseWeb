@@ -103,16 +103,17 @@ class TempLanguage(models.Model):
     @classmethod
     def lang_assigned_data(cls):
         return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned.ang, "alt": x.lang_assigned.alt_name_all,
-                 "cc": [x.country.code] or [], "lr": x.lang_assigned.lr, "gw": x.lang_assigned.gateway_flag,
-                 "ld": x.get_direction_display()} for x in cls.objects.all()]
+                 "cc": [x.country.code] if x.country is not None else [], "lr": x.lang_assigned.lr,
+                 "gw": x.lang_assigned.gateway_flag, "ld": x.get_direction_display()} for x in cls.objects.all()]
 
     @classmethod
     def lang_assigned_map(cls):
-        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all()]
+        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all() if x.lang_assigned is not None]
 
     @classmethod
     def lang_assigned_changed_map(cls):
-        return [{x.code: x.lang_assigned.lc} for x in cls.objects.all() if x.code != x.lang_assigned.lc]
+        return [{x.code: x.lang_assigned.lc}
+                for x in cls.objects.all() if x.lang_assigned is not None and x.code != x.lang_assigned.lc]
 
 
 @python_2_unicode_compatible
