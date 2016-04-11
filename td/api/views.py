@@ -14,7 +14,7 @@ def questionnaire_json(request):
     if request.method == "GET":
         # In the future, when we're ready to accommodate translations of the questionnaires, we should iterate through
         #    the queryset and construct the data content appropriately.
-        questionnaire = Questionnaire.objects.latest('created_at')
+        questionnaire = Questionnaire.objects.latest("created_at")
         data = {
             "languages": [
                 {
@@ -30,7 +30,6 @@ def questionnaire_json(request):
     elif request.method == "POST":
         # First pass only. Will need more validation and refactoring
         try:
-            status = ""
             message = ""
             data = request.POST
             questionnaire = Questionnaire.objects.get(pk=data.get("questionnaire_id"))
@@ -42,7 +41,7 @@ def questionnaire_json(request):
 
             for a in json.loads(data.get("answers")):
                 qid = a.get("question_id")
-                if qid and qid in field_mapping:
+                if qid is not None and qid in field_mapping:
                     if field_mapping[qid] == "country":
                         obj.country = Country.objects.get(name__iexact=a["text"])
                     else:
@@ -50,17 +49,10 @@ def questionnaire_json(request):
 
             obj.save()
 
-        except Questionnaire.DoesNotExist:
-            status = "error"
-            message = "questionnaire does not exist"
+        except Exception as e:
+            message = e.message
 
-        except Country.DoesNotExist:
-            # NOTE: what's the best way to handle non-existing country? maybe if it's a selectbox, we don't need
-            #    to check this
-            status = "error"
-            message = "country does not exist"
-
-        return JsonResponse({"status": status or "success", "message": message})
+        return JsonResponse({"status": "error" if message else "success", "message": message or "Request submitted"})
 
 
 def templanguages_json(request):
