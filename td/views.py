@@ -520,7 +520,10 @@ class LanguageDetailView(DetailView):
             'api_key': settings.JP_API_KEY,
             'ROL3': self.object.iso_639_3,
         })
-        jp_status_code = jp_resp.json()['status']['status_code']
+        try:
+            jp_status_code = jp_resp.json()['status']['status_code']
+        except ValueError:
+            jp_status_code = 505
         context.update({
             "country": self.object.country,
             "countries": [Country.objects.get(code=c).name
