@@ -46,7 +46,7 @@ class TempLanguage(models.Model):
     name = models.CharField(max_length=200, blank=True)
     country = models.ForeignKey("Country", on_delete=models.SET_NULL, null=True)
     direction = models.CharField(max_length=1, choices=DIRECTION_CHOICES, default="l")
-    app = models.CharField(max_length=5, choices=APP_CHOICES, blank=True)
+    app = models.CharField(max_length=10, choices=APP_CHOICES, blank=True)
     requester = models.CharField(max_length=100)
     questionnaire = models.ForeignKey("resources.Questionnaire", on_delete=models.PROTECT, null=True)
     answers = JSONField(blank=True)

@@ -21,13 +21,6 @@ class TempLanguageForm(forms.ModelForm):
         widgets = {"code": forms.HiddenInput()}
 
 
-# class TempLanguageAdminForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = TempLanguage
-#         fields = "__all__"
-
-
 class NetworkForm(EntityTrackingForm):
 
     required_css_class = "required"
