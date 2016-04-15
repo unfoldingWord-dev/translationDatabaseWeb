@@ -36,8 +36,8 @@ class QuestionnaireJsonTestCase(TestCase):
             }
         ]
         field_mapping = {"0": "name", "1": "country"}
-        Questionnaire.objects.create(pk=999, language=lang, questions=json.dumps(questions),
-                                     field_mapping=field_mapping)
+        self.questionnaire = Questionnaire.objects.create(pk=999, language=lang, questions=json.dumps(questions),
+                                                          field_mapping=field_mapping)
 
     def test_get(self):
         """
@@ -55,7 +55,7 @@ class QuestionnaireJsonTestCase(TestCase):
         data = {
             "request_id": uuid.uuid1(),
             "temp_code": "qaa-x-abcdef",
-            "questionnaire_id": 999,
+            "questionnaire_id": self.questionnaire.id,
             "app": "ts-android",
             "requester": "test requester",
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "narnia"}])
@@ -77,7 +77,7 @@ class QuestionnaireJsonTestCase(TestCase):
         data = {
             "request_id": uuid.uuid1(),
             "temp_code": "qaa-x-abcdef",
-            "questionnaire_id": 999,
+            "questionnaire_id": self.questionnaire.id,
             "app": "ts-android",
             "requester": "test requester",
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "oz"}])
@@ -114,7 +114,7 @@ class QuestionnaireJsonTestCase(TestCase):
         """
         data = {
             "request_id": uuid.uuid1(),
-            "questionnaire_id": 999,
+            "questionnaire_id": self.questionnaire.id,
             "temp_code": "qaa-x-abcdef",
             "requester": "test requester",
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "narnia"}])
