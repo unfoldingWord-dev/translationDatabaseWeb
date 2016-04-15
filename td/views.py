@@ -523,7 +523,7 @@ class LanguageDetailView(DetailView):
         try:
             jp_status_code = jp_resp.json()['status']['status_code']
         except ValueError:
-            jp_status_code = 505
+            jp_status_code = 204
         context.update({
             "country": self.object.country,
             "countries": [Country.objects.get(code=c).name

@@ -1,5 +1,6 @@
 import importlib
 import re
+import requests
 
 from mock import patch, Mock
 
@@ -9,10 +10,10 @@ from django.conf import settings
 
 from djcelery.tests.req import RequestFactory
 
-from td.models import TempLanguage
+from td.models import TempLanguage, Language
 from td.resources.models import Questionnaire
 from td.views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
-    TempLanguageAdminView, TempLanguageWizardView
+    TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView
 from td.forms import TempLanguageForm
 
 
@@ -35,6 +36,33 @@ def create_user():
         email="test@gmail.com",
         password="test_password",
     )
+
+
+class LanguageDetailViewTestCase(TestCase):
+    def setUp(self):
+        self.request = RequestFactory().get("uw/languages/")
+        self.request.user = create_user()
+        self.view = setup_view(LanguageDetailView(), self.request)
+        self.view.object = Language.objects.create(pk=999, code="tst", name="test")
+
+    @patch("td.views.requests")
+    def test_get_context_data(self, mock_requests):
+        mock_requests.get.return_value.status_code = 505
+        context = self.view.get_context_data()
+        self.assertIn("jp_status_code", context)
+        self.assertIn("jp", context)
+        self.assertIn("language", context)
+        self.assertIn("countries", context)
+        self.assertIn("country", context)
+
+    @patch("td.views.requests")
+    def test_get_context_data_error(self, mock_requests):
+        mock_response = requests.Response()
+        mock_response._content = "this should will throw an error when json tries to decode"
+        mock_requests.get.return_value = mock_response
+        context = self.view.get_context_data()
+        self.assertEqual(context["jp_status_code"], "204")
+        self.assertIsNone(context["jp"])
 
 
 class TempLanguageListViewTestCase(TestCase):
