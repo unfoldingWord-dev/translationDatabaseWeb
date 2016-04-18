@@ -23,7 +23,7 @@
             {{ form|bootstrap }}
         </div>
         <div class="modal-footer">
-            <button name="cancel" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+            <a name="cancel" class="btn btn-default pull-left" data-dismiss="modal">Cancel</a>
             <button type="submit" class="btn btn-primary pull-right">{% if form.errors %}Try again{% else %}Save{% endif %}</button>
         </div>
     </form>
