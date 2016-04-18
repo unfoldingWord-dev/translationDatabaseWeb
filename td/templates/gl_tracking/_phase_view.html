@@ -84,9 +84,9 @@
                 <!-- PANEL/TABLE BODY -->
                 <div id="{{ language.code }}" class="panel-body language-panel-body collapse">
                     {% if phase == "1" %}
-                        {% include "gl_tracking/_language_doc_table.html" with region=language.wa_region documents=language.documents_phase_1 can_edit=can_edit %}
+                        {% include "gl_tracking/_language_doc_table.html" with region=language.wa_region.slug documents=language.documents_phase_1 can_edit=can_edit %}
                     {% elif phase == "2" %}
-                        {% include "gl_tracking/_language_doc_table.html" with region=language.wa_region documents=language.documents_phase_2 can_edit=can_edit %}
+                        {% include "gl_tracking/_language_doc_table.html" with region=language.wa_region.slug documents=language.documents_phase_2 can_edit=can_edit %}
                     {% endif %}
                 </div>
 
