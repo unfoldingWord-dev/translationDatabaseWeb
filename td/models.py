@@ -332,9 +332,7 @@ class Language(models.Model):
 
     @property
     def lr(self):
-        if self.country and self.country.region:
-            return self.country.region.name.encode("utf-8")
-        return ""
+        return self.country.region.name.encode("utf-8") if self.country and self.country.region else ""
 
     @property
     def lc(self):
@@ -350,33 +348,19 @@ class Language(models.Model):
 
     @property
     def progress_phase_1(self):
-        total = 0.0
-        doc_num = Document.objects.filter(category__phase__number="1").count()
-        if doc_num == 0:
-            return total
-        for doc in self.progress_set.filter(type__category__phase__number="1"):
-            if type(doc.completion_rate) == int:
-                total = total + doc.completion_rate
-        return round(total / doc_num, 2)
+        return self.get_progress("1")
 
     @property
     def progress_phase_2(self):
-        total = 0.0
-        doc_num = Document.objects.filter(category__phase__number="2").count()
-        if doc_num == 0:
-            return total
-        for doc in self.progress_set.filter(type__category__phase__number="2"):
-            if type(doc.completion_rate) == int:
-                total = total + doc.completion_rate
-        return round(total / doc_num, 2)
+        return self.get_progress("2")
 
     @property
     def documents_phase_1(self):
-        return self.progress_set.filter(type__category__phase__number="1")
+        return self.get_documents("1")
 
     @property
     def documents_phase_2(self):
-        return self.progress_set.filter(type__category__phase__number="2")
+        return self.get_documents("2")
 
     @property
     def documents_ordered(self):
@@ -393,6 +377,18 @@ class Language(models.Model):
                                         .values_list("value", flat=True)]
         alt_names = LanguageAltName.objects.filter(pk__in=pks)
         return [n.name.encode("utf-8") for n in alt_names]
+
+    def get_progress(self, phase):
+        words = 0.0
+        total_words = Document.total_words()
+        for progress in self.get_documents(phase):
+            word_count = progress.type.words
+            if type(progress.completion_rate) == int:
+                words += (float(progress.completion_rate) / 100 * word_count)
+        return round((words / total_words) * 100, 2) if total_words != 0 else 0.0
+
+    def get_documents(self, phase):
+        return self.progress_set.filter(type__category__phase__number=str(phase))
 
     @classmethod
     def codes_text(cls):
