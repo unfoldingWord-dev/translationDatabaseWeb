@@ -25,22 +25,21 @@ class PhaseView(LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         """
-        Overriden to allow POST and avoid error when doing so.
-        POST will be the default method of calling this view.
+        Overridden to allow POST and avoid error when doing so. POST will be the default method of calling this view.
         """
         context = self.get_context_data()
         return self.render_to_response(context)
 
     def get_context_data(self, *args, **kwargs):
         context = super(PhaseView, self).get_context_data(**kwargs)
-        #
-        regions = map_gls(Language.objects.filter(gateway_flag=True, variant_of=None))
+        phase = self.request.POST["phase"]
+        regions = map_gls(Language.objects.filter(gateway_flag=True, variant_of=None), phase)
         for key, region in regions.iteritems():
-            region["regional_progress"] = get_regional_progress(region["gateway_languages"], self.request.POST["phase"])
-        #
-        context["phase"] = self.request.POST["phase"]
+            region["regional_progress"] = get_regional_progress(region["gateway_languages"])
+
+        context["phase"] = phase
         context["regions"] = regions
-        context["overall_progress"] = get_overall_progress(context["regions"])
+        context["overall_progress"] = get_overall_progress(regions)
         context["can_edit"] = get_edit_privilege(self.request.user)
 
         return context
@@ -52,8 +51,7 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         """
-        Overriden to allow POST and avoid error when doing so.
-        POST will be the default method of calling this view.
+        Overridden to allow POST and avoid error when doing so. POST will be the default method of calling this view.
         """
         context = self.get_context_data()
         return self.render_to_response(context)
@@ -168,48 +166,24 @@ class AjaxPartnerListView(LoginRequiredMixin, DataTableSourceView):
 #    CUSTOM FUNCTIONS    #
 # ---------------------- #
 
-def map_gls(gls):
-    regions = {}
-    for lang in gls:
-        region = lang.wa_region
-        if region:
-            if region.slug not in regions:
-                regions[region.slug] = {"name": region.name}
-                regions[region.slug]["gateway_languages"] = []
-            regions[region.slug]["gateway_languages"].append(lang)
-        else:
-            if "unknown" not in regions:
-                regions["unknown"] = {"name": "Unknown"}
-                regions["unknown"]["gateway_languages"] = []
-            regions["unknown"]["gateway_languages"].append(lang)
+def map_gls(gls, phase):
+    regions = dict(map(lambda x: (x.slug, {"name": x.name, "gateway_languages": []}), WARegion.objects.all()))
+    regions.update({None: {"name": "Unknown", "gateway_languages": []}})
+    for l in gls:
+        regions[l.wa_region.slug]["gateway_languages"].append({"language": l, "progress": l.get_progress(phase)})
     return regions
 
 
-def get_regional_progress(gateway_languages, phase):
-    total = 0.0
-    count = 0
-    for lang in gateway_languages:
-        count = count + 1
-        if phase == "1":
-            total += lang.progress_phase_1
-        elif phase == "2":
-            total += lang.progress_phase_2
-    if count:
-        return round(total / count, 2)
-    else:
-        return 0.0
+def get_regional_progress(gateway_languages):
+    total = sum(map(lambda x: x.get("progress"), gateway_languages))
+    count = len(gateway_languages)
+    return round(total / count, 2) if count > 0 else 0.0
 
 
 def get_overall_progress(regions):
-    total = 0.0
-    count = 0
-    for key, region in regions.iteritems():
-        count += 1
-        total += region["regional_progress"]
-    if count:
-        return round(total / count, 2)
-    else:
-        return 0.0
+    total = sum(map(lambda x: regions.get(x, {}).get("regional_progress"), regions))
+    count = len(regions)
+    return round(total / count, 2) if count > 0 else 0.0
 
 
 def get_edit_privilege(user):
