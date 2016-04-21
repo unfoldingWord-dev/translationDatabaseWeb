@@ -19,56 +19,20 @@ CHECKING_LEVEL = (
 # ------------- #
 class Charter(models.Model):
 
-    language = models.OneToOneField(
-        Language,
-        unique=True,
-        verbose_name="Target Language",
-    )
-    countries = models.ManyToManyField(
-        Country,
-        verbose_name="Countries that speak this language",
-        help_text="Hold Ctrl while clicking to select multiple countries",
-    )
-    start_date = models.DateField(
-        verbose_name="Start Date",
-    )
-    end_date = models.DateField(
-        verbose_name="Projected Completion Date",
-    )
-    number = models.CharField(
-        max_length=10,
-        verbose_name="Project Accounting Number",
-        blank=True,
-        default="",
-    )
-    lead_dept = models.ForeignKey(
-        "Department",
-        verbose_name="Lead Department",
-    )
-    contact_person = models.CharField(
-        max_length=200,
-        verbose_name="Follow-up Person",
-    )
-    partner = models.ForeignKey(
-        "gl_tracking.Partner",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    created_at = models.DateTimeField(
-        default=timezone.now,
-    )
-    created_by = models.CharField(
-        max_length=200,
-    )
-    modified_at = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-    modified_by = models.CharField(
-        max_length=200,
-        blank=True,
-    )
+    language = models.OneToOneField(Language, unique=True, verbose_name="Target Language")
+    new_start = models.BooleanField(default=False)
+    countries = models.ManyToManyField(Country, verbose_name="Countries that speak this language",
+                                       help_text="Hold Ctrl while clicking to select multiple countries")
+    start_date = models.DateField(verbose_name="Start Date")
+    end_date = models.DateField(verbose_name="Projected Completion Date")
+    number = models.CharField(max_length=10, verbose_name="Project Accounting Number", blank=True, default="")
+    lead_dept = models.ForeignKey("Department", verbose_name="Lead Department")
+    contact_person = models.CharField(max_length=200, verbose_name="Follow-up Person")
+    partner = models.ForeignKey("gl_tracking.Partner", blank=True, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(default=timezone.now)
+    created_by = models.CharField(max_length=200)
+    modified_at = models.DateTimeField(null=True, blank=True)
+    modified_by = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin

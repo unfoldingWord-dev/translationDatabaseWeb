@@ -8,7 +8,8 @@
         <div class="panel-body no-padding charter-table collapse in">
             <table class="table table-no-border no-margin">
                 <tbody>
-                    <tr><th class="col-md-2">Start Date</th><td>{{ data.start_date|default:"-" }}</td></tr>
+                    <tr><th class="col-md-2">New Start</th><td>{{ data.new_start|yesno|capfirst }}</td></tr>
+                    <tr><th>Start Date</th><td>{{ data.start_date|default:"-" }}</td></tr>
                     <tr><th>Completion Date</th><td>{{ data.end_date|default:"-" }}</td></tr>
                     <tr><th>Lead Department</th><td>{{ data.lead_dept|default:"-" }}</td></tr>
                     <tr><th>Contact Person</th><td>{{ data.contact_person|default:"-" }}</td></tr>
