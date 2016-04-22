@@ -53,9 +53,15 @@ class Document(models.Model):
     code = models.SlugField(max_length=10, unique=True, default='')
     description = models.TextField(blank=True)
     category = models.ForeignKey('DocumentCategory', null=True)
+    words = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def total_words(cls):
+        return sum(cls.objects.filter(is_active=True).values_list("words", flat=True))
 
 
 # -------------- #
