@@ -12002,6 +12002,12 @@ label.required:after {
 .center-text {
   text-align: center;
 }
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  width: auto;
+}
 .giant-search-input {
   width: 20rem;
   display: inline;
@@ -12050,4 +12056,149 @@ label.required:after {
 .form-group.flex > div .btn {
   flex: 0;
   margin-right: 1rem;
+}
+.charter-form .form-notice-container {
+  padding: 1rem;
+  margin-bottom: 2rem;
+  background-color: rgba(0, 0, 0, 0.075);
+  border-radius: 5px;
+}
+.charter-form .form-notice {
+  font-weight: lighter;
+}
+.language-detail .center-text {
+  text-align: center;
+}
+.language-detail .top-right-spaced {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+.language-detail .jumbotron.jumbotron-custom {
+  margin-top: 20px;
+  position: relative;
+}
+.language-detail .language-title {
+  margin-bottom: 20px;
+}
+.language-detail .nav.nav-tabs.view-tabs .active a {
+  background-color: #EEE;
+}
+.language-detail .multi-view-container {
+  min-height: 200px;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  position: relative;
+}
+.language-detail .multi-view-container > div {
+  min-height: 100%;
+}
+.language-detail .table-no-border tbody > tr > th,
+.language-detail .table-no-border tbody > tr > td {
+  border-top: none;
+  border-bottom: 1px solid #DDD;
+}
+.language-detail .table-no-border tbody > tr:last-child > th,
+.language-detail .table-no-border tbody > tr:last-child > td {
+  border: none;
+}
+.language-detail .panel-title {
+  display: inline;
+  margin-right: 1rem;
+}
+.language-detail .no-padding {
+  padding: 0;
+}
+.language-detail .no-margin {
+  margin: 0;
+}
+.language-detail .empty-div-overlay {
+  text-align: center;
+}
+.language-detail .empty-div-msg {
+  padding: 2rem 0;
+  color: #AAA;
+}
+.multi-charter-event-form form .form-group::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.multi-charter-event-form .entry .form-group {
+  margin-bottom: 0;
+}
+.multi-charter-event-form .entry {
+  margin-bottom: 15px;
+}
+.multi-charter-event-form .control-label-sub {
+  font-size: 90%;
+  font-weight: 300;
+  color: #444;
+}
+.multi-charter-event-form .full-width {
+  width: 100%;
+}
+.multi-charter-event-form .half-width {
+  width: 50%;
+}
+.multi-charter-event-form .quarter-width {
+  width: 25%;
+}
+.multi-charter-event-form .date-input {
+  width: calc(30.33%);
+  display: inline-block;
+  float: left;
+  margin-right: 3px;
+}
+.multi-charter-event-form .date-input:last-child {
+  width: 33.33%;
+  margin-right: 0;
+}
+.multi-charter-event-form .inline div,
+.multi-charter-event-form .inline label {
+  display: inline;
+  float: left;
+}
+.multi-charter-event-form .inline-input {
+  margin-top: 0.1rem;
+}
+.multi-charter-event-form .inline input[type="checkbox"].form-control {
+  width: 20px;
+  height: 20px;
+  margin: 7px auto 0 auto;
+}
+.multi-charter-event-form .facilitator-text {
+  width: calc(-40%);
+}
+.multi-charter-event-form .facilitator-checkboxes {
+  width: 140px;
+}
+.multi-charter-event-form .material-text,
+.multi-charter-event-form .translator-text {
+  width: calc(30%);
+}
+.multi-charter-event-form .material-checkboxes,
+.multi-charter-event-form .translator-checkboxes {
+  width: 70px;
+}
+.multi-charter-event-form .btn-add {
+  margin-left: 1rem;
+}
+.multi-charter-event-form input[type="checkbox"] {
+  width: auto;
+  margin: 0 1rem;
+}
+.multi-charter-event-form ul {
+  list-style: none;
+  padding-left: 0;
+}
+.multi-charter-event-form ul > li > label {
+  font-weight: lighter;
+}
+.multi-charter-event-form .form-notice-container {
+  padding: 1rem;
+  margin-bottom: 2rem;
+  background-color: rgba(0, 0, 0, 0.075);
+  border-radius: 5px;
+  font-weight: lighter;
 }
