@@ -17,7 +17,7 @@ class DocumentCategoryAdmin(admin.ModelAdmin):
 
 
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ("code", "name", "description", "category")
+    list_display = ("code", "name", "description", "category", "words")
     list_filter = ("category", )
 
 

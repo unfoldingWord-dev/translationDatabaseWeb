@@ -41,7 +41,8 @@ class CharterResource(resources.ModelResource):
 
     class Meta:
         model = Charter
-        fields = ('id', 'language', 'countries', 'start_date', 'end_date', 'lead_dept', 'number', 'contact_person', 'created_by')
+        fields = ("id", "language", "countries", "start_date", "end_date", "lead_dept", "number", "contact_person",
+                  "new_start", "created_by")
 
 
 class EventResource(resources.ModelResource):
@@ -54,7 +55,7 @@ class EventResource(resources.ModelResource):
 class CharterAdmin(ImportExportModelAdmin):
     resource_class = CharterResource
     fieldsets = [
-        ("General", {"fields": ["language", "countries"]}),
+        ("General", {"fields": ["language", "countries", "new_start"]}),
         ("Timing", {"fields": [("start_date", "end_date")]}),
         ("Internal", {"fields": ["number", "lead_dept", "contact_person", "partner"]}),
         ("Submission Info", {"fields": [("created_at", "created_by"), ("modified_at", "modified_by")]}),
