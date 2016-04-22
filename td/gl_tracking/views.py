@@ -181,6 +181,11 @@ def get_regional_progress(gateway_languages):
 
 
 def get_overall_progress(regions):
+    """
+    Average the regional progress of all regions
+    :param regions: A dictionary of "region_slug": region_data
+    :return: The average of all regional_progress in float
+    """
     total = sum(map(lambda x: regions.get(x, {}).get("regional_progress"), regions))
     count = len(regions)
     return round(total / count, 2) if count > 0 else 0.0
