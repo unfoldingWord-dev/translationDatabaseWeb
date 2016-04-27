@@ -10,9 +10,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = PACKAGE_ROOT
 
-ADMINS = [
-    ("Patrick Altman", "paltman@eldarion.com"),
-]
+ADMINS = []
 
 DEBUG = True
 
