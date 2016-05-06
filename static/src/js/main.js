@@ -10,11 +10,6 @@ require("select2");
 require("datatables");
 require("datatables-bootstrap3-plugin");
 
-// Custom scripts for specific web pages
-require("./homepage.js");
-require("./language_list.js");
-require("./tracking_forms.js");
-
 
 // Custom initialization for select2 language search input
 $.fn.languageSelector = function(options) {
@@ -106,3 +101,8 @@ $(function () {
         $(this).find('i').toggleClass("fa-expand fa-compress");
     });
 });
+
+// Custom scripts for specific web pages
+require("./homepage.js");
+require("./language_list.js");
+require("./tracking_forms.js");

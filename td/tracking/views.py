@@ -19,7 +19,8 @@ from django.views.generic import (
     View
 )
 
-from td.models import Language
+from td.models import Language, WARegion
+from td.utils import wa_financial_year
 from .forms import (
     CharterForm,
     EventForm,
@@ -115,23 +116,9 @@ class EventTableSourceView(DataTableSourceView):
 
     @property
     def filtered_data(self):
-        if self.search_term and len(self.search_term) <= 3:
-            qs = self.queryset.filter(
-                reduce(
-                    operator.or_,
-                    [Q(number__icontains=self.search_term)]
-                )
-            ).order_by("start_date")
-            if qs.count():
-                return qs
-        return self.queryset.filter(
-            reduce(
-                operator.or_,
-                [Q(x) for x in self.filter_predicates]
-            )
-        ).order_by(
-            self.order_by
-        )
+        return self.queryset\
+            .filter(reduce(operator.or_, [Q(x) for x in self.filter_predicates]))\
+            .order_by(self.order_by)
 
 
 # ------------------------------- #
@@ -154,6 +141,22 @@ class AjaxCharterListView(CharterTableSourceView):
     link_column = "language__code"
     link_url_name = "language_detail"
     link_url_field = "lang_id"
+
+
+class AjaxEventListView(EventTableSourceView):
+    model = Event
+    fields = [
+        "charter__language__name",
+        "charter__language__anglicized_name",
+        "number",
+        "location",
+        "start_date",
+        "end_date",
+        "contact_person",
+    ]
+    link_column = "number"
+    link_url_name = "tracking:event_detail"
+    link_url_field = "pk"
 
 
 class AjaxCharterEventsListView(EventTableSourceView):
@@ -267,6 +270,33 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 # -------------------------------- #
 #            EVENT VIEWS           #
 # -------------------------------- #
+
+class EventListView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/event_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EventListView, self).get_context_data(**kwargs)
+        context["count"] = self.get_event_counts()
+        context["fy"] = wa_financial_year()
+        return context
+
+    @staticmethod
+    def get_event_counts():
+        fy = wa_financial_year()
+        return {
+            "overall": {
+                "text": "Total",
+                "count": Event.objects.filter(start_date__range=(fy["current_start"], fy["current_end"])).count()
+            },
+            "regions": [
+                {
+                    "text": region.name,
+                    "count": Event.objects.filter(start_date__range=(fy["current_start"], fy["current_end"]),
+                                                  charter__language__wa_region__slug=region.slug).count()
+                } for region in WARegion.objects.all()
+            ]
+        }
+
 
 class EventAddView(LoginRequiredMixin, CreateView):
     model = Event

@@ -9,6 +9,7 @@ from .views import (
     CharterAddView,
     CharterUpdateView,
     downloadPDF,
+    EventListView,
     EventAddView,
     EventUpdateView,
     EventDetailView,
@@ -21,6 +22,7 @@ from .views import (
     MultiCharterAddView,
     HomeView,
     AjaxCharterPartnerLookup,
+    AjaxEventListView,
 )
 
 
@@ -37,6 +39,7 @@ urlpatterns = [
     url(r"^mc/new/$", MultiCharterAddView.as_view(), name="multi_charter_add"),
 
     # Event
+    url(r"^events/$", EventListView.as_view(), name="event_list"),
     url(r"^event/new/$", EventAddView.as_view(), name="event_add"),
     url(r"^event/new/(?P<pk>\d+)/$", EventAddView.as_view(), name="event_add_specific"),
     url(r"^event/update/(?P<pk>\d+)/$", EventUpdateView.as_view(), name="event_update"),
@@ -49,6 +52,7 @@ urlpatterns = [
     url(r"^ajax/charters/(?P<slug>\w+)/$", AjaxCharterListView.as_view(), name="ajax_wa_region_charter_list"),
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
     url(r"^ajax/charter/partner_lookup/$", AjaxCharterPartnerLookup.as_view(), name="charter_partner_lookup"),
+    url(r"^ajax/events/$", AjaxEventListView.as_view(), name="ajax_event_list"),
 
     # Auto-complete
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),

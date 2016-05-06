@@ -1,5 +1,7 @@
 import operator
 
+from datetime import datetime
+
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
@@ -30,6 +32,20 @@ def svg_to_pdf(svg_data):
     drawing = svgr.finish()
     pdf = renderPDF.drawToString(drawing)
     return pdf
+
+
+def wa_financial_year(year=None, month=None):
+    now = datetime.now().date()
+    month = month or now.month
+    year = year or now.year
+    if month >= 10:
+        year += 1
+    return {
+        "year": str(year)[-2:],
+        "full_year": str(year),
+        "current_start": str(year-1) + "-10-01",
+        "current_end": str(year) + "-09-30"
+    }
 
 
 class DataTableSourceView(View):

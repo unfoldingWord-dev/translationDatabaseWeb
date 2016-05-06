@@ -1,0 +1,63 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block head_title %}Tracking | Events{% endblock %}
+
+
+{% block extra_style %}
+    <style>
+        .btn.btn-primary {
+            margin-top: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body_class %}home event-list{% endblock %}
+
+{% block body_base %}
+    <section class="jumbotron">
+        <div class="container">
+            {% include "_messages.html" %}
+            <h1>Events / Workshops</h1>
+                <a href="{% url "tracking:event_add" %}" class="btn btn-primary large">Add an Event</a>
+                <a href="{% url "tracking:multi_charter_event_add" %}" class="btn btn-primary large">Add a Multi-Charter Event</a>
+        </div>
+    </section>
+
+    <section id="content_body">
+        <div class="container">
+
+            <div class="event-count">
+                <h2>Events started in FY{{ fy.year }}</h2>
+                <div class="event-count-blocks">
+                    <div class="block overall-block"><p class="block-text">{{ count.overall.text }}</p><p class="block-count">{{ count.overall.count }}</p></div>
+                    {% for region in count.regions %}
+                        <div class="block region-block"><p class="block-text">{{ region.text }}</p><p class="block-count">{{ region.count }}</p></div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="event-list-table">
+                <h2>Event List</h2>
+                <hr />
+                <table class="table table-borderless" data-source="{% url "tracking:ajax_event_list" %}" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>Anglicized</th>
+                            <th>Number</th>
+                            <th>Location</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Contact Person</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
