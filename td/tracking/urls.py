@@ -5,6 +5,7 @@ from .views import (
     AjaxCharterEventsListView,
     charters_autocomplete,
     charters_autocomplete_lid,
+    CharterListView,
     CharterAddView,
     CharterUpdateView,
     downloadPDF,
@@ -26,9 +27,10 @@ from .views import (
 urlpatterns = [
 
     # Home
-    url(r"^$", HomeView.as_view(), name="project_list"),
+    url(r"^$", HomeView.as_view(), name="home"),
 
     # Charter
+    url(r"^charters/$", CharterListView.as_view(), name="project_list"),
     url(r"^charter/new/$", CharterAddView.as_view(), name="charter_add"),
     url(r"^charter/new/(?P<pk>\d+)/$", CharterAddView.as_view(), name="charter_add_specific"),
     url(r"^charter/update/(?P<pk>\d+)/$", CharterUpdateView.as_view(), name="charter_update"),

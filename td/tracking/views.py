@@ -175,6 +175,10 @@ class AjaxCharterEventsListView(EventTableSourceView):
 #            CHARTER VIEWS           #
 # ---------------------------------- #
 
+class CharterListView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/project_list.html"
+
+
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm

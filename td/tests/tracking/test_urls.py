@@ -6,7 +6,7 @@ class urlPatternsTestCase(TestCase):
 
     def test_home_url_reverse(self):
         url = reverse("tracking:project_list")
-        self.assertEqual(url, "/tracking/")
+        self.assertEqual(url, "/tracking/charters/")
 
     def test_charter_url_reverse(self):
         url = reverse("tracking:charter_add")
