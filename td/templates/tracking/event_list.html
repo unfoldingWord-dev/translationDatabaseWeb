@@ -37,6 +37,7 @@
                         <div class="block region-block"><p class="block-text">{{ region.text }}</p><p class="block-count">{{ region.count }}</p></div>
                     {% endfor %}
                 </div>
+                {% include "tracking/_event_count_form.html" with region_selected="" fy_selected="" %}
             </div>
 
             <div class="event-list-table">

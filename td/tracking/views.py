@@ -1,6 +1,9 @@
 import operator
 import re
 import urlparse
+import calendar
+
+from datetime import datetime
 
 from django import forms
 from django.contrib import messages
@@ -10,6 +13,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.views.generic import (
     CreateView,
     UpdateView,
@@ -20,7 +24,7 @@ from django.views.generic import (
 )
 
 from td.models import Language, WARegion
-from td.utils import wa_financial_year
+from td.utils import wa_financial_year, two_digit_datetime, flatten
 from .forms import (
     CharterForm,
     EventForm,
@@ -174,6 +178,91 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_url_field = "pk"
 
 
+class AjaxEventCountView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/_event_count_table.html"
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super(AjaxEventCountView, self).get_context_data(**kwargs)
+        param = self.kwargs
+        context["months"] = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+        context["data"] = self.count_events(param.get("region"), param.get("fy"), param.get("by_language"))
+        context["monthly_total"] = self.total_by_month(context["data"])
+        return context
+
+    @staticmethod
+    def count_events(region=None, fy=None, by_language=None):
+        # Setup
+        regions = WARegion.objects.all()
+        regions_slug = regions.values_list("slug", flat=True)
+        region_obj = WARegion.objects.get(slug=region) if region in regions_slug else None
+        financial_year = {
+            None: wa_financial_year(),
+            "0": wa_financial_year(),
+            "1": wa_financial_year(datetime.now().date().year+1),
+            "-1": wa_financial_year(datetime.now().date().year-1)
+        }[fy]
+        data = []
+        # If there's a region / If a region is selected, compile a row with counts for event in that region, broken down
+        #    by country
+        if region_obj:
+            for c in region_obj.country_set.all():
+                row = []
+                for month in range(10, 13):
+                    full_year = int(financial_year["full_year"]) - 1
+                    _, end_date = calendar.monthrange(full_year, month)
+                    month_start = "-".join([str(full_year), str(month), "1"])
+                    month_end = "-".join([str(full_year), str(month), str(end_date)])
+                    monthly_count = Event.objects.filter(charter__language__country__code=c.code,
+                                                         start_date__range=(month_start, month_end)).count()
+                    row.append(monthly_count)
+                for month in range(1, 10):
+                    full_year = financial_year["full_year"]
+                    _, end_date = calendar.monthrange(int(full_year), month)
+                    month_start = "-".join([str(full_year), str(month), "1"])
+                    month_end = "-".join([str(full_year), str(month), str(end_date)])
+                    monthly_count = Event.objects.filter(charter__language__country__code=c.code,
+                                                         start_date__range=(month_start, month_end)).count()
+                    row.append(monthly_count)
+                row.append(sum(row))
+                country_link = "<a href=\"" + urlReverse("country_detail", kwargs={"pk": c.pk}) + "\">" + c.name + "</a>"
+                row.insert(0, mark_safe(country_link))
+                data.append(row)
+        # If there's not a region / If overall (or anything else) is selected, compile a row with counts for events in
+        #    each region
+        else:
+            for r in regions:
+                row = []
+                for month in range(10, 13):
+                    full_year = int(financial_year["full_year"]) - 1
+                    _, end_date = calendar.monthrange(full_year, month)
+                    month_start = "-".join([str(full_year), str(month), "1"])
+                    month_end = "-".join([str(full_year), str(month), str(end_date)])
+                    monthly_count = Event.objects.filter(charter__language__wa_region__slug=r.slug,
+                                                         start_date__range=(month_start, month_end)).count()
+                    row.append(monthly_count)
+                for month in range(1, 10):
+                    full_year = financial_year["full_year"]
+                    _, end_date = calendar.monthrange(int(full_year), month)
+                    month_start = "-".join([str(full_year), str(month), "1"])
+                    month_end = "-".join([str(full_year), str(month), str(end_date)])
+                    monthly_count = Event.objects.filter(charter__language__wa_region__slug=r.slug,
+                                                         start_date__range=(month_start, month_end)).count()
+                    row.append(monthly_count)
+                row.append(sum(row))
+                row.insert(0, r.name)
+                data.append(row)
+        return data
+
+    @staticmethod
+    def total_by_month(data):
+        zipped_reduced = reduce(lambda row_1, row_2: zip(row_1, row_2), data)
+        del(zipped_reduced[0])
+        return [reduce(lambda a, b: int(a) + int(b), flatten(t)) for t in zipped_reduced]
+
+
 # ---------------------------------- #
 #            CHARTER VIEWS           #
 # ---------------------------------- #
@@ -278,6 +367,7 @@ class EventListView(LoginRequiredMixin, TemplateView):
         context = super(EventListView, self).get_context_data(**kwargs)
         context["count"] = self.get_event_counts()
         context["fy"] = wa_financial_year()
+        context["regions"] = WARegion.objects.all()
         return context
 
     @staticmethod
@@ -550,6 +640,17 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         else:
             self.request.session["mc-event-success-charters"] = charter_info
             return redirect("tracking:multi_charter_success")
+
+
+class EventCountView(TemplateView):
+    template_name = "tracking/event_count.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EventCountView, self).get_context_data(**kwargs)
+        context["regions"] = WARegion.objects.all()
+        context["region"] = self.request.GET.get("region")
+        context["financial_year"] = self.request.GET.get("financial_year")
+        return context
 
 
 # ---------------------------------- #

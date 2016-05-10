@@ -75,7 +75,8 @@ $.fn.languageSelector = function(options) {
         $el.DataTable({
             serverSide: true,
             ajax: $el.data("source"),
-            stateSave: true
+            stateSave: true,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
         });
     });
 
@@ -106,3 +107,4 @@ $(function () {
 require("./homepage.js");
 require("./language_list.js");
 require("./tracking_forms.js");
+require("./event_count.js");

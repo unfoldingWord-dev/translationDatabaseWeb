@@ -1,4 +1,5 @@
 import operator
+import types
 
 from datetime import datetime
 
@@ -34,6 +35,19 @@ def svg_to_pdf(svg_data):
     return pdf
 
 
+def is_tuple(x):
+    return isinstance(x, types.TupleType)
+
+
+def flatten(t):
+    if not is_tuple(t):
+        return (t, )
+    elif len(t) == 0:
+        return ()
+    else:
+        return flatten(t[0]) + flatten(t[1:])
+
+
 def wa_financial_year(year=None, month=None):
     now = datetime.now().date()
     month = month or now.month
@@ -46,6 +60,10 @@ def wa_financial_year(year=None, month=None):
         "current_start": str(year-1) + "-10-01",
         "current_end": str(year) + "-09-30"
     }
+
+
+def two_digit_datetime(d):
+    return "".join(["0", d])[-2:]
 
 
 class DataTableSourceView(View):
