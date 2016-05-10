@@ -1,0 +1,26 @@
+<div class="event-count-form">
+    <form action="{% url "tracking:event_count" %}" class="form-inline">
+
+        <span>See</span>
+
+        <select name="region" class="form-control input-sm">
+            <option value="overall">overall</option>
+            {% for region in regions %}
+                <option value="{{ region.slug }}" {% if region.slug == region_selected %}selected{% endif %}>{{ region.name|lower }}</option>
+            {% endfor %}
+        </select>
+
+        <span>breakdown for</span>
+
+        <select name="financial_year" class="form-control input-sm">
+            <option value="0" {% if fy_selected == "0" %}selected{% endif %}>this</option>
+            <option value="-1" {% if fy_selected == "-1" %}selected{% endif %}>last</option>
+            <option value="1" {% if fy_selected == "1" %}selected{% endif %}>next</option>
+        </select>
+
+        <span>financial year</span>
+
+        <button id="submit" class="btn btn-primary btn-sm">Go</button>
+
+    </form>
+</div>
