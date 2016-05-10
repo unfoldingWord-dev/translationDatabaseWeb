@@ -1,6 +1,9 @@
 import operator
 import re
 import urlparse
+import calendar
+
+from datetime import datetime
 
 from django import forms
 from django.contrib import messages
@@ -10,6 +13,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.views.generic import (
     CreateView,
     UpdateView,
@@ -20,7 +24,7 @@ from django.views.generic import (
 )
 
 from td.models import Language, WARegion
-from td.utils import wa_financial_year
+from td.utils import get_wa_fy, two_digit_datetime, flatten_tuple, get_event_total, get_event_count
 from .forms import (
     CharterForm,
     EventForm,
@@ -79,6 +83,9 @@ class CharterTableSourceView(DataTableSourceView):
             return Charter.objects.filter(language=self.kwargs["pk"])
         elif "slug" in self.kwargs:
             return Charter.objects.filter(Q(language__wa_region__slug=self.kwargs["slug"]))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Charter.objects.filter(language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
@@ -110,7 +117,12 @@ class EventTableSourceView(DataTableSourceView):
     @property
     def queryset(self):
         if "pk" in self.kwargs:
-            return Event.objects.filter(charter=self.kwargs["pk"])
+            return Event.objects.filter(charter=self.kwargs.get("pk"))
+        elif "wa_region" in self.kwargs:
+            return Event.objects.filter(charter__language__wa_region__slug=self.kwargs.get("wa_region"))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Event.objects.filter(charter__language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
@@ -172,6 +184,31 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_column = "number"
     link_url_name = "tracking:event_detail"
     link_url_field = "pk"
+
+
+class AjaxEventCountView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/_event_count_table.html"
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super(AjaxEventCountView, self).get_context_data(**kwargs)
+        param = self.kwargs
+        # NOTE: Is there a library for this?
+        context["months"] = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+        context["data"] = get_event_count(param.get("mode"), param.get("option"), param.get("fy"))
+        context["monthly_total"] = self.total_by_month(context.get("data"))
+        return context
+
+    @staticmethod
+    def total_by_month(data):
+        # If initializer is not provided and there's only one row in data, zipped_reduced.pop(0) will, somehow, affect
+        # context["data"] - making it lose index 0 as well.
+        initializer = ["", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        zipped_reduced = reduce(lambda row_1, row_2: zip(row_1, row_2), data, initializer)
+        zipped_reduced.pop(0)
+        return [reduce(lambda a, b: int(a) + int(b), flatten_tuple(t)) for t in zipped_reduced]
 
 
 # ---------------------------------- #
@@ -276,26 +313,14 @@ class EventListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
-        context["count"] = self.get_event_counts()
-        context["fy"] = wa_financial_year()
+        context["fy"] = get_wa_fy()
+        context["regions"] = WARegion.objects.all()
+        context["total"] = get_event_total(
+            context.get("fy", {}).get("current_start"),
+            context.get("fy", {}).get("current_end"),
+            context.get("regions")
+        )
         return context
-
-    @staticmethod
-    def get_event_counts():
-        fy = wa_financial_year()
-        return {
-            "overall": {
-                "text": "Total",
-                "count": Event.objects.filter(start_date__range=(fy["current_start"], fy["current_end"])).count()
-            },
-            "regions": [
-                {
-                    "text": region.name,
-                    "count": Event.objects.filter(start_date__range=(fy["current_start"], fy["current_end"]),
-                                                  charter__language__wa_region__slug=region.slug).count()
-                } for region in WARegion.objects.all()
-            ]
-        }
 
 
 class EventAddView(LoginRequiredMixin, CreateView):
@@ -550,6 +575,17 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         else:
             self.request.session["mc-event-success-charters"] = charter_info
             return redirect("tracking:multi_charter_success")
+
+
+class EventCountView(TemplateView):
+    template_name = "tracking/event_count.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EventCountView, self).get_context_data(**kwargs)
+        # context["regions"] = WARegion.objects.all()
+        context["option"] = self.request.GET.get("option")
+        context["fiscal_year"] = self.request.GET.get("fiscal-year")
+        return context
 
 
 # ---------------------------------- #

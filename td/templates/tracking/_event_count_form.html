@@ -1,0 +1,87 @@
+<div class="event-count-form form-inline">
+
+    {% if form_action %}
+        <form action="{{ form_action }}">
+    {% else %}
+        <div class="js-py-data" data-container="{{ container }}" data-option="{{ selected_option }}" data-fiscal-year="{{ selected_fy }}"></div>
+    {% endif %}
+
+        <span>See</span>
+
+        {% if options|length == 1 %}
+            <select id="option" name="option" class="form-control input-sm" disabled>
+        {% else %}
+            <select id="option" name="option" class="form-control input-sm">
+            <option value="overall">overall</option>
+        {% endif %}
+            {% for value, text in options %}
+                <option value="{{ value }}" {% if value == selected_option %}selected{% endif %}>{{ text|lower }}</option>
+            {% endfor %}
+        </select>
+
+        <span>breakdown for</span>
+
+        <select id="fiscalYear" name="fiscal-year" class="form-control input-sm">
+            {% for value, text in fiscal_years %}
+                <option value="{{ value }}" {% if value == selected_fy %}selected{% endif %}>{{ text }}</option>
+            {% endfor %}
+        </select>
+
+        <span>fiscal year</span>
+
+        {% if form_action %}
+            <button id="submit" class="btn btn-primary btn-sm">Go</button>
+        {% endif %}
+
+    {% if form_action %}
+        </form>
+    {% endif %}
+
+</div>
+
+
+<script type="text/javascript">
+
+    // NOTE: How do I put this in a javascript module where it's not bundled into site.js and called by every single
+    // page? Especially the loadTable(), which is identical to initializeEventCountTable() found in
+    // src/_event_count_table.js, imported into src/main.js, bundled into dist/site.js.
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var jsPyData = document.querySelector('.js-py-data');
+        if (jsPyData) {
+            // The presence of <div class="js-py-data"> signifies that this form is going to be submitted through an
+            // ajax call rather than POST form action. Therefore, we'll attach event listeners to the drop-downs so it
+            // knows when to make that call.
+            var dropdowns = document.querySelectorAll('.event-count-form select');
+            var container = document.querySelector(jsPyData.dataset.container);
+            // Abort if, for some reason, the container and the drop-downs cannot be found.
+            if (!container && !dropdowns) {
+                return;
+            }
+            // Attach an event handler that will be called when the value of the dropdowns change.
+            for (var i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].addEventListener('change', function (e) {
+                    // Modify the container data-* attribute before making the ajax call because the initialization
+                    // process is dependent on those values.
+                    container.dataset[e.target.id] = e.target.value;
+                    loadTable(container);
+                });
+            }
+        }
+    });
+
+    // NOTE: This needs to be put in somewhere where it can be called by this page and _event_count_table.js. Maybe in
+    // module/util.js? Maybe it's own module?
+    function loadTable(container) {
+        var mode = container.dataset.mode || 'dashboard',
+            option = container.dataset.option || 'overall',
+            fiscalYear = container.dataset.fiscalYear || '0',
+            ajaxUrl = container.dataset.url + mode + '/' + option + '/' + fiscalYear + '/';
+        $(container).load(ajaxUrl, function(response, status, xhr) {
+            this.html(response);
+            this.find('table.event-count-table').DataTable({
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+        });
+    }
+</script>

@@ -26,6 +26,7 @@ var util = {
         // If event is cancelled, dispatchEvent will return false.
         return s.dispatchEvent(new Event('search'));
     }
+
 };
 
 module.exports = util;
