@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load humanize %}
+{% load show_event_count_form %}
 
 {% block head_title %}Event Count{% endblock %}
 
@@ -17,16 +18,10 @@
         </ol>
         <h2>Event Count</h2>
         <hr />
-        {% include "tracking/_event_count_form.html" with region_selected=region fy_selected=financial_year %}
+        {% show_event_count_form container=".event-count-table-container" selected_region=region selected_fy=financial_year %}
         <hr />
         <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-region="{{ region|default:"" }}" data-financial-year="{{ financial_year|default:"" }}">
             <!-- load table here -->
         </div>
     </div>
-{% endblock %}
-
-{% block custom_bottom_script %}
-    <script>
-
-    </script>
 {% endblock %}

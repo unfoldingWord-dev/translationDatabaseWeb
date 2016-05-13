@@ -11978,6 +11978,21 @@ label.required:after {
 .nav-tabs > li {
   cursor: pointer;
 }
+.table-borderless > tbody > tr > th,
+.table-borderless > tbody > tr > td {
+  border-top: none;
+  border-bottom: 1px solid #DDD;
+}
+.table-borderless > tr:last-child > th,
+.table-borderless > tr:last-child > td {
+  border: none;
+}
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  width: auto;
+}
 .full-width {
   width: 100%;
 }
@@ -12001,12 +12016,6 @@ label.required:after {
 }
 .center-text {
   text-align: center;
-}
-.radio input[type="radio"],
-.radio-inline input[type="radio"],
-.checkbox input[type="checkbox"],
-.checkbox-inline input[type="checkbox"] {
-  width: auto;
 }
 .giant-search-input {
   width: 20rem;
@@ -12257,4 +12266,26 @@ label.required:after {
 .event-count-table .total-cell,
 .event-count-table tfoot tr td {
   background-color: #F8F8F8;
+}
+.wa-region-detail .language-title {
+  margin-bottom: 20px;
+}
+.wa-region-detail .nav.nav-tabs.view-tabs .active a {
+  background-color: #EEE;
+}
+.wa-region-detail .multi-view-container {
+  min-height: 200px;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  position: relative;
+}
+.wa-region-detail .multi-view-container > div {
+  min-height: 100%;
+}
+.wa-region-detail .event-list-table-container h2 {
+  display: inline-block;
+}
+.wa-region-detail .event-list-table-container .event-count-form {
+  display: inline;
+  margin-left: 2rem;
 }

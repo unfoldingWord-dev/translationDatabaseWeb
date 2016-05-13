@@ -107,4 +107,4 @@ $(function () {
 require("./homepage.js");
 require("./language_list.js");
 require("./tracking_forms.js");
-require("./event_count.js");
+require("./_event_count_table.js");

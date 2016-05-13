@@ -1,26 +1,89 @@
-<div class="event-count-form">
-    <form action="{% url "tracking:event_count" %}" class="form-inline">
+<div class="event-count-form form-inline">
+
+    {% if form_action %}
+        <form action="{{ form_action }}">
+    {% else %}
+        <div class="js-py-data" data-container="{{ container }}" data-region="{{ selected_region }}" data-financial-year="{{ selected_fy }}"></div>
+    {% endif %}
 
         <span>See</span>
 
-        <select name="region" class="form-control input-sm">
+        {% if regions|length == 1 %}
+            <select id="region" name="region" class="form-control input-sm" aria-disabled="true" disabled>
+        {% else %}
+            <select id="region" name="region" class="form-control input-sm">
             <option value="overall">overall</option>
+        {% endif %}
             {% for region in regions %}
-                <option value="{{ region.slug }}" {% if region.slug == region_selected %}selected{% endif %}>{{ region.name|lower }}</option>
+                <option value="{{ region.slug }}" {% if region.slug == selected_region %}selected{% endif %}>{{ region.name|lower }}</option>
             {% endfor %}
         </select>
 
         <span>breakdown for</span>
 
-        <select name="financial_year" class="form-control input-sm">
-            <option value="0" {% if fy_selected == "0" %}selected{% endif %}>this</option>
-            <option value="-1" {% if fy_selected == "-1" %}selected{% endif %}>last</option>
-            <option value="1" {% if fy_selected == "1" %}selected{% endif %}>next</option>
+        <select id="financial-year" name="financial-year" class="form-control input-sm">
+            {% for value, text in financial_years %}
+                <option value="{{ value }}" {% if value == selected_fy %}selected{% endif %}>{{ text }}</option>
+            {% endfor %}
         </select>
 
         <span>financial year</span>
 
-        <button id="submit" class="btn btn-primary btn-sm">Go</button>
+        {% if form_action %}
+            <button id="submit" class="btn btn-primary btn-sm">Go</button>
+        {% endif %}
 
-    </form>
+    {% if form_action %}
+        </form>
+    {% endif %}
+
 </div>
+
+
+<script type="text/javascript">
+
+    // NOTE: How do I put this in a javascript module where it's not bundled into site.js and called by every single
+    // page? Especially the loadTable(), which is identical to initializeEventCountTable() found in
+    // src/_event_count_table.js, imported into src/main.js, bundled into dist/site.js.
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var jsPyData = document.querySelector('.js-py-data');
+        if (jsPyData) {
+            // The presence of <div class="js-py-data"> signifies that this form is going to be submitted through an
+            // ajax call rather than POST form action. Therefore, we'll attach event listeners to the drop-downs so it
+            // knows when to make that call.
+            var dropdowns = document.querySelectorAll('select');
+            var container = document.querySelector(jsPyData.dataset.container);
+            // Abort if, for some reason, the container and the drop-downs cannot be found.
+            if (!container && !dropdowns) {
+                return;
+            }
+            // Attach an event handler that will be called when the value of the dropdowns change.
+            for (var i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].addEventListener('change', function (e) {
+                    // Modify the container data-* attribute before making the ajax call because the initialization
+                    // process is dependent on those values.
+                    if (e.target.id == "region") {
+                        container.dataset.region = e.target.value;
+                    }
+                    else {
+                        container.dataset.financialYear = e.target.value;
+                    }
+                    loadTable(container);
+                });
+            }
+        }
+    });
+
+    // NOTE: This needs to be put in somewhere where it can be called by this page and _event_count_table.js. Maybe in
+    // module/util.js? Maybe it's own module?
+    function loadTable(container) {
+        var ajaxUrl = container.dataset.url + (container.dataset.region || "overall") + '/' + (container.dataset.financialYear || "0") + '/';
+        $(container).load(ajaxUrl, function(response, status, xhr) {
+            this.html(response);
+            this.find('table.event-count-table').DataTable({
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+        });
+    }
+</script>

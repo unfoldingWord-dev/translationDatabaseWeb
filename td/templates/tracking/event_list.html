@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load humanize %}
+{% load show_event_count_form %}
 
 {% block head_title %}Tracking | Events{% endblock %}
 
@@ -32,12 +33,13 @@
             <div class="event-count">
                 <h2>Events started in FY{{ fy.year }}</h2>
                 <div class="event-count-blocks">
-                    <div class="block overall-block"><p class="block-text">{{ count.overall.text }}</p><p class="block-count">{{ count.overall.count }}</p></div>
-                    {% for region in count.regions %}
-                        <div class="block region-block"><p class="block-text">{{ region.text }}</p><p class="block-count">{{ region.count }}</p></div>
+                    {% for entry in total %}
+                        <div class="block {% if entry.text == "Total" %}overall-block{% else %}region-block{% endif %}">
+                            <p class="block-text">{{ entry.text }}</p><p class="block-count">{{ entry.count }}</p>
+                        </div>
                     {% endfor %}
                 </div>
-                {% include "tracking/_event_count_form.html" with region_selected="" fy_selected="" %}
+                {% show_event_count_form %}
             </div>
 
             <div class="event-list-table">

@@ -56,6 +56,7 @@ urlpatterns = [
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
     url(r"^ajax/charter/partner_lookup/$", AjaxCharterPartnerLookup.as_view(), name="charter_partner_lookup"),
     url(r"^ajax/event/$", AjaxEventListView.as_view(), name="ajax_event_list"),
+    url(r"^ajax/event/(?P<wa_region>\w+)/$", AjaxEventListView.as_view(), name="ajax_event_list"),
     url(r"^ajax/event/count/$", AjaxEventCountView.as_view(), name="ajax_event_count"),
     url(r"^ajax/event/count/(?P<region>\w+)/(?P<fy>0|-?1)/$", AjaxEventCountView.as_view(), name="ajax_event_count"),
 
