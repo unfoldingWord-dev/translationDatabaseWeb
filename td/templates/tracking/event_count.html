@@ -18,9 +18,9 @@
         </ol>
         <h2>Event Count</h2>
         <hr />
-        {% show_event_count_form container=".event-count-table-container" selected_region=region selected_fy=financial_year %}
+        {% show_event_count_form container=".event-count-table-container" selected_option=option selected_fy=fiscal_year %}
         <hr />
-        <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-region="{{ region|default:"" }}" data-financial-year="{{ financial_year|default:"" }}">
+        <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="dashboard" data-option="{{ option|default:"" }}" data-fiscal-year="{{ fiscal_year|default:"" }}">
             <!-- load table here -->
         </div>
     </div>

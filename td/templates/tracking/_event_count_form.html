@@ -3,31 +3,31 @@
     {% if form_action %}
         <form action="{{ form_action }}">
     {% else %}
-        <div class="js-py-data" data-container="{{ container }}" data-region="{{ selected_region }}" data-financial-year="{{ selected_fy }}"></div>
+        <div class="js-py-data" data-container="{{ container }}" data-option="{{ selected_option }}" data-fiscal-year="{{ selected_fy }}"></div>
     {% endif %}
 
         <span>See</span>
 
-        {% if regions|length == 1 %}
-            <select id="region" name="region" class="form-control input-sm" aria-disabled="true" disabled>
+        {% if options|length == 1 %}
+            <select id="option" name="option" class="form-control input-sm" disabled>
         {% else %}
-            <select id="region" name="region" class="form-control input-sm">
+            <select id="option" name="option" class="form-control input-sm">
             <option value="overall">overall</option>
         {% endif %}
-            {% for region in regions %}
-                <option value="{{ region.slug }}" {% if region.slug == selected_region %}selected{% endif %}>{{ region.name|lower }}</option>
+            {% for value, text in options %}
+                <option value="{{ value }}" {% if value == selected_option %}selected{% endif %}>{{ text|lower }}</option>
             {% endfor %}
         </select>
 
         <span>breakdown for</span>
 
-        <select id="financial-year" name="financial-year" class="form-control input-sm">
-            {% for value, text in financial_years %}
+        <select id="fiscalYear" name="fiscal-year" class="form-control input-sm">
+            {% for value, text in fiscal_years %}
                 <option value="{{ value }}" {% if value == selected_fy %}selected{% endif %}>{{ text }}</option>
             {% endfor %}
         </select>
 
-        <span>financial year</span>
+        <span>fiscal year</span>
 
         {% if form_action %}
             <button id="submit" class="btn btn-primary btn-sm">Go</button>
@@ -52,7 +52,7 @@
             // The presence of <div class="js-py-data"> signifies that this form is going to be submitted through an
             // ajax call rather than POST form action. Therefore, we'll attach event listeners to the drop-downs so it
             // knows when to make that call.
-            var dropdowns = document.querySelectorAll('select');
+            var dropdowns = document.querySelectorAll('.event-count-form select');
             var container = document.querySelector(jsPyData.dataset.container);
             // Abort if, for some reason, the container and the drop-downs cannot be found.
             if (!container && !dropdowns) {
@@ -63,12 +63,7 @@
                 dropdowns[i].addEventListener('change', function (e) {
                     // Modify the container data-* attribute before making the ajax call because the initialization
                     // process is dependent on those values.
-                    if (e.target.id == "region") {
-                        container.dataset.region = e.target.value;
-                    }
-                    else {
-                        container.dataset.financialYear = e.target.value;
-                    }
+                    container.dataset[e.target.id] = e.target.value;
                     loadTable(container);
                 });
             }
@@ -78,7 +73,10 @@
     // NOTE: This needs to be put in somewhere where it can be called by this page and _event_count_table.js. Maybe in
     // module/util.js? Maybe it's own module?
     function loadTable(container) {
-        var ajaxUrl = container.dataset.url + (container.dataset.region || "overall") + '/' + (container.dataset.financialYear || "0") + '/';
+        var mode = container.dataset.mode || 'dashboard',
+            option = container.dataset.option || 'overall',
+            fiscalYear = container.dataset.fiscalYear || '0',
+            ajaxUrl = container.dataset.url + mode + '/' + option + '/' + fiscalYear + '/';
         $(container).load(ajaxUrl, function(response, status, xhr) {
             this.html(response);
             this.find('table.event-count-table').DataTable({

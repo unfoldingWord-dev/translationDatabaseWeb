@@ -17,7 +17,7 @@ from xml.dom import minidom
 from svglib.svglib import SvgRenderer
 from reportlab.graphics import renderPDF
 
-from td.models import WARegion
+from td.models import WARegion, Country, Language
 from td.tracking.models import Event
 
 
@@ -76,7 +76,7 @@ def get_event_total(start=None, end=None, regions=None):
     return total_count
 
 
-def get_event_count(region="", fy=0):
+def get_event_count(mode="dashboard", option="overall", fy=0):
     """
     Get the event count for all WA regions or all countries within a WA region within the specified financial year.
     :param region: The slug of the desired WA region. If not provided, it do the count by regions instead of by country.
@@ -84,32 +84,49 @@ def get_event_count(region="", fy=0):
                -1 for the last, 3 for three financial years ahead, etc.
     :return: A two-dimensional list with each second-dimension list represent a row entry in the table.
     """
-    regions = WARegion.objects.all()
-    region_obj = WARegion.objects.get(slug=region) if region in regions.values_list("slug", flat=True) else None
-    financial_year = get_wa_fy(datetime.now().date().year + int(fy))
+    is_region = False
+    if mode == "dashboard":
+        if option == "overall":
+            obj_list = WARegion.objects.all()
+            is_region = True
+        else:
+            obj_list = WARegion.objects.get(slug__iexact=option).country_set.all()
+    elif mode == "region":
+        obj_list = WARegion.objects.get(slug__iexact=option).country_set.all()
+    elif mode == "country":
+        obj_list = Country.objects.get(code__iexact=option).language_set.all()
+    elif mode == "language":
+        obj_list = Language.objects.filter(code__iexact=option)
+    #
+    fiscal_year = get_wa_fy(datetime.now().date().year + int(fy))
 
     data = []
-    for x in region_obj.country_set.all() if region_obj else regions:
+    for x in obj_list:
         row = []
         # WA financial year starts from October to September of the next year (or October of last year to September of
         # the current year)
         for month in range(10, 13) + range(1, 10):
             # Decide what to look for. The presence of region_obj indicates that we're looking for the countries in said
-            # region, while the absence of it indicates that we're looking for regions.
-            term = x.code if region_obj else x.slug
-            row.append(_get_monthly_event_counts(financial_year.get("full_year"), month, "country", term))
+            # region by looking up its code, while the absence of it indicates that we're looking for regions by its
+            # slug.
+            # term = x.code if region_obj else x.slug
+            term = x.slug if is_region else x.code
+            row.append(_get_monthly_event_counts(fiscal_year.get("full_year"), month, mode, term))
         # Total the count and attach it to the tail
         row.append(sum(row))
         # Decide what to link to. The presence of region_obj indicates that the row contains the count by country, while
         # the absence of it indicates the row contains region information.
-        url = reverse("country_detail", kwargs={"pk": x.pk}) if region_obj else reverse("wa_region_detail", kwargs={"slug": x.slug})
+        # url = reverse("country_detail", kwargs={"pk": x.pk}) if region_obj else reverse("wa_region_detail", kwargs={"slug": x.slug})
+        url = reverse("wa_region_detail", kwargs={"slug": x.slug}) if mode == "dashboard" else \
+            reverse("country_detail", kwargs={"pk": x.pk}) if mode == "region" else\
+            reverse("language_detail", kwargs={"pk": x.pk}) if mode == "country" or mode == "language" else ""
         row.insert(0, mark_safe("<a href=\"" + url + "\">" + x.name + "</a>"))
         # Attach the link to the beginning of the row
         data.append(row)
     return data
 
 
-def _get_monthly_event_counts(fy, month, model, term):
+def _get_monthly_event_counts(fy, month, mode, term):
     """
     Retrieve the count of events in a given month of a given financial year.
     :param fy: The financial year to lookup
@@ -128,9 +145,13 @@ def _get_monthly_event_counts(fy, month, model, term):
     month_end = "-".join([str(year), str(month), str(end_date)])
     # Return the count based on the designated range, model, and term.
     events = Event.objects.filter(start_date__range=(month_start, month_end))
-    if model.lower() == "country":
+    if mode.lower() == "language":
+        return events.filter(charter__language__code=term).count()
+    if mode.lower() == "country":
+        return events.filter(charter__language__code=term).count()
+    elif mode.lower() == "region":
         return events.filter(charter__language__country__code=term).count()
-    elif model.lower() == "region":
+    elif mode.lower() == "dashboard":
         return events.filter(charter__language__wa_region__slug=term).count()
     else:
         return 0

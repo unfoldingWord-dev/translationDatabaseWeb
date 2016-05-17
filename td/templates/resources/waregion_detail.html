@@ -4,7 +4,7 @@
 {% load show_event_count_form %}
 
 
-{% block head_title %}WA Region{% endblock %}
+{% block head_title %}WA Region Detail{% endblock %}
 
 
 {% block body_class %}wa-region-detail{% endblock %}
@@ -110,7 +110,7 @@
                 {% show_event_count_form container=".event-count-table-container" %}
                 <hr />
                 <div class="tab-content">
-                    <div id="this-fy-view" class="event-count-table-container tab-pane active" data-url="{% url "tracking:ajax_event_count" %}" data-region="africa" data-financial-year="0">
+                    <div class="event-count-table-container tab-pane active" data-url="{% url "tracking:ajax_event_count" %}" data-mode="region" data-option="{{ wa_region.slug }}" data-financial-year="0">
                         <!-- load table here -->
                     </div>
                 </div>

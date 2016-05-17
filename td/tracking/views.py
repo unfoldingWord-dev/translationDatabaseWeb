@@ -83,6 +83,9 @@ class CharterTableSourceView(DataTableSourceView):
             return Charter.objects.filter(language=self.kwargs["pk"])
         elif "slug" in self.kwargs:
             return Charter.objects.filter(Q(language__wa_region__slug=self.kwargs["slug"]))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Charter.objects.filter(language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
@@ -117,6 +120,9 @@ class EventTableSourceView(DataTableSourceView):
             return Event.objects.filter(charter=self.kwargs.get("pk"))
         elif "wa_region" in self.kwargs:
             return Event.objects.filter(charter__language__wa_region__slug=self.kwargs.get("wa_region"))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Event.objects.filter(charter__language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
@@ -191,14 +197,17 @@ class AjaxEventCountView(LoginRequiredMixin, TemplateView):
         param = self.kwargs
         # NOTE: Is there a library for this?
         context["months"] = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-        context["data"] = get_event_count(param.get("region"), param.get("fy"))
+        context["data"] = get_event_count(param.get("mode"), param.get("option"), param.get("fy"))
         context["monthly_total"] = self.total_by_month(context.get("data"))
         return context
 
     @staticmethod
     def total_by_month(data):
-        zipped_reduced = reduce(lambda row_1, row_2: zip(row_1, row_2), data)
-        del(zipped_reduced[0])
+        # If initializer is not provided and there's only one row in data, zipped_reduced.pop(0) will, somehow, affect
+        # context["data"] - making it lose index 0 as well.
+        initializer = ["", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        zipped_reduced = reduce(lambda row_1, row_2: zip(row_1, row_2), data, initializer)
+        zipped_reduced.pop(0)
         return [reduce(lambda a, b: int(a) + int(b), flatten_tuple(t)) for t in zipped_reduced]
 
 
@@ -573,9 +582,9 @@ class EventCountView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EventCountView, self).get_context_data(**kwargs)
-        context["regions"] = WARegion.objects.all()
-        context["region"] = self.request.GET.get("region")
-        context["financial_year"] = self.request.GET.get("financial-year")
+        # context["regions"] = WARegion.objects.all()
+        context["option"] = self.request.GET.get("option")
+        context["fiscal_year"] = self.request.GET.get("fiscal-year")
         return context
 
 

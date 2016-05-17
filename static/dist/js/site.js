@@ -50266,15 +50266,6 @@
 	        return s.dispatchEvent(new Event('search'));
 	    }
 
-	    // getEventCountTable: function(container) {
-	    //     var ajaxUrl = container.dataset.url + container.dataset.region + '/' + container.dataset.financialYear + '/';
-	    //     $(container).load(ajaxUrl, function(response, status, xhr) {
-	    //         this.html(response);
-	    //         this.find('table.event-count-table').DataTable({
-	    //             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
-	    //         });
-	    //     });
-	    // }
 	};
 
 	module.exports = util;
@@ -50379,6 +50370,8 @@
 /* 157 */
 /***/ function(module, exports) {
 
+	// NOTE: This is basically an initialization function. Consider putting this with other intialization functions in
+	// src/main.js
 	document.addEventListener('DOMContentLoaded', function () {
 	    var tableContainers = document.querySelectorAll('.event-count-table-container');
 	    if (tableContainers.length) {
@@ -50388,12 +50381,13 @@
 	    }
 	});
 
+	// NOTE: This function is almost identical to the one in src/_event_count_table.js. Strongly consider extracting
+	// this to a shareable function that can be called from both places.
 	function initializeEventCountTable(tableContainer) {
-	    console.log(this);
-
-	    var region = tableContainer.dataset.region || "overall",
-	        fy = tableContainer.dataset.financialYear || "0",
-	        ajaxUrl = tableContainer.dataset.url + region + '/' + fy + '/';
+	    var mode = tableContainer.dataset.mode || "dashboard",
+	        option = tableContainer.dataset.option || "overall",
+	        fy = tableContainer.dataset.fiscalYear || "0",
+	        ajaxUrl = tableContainer.dataset.url + mode + '/' + option + '/' + fy + '/';
 
 	    $(tableContainer).load(ajaxUrl, function (response, status, xhr) {
 	        this.html(response);
