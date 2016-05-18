@@ -30,16 +30,28 @@
     <section id="content_body">
         <div class="container">
 
-            <div class="event-count">
+            <div class="event-total">
                 <h2>Events started in FY{{ fy.year }}</h2>
-                <div class="event-count-blocks">
+                <div class="event-total-blocks">
                     {% for entry in total %}
                         <div class="block {% if entry.text == "Total" %}overall-block{% else %}region-block{% endif %}">
                             <p class="block-text">{{ entry.text }}</p><p class="block-count">{{ entry.count }}</p>
                         </div>
                     {% endfor %}
                 </div>
-                {% show_event_count_form %}
+            </div>
+
+            <div class="event-count">
+                <h2>Event Count</h2>
+                <hr />
+                {% show_event_count_form container=".event-count-table-container" %}
+                <hr />
+                <div class="">
+                    {% include "_loading.html" %}
+                    <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="dashboard" data-option="{{ option|default:"" }}" data-fiscal-year="{{ fiscal_year|default:"" }}">
+                        <!-- load table here -->
+                    </div>
+                </div>
             </div>
 
             <div class="event-list-table">

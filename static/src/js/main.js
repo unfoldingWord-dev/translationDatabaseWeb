@@ -11,7 +11,7 @@ require("datatables");
 require("datatables-bootstrap3-plugin");
 
 
-// Custom initialization for select2 language search input
+// Custom init for select2 language search input
 $.fn.languageSelector = function(options) {
     var settings = $.extend({}, options);
     return this.each(function () {
@@ -53,7 +53,14 @@ $.fn.languageSelector = function(options) {
         });
     });
 };
-
+// Set default init for DataTables
+$.fn.customDataTable = function(options) {
+    var defaults = {
+        stateSave: true,
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+    };
+    return $(this).DataTable($.extend(defaults, options));
+};
 
 // Initialize components
 (function ($) {
@@ -69,14 +76,31 @@ $.fn.languageSelector = function(options) {
     $(".select2-multiple").select2();
     $(".language-selector").languageSelector();
 
-    // Initialize DataTables
+    // Initialize DataTables (serverSide)
     $("table[data-source]").each(function () {
         var $el = $(this);
-        $el.DataTable({
+        $el.customDataTable({
             serverSide: true,
             ajax: $el.data("source"),
-            stateSave: true,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        });
+    });
+
+    // Initialize DataTables (clientSide)
+    $('table.js-datatable').customDataTable();
+
+    // Initialize event-count tables
+    $('.event-count-table-container').each(function() {
+        var mode = this.dataset.mode || "dashboard",
+            option = this.dataset.option || "overall",
+            fy = this.dataset.fiscalYear || "0",
+            ajaxUrl = this.dataset.url + mode + '/' + option + '/' + fy + '/',
+            loading = $(this).siblings('.loading');
+
+        loading && loading.show();
+        $(this).load(ajaxUrl, function(response, status, xhr) {
+            this.html(response);
+            this.find('table.event-count-table').customDataTable();
+            loading && (loading.hide());
         });
     });
 
@@ -107,4 +131,3 @@ $(function () {
 require("./homepage.js");
 require("./language_list.js");
 require("./tracking_forms.js");
-require("./_event_count_table.js");
