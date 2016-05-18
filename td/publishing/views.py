@@ -254,7 +254,7 @@ class PublishRequestCreateView(CreateView):
 
 
 def redirect_new_publishing(request):
-    return redirect("http://ufw.io/pub/")
+    return redirect("http://ufw.io/pub")
 
 
 class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
