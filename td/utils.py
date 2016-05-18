@@ -278,13 +278,13 @@ class DataTableSourceView(View):
                             row.append('<a href="{0}">{1}</a>'.format(reverse(
                                 self.link_url_name,
                                 kwargs={"pk": getattr(obj, self.link_url_field)}),
-                                v
+                                v.encode("utf-8")
                             ))
                         else:
                             row.append('<a href="{0}">{1}</a>'.format(reverse(
                                 self.link_url_name,
                                 kwargs={self.link_url_field: getattr(obj, self.link_url_field)}),
-                                v
+                                v.encode("utf-8")
                             ))
                     else:
                         row.append(v)
