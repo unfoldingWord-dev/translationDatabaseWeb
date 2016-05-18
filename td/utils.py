@@ -117,9 +117,9 @@ def get_event_count(mode="dashboard", option="overall", fy=0):
         # Decide what to link to. The presence of region_obj indicates that the row contains the count by country, while
         # the absence of it indicates the row contains region information.
         # url = reverse("country_detail", kwargs={"pk": x.pk}) if region_obj else reverse("wa_region_detail", kwargs={"slug": x.slug})
-        url = reverse("wa_region_detail", kwargs={"slug": x.slug}) if mode == "dashboard" else \
-            reverse("country_detail", kwargs={"pk": x.pk}) if mode == "region" else\
-            reverse("language_detail", kwargs={"pk": x.pk}) if mode == "country" or mode == "language" else ""
+        url = reverse("wa_region_detail", kwargs={"slug": x.slug}) if isinstance(x, WARegion) else \
+            reverse("country_detail", kwargs={"pk": x.pk}) if isinstance(x, Country) else\
+            reverse("language_detail", kwargs={"pk": x.pk}) if isinstance(x, Language) else ""
         row.insert(0, mark_safe("<a href=\"" + url + "\">" + x.name + "</a>"))
         # Attach the link to the beginning of the row
         data.append(row)
