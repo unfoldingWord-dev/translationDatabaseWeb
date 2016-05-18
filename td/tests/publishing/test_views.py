@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import datetime
 import json
 
@@ -10,9 +12,15 @@ from django.utils import timezone
 import requests_mock
 
 from td.models import Language
-from td.publishing.models import (
-    OfficialResource, OfficialResourceType, PublishRequest)
-from td.publishing.views import resource_language_json, resource_catalog_json
+from td.publishing.models import OfficialResource, OfficialResourceType, PublishRequest
+from td.publishing.views import resource_language_json, resource_catalog_json, redirect_new_publishing
+
+
+class RedirectNewPublishingTestCase(TestCase):
+    @requests_mock.mock()
+    def test_redirect_new_publishing(self, request):
+        response = redirect_new_publishing(request)
+        self.assertEqual(response.status_code, 302)
 
 
 class PublishingViewsBaseTestCase(TestCase):

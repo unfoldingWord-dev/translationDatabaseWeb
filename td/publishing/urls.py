@@ -14,13 +14,14 @@ from .views import (
     OfficialResourceCreateView,
     OfficialResourceUpdateView,
     OfficialResourceDetailView,
-    PublishRequestCreateView,
+    # PublishRequestCreateView,
     PublishRequestUpdateView,
     PublishRequestDeleteView,
     source_languages_autocomplete,
     resource_language_json,
     resource_catalog_json,
-    PublishRequestResubmitView
+    PublishRequestResubmitView,
+    redirect_new_publishing,
 )
 
 
@@ -35,7 +36,8 @@ urlpatterns = [
     url(r"^oresource/create/$", OfficialResourceCreateView.as_view(), name="oresource_create"),
     url(r"^oresource/(?P<pk>\d+)/$", OfficialResourceDetailView.as_view(), name="oresource_detail"),
     url(r"^oresource/(?P<pk>\d+)/update$", OfficialResourceUpdateView.as_view(), name="oresource_update"),
-    url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request"),
+    # url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request"),
+    url(r"^publish/request/$", redirect_new_publishing, name="publish_request"),
     url(r"^publish/request/(?P<pk>\d+)/", PublishRequestUpdateView.as_view(), name="publish_request_update"),
     url(r"^publish/request/(?P<permalink>\w+)/", PublishRequestResubmitView.as_view(), name="publish_request_resubmit"),
     url(r"^publish/request-reject/(?P<pk>\d+)/", PublishRequestDeleteView.as_view(), name="publish_request_delete"),
