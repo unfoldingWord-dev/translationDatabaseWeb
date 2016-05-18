@@ -253,6 +253,10 @@ class PublishRequestCreateView(CreateView):
         return redirect("oresource_list")
 
 
+def redirect_new_publishing(request):
+    return redirect("http://ufw.io/pub/")
+
+
 class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
     model = PublishRequest
     form_class = PublishRequestForm
