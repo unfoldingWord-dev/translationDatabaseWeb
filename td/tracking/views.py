@@ -1,9 +1,6 @@
 import operator
 import re
 import urlparse
-import calendar
-
-from datetime import datetime
 
 from django import forms
 from django.contrib import messages
@@ -13,7 +10,6 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.views.generic import (
     CreateView,
     UpdateView,
@@ -23,8 +19,8 @@ from django.views.generic import (
     View
 )
 
-from td.models import Language, WARegion
-from td.utils import get_wa_fy, two_digit_datetime, flatten_tuple, get_event_total, get_event_count
+from td.models import Language
+from td.utils import get_wa_fy, get_event_total, get_event_count_data, get_total_by_month
 from .forms import (
     CharterForm,
     EventForm,
@@ -196,19 +192,11 @@ class AjaxEventCountView(LoginRequiredMixin, TemplateView):
         context = super(AjaxEventCountView, self).get_context_data(**kwargs)
         param = self.kwargs
         # NOTE: Is there a library for this?
-        context["months"] = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-        context["data"] = get_event_count(param.get("mode"), param.get("option"), param.get("fy"))
-        context["monthly_total"] = self.total_by_month(context.get("data"))
+        context["header"] = ["", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                             "Total"]
+        context["data"] = get_event_count_data(param.get("mode"), param.get("option"), param.get("fy"))
+        context["footer"] = get_total_by_month(context.get("data"))
         return context
-
-    @staticmethod
-    def total_by_month(data):
-        # If initializer is not provided and there's only one row in data, zipped_reduced.pop(0) will, somehow, affect
-        # context["data"] - making it lose index 0 as well.
-        initializer = ["", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        zipped_reduced = reduce(lambda row_1, row_2: zip(row_1, row_2), data, initializer)
-        zipped_reduced.pop(0)
-        return [reduce(lambda a, b: int(a) + int(b), flatten_tuple(t)) for t in zipped_reduced]
 
 
 # ---------------------------------- #
@@ -314,7 +302,6 @@ class EventListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
         context["fy"] = get_wa_fy()
-        context["regions"] = WARegion.objects.all()
         context["total"] = get_event_total(
             context.get("fy", {}).get("current_start"),
             context.get("fy", {}).get("current_end"),
@@ -582,7 +569,6 @@ class EventCountView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EventCountView, self).get_context_data(**kwargs)
-        # context["regions"] = WARegion.objects.all()
         context["option"] = self.request.GET.get("option")
         context["fiscal_year"] = self.request.GET.get("fiscal-year")
         return context

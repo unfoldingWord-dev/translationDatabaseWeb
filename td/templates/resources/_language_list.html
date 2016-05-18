@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<table class="table js-language-datatable">
+<table class="table js-datatable">
     <thead>
         <tr>
             <th></th>
@@ -18,7 +18,7 @@
                     <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i> Edit</a>
                 </td>
                 <td>
-                    <a href="{% url "language_detail" language.pk %}">{{ language.name }} ({{ language.code }})</a>
+                    <a href="{{ language.get_absolute_url }}">{{ language.name }} ({{ language.code }})</a>
                 </td>
                 <td>{% if language.gateway_flag %}<i class="fa fa-check fa-lg"></i>{% endif %}</td>
                 <td>{% if language.gateway_language %}{{ language.gateway_language.name }} ({{ language.gateway_language.code }}){% endif %}</td>
@@ -32,12 +32,3 @@
         {% endfor %}
     </tbody>
 </table>
-
-<script>
-    // NOTE: Initialization. Could be moved somewhere else.
-    document.addEventListener('DOMContentLoaded', function() {
-       $('table.js-language-datatable').DataTable({
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
-        });
-    });
-</script>

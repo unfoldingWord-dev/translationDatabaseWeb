@@ -1,4 +1,5 @@
 import importlib
+import requests_mock
 
 from mock import patch, Mock
 
@@ -14,7 +15,7 @@ from td.tracking.views import (
     CharterAddView, CharterUpdateView, NewCharterModalView, MultiCharterAddView,
     EventAddView, EventUpdateView, EventDetailView, MultiCharterEventView,
     SuccessView, MultiCharterSuccessView, NewItemView,
-)
+    AjaxEventCountView, EventListView, CharterListView, EventCountView)
 from td.tracking.models import (
     Charter, Event,
     Department, Hardware, Software,
@@ -26,7 +27,7 @@ from td.tracking.forms import (
     EventForm,
     MultiCharterStarter, MultiCharterEventForm1, MultiCharterEventForm2,
 )
-from td.models import Language
+from td.models import Language, Country, WARegion
 
 
 def setup_view(view, request=None, *args, **kwargs):
@@ -74,43 +75,36 @@ class HomeViewTestCase(TestCase):
 class CharterTableSourceViewTestCase(TestCase):
 
     def setUp(self):
-        language0 = Language.objects.create(
-            id=9999,
-            code="ts",
-            name="Test Language",
-        )
-        language1 = Language.objects.create(
-            id=8888,
-            code="ml",
-            name="Mock Language",
-        )
-        department = Department.objects.create(
-            name="Test Department",
-        )
-        self.charter0 = Charter.objects.create(
-            id=9999,
-            language=language0,
-            start_date=timezone.now().date(),
-            end_date=timezone.now().date(),
-            lead_dept=department,
-        )
-        self.charter1 = Charter.objects.create(
-            id=8888,
-            language=language1,
-            start_date=timezone.now().date(),
-            end_date=timezone.now().date(),
-            lead_dept=department,
-        )
+        country_0 = Country.objects.create(id=999, name="Narnia", code="NA")
+        country_1 = Country.objects.create(id=888, name="Oz", code="OZ")
+        language_0 = Language.objects.create(id=9999, code="ts", name="Test Language", country=country_0)
+        language_1 = Language.objects.create(id=8888, code="ml", name="Mock Language", country=country_1)
+        department = Department.objects.create(name="Test Department")
+        self.charter_0 = Charter.objects.create(id=9999, language=language_0, start_date=timezone.now().date(),
+                                                end_date=timezone.now().date(), lead_dept=department)
+        self.charter_1 = Charter.objects.create(id=8888, language=language_1, start_date=timezone.now().date(),
+                                                end_date=timezone.now().date(), lead_dept=department)
 
     def test_queryset(self):
-        self.view = setup_view(CharterTableSourceView(), pk=9999)
-        self.assertEqual(len(self.view.queryset), 1)
-        self.assertEqual(self.view.queryset[0], self.charter0)
+        view = setup_view(CharterTableSourceView(), pk=9999)
+        self.assertEqual(len(view.queryset), 1)
+        self.assertEqual(view.queryset[0], self.charter_0)
 
     def test_queryset_empty(self):
-        self.view = setup_view(CharterTableSourceView())
-        self.view.model = Charter
-        self.assertEqual(len(self.view.queryset), 2)
+        view = setup_view(CharterTableSourceView())
+        view.model = Charter
+        self.assertEqual(len(view.queryset), 2)
+
+    def test_queryset_filter_country_no_match(self):
+        view = setup_view(CharterTableSourceView(), filter="country", term=None)
+        self.assertEqual(len(view.queryset), 0)
+        view = setup_view(CharterTableSourceView(), filter="country", term="777")
+        self.assertEqual(len(view.queryset), 0)
+
+    def test_queryset_filter_country(self):
+        view = setup_view(CharterTableSourceView(), filter="country", term="999")
+        self.assertEqual(len(view.queryset), 1)
+        self.assertEqual(view.queryset[0], self.charter_0)
 
     def test_filtered_data(self):
         self.request = RequestFactory().get('', {
@@ -120,7 +114,7 @@ class CharterTableSourceViewTestCase(TestCase):
         self.view = setup_view(CharterTableSourceView(), self.request)
         self.view.model = Charter
         self.view.fields = ["language__name"]
-        self.assertIn(self.charter0, self.view.filtered_data)
+        self.assertIn(self.charter_0, self.view.filtered_data)
 
     def test_filtered_data_all(self):
         self.request = RequestFactory().get('', {
@@ -131,8 +125,8 @@ class CharterTableSourceViewTestCase(TestCase):
         self.view.model = Charter
         self.view.fields = ["language__name"]
         result = self.view.filtered_data
-        self.assertIn(self.charter0, result)
-        self.assertIn(self.charter1, result)
+        self.assertIn(self.charter_0, result)
+        self.assertIn(self.charter_1, result)
 
     def test_filtered_data_short(self):
         self.request = RequestFactory().get('', {
@@ -143,76 +137,84 @@ class CharterTableSourceViewTestCase(TestCase):
         self.view.model = Charter
         self.view.fields = ["language__name"]
         result = self.view.filtered_data
-        self.assertIn(self.charter0, result)
-        self.assertIn(self.charter1, result)
+        self.assertIn(self.charter_0, result)
+        self.assertIn(self.charter_1, result)
 
 
 class EventTableSourceViewTestCase(TestCase):
 
     def setUp(self):
-        language = Language.objects.create(
-            id=9999,
-            code="ts",
-            name="Test Language",
-        )
-        department = Department.objects.create(
-            name="Test Department",
-        )
-        charter = Charter.objects.create(
-            id=9999,
-            language=language,
-            start_date=timezone.now().date(),
-            end_date=timezone.now().date(),
-            lead_dept=department,
-        )
-        self.event0 = Event.objects.create(
-            charter=charter,
-            start_date=timezone.now().date(),
-            end_date=timezone.now().date(),
-            lead_dept=department,
-            number=1,
-        )
-        self.event1 = Event.objects.create(
-            charter=charter,
-            start_date=timezone.now().date(),
-            end_date=timezone.now().date(),
-            lead_dept=department,
-            number=2,
-        )
+        wa_region, _ = WARegion.objects.get_or_create(name="Middle Earth", slug="middleearth")
+        country = Country.objects.create(id=999, name="Narnia", code="NA")
+        language = Language.objects.create(id=9999, code="ts", name="Test Language", country=country,
+                                           wa_region=wa_region)
+        department = Department.objects.create(name="Test Department")
+        charter = Charter.objects.create(id=9999, language=language, start_date=timezone.now().date(),
+                                         end_date=timezone.now().date(), lead_dept=department)
+        self.event_0 = Event.objects.create(charter=charter, start_date=timezone.now().date(),
+                                            end_date=timezone.now().date(), lead_dept=department, number=1)
+        self.event_1 = Event.objects.create(charter=charter, start_date=timezone.now().date(),
+                                            end_date=timezone.now().date(), lead_dept=department, number=2)
 
     def test_queryset(self):
-        self.view = setup_view(EventTableSourceView(), pk=9999)
-        qs = self.view.queryset
+        view = setup_view(EventTableSourceView(), pk=9999)
+        qs = view.queryset
         self.assertEqual(len(qs), 2)
-        self.assertIn(self.event0, qs)
-        self.assertIn(self.event1, qs)
+        self.assertIn(self.event_0, qs)
+        self.assertIn(self.event_1, qs)
 
     def test_queryset_empty(self):
-        self.view = setup_view(EventTableSourceView())
-        self.view.model = Event
-        self.assertEqual(len(self.view.queryset), 2)
+        view = setup_view(EventTableSourceView())
+        view.model = Event
+        self.assertEqual(len(view.queryset), 2)
+
+    def test_queryset_wa_region_no_match(self):
+        view = setup_view(EventTableSourceView(), wa_region="")
+        self.assertEqual(len(view.queryset), 0)
+        view = setup_view(EventTableSourceView(), wa_region="sideearth")
+        self.assertEqual(len(view.queryset), 0)
+
+    def test_queryset_wa_region(self):
+        view = setup_view(EventTableSourceView(), wa_region="middleearth")
+        qs = view.queryset
+        self.assertEqual(len(qs), 2)
+        self.assertIn(self.event_0, qs)
+        self.assertIn(self.event_1, qs)
+
+    def test_queryset_filter_country_no_match(self):
+        view = setup_view(EventTableSourceView(), filter="country", term=None)
+        self.assertEqual(len(view.queryset), 0)
+        view = setup_view(EventTableSourceView(), filter="country", term="888")
+        self.assertEqual(len(view.queryset), 0)
+
+    def test_queryset_filter_country(self):
+        view = setup_view(EventTableSourceView(), filter="country", term="999")
+        qs = view.queryset
+        self.assertEqual(len(qs), 2)
+        self.assertIn(self.event_0, qs)
+        self.assertIn(self.event_1, qs)
 
     def test_filtered_data(self):
         self.request = RequestFactory().get('', {
             "search[value]": "1",
             "order[0][column]": "0"
         })
-        self.view = setup_view(EventTableSourceView(), self.request)
-        self.view.model = Event
-        self.view.fields = ["number"]
-        self.assertIn(self.event0, self.view.filtered_data)
+        view = setup_view(EventTableSourceView(), self.request)
+        view.model = Event
+        view.fields = ["number"]
+        self.assertIn(self.event_0, view.filtered_data)
 
     def test_filtered_data_all(self):
         self.request = RequestFactory().get('', {
             "search[value]": "",
             "order[0][column]": "0"
         })
-        self.view = setup_view(EventTableSourceView(), self.request)
-        self.view.model = Event
-        self.view.fields = ["number"]
-        result = self.view.filtered_data
-        self.assertIn(self.event0, result)
-        self.assertIn(self.event1, result)
+        view = setup_view(EventTableSourceView(), self.request)
+        view.model = Event
+        view.fields = ["number"]
+        result = view.filtered_data
+        self.assertIn(self.event_0, result)
+        self.assertIn(self.event_1, result)
 
 
 class FileDownloadViewTestCase(TestCase):
@@ -261,6 +263,13 @@ class DownloadPDFTestCase(TestCase):
 # ---------------------------------- #
 #            CHARTER VIEWS           #
 # ---------------------------------- #
+
+
+class CharterListViewTestCase(TestCase):
+
+    def test_config(self):
+        view = setup_view(CharterListView())
+        self.assertGreater(len(view.template_name), 0)
 
 
 class CharterAddViewTestCase(TestCase):
@@ -504,6 +513,22 @@ class MultiCharterAddViewTestCase(TestCase):
 # -------------------------------- #
 #            EVENT VIEWS           #
 # -------------------------------- #
+
+
+class EventListViewTestCase(TestCase):
+
+    def setUp(self):
+        self.view = setup_view(EventListView())
+
+    def test_config(self):
+        self.assertGreater(len(self.view.template_name), 0)
+
+    @patch("td.tracking.views.get_wa_fy", return_value={})
+    @patch("td.tracking.views.get_event_total", return_value=[])
+    def test_get_context_data(self, mock_event_total, mock_wa_fy):
+        context = self.view.get_context_data()
+        self.assertIn("fy", context)
+        self.assertIn("total", context)
 
 
 class EventAddViewTestCase(TestCase):
@@ -970,6 +995,20 @@ class MultiCharterEventViewTestCase(TestCase):
         self.assertEqual(response.url, reverse("tracking:new_item"))
 
 
+class EventCountViewTestCase(TestCase):
+    def setUp(self):
+        self.view = setup_view(EventCountView())
+
+    def test_config(self):
+        self.assertGreater(len(self.view.template_name), 0)
+
+    def test_get_context_data(self):
+        self.view.request = RequestFactory().get("")
+        context = self.view.get_context_data()
+        self.assertIn("option", context)
+        self.assertIn("fiscal_year", context)
+
+
 # ---------------------------------- #
 #            SUCCESS VIEWS           #
 # ---------------------------------- #
@@ -1297,3 +1336,35 @@ class checkForNewItemsTestCase(TestCase):
 class getNextEventNumberTestCase(TestCase):
     # TODO
     pass
+
+
+# ------------------------------- #
+#            AJAX VIEWS           #
+# ------------------------------- #
+
+
+class AjaxEventCountViewTestCase(TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_config(self):
+        view = setup_view(AjaxEventCountView())
+        self.assertGreater(len(view.template_name), 0)
+
+    @requests_mock.mock()
+    def test_get(self, mock_request):
+        view = setup_view(AjaxEventCountView(), mode="", option="")
+        view.get_context_data = Mock(return_value={})
+        response = view.get(mock_request)
+        self.assertEqual(response.status_code, 200)
+
+    @patch("td.tracking.views.get_event_count_data", return_value=[])
+    @patch("td.tracking.views.get_total_by_month", return_value=[])
+    def test_get_context_data(self, mock_total_by_month, mock_event_count_data):
+        view = setup_view(AjaxEventCountView(), mode="", option="")
+        context = view.get_context_data()
+        self.assertIn("header", context)
+        self.assertIn("data", context)
+        self.assertIn("footer", context)
+        self.assertGreater(len(context["header"]), 0)

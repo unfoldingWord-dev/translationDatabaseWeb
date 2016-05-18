@@ -10,7 +10,7 @@ from mock import patch
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3,\
     WikipediaISOCountry
 
-from td.models import Language, AdditionalLanguage, TempLanguage
+from td.models import Language, AdditionalLanguage, TempLanguage, Country, WARegion
 from td.resources.models import Questionnaire
 from td.tasks import integrate_imports, update_countries_from_imports
 from td.gl_tracking.models import Phase, Document, DocumentCategory, Progress
@@ -242,7 +242,7 @@ class LanguageIntegrationTests(TestCase):
 class LanguageTestCase(TestCase):
 
     def setUp(self):
-        self.lang = Language.objects.create(code="tl", name="Test Language", gateway_flag=True)
+        self.lang = Language.objects.create(pk=999, code="tl", name="Test Language", gateway_flag=True)
         self.phase_one = Phase.objects.create(number=1)
         self.phase_two = Phase.objects.create(number=2)
         self.cat_one = DocumentCategory.objects.create(name="Category One", phase=self.phase_one)
@@ -253,6 +253,14 @@ class LanguageTestCase(TestCase):
         self.progress_two = Progress.objects.create(language=self.lang, type=self.doc_two)
         self.lang.progress_set.add(self.progress_one)
         self.lang.progress_set.add(self.progress_two)
+
+    def test_string_repr(self):
+        """__str__ should return the language name"""
+        self.assertEqual(self.lang.__str__(), "Test Language")
+
+    def test_get_absolute_url(self):
+        """get_absolute_url of a language should return the link to its detail page"""
+        self.assertEqual(self.lang.get_absolute_url(), reverse("language_detail", kwargs={"pk": 999}))
 
     def test_names_data_short(self):
         """
@@ -287,3 +295,23 @@ class LanguageTestCase(TestCase):
         self.assertEqual(len(tmp), 2)
         self.assertEqual(tmp[0].pk, self.progress_one.pk)
         self.assertEqual(tmp[1].pk, self.progress_two.pk)
+
+
+class CountryTestCase(TestCase):
+
+    def setUp(self):
+        self.country, _ = Country.objects.get_or_create(pk=999, code="go", name="Gondor")
+
+    def test_get_absolute_url(self):
+        """get_absolute_url of a country should return the link to its detail page"""
+        self.assertEqual(self.country.get_absolute_url(), reverse("country_detail", kwargs={"pk": 999}))
+
+
+class WARegionTestCase(TestCase):
+
+    def setUp(self):
+        self.wa_region, _ = WARegion.objects.get_or_create(pk=999, name="Middle Earth", slug="middleearth")
+
+    def test_get_absolute_url(self):
+        """get_absolute_url of a WA region should return the link to its detail page"""
+        self.assertEqual(self.wa_region.get_absolute_url(), reverse("wa_region_detail", kwargs={"slug": "middleearth"}))
