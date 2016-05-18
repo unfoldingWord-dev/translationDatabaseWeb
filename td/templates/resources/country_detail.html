@@ -105,7 +105,8 @@
                 <h2>Event Count</h2>
                 {% show_event_count_form container=".event-count-table-container" selected_option=country.code %}
                 <hr />
-                <div class="tab-content">
+                <div class="">
+                    {% include "_loading.html" %}
                     <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="country" data-option="{{ country.code|lower }}" data-fiscal-year="0">
                         <!-- load table here -->
                     </div>

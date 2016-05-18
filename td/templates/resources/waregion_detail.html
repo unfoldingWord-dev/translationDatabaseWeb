@@ -109,12 +109,12 @@
                 <h2>Event Count</h2>
                 {% show_event_count_form container=".event-count-table-container" %}
                 <hr />
-                <div class="tab-content">
+                <div class="">
+                    {% include "_loading.html" %}
                     <div class="event-count-table-container tab-pane active" data-url="{% url "tracking:ajax_event_count" %}" data-mode="region" data-option="{{ wa_region.slug }}" data-financial-year="0">
                         <!-- load table here -->
                     </div>
                 </div>
-
             </div>
         </div>
 
