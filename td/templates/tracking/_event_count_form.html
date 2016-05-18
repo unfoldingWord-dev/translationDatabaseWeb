@@ -76,12 +76,17 @@
         var mode = container.dataset.mode || 'dashboard',
             option = container.dataset.option || 'overall',
             fiscalYear = container.dataset.fiscalYear || '0',
-            ajaxUrl = container.dataset.url + mode + '/' + option + '/' + fiscalYear + '/';
+            ajaxUrl = container.dataset.url + mode + '/' + option + '/' + fiscalYear + '/',
+            loading = $(container).siblings('.loading');
+
+        loading && loading.show();
+        console.log(loading);
         $(container).load(ajaxUrl, function(response, status, xhr) {
             this.html(response);
             this.find('table.event-count-table').DataTable({
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
             });
+            loading && loading.hide();
         });
     }
 </script>

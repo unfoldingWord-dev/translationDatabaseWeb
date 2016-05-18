@@ -23,7 +23,8 @@ body {
     padding-top: 10px;
 }
 .jumbotron {
-    clear: both;
+  clear: both;
+  position:relative;
 }
 label {
   font-weight: normal;
@@ -60,4 +61,30 @@ label {
 .checkbox input[type="checkbox"],
 .checkbox-inline input[type="checkbox"] {
   width: auto;
+}
+.multi-view-container {
+  min-height: 200px;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  position: relative;
+  & > div {
+    min-height: 100%;
+  }
+}
+.event-list-table-container {
+  h2 {
+    display: inline-block;
+  }
+  .event-count-form {
+    display: inline;
+    margin-left: 2rem;
+  }
+}
+.nav.nav-tabs.view-tabs .active a {
+  background-color: #EEE;
+}
+.top-right-spaced {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
