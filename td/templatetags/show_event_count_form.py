@@ -6,11 +6,11 @@ from td.models import WARegion, Country, Language
 
 @register.inclusion_tag("tracking/_event_count_form.html", takes_context=True)
 def show_event_count_form(context, **kwargs):
-    mode = kwargs.get("mode") or\
-           "language" if "language" in context else\
-           "country" if "country" in context else\
-           "region" if "wa_region" in context else\
-           "dashboard"
+    mode = kwargs.get("mode")\
+        or "language" if "language" in context\
+        else "country" if "country" in context\
+        else "region" if "wa_region" in context\
+        else "dashboard"
     #
     if mode == "region":
         selected_option = kwargs.get("selected_option", context.get("wa_region").slug)

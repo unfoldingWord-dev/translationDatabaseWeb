@@ -6,11 +6,9 @@
     </colgroup>
     <thead>
         <tr>
-            <th></th>
-            {% for month in months %}
-                <th>{{ month }}</th>
+            {% for column in header %}
+                <th>{{ column }}</th>
             {% endfor %}
-            <th>Total</th>
         </tr>
     </thead>
     <tbody>
@@ -24,9 +22,8 @@
     </tbody>
     <tfoot>
         <tr>
-            <td>Total</td>
-            {% for total in monthly_total %}
-                <td>{{ total }}</td>
+            {% for column in footer %}
+                <td>{{ column }}</td>
             {% endfor %}
         </tr>
     </tfoot>
