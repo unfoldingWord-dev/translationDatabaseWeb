@@ -14,9 +14,9 @@ def show_event_count_form(context, **kwargs):
     # print "kwargs:", kwargs
 
     mode = kwargs.get("mode") or (
-        "language" if "language" in context\
-        else "country" if "country" in context\
-        else "region" if "wa_region" in context\
+        "language" if "language" in context
+        else "country" if "country" in context
+        else "region" if "wa_region" in context
         else "dashboard"
     )
 
