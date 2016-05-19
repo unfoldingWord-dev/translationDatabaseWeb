@@ -302,7 +302,6 @@ class EventListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
         context["fy"] = get_wa_fy()
-        context["regions"] = WARegion.objects.all()
         context["total"] = get_event_total(
             context.get("fy", {}).get("current_start"),
             context.get("fy", {}).get("current_end"),
@@ -570,7 +569,6 @@ class EventCountView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EventCountView, self).get_context_data(**kwargs)
-        # context["regions"] = WARegion.objects.all()
         context["option"] = self.request.GET.get("option")
         context["fiscal_year"] = self.request.GET.get("fiscal-year")
         return context

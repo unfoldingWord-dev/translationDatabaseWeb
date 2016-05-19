@@ -76,7 +76,7 @@ $.fn.customDataTable = function(options) {
     $(".select2-multiple").select2();
     $(".language-selector").languageSelector();
 
-    // Initialize DataTables
+    // Initialize DataTables (serverSide)
     $("table[data-source]").each(function () {
         var $el = $(this);
         $el.customDataTable({
@@ -84,6 +84,9 @@ $.fn.customDataTable = function(options) {
             ajax: $el.data("source"),
         });
     });
+
+    // Initialize DataTables (clientSide)
+    $('table.js-datatable').customDataTable();
 
     // Initialize event-count tables
     $('.event-count-table-container').each(function() {

@@ -29,14 +29,7 @@ def show_event_count_form(context, **kwargs):
     year = int(get_wa_fy().get("full_year"))
 
     selected_fy = kwargs.get("selected_fy", "0")
-    fiscal_years = [
-        ("-4", str(year - 4)),
-        ("-3", str(year - 3)),
-        ("-2", str(year - 2)),
-        ("-1", str(year - 1)),
-        ("0", str(year)),
-        ("1", str(year + 1)),
-    ]
+    fiscal_years = [(str(x), str(year + x)) for x in range(-4, 2)]
 
     container = kwargs.get("container", "")
     # If "container" is not specified, then the assumption is that this form is displayed on a page that has no
