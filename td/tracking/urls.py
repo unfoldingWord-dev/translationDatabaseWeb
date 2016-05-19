@@ -60,7 +60,7 @@ urlpatterns = [
     url(r"^ajax/event/(?P<wa_region>\w+)/$", AjaxEventListView.as_view(), name="ajax_event_list"),
     url(r"^ajax/event/(?P<filter>\w+)/(?P<term>[\d\w]+)/$", AjaxEventListView.as_view(), name="ajax_event_list"),
     url(r"^ajax/event/count/$", AjaxEventCountView.as_view(), name="ajax_event_count"),
-    url(r"^ajax/event/count/(?P<mode>\w+)/(?P<option>\w+)/(?P<fy>0|-?1)/$", AjaxEventCountView.as_view(), name="ajax_event_count"),
+    url(r"^ajax/event/count/(?P<mode>\w+)/(?P<option>\w+)/(?P<fy>-?[\d])/$", AjaxEventCountView.as_view(), name="ajax_event_count"),
 
     # Auto-complete
     url(r"^ac/charters$", charters_autocomplete, name="charters_autocomplete"),

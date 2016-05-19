@@ -1,7 +1,6 @@
 import calendar
 import operator
 import types
-import re
 
 from datetime import datetime
 
@@ -17,7 +16,7 @@ from xml.dom import minidom
 from svglib.svglib import SvgRenderer
 from reportlab.graphics import renderPDF
 
-from td.models import WARegion, Country, Language
+from .models import WARegion, Country, Language
 from td.tracking.models import Event
 
 
@@ -169,7 +168,7 @@ def get_wa_fy(year=None, month=None):
     return {
         "year": str(year)[-2:],
         "full_year": str(year),
-        "current_start": str(year-1) + "-10-1",
+        "current_start": str(year - 1) + "-10-1",
         "current_end": str(year) + "-9-30"
     }
 
@@ -242,9 +241,9 @@ class DataTableSourceView(View):
 
     @property
     def data(self):
-        paginator = Paginator(self.filtered_data, self.paging_page_length, orphans=0, allow_empty_first_page=True)
-        page = paginator.page(self.current_page)
-        return [self.format_row(obj) for obj in page.object_list]
+        obj_list = Paginator(self.filtered_data, self.paging_page_length, orphans=0, allow_empty_first_page=True)\
+            .page(self.current_page).object_list if self.paging_page_length >= 0 else self.filtered_data
+        return [self.format_row(obj) for obj in obj_list]
 
     def format_row(self, obj):
         row = []
@@ -278,13 +277,13 @@ class DataTableSourceView(View):
                             row.append('<a href="{0}">{1}</a>'.format(reverse(
                                 self.link_url_name,
                                 kwargs={"pk": getattr(obj, self.link_url_field)}),
-                                v.encode("utf-8")
+                                str(v).encode("utf-8")
                             ))
                         else:
                             row.append('<a href="{0}">{1}</a>'.format(reverse(
                                 self.link_url_name,
                                 kwargs={self.link_url_field: getattr(obj, self.link_url_field)}),
-                                v.encode("utf-8")
+                                str(v).encode("utf-8")
                             ))
                     else:
                         row.append(v)

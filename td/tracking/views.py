@@ -1,9 +1,6 @@
 import operator
 import re
 import urlparse
-import calendar
-
-from datetime import datetime
 
 from django import forms
 from django.contrib import messages
@@ -13,7 +10,6 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.views.generic import (
     CreateView,
     UpdateView,

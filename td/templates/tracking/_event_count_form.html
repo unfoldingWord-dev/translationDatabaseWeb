@@ -19,15 +19,13 @@
             {% endfor %}
         </select>
 
-        <span>breakdown for</span>
+        <span> breakdown for fiscal year </span>
 
         <select id="fiscalYear" name="fiscal-year" class="form-control input-sm">
             {% for value, text in fiscal_years %}
                 <option value="{{ value }}" {% if value == selected_fy %}selected{% endif %}>{{ text }}</option>
             {% endfor %}
         </select>
-
-        <span>fiscal year</span>
 
         {% if form_action %}
             <button id="submit" class="btn btn-primary btn-sm">Go</button>
