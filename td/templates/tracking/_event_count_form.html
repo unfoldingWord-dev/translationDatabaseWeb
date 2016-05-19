@@ -40,10 +40,7 @@
 
 <script type="text/javascript">
 
-    // NOTE: How do I put this in a javascript module where it's not bundled into site.js and called by every single
-    // page? Especially the loadTable(), which is identical to initializeEventCountTable() found in
-    // src/_event_count_table.js, imported into src/main.js, bundled into dist/site.js.
-
+    // TODO: Extract this script
     document.addEventListener('DOMContentLoaded', function() {
         var jsPyData = document.querySelector('.js-py-data');
         if (jsPyData) {
@@ -68,8 +65,7 @@
         }
     });
 
-    // NOTE: This needs to be put in somewhere where it can be called by this page and _event_count_table.js. Maybe in
-    // module/util.js? Maybe it's own module?
+    // NOTE: This is identical to the initialization in main.js. Maybe extract this out as well?
     function loadTable(container) {
         var mode = container.dataset.mode || 'dashboard',
             option = container.dataset.option || 'overall',
@@ -78,7 +74,6 @@
             loading = $(container).siblings('.loading');
 
         loading && loading.show();
-        console.log(loading);
         $(container).load(ajaxUrl, function(response, status, xhr) {
             this.html(response);
             this.find('table.event-count-table').DataTable({
