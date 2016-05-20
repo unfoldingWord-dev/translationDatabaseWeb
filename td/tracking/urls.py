@@ -51,11 +51,13 @@ urlpatterns = [
 
     # Ajax
     url(r"^ajax/charter_events/(?P<pk>\d+)/$", AjaxCharterEventsListView.as_view(), name="ajax_charter_events"),
+    # TODO: rework like urls
     url(r"^ajax/charters/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
     url(r"^ajax/charters/(?P<filter>\w+)/(?P<term>[\d\w]+)/$", AjaxCharterListView.as_view(), name="ajax_ds_charter_list"),
     url(r"^ajax/charters/(?P<slug>\w+)/$", AjaxCharterListView.as_view(), name="ajax_wa_region_charter_list"),
     url(r"^ajax/charter/modal/$", NewCharterModalView.as_view(), name="new_charter_modal"),
     url(r"^ajax/charter/partner_lookup/$", AjaxCharterPartnerLookup.as_view(), name="charter_partner_lookup"),
+    # TODO: rework like urls
     url(r"^ajax/event/$", AjaxEventListView.as_view(), name="ajax_event_list"),
     url(r"^ajax/event/(?P<wa_region>\w+)/$", AjaxEventListView.as_view(), name="ajax_event_list"),
     url(r"^ajax/event/(?P<filter>\w+)/(?P<term>[\d\w]+)/$", AjaxEventListView.as_view(), name="ajax_event_list"),
