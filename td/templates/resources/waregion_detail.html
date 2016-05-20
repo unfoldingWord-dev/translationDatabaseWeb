@@ -1,42 +1,14 @@
 {% extends "site_base.html" %}
 
 {% load humanize %}
+{% load show_event_count_form %}
 
-{% block extra_style %}
-    <style>
-        .center-text {
-            text-align: center;
-        }
-        .jumbotron.jumbotron-custom {
-            margin-top: 20px;
-            position: relative;
-        }
-        .language-title {
-            margin-bottom: 20px;
-        }
-        .nav.nav-tabs.view-tabs .active a {
-            background-color: #EEE;
-        }
-        .multi-view-container {
-            min-height: 200px;
-            padding-top: 1.5rem;
-            padding-bottom: 1rem;
-            position: relative;
-        }
-        .multi-view-container > div {
-            min-height: 100%;
-        }
-        .table-no-border tbody > tr > th,
-        .table-no-border tbody > tr > td {
-            border-top: none;
-            border-bottom: 1px solid #DDD;
-        }
-        .table-no-border tbody > tr:last-child > th,
-        .table-no-border tbody > tr:last-child > td {
-            border: none;
-        }
-    </style>
-{% endblock %}
+
+{% block head_title %}WA Region Detail{% endblock %}
+
+
+{% block body_class %}wa-region-detail{% endblock %}
+
 
 {% block body %}
     {% include "resources/_breadcrumbs.html" %}
@@ -49,8 +21,9 @@
     <!-- VIEW TABS -->
     <ul class="nav nav-tabs view-tabs">
         <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">Info</a></li>
-        <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#countries-view">Countries</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
     </ul>
 
     <!-- TAB CONTENT -->
@@ -59,7 +32,7 @@
         <!-- GENERAL VIEW -->
         <div id="general-view" class="row tab-pane active">
             <div class="col-md-12">
-                <table class="table table-no-border">
+                <table class="table table-borderless">
                     <tbody>
                         <tr><th class="col-md-2">Slug</th><td>{{ wa_region.slug|lower }}</td><tr>
                         <tr><th>GL Director(s)</th><td>{{ gl_directors|join:", "|default:"-" }}</td></tr>
@@ -69,10 +42,30 @@
             </div>
         </div>
 
+        <!-- COUNTRIES VIEW -->
+        <div id="countries-view" class="row tab-pane">
+            <div class="col-md-12">
+                <table class="table table-borderless" data-source="{% url 'ajax_wa_region_country_list' wa_region.slug|lower %}">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Alpha 3 Code</th>
+                            <th>Name</th>
+                            <th>Region</th>
+                            <th>WA Region</th>
+                            <th>Population</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- PROJECTS VIEW -->
         <div id="projects-view" class="row tab-pane">
             <div class="col-md-12">
-                <table class="table table-bordered" data-source="{% url 'tracking:ajax_wa_region_charter_list' wa_region.slug|lower %}">
+                <table class="table table-borderless" data-source="{% url 'tracking:ajax_wa_region_charter_list' wa_region.slug|lower %}">
                     <thead>
                     <tr>
                         <th>Language</th>
@@ -90,25 +83,41 @@
             </div>
         </div>
 
-        <!-- COUNTRIES VIEW -->
-        <div id="countries-view" class="row tab-pane">
+        <!-- EVENTS VIEW -->
+        <div id="events-view" class="row tab-pane">
             <div class="col-md-12">
-                <table class="table table-bordered" data-source="{% url 'ajax_wa_region_country_list' wa_region.slug|lower %}">
-                    <thead>
+
+                <!-- EVENT LIST -->
+                <div class="event-list-table-container">
+                    <table class="table table-borderless" data-source="{% url 'tracking:ajax_event_list' wa_region=wa_region.slug|lower %}">
+                        <thead>
                         <tr>
-                            <th>Code</th>
-                            <th>Alpha 3 Code</th>
-                            <th>Name</th>
-                            <th>Region</th>
-                            <th>WA Region</th>
-                            <th>Population</th>
+                            <th>Native</th>
+                            <th>Anglicized</th>
+                            <th>Number</th>
+                            <th>Location</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- EVENT COUNT -->
+                <h2>Event Count</h2>
+                {% show_event_count_form container=".event-count-table-container" %}
+                <hr />
+                <div class="">
+                    {% include "_loading.html" %}
+                    <div class="event-count-table-container tab-pane active" data-url="{% url "tracking:ajax_event_count" %}" data-mode="region" data-option="{{ wa_region.slug }}" data-financial-year="0">
+                        <!-- load table here -->
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 
 {% endblock %}

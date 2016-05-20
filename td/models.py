@@ -179,12 +179,15 @@ class WARegion(models.Model):
     slug = models.SlugField(max_length=100, db_index=True)
     tracker = FieldTracker()
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         db_table = 'wa_region'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("wa_region_detail", kwargs={"slug": self.slug})
 
     @property
     def gl_directors(self):
@@ -267,6 +270,9 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("country_detail", kwargs={"pk": self.pk})
+
 
 @python_2_unicode_compatible
 class LanguageAltName(models.Model):
@@ -315,6 +321,9 @@ class Language(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("language_detail", kwargs={"pk": self.pk})
 
     @property
     def cc(self):

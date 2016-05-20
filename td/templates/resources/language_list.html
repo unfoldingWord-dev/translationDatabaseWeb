@@ -9,9 +9,9 @@
 {% block body %}
     <h2>Languages</h2>
     <hr>
-    <table id="language-list-table" class="table table-bordered"
+    <table id="language-list-table" class="table table-borderless"
            data-source="{% if query %}{% url "ajax_ds_uw_languages" q=query %}{% else %}{% url "ajax_ds_uw_languages" %}{% endif %}"
-           width="100%">
+           style="width: 100%">
         <thead>
             <tr>
                 <th>Code</th>
