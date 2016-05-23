@@ -136,7 +136,8 @@
                 <li><a href="{% url "title_list" %}">Titles</a></li>
                 <li><a href="{% url "publisher_list" %}">Publishers</a></li>
                 {% if user.is_authenticated %}
-                    <li class="exclusive"><a href="{% url "tracking:project_list" %}">Translation Projects</a></li>
+                    <li class="exclusive"><a href="{% url "tracking:project_list" %}">Charters</a></li>
+                    <li class="exclusive"><a href="{% url "tracking:event_list" %}">Events</a></li>
                     <li class="exclusive"><a href="{% url "gl:partner_list_view" %}">Partners</a></li>
                 {% endif %}
                 <li><a href="{% url "network_list" %}">Networks</a></li>

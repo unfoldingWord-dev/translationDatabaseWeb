@@ -22,55 +22,69 @@ body {
 #content_body {
     padding-top: 10px;
 }
-
 .jumbotron {
-    clear: both;
+  clear: both;
+  position:relative;
 }
-
 label {
-    font-weight: normal;
-}
-label.required {
-    &:after {
-        content: " *";
-    }
+  font-weight: normal;
+  &.required {
     font-weight: bold;
+    &:after {
+      content: " *";
+    }
+  }
 }
-
 .placeholder-text {
     color: #999;
 }
-.nav-tabs > li {
+.nav-tabs {
+  & > li {
     cursor: pointer;
+  }
 }
-.full-width {
-    width: 100%;
+.table-borderless {
+  & > tbody > tr > th,
+  & > tbody > tr > td {
+    border-top: none;
+    border-bottom: 1px solid #DDD;
+  }
+  & > tr:last-child > th,
+  & > tr:last-child > td {
+    border: none;
+  }
 }
-.half-width {
-    width: 50%;
-}
-.third-width {
-    width: 33.33%;
-}
-.quarter-width {
-    width: 25%;
-}
-.clickable {
-    cursor: pointer;
-}
-.no-padding {
-    padding: 0;
-}
-.no-margin {
-    margin: 0;
-}
-.center-text {
-    text-align: center;
-}
-
+// This fixes the styling error when displaying checkboxes or radio buttons in forms, where the checkbox is off to the
+// right of the input and not aligned. That's caused by django/bootstrap styling all input to be 100% wide.
 .radio input[type="radio"],
 .radio-inline input[type="radio"],
 .checkbox input[type="checkbox"],
 .checkbox-inline input[type="checkbox"] {
-    width: auto;
+  width: auto;
+}
+.multi-view-container {
+  min-height: 200px;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  position: relative;
+  & > div {
+    min-height: 100%;
+  }
+}
+.event-list-table-container {
+  h2 {
+    display: inline-block;
+  }
+  .event-count-form {
+    display: inline;
+    margin-left: 2rem;
+  }
+}
+.nav.nav-tabs.view-tabs .active a {
+  background-color: #EEE;
+}
+.top-right-spaced {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }

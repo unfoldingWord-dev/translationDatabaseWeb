@@ -20,6 +20,7 @@ from django.views.generic import (
 )
 
 from td.models import Language
+from td.utils import get_wa_fy, get_event_total, get_event_count_data, get_total_by_month
 from .forms import (
     CharterForm,
     EventForm,
@@ -78,6 +79,9 @@ class CharterTableSourceView(DataTableSourceView):
             return Charter.objects.filter(language=self.kwargs["pk"])
         elif "slug" in self.kwargs:
             return Charter.objects.filter(Q(language__wa_region__slug=self.kwargs["slug"]))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Charter.objects.filter(language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
@@ -109,29 +113,20 @@ class EventTableSourceView(DataTableSourceView):
     @property
     def queryset(self):
         if "pk" in self.kwargs:
-            return Event.objects.filter(charter=self.kwargs["pk"])
+            return Event.objects.filter(charter=self.kwargs.get("pk"))
+        elif "wa_region" in self.kwargs:
+            return Event.objects.filter(charter__language__wa_region__slug=self.kwargs.get("wa_region"))
+        elif "filter" in self.kwargs:
+            if self.kwargs.get("filter") == "country":
+                return Event.objects.filter(charter__language__country__pk=self.kwargs.get("term"))
         else:
             return self.model._default_manager.all()
 
     @property
     def filtered_data(self):
-        if self.search_term and len(self.search_term) <= 3:
-            qs = self.queryset.filter(
-                reduce(
-                    operator.or_,
-                    [Q(number__icontains=self.search_term)]
-                )
-            ).order_by("start_date")
-            if qs.count():
-                return qs
-        return self.queryset.filter(
-            reduce(
-                operator.or_,
-                [Q(x) for x in self.filter_predicates]
-            )
-        ).order_by(
-            self.order_by
-        )
+        return self.queryset\
+            .filter(reduce(operator.or_, [Q(x) for x in self.filter_predicates]))\
+            .order_by(self.order_by)
 
 
 # ------------------------------- #
@@ -156,6 +151,22 @@ class AjaxCharterListView(CharterTableSourceView):
     link_url_field = "lang_id"
 
 
+class AjaxEventListView(EventTableSourceView):
+    model = Event
+    fields = [
+        "charter__language__name",
+        "charter__language__anglicized_name",
+        "number",
+        "location",
+        "start_date",
+        "end_date",
+        "contact_person",
+    ]
+    link_column = "number"
+    link_url_name = "tracking:event_detail"
+    link_url_field = "pk"
+
+
 class AjaxCharterEventsListView(EventTableSourceView):
     model = Event
     fields = [
@@ -171,9 +182,30 @@ class AjaxCharterEventsListView(EventTableSourceView):
     link_url_field = "pk"
 
 
+class AjaxEventCountView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/_event_count_table.html"
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super(AjaxEventCountView, self).get_context_data(**kwargs)
+        param = self.kwargs
+        # NOTE: Is there a library for this?
+        context["header"] = ["", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                             "Total"]
+        context["data"] = get_event_count_data(param.get("mode"), param.get("option"), param.get("fy"))
+        context["footer"] = get_total_by_month(context.get("data"))
+        return context
+
+
 # ---------------------------------- #
 #            CHARTER VIEWS           #
 # ---------------------------------- #
+
+class CharterListView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/project_list.html"
+
 
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
@@ -263,6 +295,20 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 # -------------------------------- #
 #            EVENT VIEWS           #
 # -------------------------------- #
+
+class EventListView(LoginRequiredMixin, TemplateView):
+    template_name = "tracking/event_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EventListView, self).get_context_data(**kwargs)
+        context["fy"] = get_wa_fy()
+        context["total"] = get_event_total(
+            context.get("fy", {}).get("current_start"),
+            context.get("fy", {}).get("current_end"),
+            context.get("regions")
+        )
+        return context
+
 
 class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
@@ -516,6 +562,16 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
         else:
             self.request.session["mc-event-success-charters"] = charter_info
             return redirect("tracking:multi_charter_success")
+
+
+class EventCountView(TemplateView):
+    template_name = "tracking/event_count.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EventCountView, self).get_context_data(**kwargs)
+        context["option"] = self.request.GET.get("option")
+        context["fiscal_year"] = self.request.GET.get("fiscal-year")
+        return context
 
 
 # ---------------------------------- #
