@@ -16,10 +16,11 @@
     <!-- TITLE -->
     <div class="jumbotron jumbotron-custom center-text">
         <h1 class="language-title">{{ country.name }}</h1>
-        <span class="top-right-spaced">
-            <a class="btn btn-default btn-xs" href="{% url "country_edit" country.pk %}"
-               title="Edit {{ country.name }}"><i class="fa fa-pencil"></i> Edit</a>
-        </span>
+        {% if user.is_authenticated %}
+            <span class="top-right-spaced">
+                <a class="btn btn-default btn-xs" href="{% url "country_edit" country.pk %}" title="Edit {{ country.name }}"><i class="fa fa-pencil"></i> Edit</a>
+            </span>
+        {% endif %}
     </div>
 
     <!-- VIEW TABS -->
@@ -39,7 +40,7 @@
                 <table class="table table-borderless">
                     <tbody>
                         <tr><th class="col-md-2">Code</th><td>{{ country.code|default:"_" }}</td><tr>
-                        <tr><th>Population</th><td>{{ gl_directors|join:", "|default:"-" }}</td></tr>
+                        <tr><th>Population</th><td>{{ country.population|default:"-"|intcomma }}</td></tr>
                         <tr><th>Region</th><td>{{ country.region|default:"-" }}</td></tr>
                         <tr><th>WA Region</th><td>{{ country.wa_region|default:"-" }}</td></tr>
                         <!-- Legacy Code -->

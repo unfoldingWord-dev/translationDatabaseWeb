@@ -1345,9 +1345,6 @@ class getNextEventNumberTestCase(TestCase):
 
 class AjaxEventCountViewTestCase(TestCase):
 
-    def setUp(self):
-        pass
-
     def test_config(self):
         view = setup_view(AjaxEventCountView())
         self.assertGreater(len(view.template_name), 0)

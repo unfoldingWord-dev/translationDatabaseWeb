@@ -7,11 +7,6 @@ from td.utils import get_wa_fy
 
 @register.inclusion_tag("tracking/_event_count_form.html", takes_context=True)
 def show_event_count_form(context, **kwargs):
-    # print "\n====================="
-    # print "SHOW EVENT COUNT FORM"
-    # print "====================="
-    # print "context:", context
-    # print "kwargs:", kwargs
 
     mode = kwargs.get("mode") or (
         "language" if "language" in context
@@ -19,8 +14,6 @@ def show_event_count_form(context, **kwargs):
         else "region" if "wa_region" in context
         else "dashboard"
     )
-
-    # print "\nmode:", kwargs.get("mode"), mode
 
     if mode == "region":
         default = context["wa_region"].slug if context.get("wa_region") else None
@@ -38,9 +31,6 @@ def show_event_count_form(context, **kwargs):
         selected_option = kwargs.get("selected_option", None)
         options = [(r.slug, r.name) for r in WARegion.objects.all()]
 
-    # print "selected_option:", selected_option
-    # print "options:", options
-
     year = int(get_wa_fy().get("full_year"))
 
     selected_fy = kwargs.get("selected_fy", "0")
@@ -51,8 +41,6 @@ def show_event_count_form(context, **kwargs):
     # table for the event count and implies that this form will have have to be submitted to another page that does. The
     # default page to display the event count table is the Event Count page.
     form_action = kwargs.get("form_action", reverse("tracking:event_count")) if not container else ""
-
-    # print "=====================\n"
 
     return {"mode": mode, "selected_option": selected_option, "selected_fy": selected_fy, "form_action": form_action,
             "options": options, "fiscal_years": fiscal_years, "container": container}

@@ -3,7 +3,9 @@
 <table class="table js-datatable">
     <thead>
         <tr>
-            <th></th>
+            {% if user.is_authenticated %}
+                <th></th>
+            {% endif %}
             <th>Language</th>
             <th>Is Gateway</th>
             <th>Gateway Language</th>
@@ -14,9 +16,11 @@
     <tbody>
         {% for language in language_list %}
             <tr>
-                <td>
-                    <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i> Edit</a>
-                </td>
+                {% if user.is_authenticated %}
+                    <td>
+                        <a class="" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i></a>
+                    </td>
+                {% endif %}
                 <td>
                     <a href="{{ language.get_absolute_url }}">{{ language.name }} ({{ language.code }})</a>
                 </td>

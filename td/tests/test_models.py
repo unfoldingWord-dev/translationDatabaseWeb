@@ -242,7 +242,7 @@ class LanguageIntegrationTests(TestCase):
 class LanguageTestCase(TestCase):
 
     def setUp(self):
-        self.lang = Language.objects.create(pk=999, code="tl", name="Test Language", gateway_flag=True)
+        self.lang = Language.objects.create(code="tl", name="Test Language", gateway_flag=True)
         self.phase_one = Phase.objects.create(number=1)
         self.phase_two = Phase.objects.create(number=2)
         self.cat_one = DocumentCategory.objects.create(name="Category One", phase=self.phase_one)
@@ -260,7 +260,7 @@ class LanguageTestCase(TestCase):
 
     def test_get_absolute_url(self):
         """get_absolute_url of a language should return the link to its detail page"""
-        self.assertEqual(self.lang.get_absolute_url(), reverse("language_detail", kwargs={"pk": 999}))
+        self.assertEqual(self.lang.get_absolute_url(), reverse("language_detail", kwargs={"pk": self.lang.pk}))
 
     def test_names_data_short(self):
         """
@@ -300,18 +300,19 @@ class LanguageTestCase(TestCase):
 class CountryTestCase(TestCase):
 
     def setUp(self):
-        self.country, _ = Country.objects.get_or_create(pk=999, code="go", name="Gondor")
+        self.country, _ = Country.objects.get_or_create(code="go", name="Gondor")
 
     def test_get_absolute_url(self):
         """get_absolute_url of a country should return the link to its detail page"""
-        self.assertEqual(self.country.get_absolute_url(), reverse("country_detail", kwargs={"pk": 999}))
+        self.assertEqual(self.country.get_absolute_url(), reverse("country_detail", kwargs={"pk": self.country.pk}))
 
 
 class WARegionTestCase(TestCase):
 
     def setUp(self):
-        self.wa_region, _ = WARegion.objects.get_or_create(pk=999, name="Middle Earth", slug="middleearth")
+        self.wa_region, _ = WARegion.objects.get_or_create(name="Middle Earth", slug="middleearth")
 
     def test_get_absolute_url(self):
         """get_absolute_url of a WA region should return the link to its detail page"""
-        self.assertEqual(self.wa_region.get_absolute_url(), reverse("wa_region_detail", kwargs={"slug": "middleearth"}))
+        self.assertEqual(self.wa_region.get_absolute_url(), reverse("wa_region_detail",
+                                                                    kwargs={"slug": self.wa_region.slug}))
