@@ -2,43 +2,119 @@
 
 {% load humanize %}
 
+
+{% block head_title %}Country Detail{% endblock %}
+
+
+{% block body_class %}country-detail{% endblock %}
+
+
 {% block body %}
 
     {% include "resources/_breadcrumbs.html" with region=country.region %}
 
-<h1>
-  {{ country.name }}
-    {% if user.is_authenticated %}
-        <a class="btn btn-primary btn-xs" href="{% url "country_edit" country.pk %}">Edit</a>
-    {% endif %}
-</h1>
-
-
-
-<div class="row">
-    <div class="col-md-4">
-        <table class="table">
-            <thead><tr><th>Gateway Language</th></tr></thead>
-            <tbody><tr><td>{% if country.gateway_language %}{{ country.gateway_language.name }} ({{ country.gateway_language.code }}){% else %}None{% endif %}</td></tr></tbody>
-        </table>
+    <!-- TITLE -->
+    <div class="jumbotron jumbotron-custom center-text">
+        <h1 class="language-title">{{ country.name }}</h1>
+        {% if user.is_authenticated %}
+            <span class="top-right-spaced">
+                <a class="btn btn-default btn-xs" href="{% url "country_edit" country.pk %}" title="Edit {{ country.name }}"><i class="fa fa-pencil"></i> Edit</a>
+            </span>
+        {% endif %}
     </div>
-    <div class="col-md-4">
-        <table class="table">
-            <thead><tr><th>Population</th></tr></thead>
-            <tbody><tr><td>{{ country.population|default:""|intcomma }}</td></tr></tbody>
-        </table>
-    </div>
-    <div class="col-md-4">
-        {% include "resources/_short_list.html" with title="Top Networks" data=country.primary_networks.all %}
-    </div>
-</div>
 
+    <!-- VIEW TABS -->
+    <ul class="nav nav-tabs view-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">General Info</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#languages-view">Languages</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+    </ul>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h2 class="panel-title">Languages</h2>
+    <!-- TAB CONTENT -->
+    <div class="multi-view-container tab-content">
+
+        <!-- GENERAL VIEW -->
+        <div id="general-view" class="row tab-pane active">
+            <div class="col-md-12">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr><th class="col-md-2">Code</th><td>{{ country.code|default:"_" }}</td><tr>
+                        <tr><th>Population</th><td>{{ country.population|default:"-"|intcomma }}</td></tr>
+                        <tr><th>Region</th><td>{{ country.region|default:"-" }}</td></tr>
+                        <tr><th>WA Region</th><td>{{ country.wa_region|default:"-" }}</td></tr>
+                        <!-- Legacy Code -->
+                        {# <div class="col-md-4"> #}
+                            {# include "resources/_short_list.html" with title="Top Networks" data=country.primary_networks.all #}
+                        {# </div> #}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LANGUAGES VIEW -->
+        <div id="languages-view" class="row tab-pane">
+            <div class="col-md-12">
+                {% include "resources/_language_list.html" with language_list=country.language_set.all %}
+            </div>
+        </div>
+
+        <!-- PROJECTS VIEW -->
+        <div id="projects-view" class="row tab-pane">
+            <div class="col-md-12">
+                <table class="table table-borderless" data-source="{% url "tracking:ajax_ds_charter_list" "country" country.pk %}">
+                    <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Contact Person</th>
+                        <th>WA Region</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EVENTS VIEW -->
+        <div id="events-view" class="row tab-pane">
+            <div class="col-md-12">
+
+                <!-- EVENT LIST -->
+                <div class="event-list-table-container">
+                    <table class="table table-borderless" data-source="{% url "tracking:ajax_event_list" "country" country.pk %}">
+                        <thead>
+                        <tr>
+                            <th>Native</th>
+                            <th>Anglicized</th>
+                            <th>Number</th>
+                            <th>Location</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- EVENT COUNT -->
+                <h2>Event Count</h2>
+                {% show_event_count_form container=".event-count-table-container" selected_option=country.code %}
+                <hr />
+                <div class="">
+                    {% include "_loading.html" %}
+                    <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="country" data-option="{{ country.code|lower }}" data-fiscal-year="0">
+                        <!-- load table here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-    {% include "resources/_language_list.html" with language_list=country.language_set.all %}
-</div>
 
 {% endblock %}

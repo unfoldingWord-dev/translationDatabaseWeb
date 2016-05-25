@@ -3,8 +3,21 @@
 {% load humanize %}
 
 {% block body %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Countries</h1></div>
-        {% include "resources/_country_list.html" %}
-    </div>
+    <h2>Countries</h2>
+    <hr />
+    <!-- TODO: Return this back to a partial view, but keep the ajax call -->
+    <table id="country-list-table" class="table table-borderless" data-source="{% url "ajax_ds_country_list" %}" style="width: 100%">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Alpha 3 Code</th>
+                <th>Name</th>
+                <th>Region</th>
+                <th>WA Region</th>
+                <th>Population</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,18 +1,28 @@
 {% load humanize %}
-<table class="table">
-    <thead><tr><th></th><th>Language</th><th>Is Gateway</th><th>Gateway Language</th><th># of Native Speakers</th><th>Networks Translating</th></tr></thead>
+
+<table class="table js-datatable">
+    <thead>
+        <tr>
+            {% if user.is_authenticated %}
+                <th></th>
+            {% endif %}
+            <th>Language</th>
+            <th>Is Gateway</th>
+            <th>Gateway Language</th>
+            <th>Native Speakers</th>
+            <th>Networks Translating</th>
+        </tr>
+    </thead>
     <tbody>
         {% for language in language_list %}
             <tr>
+                {% if user.is_authenticated %}
+                    <td>
+                        <a class="" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i></a>
+                    </td>
+                {% endif %}
                 <td>
-                    {% if user.is_authenticated %}
-                    <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}"><i class="fa fa-fw fa-pencil"></i> Edit</a>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{% url "language_detail" language.pk %}">
-                        {{ language.name }} ({{ language.code }})
-                    </a>
+                    <a href="{{ language.get_absolute_url }}">{{ language.name }} ({{ language.code }})</a>
                 </td>
                 <td>{% if language.gateway_flag %}<i class="fa fa-check fa-lg"></i>{% endif %}</td>
                 <td>{% if language.gateway_language %}{{ language.gateway_language.name }} ({{ language.gateway_language.code }}){% endif %}</td>
