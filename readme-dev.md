@@ -60,9 +60,11 @@ Create a new virtual environment with PyCharm/IntelliJ in ~/virtual_env/translat
     deactivate
 
 
-### Install Gondor CLI
+### Install Eldarion Cloud CLI
 
-    sudo sh -c 'curl -s https://storage.googleapis.com/ec-cli/ec-v0.1.2-linux-amd64 > /usr/local/bin/ec'
+If you need more information on installing the cli, look here: http://eldarion-gondor.github.io/docs/how-to/install-cli/
+
+    sudo sh -c 'curl -s https://storage.googleapis.com/ec-cli/ec-v0.2.2-linux-amd64 > /usr/local/bin/ec'
     sudo chmod +x /usr/local/bin/ec
     sudo ec upgrade
 
