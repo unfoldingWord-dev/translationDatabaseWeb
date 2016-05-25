@@ -12018,6 +12018,10 @@ label.required:after {
   top: 1rem;
   right: 1rem;
 }
+#id_honeypot,
+#id_tags {
+  display: none;
+}
 .full-width {
   width: 100%;
 }

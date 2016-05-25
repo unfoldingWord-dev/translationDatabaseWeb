@@ -1,0 +1,9 @@
+{% load comments %}
+
+
+<h3>Comments <span>({{ comment_count|default:"-" }})</span></h3>
+<ul>
+  {% for comment in comment_list %}
+    <li>{{ comment.comment }} - {{ comment.user.full_name }}, {{ comment.submit_date }}</li>
+  {% endfor %}
+</ul>

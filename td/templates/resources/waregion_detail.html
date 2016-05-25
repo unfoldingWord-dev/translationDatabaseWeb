@@ -1,5 +1,6 @@
 {% extends "site_base.html" %}
 
+{% load comments %}
 {% load humanize %}
 {% load show_event_count_form %}
 
@@ -11,7 +12,7 @@
 
 
 {% block body %}
-    {% include "resources/_breadcrumbs.html" %}
+  {% include "resources/_breadcrumbs.html" %}
 
     <!-- TITLE -->
     <div class="jumbotron jumbotron-custom center-text">
@@ -24,6 +25,8 @@
         <li role="presentation"><a data-toggle="tab" data-target="#countries-view">Countries</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
+
     </ul>
 
     <!-- TAB CONTENT -->
@@ -117,6 +120,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- COMMENTS VIEW -->
+        <div id="comments-view" class="row tab-pane">
+            <div class="col-md-12">
+
+              {% render_comment_form for wa_region%}
+              {% get_comment_count for wa_region as comment_count %}
+              {% render_comment_list for wa_region %}
+
+            </div>
+        </div>
+
 
     </div>
 
