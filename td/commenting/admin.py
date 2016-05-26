@@ -1,9 +1,21 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from taggit.admin import TagAdmin
+from taggit.models import Tag
 
 from . import get_model
-from .models import CommentWithTags
+from .models import CommentWithTags, TaggedObject, CommentTag
 from django_comments.admin import CommentsAdmin
+
+
+class TaggedObjectInline(admin.StackedInline):
+    model = TaggedObject
+
+
+class CommentTagAdmin(TagAdmin):
+    inlines = [TaggedObjectInline]
+    list_display = ["name", "slug", "content_type", "object_id"]
+    search_fields = ["name", "slug", "content_type"]
 
 
 class CommentWithTagsAdmin(CommentsAdmin):
@@ -15,3 +27,5 @@ class CommentWithTagsAdmin(CommentsAdmin):
 
 if get_model() is CommentWithTags:
     admin.site.register(CommentWithTags, CommentWithTagsAdmin)
+    admin.site.unregister(Tag)
+    admin.site.register(CommentTag, CommentTagAdmin)
