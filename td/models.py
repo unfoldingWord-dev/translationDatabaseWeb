@@ -197,6 +197,10 @@ class WARegion(models.Model):
     def gl_helpers(self):
         return [d.name for d in self.gldirector_set.filter(is_helper=True)]
 
+    @property
+    def tag_slug(self):
+        return self.slug
+
     @classmethod
     def slug_all(cls):
         return [r.slug for r in cls.objects.all()]
@@ -272,6 +276,10 @@ class Country(models.Model):
 
     def get_absolute_url(self):
         return reverse("country_detail", kwargs={"pk": self.pk})
+
+    @property
+    def tag_slug(self):
+        return self.code.lower()
 
 
 @python_2_unicode_compatible
@@ -386,6 +394,10 @@ class Language(models.Model):
                                         .values_list("value", flat=True)]
         alt_names = LanguageAltName.objects.filter(pk__in=pks)
         return [n.name.encode("utf-8") for n in alt_names]
+
+    @property
+    def tag_slug(self):
+        return self.code.lower()
 
     def get_progress(self, phase):
         words = 0.0

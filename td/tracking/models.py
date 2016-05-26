@@ -45,6 +45,10 @@ class Charter(models.Model):
     def lang_id(self):
         return self.language.id
 
+    @property
+    def tag_slug(self):
+        return "-".join([self.language.code, "proj"])
+
     @classmethod
     def lang_data(cls):
         return [
@@ -58,118 +62,42 @@ class Charter(models.Model):
 # ----------- #
 class Event(models.Model):
 
-    charter = models.ForeignKey(
-        Charter,
-        verbose_name="Project Charter",
-    )
-    number = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-    )
-    location = models.CharField(
-        max_length=200,
-    )
-    start_date = models.DateField(
-        verbose_name="Start Date",
-    )
-    end_date = models.DateField(
-        verbose_name="End Date",
-    )
-    lead_dept = models.ForeignKey(
-        "Department",
-        verbose_name="Lead Department",
-        related_name="event_lead_dept",
-    )
-    output_target = models.ManyToManyField(
-        "Output",
-        blank=True,
-        verbose_name="Output Target"
-    )
-    publication = models.ManyToManyField(
-        "Publication",
-        blank=True,
-        verbose_name="Distribution Method"
-    )
-    current_check_level = models.SlugField(
-        choices=CHECKING_LEVEL,
-        verbose_name="Current Checking Level",
-        blank=True,
-        null=True,
-    )
-    target_check_level = models.SlugField(
-        choices=CHECKING_LEVEL,
-        verbose_name="Anticipated Checking Level",
-        blank=True,
-        null=True,
-    )
-    translation_methods = models.ManyToManyField(
-        "TranslationMethod",
-        blank=True,
-        verbose_name="Translation Methodologies",
-    )
-    software = models.ManyToManyField(
-        "Software",
-        blank=True,
-        verbose_name="Software/App Used",
-    )
-    hardware = models.ManyToManyField(
-        "Hardware",
-        blank=True,
-        verbose_name="Hardware Used",
-    )
-    contact_person = models.CharField(
-        max_length=200,
-    )
-    materials = models.ManyToManyField(
-        "Material",
-        blank=True,
-    )
-    translators = models.ManyToManyField(
-        "Translator",
-        blank=True,
-    )
-    facilitators = models.ManyToManyField(
-        "Facilitator",
-        blank=True,
-    )
-    networks = models.ManyToManyField(
-        Network,
-        blank=True,
-    )
-    partner = models.ForeignKey(
-        "gl_tracking.Partner",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    departments = models.ManyToManyField(
-        "Department",
-        related_name="event_supporting_dept",
-        blank=True,
-        verbose_name="Supporting Departments",
-    )
-    created_at = models.DateTimeField(
-        default=timezone.now,
-        null=True,
-    )
-    created_by = models.CharField(
-        max_length=200,
-        default="unknown",
-    )
-    modified_at = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-    modified_by = models.CharField(
-        max_length=200,
-        blank=True,
-    )
-    comment = models.TextField(
-        blank=True,
-    )
+    charter = models.ForeignKey(Charter, verbose_name="Project Charter")
+    number = models.PositiveSmallIntegerField(blank=True, null=True)
+    location = models.CharField(max_length=200)
+    start_date = models.DateField(verbose_name="Start Date")
+    end_date = models.DateField(verbose_name="End Date")
+    lead_dept = models.ForeignKey("Department", verbose_name="Lead Department", related_name="event_lead_dept")
+    output_target = models.ManyToManyField("Output", blank=True, verbose_name="Output Target")
+    publication = models.ManyToManyField("Publication", blank=True, verbose_name="Distribution Method")
+    current_check_level = models.SlugField(choices=CHECKING_LEVEL, verbose_name="Current Checking Level", blank=True,
+                                           null=True)
+    target_check_level = models.SlugField(choices=CHECKING_LEVEL, verbose_name="Anticipated Checking Level", blank=True,
+                                          null=True)
+    translation_methods = models.ManyToManyField("TranslationMethod", blank=True,
+                                                 verbose_name="Translation Methodologies")
+    software = models.ManyToManyField("Software", blank=True, verbose_name="Software/App Used")
+    hardware = models.ManyToManyField("Hardware", blank=True, verbose_name="Hardware Used")
+    contact_person = models.CharField(max_length=200)
+    materials = models.ManyToManyField("Material", blank=True)
+    translators = models.ManyToManyField("Translator", blank=True)
+    facilitators = models.ManyToManyField("Facilitator", blank=True)
+    networks = models.ManyToManyField(Network, blank=True)
+    partner = models.ForeignKey("gl_tracking.Partner", blank=True, null=True, on_delete=models.SET_NULL)
+    departments = models.ManyToManyField("Department", related_name="event_supporting_dept", blank=True,
+                                         verbose_name="Supporting Departments")
+    created_at = models.DateTimeField(default=timezone.now, null=True)
+    created_by = models.CharField(max_length=200, default="unknown")
+    modified_at = models.DateTimeField(null=True, blank=True)
+    modified_by = models.CharField(max_length=200, blank=True)
+    comment = models.TextField(blank=True)
 
     def __unicode__(self):
         return str(self.id)
+
+    @property
+    def tag_slug(self):
+        return "-".join([self.charter.language.code, "proj", "e" + str(self.number)])
 
 
 # ------------------------ #
