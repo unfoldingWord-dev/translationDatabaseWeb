@@ -57,6 +57,10 @@ class Charter(models.Model):
         language = Language.objects.get(id=self.language_id)
         return "-".join([language.code, "proj"])
 
+    @property
+    def hashtag(self):
+        return "".join(["#", self.tag_slug])
+
     @classmethod
     def lang_data(cls):
         return [
@@ -110,6 +114,10 @@ class Event(models.Model):
         # NOTE: look at Charter.tag_slug's note
         charter = Charter.objects.get(id=self.charter_id)
         return "-".join([charter.language.code, "proj", "e" + str(self.number)])
+
+    @property
+    def hashtag(self):
+        return "".join(["#", self.tag_slug])
 
 
 # ------------------------ #

@@ -201,6 +201,10 @@ class WARegion(models.Model):
     def tag_slug(self):
         return self.slug
 
+    @property
+    def hasthag(self):
+        return "".join(["#", self.tag_slug])
+
     @classmethod
     def slug_all(cls):
         return [r.slug for r in cls.objects.all()]
@@ -280,6 +284,10 @@ class Country(models.Model):
     @property
     def tag_slug(self):
         return self.code.lower()
+
+    @property
+    def hashtag(self):
+        return "".join(["#", self.tag_slug])
 
 
 @python_2_unicode_compatible
@@ -398,6 +406,10 @@ class Language(models.Model):
     @property
     def tag_slug(self):
         return self.code.lower()
+
+    @property
+    def hashtag(self):
+        return "".join(["#", self.tag_slug])
 
     def get_progress(self, phase):
         words = 0.0

@@ -40,6 +40,7 @@
                 <table class="table table-borderless">
                     <tbody>
                         <tr><th class="col-md-2">Code</th><td>{{ country.code|default:"_" }}</td><tr>
+                        <tr><th>Hashtag</th><td>{{ country.hashtag|default:"-" }}</td></tr>
                         <tr><th>Population</th><td>{{ country.population|default:"-"|intcomma }}</td></tr>
                         <tr><th>Region</th><td>{{ country.region|default:"-" }}</td></tr>
                         <tr><th>WA Region</th><td>{{ country.wa_region|default:"-" }}</td></tr>
