@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from model_utils import FieldTracker
 
 from td.models import Language, Country, Network
 
@@ -34,6 +35,8 @@ class Charter(models.Model):
     modified_at = models.DateTimeField(null=True, blank=True)
     modified_by = models.CharField(max_length=200, blank=True)
 
+    tracker = FieldTracker()
+
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
         return self.language.code.encode("utf-8")
@@ -47,7 +50,12 @@ class Charter(models.Model):
 
     @property
     def tag_slug(self):
-        return "-".join([self.language.code, "proj"])
+        # NOTE: For some reason, when the language_id is changed through the language edit form, self.language is not
+        # changed until later. This results in the handler receiving the old language code for the tag_slug. Could
+        # self.language be a GenericForeignKey and self.language_id the object_id? Maybe that causes the relationship to
+        # not be updated until the next time it's referenced?
+        language = Language.objects.get(id=self.language_id)
+        return "-".join([language.code, "proj"])
 
     @classmethod
     def lang_data(cls):
@@ -92,12 +100,16 @@ class Event(models.Model):
     modified_by = models.CharField(max_length=200, blank=True)
     comment = models.TextField(blank=True)
 
+    tracker = FieldTracker()
+
     def __unicode__(self):
         return str(self.id)
 
     @property
     def tag_slug(self):
-        return "-".join([self.charter.language.code, "proj", "e" + str(self.number)])
+        # NOTE: look at Charter.tag_slug's note
+        charter = Charter.objects.get(id=self.charter_id)
+        return "-".join([charter.language.code, "proj", "e" + str(self.number)])
 
 
 # ------------------------ #

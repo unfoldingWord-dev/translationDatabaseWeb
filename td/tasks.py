@@ -1,11 +1,13 @@
 from __future__ import absolute_import
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import connection
 
 from celery import task
 from pinax.eventlog.models import log
 
+from td.commenting.models import CommentTag
 from td.imports.models import (
     EthnologueLanguageCode,
     EthnologueCountryCode,
@@ -18,6 +20,21 @@ from td.resources.models import Title, Resource, Media
 
 from .models import AdditionalLanguage, Country, Language, Region, JSONData
 from .signals import languages_integrated
+
+
+@task()
+def create_comment_tag(instance):
+    content_type = ContentType.objects.get_for_model(instance)
+    pk = instance.id
+    delete_comment_tag(instance)
+    CommentTag.objects.create(name=instance.tag_slug, slug=instance.tag_slug, object_id=pk, content_type=content_type)
+
+
+@task()
+def delete_comment_tag(instance):
+    content_type = ContentType.objects.get_for_model(instance)
+    tags = CommentTag.objects.filter(content_type=content_type, object_id=instance.id)
+    tags.delete()
 
 
 @task()

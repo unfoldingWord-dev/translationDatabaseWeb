@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _, override
+from django.utils.translation import ugettext_lazy as _,
 
 from django_comments.models import CommentAbstractModel
 from taggit.managers import TaggableManager
-from taggit.models import TagBase, GenericTaggedItemBase, TaggedItemBase
+from taggit.models import TagBase, GenericTaggedItemBase
 
 
 class CommentTag(TagBase):

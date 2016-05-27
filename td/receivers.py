@@ -9,10 +9,20 @@ from account.signals import user_login_attempt, user_logged_in
 
 from pinax.eventlog.models import log
 
-from .models import Country, Language, LanguageAltName, AdditionalLanguage, TempLanguage
-from .tasks import reset_langnames_cache, update_alt_names
+from .models import Country, Language, LanguageAltName, AdditionalLanguage, TempLanguage, WARegion
+from .tasks import reset_langnames_cache, update_alt_names, create_comment_tag, delete_comment_tag
 from .signals import languages_integrated
 from td.resources.tasks import notify_templanguage_created
+
+
+@receiver(post_save, sender=WARegion)
+def handle_wa_region_save(sender, instance=None, created=False, **kwargs):
+    "slug" in instance.tracker.changed().keys() and create_comment_tag(instance)
+
+
+@receiver(post_delete, sender=WARegion)
+def handle_wa_region_delete(sender, instance=None, **kwargs):
+    instance and delete_comment_tag(instance)
 
 
 @receiver(post_save, sender=TempLanguage)
@@ -49,13 +59,15 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Language)
-def handle_language_save(sender, **kwargs):
+def handle_language_save(sender, instance=None, created=False, **kwargs):
+    "code" in instance.tracker.changed().keys() and create_comment_tag(instance)
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Language)
-def handle_language_delete(sender, **kwargs):
+def handle_language_delete(sender, instance=None, **kwargs):
+    instance and delete_comment_tag(instance)
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
@@ -73,12 +85,14 @@ def handle_alt_name_delete(sender, instance=None, **kwargs):
 
 
 @receiver(post_save, sender=Country)
-def handle_country_save(sender, **kwargs):
+def handle_country_save(sender, instance=None, created=False, **kwargs):
+    "code" in instance.tracker.changed().keys() and create_comment_tag(instance)
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Country)
-def handle_country_delete(sender, **kwargs):
+def handle_country_delete(sender, instance=None, **kwargs):
+    instance and delete_comment_tag(instance)
     cache.set("map_gateway_refresh", True)
 
 
