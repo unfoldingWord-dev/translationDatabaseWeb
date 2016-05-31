@@ -290,6 +290,7 @@ class DataTableSourceView(View):
         return row
 
     def get(self, request, *args, **kwargs):
+        # type: (object, object, object) -> object
         return JsonResponse({
             "data": self.data,
             "draw": self.draw,

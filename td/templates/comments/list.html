@@ -1,9 +1,16 @@
 {% load comments %}
 
-
-<h3>Comments <span>({{ comment_count|default:"-" }})</span></h3>
-<ul>
-  {% for comment in comment_list %}
-    <li>{{ comment.comment }} - {{ comment.user.full_name }}, {{ comment.submit_date }}</li>
-  {% endfor %}
-</ul>
+<div class="comment-list-container">
+{#  <h3>Comments <span>({{ comment_count }})</span></h3>#}
+  <ul class="comment-list">
+    {% for comment in comment_list %}
+      <li>
+        {{ comment.comment|safe|linebreaks }}
+        <p class="comment-list-info">{{ comment.user.get_full_name|default:comment.user.get_username }}, {{ comment.submit_date }}</p>
+        {% if not forloop.last %}
+          <hr />
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>

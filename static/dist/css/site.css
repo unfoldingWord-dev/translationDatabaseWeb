@@ -12019,8 +12019,21 @@ label.required:after {
   right: 1rem;
 }
 #id_honeypot,
-#id_tags {
+.comment-form-container .control-label {
   display: none;
+}
+.comment-list-container {
+  margin-top: 5rem;
+}
+.comment-list-container ul {
+  list-style: none;
+  padding: 0;
+}
+.comment-list-container li {
+  margin-bottom: 2rem;
+}
+.comment-list-container .comment-list-info {
+  color: #999;
 }
 .full-width {
   width: 100%;

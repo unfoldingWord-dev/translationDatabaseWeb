@@ -4,6 +4,7 @@ from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.shortcuts import render
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
@@ -61,7 +62,6 @@ def post_comment(request, next=None, using=None):
 
     # Construct the comment form
     form = django_comments.get_form()(target, data=data)
-    print "*** form in post_comment is ", form
 
     # Check security information
     if form.security_errors():
@@ -89,10 +89,12 @@ def post_comment(request, next=None, using=None):
         )
 
     # Otherwise create the comment
-    comment, tags = form.get_comment_object_and_tags()
+    comment = form.get_comment_object()
     comment.ip_address = request.META.get("REMOTE_ADDR", None)
     if request.user.is_authenticated():
         comment.user = request.user
+    html_comment, tags = form.process_tags()
+    comment.comment = html_comment
 
     # Signal that the comment is about to be saved
     responses = signals.comment_will_be_posted.send(
