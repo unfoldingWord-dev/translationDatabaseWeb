@@ -3,7 +3,7 @@
 <div class="comment-list-container">
 {#  <h3>Comments <span>({{ comment_count }})</span></h3>#}
   <ul class="comment-list">
-    {% for comment in comment_list %}
+    {% for comment in comment_list|dictsortreversed:"submit_date" %}
       <li>
         {{ comment.comment|safe|linebreaks }}
         <p class="comment-list-info">{{ comment.user.get_full_name|default:comment.user.get_username }}, {{ comment.submit_date }}</p>

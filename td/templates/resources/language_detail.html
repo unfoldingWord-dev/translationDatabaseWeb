@@ -2,6 +2,7 @@
 
 {% load render_dict %}
 {% load humanize %}
+{% load comments %}
 
 
 {% block head_title %}Language Detail{% endblock %}
@@ -35,6 +36,7 @@
         {% endif %}
         <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
     </ul>
 
     <!-- TAB CONTENT -->
@@ -204,6 +206,15 @@
                     <li><a href="https://en.wikipedia.org/wiki/Special:Search/{{ language.ang }}" target="_blank">Wikipedia</a></li>
                     <li><a href="http://www.peoplegroups.org/explore/Explore.aspx?lang={{ language.iso_639_3 }}#topmenu" target="_blank">People Groups</a></li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- COMMENTS VIEW -->
+        <div id="comments-view" class="row tab-pane">
+            <div class="col-md-12">
+              {% render_comment_form for language %}
+              {% get_comment_count for language as comment_count %}
+              {% render_comment_list for language %}
             </div>
         </div>
 

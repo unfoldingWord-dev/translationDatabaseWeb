@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 
 {% load humanize %}
+{% load comments %}
 
 
 {% block head_title %}Country Detail{% endblock %}
@@ -29,6 +30,7 @@
         <li role="presentation"><a data-toggle="tab" data-target="#languages-view">Languages</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+        <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
     </ul>
 
     <!-- TAB CONTENT -->
@@ -116,6 +118,16 @@
 
             </div>
         </div>
+
+        <!-- COMMENTS VIEW -->
+        <div id="comments-view" class="row tab-pane">
+            <div class="col-md-12">
+              {% render_comment_form for country %}
+              {% get_comment_count for country as comment_count %}
+              {% render_comment_list for country %}
+            </div>
+        </div>
+
     </div>
 
 {% endblock %}

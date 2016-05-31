@@ -12034,6 +12034,7 @@ label.required:after {
 }
 .comment-list-container .comment-list-info {
   color: #999;
+  font-size: 90%;
 }
 .full-width {
   width: 100%;
@@ -12341,4 +12342,7 @@ label.required:after {
     transform: scaleY(1);
     -webkit-transform: scaleY(1);
   }
+}
+.event-detail .comment-form-container {
+  margin-top: 5rem;
 }

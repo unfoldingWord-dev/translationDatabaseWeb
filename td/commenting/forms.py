@@ -15,14 +15,18 @@ class CommentFormWithTags(CommentForm):
 
     def process_tags(self):
         comment = self.cleaned_data.get("comment")
-        tags = [part[1:] for part in comment.split() if part.startswith('#')]
+        tags = [part.replace("#", "") for part in comment.split() if part.__contains__("#")]
         valid_tags = []
 
         for tag in tags:
+            tag = re.sub(r"[\s.,\?\!\;\:\'\"\(\)]*", "", tag)
+            print "\nTAG IN QUESTION", tag
             try:
                 tag_object = CommentTag.objects.get(slug=tag)
-                tag_in_comment = r"#" + tag + "(?=[.,\s]|$)"
+                tag_in_comment = r"#" + tag + "(?=[\s.,\?\!\;\:\'\"\(\)]|$)"
+                print "\nTAG IN COMMENT", tag_in_comment
                 comment = re.sub(r"%s" % tag_in_comment, tag_object.html, comment)
+                print "\nCOMMENT", comment
                 tag not in valid_tags and valid_tags.append(tag)
             except CommentTag.DoesNotExist:
                 # If tag is invalid, don't pick it up
