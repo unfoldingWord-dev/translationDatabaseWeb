@@ -1,7 +1,9 @@
 {% load comments %}
 
 <div class="comment-list-container">
-{#  <h3>Comments <span>({{ comment_count }})</span></h3>#}
+  <div class="comment-list-header">
+    <h3>Comments <span>({{ comment_count }})</span></h3>
+  </div>
   <ul class="comment-list">
     {% for comment in comment_list|dictsortreversed:"submit_date" %}
       <li>

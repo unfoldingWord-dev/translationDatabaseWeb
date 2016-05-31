@@ -12036,6 +12036,14 @@ label.required:after {
   color: #999;
   font-size: 90%;
 }
+.btn.btn-icon {
+  background-color: transparent;
+  color: #AAA;
+  padding: 3px;
+}
+.btn.btn-icon:hover {
+  color: #666;
+}
 .full-width {
   width: 100%;
 }
@@ -12345,4 +12353,55 @@ label.required:after {
 }
 .event-detail .comment-form-container {
   margin-top: 5rem;
+}
+.project-detail .section {
+  margin-top: 3rem;
+}
+.project-detail .section:first-of-type {
+  margin-top: 0;
+}
+.project-detail .section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.project-detail .section-header-title {
+  flex: 0 0 auto;
+  color: #AAA;
+  padding: 3px;
+}
+.project-detail .section-header-line {
+  flex: 1 1 auto;
+  background-color: #DDD;
+  height: 1px;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.project-detail .section-header-actions {
+  flex: 0 0 auto;
+}
+.project-detail .comment-list-container {
+  margin: 0;
+  height: 320px;
+  border: 1px solid #DDD;
+  display: flex;
+  flex-direction: column;
+}
+.project-detail .comment-list-header {
+  padding: 1rem;
+  background-color: #FAFAFA;
+  flex: 0 0 auto;
+}
+.project-detail .comment-list-header h3 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+.project-detail .comment-list {
+  flex: 1 1 auto;
+  padding: 1rem;
+  overflow-y: auto;
+  margin-bottom: 0;
+}
+.project-detail .comment-form-container {
+  margin: 1rem 0 3rem;
 }
