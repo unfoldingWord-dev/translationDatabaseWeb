@@ -19,6 +19,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 
+from td.commenting.models import CommentWithTags
 from .imports.models import (
     EthnologueCountryCode,
     EthnologueLanguageCode,

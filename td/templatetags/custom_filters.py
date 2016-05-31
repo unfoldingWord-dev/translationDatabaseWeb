@@ -9,6 +9,11 @@ from ..gl_tracking.models import GLDirector
 register = template.Library()
 
 
+@register.filter(name="append_qs")
+def append_qs(list_1, list_2):
+    return list(list_1) + list(list_2)
+
+
 @register.filter(name="bible_status")
 @stringfilter
 def bible_status(value):

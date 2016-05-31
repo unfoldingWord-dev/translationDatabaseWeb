@@ -31,8 +31,7 @@
                     </table>
                 </div>
                 <div class="col-md-6">
-                    {% get_comment_count for data as comment_count %}
-                    {% render_comment_list for data %}
+                    {% include "comments/custom_lists.html" with object=data prefix="ch" %}
                     {% render_comment_form for data %}
                 </div>
             </div>
@@ -70,31 +69,5 @@
             </div>
         </div>
     </div>
-
-{#        <div class="col-md-6">#}
-{#            <div class="panel panel-default">#}
-{#                <div class="panel-heading">#}
-{#                    <a class="btn btn-default btn-xs pull-right" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i> Edit</a>#}
-{#                    <h2 class="panel-title">Project Charter</h2>#}
-{#                    <button class="icon-button" data-toggle="collapse" data-target=".charter-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>#}
-{#                </div>#}
-{#                <div class="panel-body no-padding charter-table collapse in">#}
-
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-
-{#    <div class="row">#}
-{#        <div class="col-md-12 panel panel-default">#}
-{#            <div class="panel-heading">#}
-{#                <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>#}
-{#                <h2 class="panel-title">Translation Events/Workshops</h2>#}
-{#                <button class="icon-button" data-toggle="collapse" data-target=".event-table" title="Expand/Collapse" data-tooltip><i class="fa fa-expand"></i></button>#}
-{#            </div>#}
-{#            <div class="panel-body no-padding event-table collapse">#}
-{##}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
 
 {% endif %}

@@ -131,8 +131,7 @@
 <div id="comments-view" class="row">
     <div class="col-md-12">
         {% render_comment_form for object %}
-        {% get_comment_count for object as comment_count %}
-        {% render_comment_list for object %}
+        {% include "comments/custom_lists.html" with object=object %}
     </div>
 </div>
 

@@ -122,9 +122,8 @@
         <!-- COMMENTS VIEW -->
         <div id="comments-view" class="row tab-pane">
             <div class="col-md-12">
-              {% render_comment_form for country %}
-              {% get_comment_count for country as comment_count %}
-              {% render_comment_list for country %}
+                {% render_comment_form for country %}
+                {% include "comments/custom_lists.html" with object=country %}
             </div>
         </div>
 

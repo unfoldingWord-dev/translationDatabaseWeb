@@ -206,8 +206,7 @@
         <div id="comments-view" class="row tab-pane">
             <div class="col-md-12">
               {% render_comment_form for language %}
-              {% get_comment_count for language as comment_count %}
-              {% render_comment_list for language %}
+              {% include "comments/custom_lists.html" with object=language %}
             </div>
         </div>
 

@@ -12,7 +12,7 @@
 
 
 {% block body %}
-  {% include "resources/_breadcrumbs.html" %}
+    {% include "resources/_breadcrumbs.html" %}
 
     <!-- TITLE -->
     <div class="jumbotron jumbotron-custom center-text">
@@ -118,15 +118,15 @@
                         <!-- load table here -->
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- COMMENTS VIEW -->
         <div id="comments-view" class="row tab-pane">
             <div class="col-md-12">
-              {% render_comment_form for wa_region%}
-              {% get_comment_count for wa_region as comment_count %}
-              {% render_comment_list for wa_region %}
+                {% render_comment_form for wa_region%}
+                {% include "comments/custom_lists.html" with object=wa_region %}
             </div>
         </div>
 

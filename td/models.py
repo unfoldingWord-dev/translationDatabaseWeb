@@ -9,6 +9,7 @@ from collections import defaultdict
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
+from td.commenting.models import CommentTag, CommentWithTags
 from .gl_tracking.models import Document
 
 
@@ -205,6 +206,10 @@ class WARegion(models.Model):
     def hasthag(self):
         return "".join(["#", self.tag_slug])
 
+    @property
+    def mentions(self):
+        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
+
     @classmethod
     def slug_all(cls):
         return [r.slug for r in cls.objects.all()]
@@ -288,6 +293,10 @@ class Country(models.Model):
     @property
     def hashtag(self):
         return "".join(["#", self.tag_slug])
+
+    @property
+    def mentions(self):
+        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
 
 @python_2_unicode_compatible
@@ -410,6 +419,10 @@ class Language(models.Model):
     @property
     def hashtag(self):
         return "".join(["#", self.tag_slug])
+
+    @property
+    def mentions(self):
+        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
     def get_progress(self, phase):
         words = 0.0

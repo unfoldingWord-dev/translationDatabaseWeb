@@ -12032,6 +12032,12 @@ label.required:after {
 .comment-list-container li {
   margin-bottom: 2rem;
 }
+.comment-list-container .comment-list-header {
+  margin-bottom: 3rem;
+}
+.comment-list-container .comment-list-header h3 {
+  margin: 0;
+}
 .comment-list-container .comment-list-info {
   color: #999;
   font-size: 90%;
@@ -12043,6 +12049,17 @@ label.required:after {
 }
 .btn.btn-icon:hover {
   color: #666;
+}
+.comment-filter a {
+  border: 1px solid #AAA;
+  color: #AAA;
+  cursor: pointer;
+}
+.comment-filter .active a {
+  border-color: inherit;
+}
+.comment-filter .btn-xs {
+  padding: 0.5rem 1rem;
 }
 .full-width {
   width: 100%;
@@ -12391,6 +12408,7 @@ label.required:after {
   padding: 1rem;
   background-color: #FAFAFA;
   flex: 0 0 auto;
+  margin: 0;
 }
 .project-detail .comment-list-header h3 {
   font-size: 1.5rem;
@@ -12404,4 +12422,9 @@ label.required:after {
 }
 .project-detail .comment-form-container {
   margin: 1rem 0 3rem;
+}
+.project-detail .comment-filter {
+  position: absolute;
+  right: 20px;
+  top: 4px;
 }
