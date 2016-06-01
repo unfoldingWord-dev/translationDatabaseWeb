@@ -199,8 +199,16 @@ class WARegion(models.Model):
         return [d.name for d in self.gldirector_set.filter(is_helper=True)]
 
     @property
+    def tag_display(self):
+        return self.name
+
+    @property
+    def tag_tip(self):
+        return self.name
+
+    @property
     def tag_slug(self):
-        return self.slug
+        return ""
 
     @property
     def hasthag(self):
@@ -287,6 +295,14 @@ class Country(models.Model):
         return reverse("country_detail", kwargs={"pk": self.pk})
 
     @property
+    def tag_display(self):
+        return self.name
+
+    @property
+    def tag_tip(self):
+        return self.code
+
+    @property
     def tag_slug(self):
         return self.code.lower()
 
@@ -345,7 +361,7 @@ class Language(models.Model):
         db_table = 'uw_language'
 
     def __str__(self):
-        return self.name
+        return self.ln
 
     def get_absolute_url(self):
         return reverse("language_detail", kwargs={"pk": self.pk})
@@ -411,6 +427,14 @@ class Language(models.Model):
                                         .values_list("value", flat=True)]
         alt_names = LanguageAltName.objects.filter(pk__in=pks)
         return [n.name.encode("utf-8") for n in alt_names]
+
+    @property
+    def tag_display(self):
+        return self.anglicized_name or self.name
+
+    @property
+    def tag_tip(self):
+        return ",".join(self.alt_name_all).decode("utf-8")
 
     @property
     def tag_slug(self):

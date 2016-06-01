@@ -4,6 +4,7 @@ from django.utils import timezone
 from model_utils import FieldTracker
 
 from td.models import Language, Country, Network
+from td.utils import ordinal
 
 
 # ------------- #
@@ -51,6 +52,14 @@ class Charter(models.Model):
     @property
     def lang_id(self):
         return self.language.id
+
+    @property
+    def tag_display(self):
+        return "%s-Project" % self.language.tag_display
+
+    @property
+    def tag_tip(self):
+        return self.language.tag_tip
 
     @property
     def tag_slug(self):
@@ -115,6 +124,14 @@ class Event(models.Model):
 
     def get_absolute_url(self):
         return reverse("tracking:event_detail", kwargs={"pk": self.pk})
+
+    @property
+    def tag_display(self):
+        return "%s-Project-Event %d" % (self.charter.language.tag_display, self.number)
+
+    @property
+    def tag_tip(self):
+        return "The %s event of %s project" % (ordinal(self.number), self.charter.language.tag_display)
 
     @property
     def tag_slug(self):

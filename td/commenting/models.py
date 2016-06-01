@@ -26,7 +26,8 @@ class CommentTag(TagBase):
     @property
     def html(self):
         object_url = self.content_object.get_absolute_url() if hasattr(self.content_object, "get_absolute_url") else ""
-        return "<a class=\"comment-tag\" href=\"" + object_url + "\">" + self.plain + "</a>"
+        return "<a class=\"comment-tag\" href=\"%s\" title=\"%s\">%s</a>" %\
+               (object_url, self.content_object.tag_tip, self.content_object.tag_display)
 
 
 class TaggedObject(GenericTaggedItemBase):

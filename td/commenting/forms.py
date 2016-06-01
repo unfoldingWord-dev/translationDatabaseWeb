@@ -20,13 +20,10 @@ class CommentFormWithTags(CommentForm):
 
         for tag in tags:
             tag = re.sub(r"[\s.,\?\!\;\:\'\"\(\)]*", "", tag)
-            print "\nTAG IN QUESTION", tag
             try:
                 tag_object = CommentTag.objects.get(slug=tag)
                 tag_in_comment = r"#" + tag + "(?=[\s.,\?\!\;\:\'\"\(\)]|$)"
-                print "\nTAG IN COMMENT", tag_in_comment
                 comment = re.sub(r"%s" % tag_in_comment, tag_object.html, comment)
-                print "\nCOMMENT", comment
                 tag not in valid_tags and valid_tags.append(tag)
             except CommentTag.DoesNotExist:
                 # If tag is invalid, don't pick it up

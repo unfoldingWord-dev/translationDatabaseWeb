@@ -20,7 +20,8 @@ from django.views.generic import (
 )
 
 from td.models import Language
-from td.utils import get_wa_fy, get_event_total, get_event_count_data, get_total_by_month
+from td.utils import get_wa_fy
+from .utils import get_event_total, get_event_count_data, get_total_by_month
 from .forms import (
     CharterForm,
     EventForm,

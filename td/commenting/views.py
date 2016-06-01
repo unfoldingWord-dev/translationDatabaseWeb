@@ -23,8 +23,6 @@ def post_comment(request, next=None, using=None):
     HTTP POST is required. If ``POST['submit'] == "preview"`` or if there are
     errors a preview template, ``comments/preview.html``, will be rendered.
     """
-    print "*** td.commenting.views.post_comment()", next, using
-
     # Fill out some initial data fields from an authenticated user, if present
     data = request.POST.copy()
     if request.user.is_authenticated():
@@ -40,7 +38,6 @@ def post_comment(request, next=None, using=None):
         return CommentPostBadRequest("Missing content_type or object_pk field.")
     try:
         model = apps.get_model(*ctype.split(".", 1))
-        print "*** model in post_comment is ", model
         target = model._default_manager.using(using).get(pk=object_pk)
     except TypeError:
         return CommentPostBadRequest(
@@ -118,9 +115,6 @@ def post_comment(request, next=None, using=None):
 
     # Add the tags that are extracted from the comment
     comment.tags.add(*tags)
-    print "*** tags were added to comment", tags
-
-    print "*** td.commenting.views.post_comment is done and returning", comment
 
     return next_redirect(request, fallback=next or 'comments-comment-done',
                          c=comment._get_pk_val())
