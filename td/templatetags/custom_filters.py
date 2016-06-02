@@ -9,11 +9,6 @@ from ..gl_tracking.models import GLDirector
 register = template.Library()
 
 
-@register.filter(name="combine_lists")
-def combine_lists(list_1, list_2):
-    return [dict(x) for x in set(tuple(z.items()) for z in list_1 + list_2)]
-
-
 @register.filter(name="bible_status")
 @stringfilter
 def bible_status(value):

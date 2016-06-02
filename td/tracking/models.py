@@ -71,6 +71,10 @@ class Charter(CommentableModel):
         language = Language.objects.get(id=self.language_id)
         return "-".join([language.tag_slug, "proj"])
 
+    @property
+    def all_events_comments(self):
+        return [{e.number: e.comments_and_mentions} for e in self.event_set.all()]
+
     @classmethod
     def lang_data(cls):
         return [

@@ -58,7 +58,7 @@ class CommentableModel(models.Model):
         return self.code
 
     @property
-    def hasthag(self):
+    def hashtag(self):
         return "".join(["#", self.tag_slug])
 
     @property
@@ -73,10 +73,8 @@ class CommentableModel(models.Model):
 
     @property
     def mentions(self):
-        print "\n\nCALLING MENTIONS"
-        print "\n\n"
         qs = list(CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct().select_related("user"))
-        ret = [{
+        return [{
             "comment": comment.comment,
             "user_name": comment.user_name,
             "submit_date": comment.submit_date,
@@ -85,9 +83,10 @@ class CommentableModel(models.Model):
                                 % (comment.content_object.get_absolute_url(), comment.content_object.tag_display)
             )
         } for comment in qs]
-        print ret
-        print "\n\n"
-        return ret
+
+    @property
+    def comments_and_mentions(self):
+        return [dict(x) for x in set(tuple(z.items()) for z in self.comments + self.mentions)]
 
     class Meta:
         abstract = True

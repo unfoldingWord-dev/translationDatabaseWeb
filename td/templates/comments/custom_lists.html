@@ -9,18 +9,14 @@
     </ul>
 
     <div class="tab-content">
-{#        {% get_comment_count for object as comment_count %}#}
-{#        {% get_comment_list for object as originals %}#}
-        {% with mentions=object.mentions comments=object.comments %}
-            <div id="{{ prefix|add:"-"|default:"" }}all-comments" class="tab-pane active">
-                {% include "comments/list.html" with comment_list=mentions|combine_lists:comments %}
-            </div>
-            <div id="{{ prefix|add:"-"|default:"" }}original-comments" class="tab-pane">
-                {% include "comments/list.html" with comment_list=comments %}
-            </div>
-            <div id="{{ prefix|add:"-"|default:"" }}mention-comments" class="tab-pane">
-                {% include "comments/list.html" with comment_list=mentions %}
-            </div>
-        {% endwith %}
+        <div id="{{ prefix|add:"-"|default:"" }}all-comments" class="tab-pane active">
+            {% include "comments/list.html" with comment_list=object.comments_and_mentions %}
+        </div>
+        <div id="{{ prefix|add:"-"|default:"" }}original-comments" class="tab-pane">
+            {% include "comments/list.html" with comment_list=object.comments %}
+        </div>
+        <div id="{{ prefix|add:"-"|default:"" }}mention-comments" class="tab-pane">
+            {% include "comments/list.html" with comment_list=object.mentions %}
+        </div>
     </div>
 </div>
