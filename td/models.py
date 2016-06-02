@@ -6,10 +6,12 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from collections import defaultdict
+
+from django.utils.safestring import mark_safe
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
-from td.commenting.models import CommentTag, CommentWithTags
+from td.commenting.models import CommentTag, CommentWithTags, CommentableModel
 from .gl_tracking.models import Document
 
 
@@ -175,7 +177,7 @@ class Region(models.Model):
 
 
 @python_2_unicode_compatible
-class WARegion(models.Model):
+class WARegion(CommentableModel):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
     tracker = FieldTracker()
@@ -199,24 +201,12 @@ class WARegion(models.Model):
         return [d.name for d in self.gldirector_set.filter(is_helper=True)]
 
     @property
-    def tag_display(self):
-        return self.name
-
-    @property
-    def tag_tip(self):
-        return ""
-
-    @property
     def tag_slug(self):
         return self.slug
 
     @property
-    def hasthag(self):
-        return "".join(["#", self.tag_slug])
-
-    @property
-    def mentions(self):
-        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
+    def tag_display(self):
+        return ""
 
     @classmethod
     def slug_all(cls):
@@ -224,7 +214,7 @@ class WARegion(models.Model):
 
 
 @python_2_unicode_compatible
-class Country(models.Model):
+class Country(CommentableModel):
     code = models.CharField(max_length=2, unique=True)
     alpha_3_code = models.CharField(max_length=3, blank=True, default="")
     name = models.CharField(max_length=75)
@@ -294,26 +284,6 @@ class Country(models.Model):
     def get_absolute_url(self):
         return reverse("country_detail", kwargs={"pk": self.pk})
 
-    @property
-    def tag_display(self):
-        return self.name
-
-    @property
-    def tag_tip(self):
-        return self.code
-
-    @property
-    def tag_slug(self):
-        return self.code.lower()
-
-    @property
-    def hashtag(self):
-        return "".join(["#", self.tag_slug])
-
-    @property
-    def mentions(self):
-        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
-
 
 @python_2_unicode_compatible
 class LanguageAltName(models.Model):
@@ -328,7 +298,7 @@ class LanguageAltName(models.Model):
 
 
 @python_2_unicode_compatible
-class Language(models.Model):
+class Language(CommentableModel):
     DIRECTION_CHOICES = (
         ("l", "ltr"),
         ("r", "rtl")
@@ -439,14 +409,6 @@ class Language(models.Model):
     @property
     def tag_slug(self):
         return self.code.lower() if len(self.code) > 2 else self.iso_639_3.lower()
-
-    @property
-    def hashtag(self):
-        return "".join(["#", self.tag_slug])
-
-    @property
-    def mentions(self):
-        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
     def get_progress(self, phase):
         words = 0.0

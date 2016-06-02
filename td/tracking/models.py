@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from model_utils import FieldTracker
 
-from td.commenting.models import CommentWithTags
+from td.commenting.models import CommentWithTags, CommentableModel
 from td.models import Language, Country, Network
 from td.utils import ordinal
 
@@ -21,7 +21,7 @@ CHECKING_LEVEL = (
 # ------------- #
 #    CHARTER    #
 # ------------- #
-class Charter(models.Model):
+class Charter(CommentableModel):
 
     language = models.OneToOneField(Language, unique=True, verbose_name="Target Language")
     new_start = models.BooleanField(default=False)
@@ -71,14 +71,6 @@ class Charter(models.Model):
         language = Language.objects.get(id=self.language_id)
         return "-".join([language.tag_slug, "proj"])
 
-    @property
-    def hashtag(self):
-        return "".join(["#", self.tag_slug])
-
-    @property
-    def mentions(self):
-        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
-
     @classmethod
     def lang_data(cls):
         return [
@@ -90,7 +82,7 @@ class Charter(models.Model):
 # ----------- #
 #    EVENT    #
 # ----------- #
-class Event(models.Model):
+class Event(CommentableModel):
 
     charter = models.ForeignKey(Charter, verbose_name="Project Charter")
     number = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -143,14 +135,6 @@ class Event(models.Model):
         # NOTE: look at Charter.tag_slug's note
         charter = Charter.objects.get(id=self.charter_id)
         return "-".join([charter.language.tag_slug, "proj", "e" + str(self.number)])
-
-    @property
-    def hashtag(self):
-        return "".join(["#", self.tag_slug])
-
-    @property
-    def mentions(self):
-        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
 
 # ------------------------ #

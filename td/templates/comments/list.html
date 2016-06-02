@@ -8,7 +8,7 @@
     {% for comment in comment_list|dictsortreversed:"submit_date" %}
       <li>
         {{ comment.comment|safe|linebreaks }}
-        <p class="comment-list-info">{{ comment.user.get_full_name|default:comment.user.get_username }}, {{ comment.submit_date }}</p>
+        <p class="comment-list-info">{{ comment.user_name }}, {{ comment.submit_date }}{{ comment.source }}</p>
         {% if not forloop.last %}
           <hr />
         {% endif %}
