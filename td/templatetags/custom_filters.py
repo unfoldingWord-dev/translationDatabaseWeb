@@ -11,7 +11,8 @@ register = template.Library()
 
 @register.filter(name="append_qs")
 def append_qs(list_1, list_2):
-    return list(list_1) + list(list_2)
+    print "RETURNING", list(set(list(list_1) + list(list_2)))
+    return list(set(list(list_1) + list(list_2)))
 
 
 @register.filter(name="bible_status")

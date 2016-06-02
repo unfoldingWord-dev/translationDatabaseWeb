@@ -204,11 +204,11 @@ class WARegion(models.Model):
 
     @property
     def tag_tip(self):
-        return self.name
+        return ""
 
     @property
     def tag_slug(self):
-        return ""
+        return self.slug
 
     @property
     def hasthag(self):
@@ -361,7 +361,7 @@ class Language(models.Model):
         db_table = 'uw_language'
 
     def __str__(self):
-        return self.ln
+        return self.name
 
     def get_absolute_url(self):
         return reverse("language_detail", kwargs={"pk": self.pk})
@@ -434,11 +434,11 @@ class Language(models.Model):
 
     @property
     def tag_tip(self):
-        return ",".join(self.alt_name_all).decode("utf-8")
+        return ", ".join(self.alt_name_all).decode("utf-8")
 
     @property
     def tag_slug(self):
-        return self.code.lower()
+        return self.code.lower() if len(self.code) > 2 else self.iso_639_3.lower()
 
     @property
     def hashtag(self):

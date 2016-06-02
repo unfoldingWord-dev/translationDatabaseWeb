@@ -31,3 +31,9 @@ class Command(BaseCommand):
                 if mapping[lc] > 1:
                     print "%s: %dx" % (lc, mapping[lc])
             print "\n"
+
+        empty_iso_languages = [l for l in Language.objects.all() if (len(l.code) <= 2 and l.iso_639_3 == " ")]
+        # for l in empty_iso_languages:
+        #     print l
+        print empty_iso_languages
+        print "\n"

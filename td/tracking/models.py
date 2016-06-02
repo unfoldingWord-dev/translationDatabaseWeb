@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from model_utils import FieldTracker
 
+from td.commenting.models import CommentWithTags
 from td.models import Language, Country, Network
 from td.utils import ordinal
 
@@ -68,11 +69,15 @@ class Charter(models.Model):
         # self.language be a GenericForeignKey and self.language_id the object_id? Maybe that causes the relationship to
         # not be updated until the next time it's referenced?
         language = Language.objects.get(id=self.language_id)
-        return "-".join([language.code, "proj"])
+        return "-".join([language.tag_slug, "proj"])
 
     @property
     def hashtag(self):
         return "".join(["#", self.tag_slug])
+
+    @property
+    def mentions(self):
+        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
     @classmethod
     def lang_data(cls):
@@ -137,11 +142,15 @@ class Event(models.Model):
     def tag_slug(self):
         # NOTE: look at Charter.tag_slug's note
         charter = Charter.objects.get(id=self.charter_id)
-        return "-".join([charter.language.code, "proj", "e" + str(self.number)])
+        return "-".join([charter.language.tag_slug, "proj", "e" + str(self.number)])
 
     @property
     def hashtag(self):
         return "".join(["#", self.tag_slug])
+
+    @property
+    def mentions(self):
+        return CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct()
 
 
 # ------------------------ #
