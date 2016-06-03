@@ -719,6 +719,8 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                 try:
                     if field_mapping[qid] == "country":
                         obj.country = Country.objects.get(name__iexact=a["text"])
+                    elif field_mapping[qid] == "direction":
+                        obj.direction = "l" if a["text"].lower() == "yes" else "r"
                     else:
                         obj.__dict__[field_mapping[qid]] = a["text"]
                 except Country.DoesNotExist:

@@ -3,7 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from td.models import TempLanguage, Country
+from td.models import TempLanguage, Country, DIRECTION_CHOICES
 from td.resources.models import Questionnaire
 
 
@@ -19,9 +19,10 @@ def questionnaire_json(request):
             "languages": [
                 {
                     "name": questionnaire.language.ln,
-                    "dir": questionnaire.language.direction,
+                    "dir": questionnaire.language.get_direction_display(),
                     "slug": questionnaire.language.lc,
                     "questionnaire_id": questionnaire.id,
+                    "language_data": questionnaire.language_data,
                     "questions": questionnaire.questions,
                 }
             ]
@@ -44,6 +45,8 @@ def questionnaire_json(request):
                 if qid is not None and qid in field_mapping:
                     if field_mapping[qid] == "country":
                         obj.country = Country.objects.get(name__iexact=a["text"])
+                    elif field_mapping[qid] == "direction":
+                        obj.direction = "l" if a["text"].lower() == "yes" else "r"
                     else:
                         obj.__dict__[field_mapping[qid]] = a["text"]
 
