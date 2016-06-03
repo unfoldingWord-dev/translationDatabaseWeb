@@ -73,7 +73,16 @@ class Charter(CommentableModel):
 
     @property
     def all_events_comments(self):
-        return [{e.number: e.comments_and_mentions} for e in self.event_set.all()]
+        # return [(e.number, e.comments_and_mentions) for e in self.event_set.all() if len(e.comments_and_mentions)]
+        return [
+            {
+                "number": e.number,
+                "location": e.location,
+                "start_date": e.start_date,
+                "end_date": e.end_date,
+                "comments_and_mentions": e.comments_and_mentions
+            } for e in self.event_set.all() if len(e.comments_and_mentions)
+        ]
 
     @classmethod
     def lang_data(cls):
