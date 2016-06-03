@@ -27,8 +27,10 @@
     <ul class="nav nav-tabs view-tabs">
         <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">General Info</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#languages-view">Languages</a></li>
-        <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
-        <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+        {% if user.is_authenticated %}
+            <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+        {% endif %}
     </ul>
 
     <!-- TAB CONTENT -->
@@ -59,62 +61,67 @@
             </div>
         </div>
 
-        <!-- PROJECTS VIEW -->
-        <div id="projects-view" class="row tab-pane">
-            <div class="col-md-12">
-                <table class="table table-borderless" data-source="{% url "tracking:ajax_ds_charter_list" "country" country.pk %}">
-                    <thead>
-                    <tr>
-                        <th>Language</th>
-                        <th>Name</th>
-                        <th>Code</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Contact Person</th>
-                        <th>WA Region</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {% if user.is_authenticated %}
 
-        <!-- EVENTS VIEW -->
-        <div id="events-view" class="row tab-pane">
-            <div class="col-md-12">
-
-                <!-- EVENT LIST -->
-                <div class="event-list-table-container">
-                    <table class="table table-borderless" data-source="{% url "tracking:ajax_event_list" "country" country.pk %}">
+            <!-- PROJECTS VIEW -->
+            <div id="projects-view" class="row tab-pane">
+                <div class="col-md-12">
+                    <table class="table table-borderless" data-source="{% url "tracking:ajax_ds_charter_list" "country" country.pk %}">
                         <thead>
                         <tr>
-                            <th>Native</th>
-                            <th>Anglicized</th>
-                            <th>Number</th>
-                            <th>Location</th>
+                            <th>Language</th>
+                            <th>Name</th>
+                            <th>Code</th>
                             <th>Start Date</th>
                             <th>End Date</th>
+                            <th>Contact Person</th>
+                            <th>WA Region</th>
                         </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- EVENT COUNT -->
-                <h2>Event Count</h2>
-                {% show_event_count_form container=".event-count-table-container" selected_option=country.code %}
-                <hr />
-                <div class="">
-                    {% include "_loading.html" %}
-                    <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="country" data-option="{{ country.code|lower }}" data-fiscal-year="0">
-                        <!-- load table here -->
-                    </div>
-                </div>
-
             </div>
-        </div>
+
+            <!-- EVENTS VIEW -->
+            <div id="events-view" class="row tab-pane">
+                <div class="col-md-12">
+
+                    <!-- EVENT LIST -->
+                    <div class="event-list-table-container">
+                        <table class="table table-borderless" data-source="{% url "tracking:ajax_event_list" "country" country.pk %}">
+                            <thead>
+                            <tr>
+                                <th>Native</th>
+                                <th>Anglicized</th>
+                                <th>Number</th>
+                                <th>Location</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- EVENT COUNT -->
+                    <h2>Event Count</h2>
+                    {% show_event_count_form container=".event-count-table-container" selected_option=country.code %}
+                    <hr />
+                    <div class="">
+                        {% include "_loading.html" %}
+                        <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="country" data-option="{{ country.code|lower }}" data-fiscal-year="0">
+                            <!-- load table here -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        {% endif %}
+
     </div>
 
 {% endblock %}
