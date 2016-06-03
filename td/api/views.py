@@ -3,7 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from td.models import TempLanguage, Country, DIRECTION_CHOICES
+from td.models import TempLanguage, Country
 from td.resources.models import Questionnaire
 
 
