@@ -572,11 +572,9 @@ class LanguageEditModalView(LanguageEditView):
             "success": True,
             "object": self.object,
         }
-        print "- self.object is ", self.object
         temp_lang = self.object.templanguage
         temp_lang.status = "a"
         temp_lang.save()
-        print "- templang.lang_assigned is ", temp_lang.lang_assigned
         return render(self.request, "resources/language_modal_form.html", context)
 
 
