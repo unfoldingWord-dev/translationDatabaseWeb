@@ -65,7 +65,7 @@ def get_wa_fy(year=None, month=None):
 
 
 def ordinal(n):
-    return "%d%s" % (n, "tsnrhtdd"[(n/10 % 10 != 1)*(n % 10 < 4)*n % 10::4])
+    return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
 
 
 def two_digit_datetime(d):

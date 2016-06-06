@@ -67,9 +67,8 @@ class CommentableModel(models.Model):
 
     @property
     def comments(self):
-        comments = list(CommentWithTags.objects.filter(content_type=self.ctype, object_pk=self.pk).select_related("user")\
-            .values("comment", "user_name", "submit_date"))
-        return comments
+        return list(CommentWithTags.objects.filter(content_type=self.ctype, object_pk=self.pk).select_related("user")
+                    .values("comment", "user_name", "submit_date"))
 
     @property
     def mentions(self):
@@ -80,8 +79,7 @@ class CommentableModel(models.Model):
             "submit_date": comment.submit_date,
             "source": mark_safe("<span class=\"mention-source\"> - mentioned in <a class=\"mention-source-link\"href=\""
                                 "%s\">%s</a></span>"
-                                % (comment.content_object.get_absolute_url(), comment.content_object.tag_display)
-            )
+                                % (comment.content_object.get_absolute_url(), comment.content_object.tag_display))
         } for comment in qs]
 
     @property

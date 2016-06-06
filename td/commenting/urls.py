@@ -1,8 +1,8 @@
 from django.conf.urls import url
 
-from .views import post_comment
+from .views import PostCommentView
 
 
 urlpatterns = [
-    url(r"^post/$", post_comment, name="post_comment"),
+    url(r"^post/$", PostCommentView.as_view(), name="post_comment"),
 ]

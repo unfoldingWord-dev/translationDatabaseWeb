@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from model_utils import FieldTracker
 
-from td.commenting.models import CommentWithTags, CommentableModel
+from td.commenting.models import CommentableModel
 from td.models import Language, Country, Network
 from td.utils import ordinal
 

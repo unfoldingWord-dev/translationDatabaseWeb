@@ -7,11 +7,10 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from collections import defaultdict
 
-from django.utils.safestring import mark_safe
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
-from td.commenting.models import CommentTag, CommentWithTags, CommentableModel
+from td.commenting.models import CommentableModel
 from .gl_tracking.models import Document
 
 
@@ -205,7 +204,7 @@ class WARegion(CommentableModel):
         return self.slug
 
     @property
-    def tag_display(self):
+    def tag_tip(self):
         return ""
 
     @classmethod

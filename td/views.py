@@ -6,7 +6,6 @@ import hashlib
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.contenttypes.models import ContentType
 from pinax.eventlog.mixins import EventLogMixin
 from formtools.wizard.views import SessionWizardView
 from django import forms
@@ -20,7 +19,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 
-from td.commenting.models import CommentWithTags
 from .imports.models import (
     EthnologueCountryCode,
     EthnologueLanguageCode,
