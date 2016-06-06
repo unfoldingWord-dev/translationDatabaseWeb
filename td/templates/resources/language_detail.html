@@ -31,12 +31,12 @@
     <ul class="nav nav-tabs view-tabs">
         <li role="presentation" class="active"><a data-toggle="tab" data-target="#general-view">General Info</a></li>
         {% if user.is_authenticated %}
-        <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
-        <li role="presentation"><a data-toggle="tab" data-target="#translation-progress">Translation Progress</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#translation-progress">Translation Progress</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
         {% endif %}
         <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
-        <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
     </ul>
 
     <!-- TAB CONTENT -->
@@ -175,6 +175,14 @@
                 </div>
             </div>
 
+            <!-- COMMENTS VIEW -->
+            <div id="comments-view" class="row tab-pane">
+                <div class="col-md-12">
+                    {% render_comment_form for language %}
+                    {% include "comments/custom_lists.html" with object=language %}
+                </div>
+            </div>
+
         {% endif %}
 
         <!-- JOSHUA PROJECT VIEW -->
@@ -199,14 +207,6 @@
                     <li><a href="https://en.wikipedia.org/wiki/Special:Search/{{ language.ang }}" target="_blank">Wikipedia</a></li>
                     <li><a href="http://www.peoplegroups.org/explore/Explore.aspx?lang={{ language.iso_639_3 }}#topmenu" target="_blank">People Groups</a></li>
                 </ul>
-            </div>
-        </div>
-
-        <!-- COMMENTS VIEW -->
-        <div id="comments-view" class="row tab-pane">
-            <div class="col-md-12">
-              {% render_comment_form for language %}
-              {% include "comments/custom_lists.html" with object=language %}
             </div>
         </div>
 
