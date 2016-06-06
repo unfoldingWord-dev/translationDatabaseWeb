@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from djcelery.tests.req import RequestFactory
 
-from td.api.views import questionnaire_json, templanguages_json, lang_assignment_json, lang_assignment_changed_json
+from td.api.views import QuestionnaireView, templanguages_json, lang_assignment_json, lang_assignment_changed_json
 from td.models import Language, TempLanguage, Country
 from td.resources.models import Questionnaire
 
@@ -38,13 +38,14 @@ class QuestionnaireJsonTestCase(TestCase):
         field_mapping = {"0": "name", "1": "country"}
         self.questionnaire = Questionnaire.objects.create(pk=999, language=lang, questions=json.dumps(questions),
                                                           field_mapping=field_mapping)
+        self.view = QuestionnaireView()
 
     def test_get(self):
         """
         Request should successfully return a JsonResponse
         """
         request = RequestFactory().get(reverse("api:questionnaire"))
-        response = questionnaire_json(request)
+        response = self.view.get(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
@@ -61,7 +62,7 @@ class QuestionnaireJsonTestCase(TestCase):
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "narnia"}])
         }
         request = RequestFactory().post(reverse("api:questionnaire"), data=data)
-        response = questionnaire_json(request)
+        response = self.view.post(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
         content = json.loads(response.content)
@@ -83,10 +84,10 @@ class QuestionnaireJsonTestCase(TestCase):
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "oz"}])
         }
         request = RequestFactory().post(reverse("api:questionnaire"), data=data)
-        content = json.loads(questionnaire_json(request).content)
+        content = json.loads(self.view.post(request).content)
         self.assertEqual(content["status"], "error")
         self.assertGreater(len(content["message"]), 0)
-        self.assertIn("Country", content["message"])
+        self.assertIn("country", content["message"].lower())
 
     def test_post_error_questionnaire(self):
         """
@@ -102,7 +103,7 @@ class QuestionnaireJsonTestCase(TestCase):
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "narnia"}])
         }
         request = RequestFactory().post(reverse("api:questionnaire"), data=data)
-        content = json.loads(questionnaire_json(request).content)
+        content = json.loads(self.view.post(request).content)
         self.assertEqual(content["status"], "error")
         self.assertGreater(len(content["message"]), 0)
         self.assertIn("Questionnaire", content["message"])
@@ -120,7 +121,7 @@ class QuestionnaireJsonTestCase(TestCase):
             "answers": json.dumps([{"question_id": "0", "text": "answer"}, {"question_id": "1", "text": "narnia"}])
         }
         request = RequestFactory().post(reverse("api:questionnaire"), data=data)
-        content = json.loads(questionnaire_json(request).content)
+        content = json.loads(self.view.post(request).content)
         self.assertEqual(content["status"], "error")
         self.assertGreater(len(content["message"]), 0)
         self.assertIn("app", content["message"])

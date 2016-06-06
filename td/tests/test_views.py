@@ -10,10 +10,10 @@ from django.conf import settings
 
 from djcelery.tests.req import RequestFactory
 
-from td.models import TempLanguage, Language
+from td.models import TempLanguage, Language, WARegion
 from td.resources.models import Questionnaire
 from td.views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
-    TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView
+    TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView, WARegionDetailView
 from td.forms import TempLanguageForm
 
 
@@ -36,6 +36,21 @@ def create_user():
         email="test@gmail.com",
         password="test_password",
     )
+
+
+class WARegionDetailViewTestCase(TestCase):
+
+    def setUp(self):
+        self.object = WARegion.objects.create(name="Middle Earth", slug="middleearth")
+
+    # @patch("td.views.WARegionDetailView.get_object")
+    def test_get_context_data(self):
+        view = setup_view(WARegionDetailView())
+        view.object = self.object
+        view.get_object = Mock(return_value=self.object)
+        context = view.get_context_data()
+        self.assertIn("gl_directors", context)
+        self.assertIn("gl_helpers", context)
 
 
 class LanguageDetailViewTestCase(TestCase):

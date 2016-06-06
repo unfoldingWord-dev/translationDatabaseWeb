@@ -6,6 +6,15 @@ from jsonfield import JSONField
 from td.models import Language
 
 
+NAME_TO_PROPERTY = {
+    "name": "ln",
+    "code": "lc",
+    "direction": "ld",
+    "country": "cc",
+    "region": "lr"
+}
+
+
 def transform_country_data(data):
     tree = {"name": "World", "parent": None, "children": []}
     for code in data:
@@ -122,6 +131,10 @@ class Questionnaire(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    @property
+    def language_data(self):
+        return {NAME_TO_PROPERTY.get(field_name): int(qid) for qid, field_name in self.field_mapping.items()}
 
     @property
     def grouped_questions(self):
