@@ -1,8 +1,6 @@
-from django.db import transaction
 from django.test import TestCase
 from mock import patch
 
-from td.commenting.models import CommentTag
 from ..models import Resource
 from td.models import Language
 from ..tasks import _process_obs_response
