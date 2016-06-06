@@ -1,5 +1,8 @@
+from django.db import transaction
 from django.test import TestCase
 from mock import patch
+
+from td.commenting.models import CommentTag
 from ..models import Resource
 from td.models import Language
 from ..tasks import _process_obs_response
@@ -8,7 +11,7 @@ from pinax.eventlog.models import Log
 
 GOOD_JSON_DATA = [{"date_modified": "20141208",
                    "direction": "ltr",
-                   "language": "z1",
+                   "language": "zt1",
                    "status": {
                        "checking_entity": "translation team",
                        "checking_level": "1",
@@ -22,7 +25,7 @@ GOOD_JSON_DATA = [{"date_modified": "20141208",
                    "string": "Espa\u00f1ol"},
                   {"date_modified": "20141208",
                    "direction": "ltr",
-                   "language": "z2",
+                   "language": "zt2",
                    "status": {
                        "checking_entity": "translation team",
                        "checking_level": "1",
@@ -39,10 +42,8 @@ class OBSTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super(OBSTestCase, cls).setUpClass()
-        lang1 = Language(code="z1", name="Z Test 1")
-        lang1.save()
-        lang2 = Language(code="z2", name="Z Test 2")
-        lang2.save()
+        Language.objects.get_or_create(code="zt1", name="Z Test 1")
+        Language.objects.get_or_create(code="zt2", name="Z Test 2")
 
     def test_good_obs_fetch(self):
         Resource.objects.all().delete()

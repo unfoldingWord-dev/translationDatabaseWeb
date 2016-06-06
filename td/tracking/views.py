@@ -398,8 +398,6 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
     # Overridden to execute custom save and redirect upon valid submission
     def form_valid(self, form):
         event = self.object = form.save()
-        print "EVENT CHARTER", event.charter
-        print "EVENT CHARTER ID", event.charter_id
 
         # Update translators info
         translators = get_translator_data(self)
