@@ -1,6 +1,23 @@
-from django.test import TestCase
+from django.db.models import QuerySet
+from mock import Mock, patch, PropertyMock
 
-from td.utils import flatten_tuple, two_digit_datetime
+from django.http import JsonResponse
+from django.test import TestCase
+from djcelery.tests.req import RequestFactory
+
+from td.models import Language, WARegion
+from td.utils import flatten_tuple, two_digit_datetime, DataTableSourceView
+
+
+def setup_view(view, request=None, *args, **kwargs):
+    """
+    Mimic as_view() by returning the view instance.
+    args and kwargs are the same as you would pass to reverse()
+    """
+    view.request = request
+    view.args = args
+    view.kwargs = kwargs
+    return view
 
 
 class FlattenTupleTestCase(TestCase):
@@ -68,3 +85,44 @@ class TwoDigitDateTimeTestCase(TestCase):
 
     def test_word_string(self):
         self.assertEqual(two_digit_datetime("random"), "om")
+
+
+class DataTableSourceViewTestCase(TestCase):
+
+    def setUp(self):
+        self.request = RequestFactory().get('')
+        self.view = setup_view(DataTableSourceView(), self.request)
+
+    @patch("td.utils.DataTableSourceView.data", new_callable=PropertyMock, return_value=None)
+    @patch("td.utils.DataTableSourceView.draw", new_callable=PropertyMock, return_value=None)
+    @patch("td.utils.DataTableSourceView.all_data")
+    @patch("td.utils.DataTableSourceView.filtered_data")
+    def test_get(self, mock_filtered_data, mock_all_data, mock_draw, mock_data):
+        mock_all_data.configure_mock(**{"count.return_value": 0})
+        mock_filtered_data.configure_mock(**{"count.return_value": 0})
+        result = self.view.get(self.request)
+        self.assertIsInstance(result, JsonResponse)
+        content = result.content
+        self.assertIn("draw", content)
+        self.assertIn("data", content)
+        self.assertIn("recordsTotal", content)
+        self.assertIn("recordsFiltered", content)
+
+    def test_queryset_empty(self):
+        self.view.model = WARegion
+        self.assertEqual(len(self.view.queryset), 0)
+
+    def test_queryset(self):
+        self.view.model = WARegion
+        WARegion.objects.get_or_create(name="Middle Earth", slug="middleearth")
+        self.assertEqual(len(self.view.queryset), 1)
+        WARegion.objects.get_or_create(name="Middle East", slug="middleeast")
+        self.assertEqual(len(self.view.queryset), 2)
+
+    def test_paging_start_record(self):
+        self.view.request = RequestFactory().get('', {"start": "1"})
+        self.assertEqual(self.view.paging_start_record, 1)
+
+    def test_paging_page_length(self):
+        self.view.request = RequestFactory().get('', {"length": "1"})
+        self.assertEqual(self.view.paging_page_length, 1)
