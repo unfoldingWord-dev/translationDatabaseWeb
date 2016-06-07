@@ -111,11 +111,6 @@ class PostCommentView(LoginRequiredMixin, View):
 class DeleteCommentView(LoginRequiredMixin, View):
 
     def post(self, request, id=None, next=None):
-
-        print "REQUEST.POST", request.POST
-        print "ID", id
-        print "NEXT", next
-
         comment = get_object_or_404(CommentWithTags, id=id)
         if comment.user == request.user:
             comment.is_removed = True
