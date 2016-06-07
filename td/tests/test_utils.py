@@ -1,11 +1,10 @@
-from django.db.models import QuerySet
-from mock import Mock, patch, PropertyMock
+from mock import patch, PropertyMock
 
 from django.http import JsonResponse
 from django.test import TestCase
 from djcelery.tests.req import RequestFactory
 
-from td.models import Language, WARegion
+from td.models import WARegion
 from td.utils import flatten_tuple, two_digit_datetime, DataTableSourceView
 
 
