@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from td.commenting.models import CommentTag, CommentWithTags
+from td.commenting.models import CommentWithTags
 from td.tracking.models import (
     Charter,
     Event,
