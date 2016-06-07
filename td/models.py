@@ -209,7 +209,7 @@ class WARegion(CommentableModel):
 
     @classmethod
     def slug_all(cls):
-        return [r.slug for r in cls.objects.all()]
+        return list(WARegion.objects.all().values_list("slug", flat=True))
 
 
 @python_2_unicode_compatible
@@ -337,9 +337,7 @@ class Language(CommentableModel):
 
     @property
     def cc(self):
-        if self.country:
-            return self.country.code.encode("utf-8")
-        return ""
+        return self.country.code.encode("utf-8") if self.country else ""
 
     @property
     def cc_all(self):

@@ -43,7 +43,6 @@ class WARegionDetailViewTestCase(TestCase):
     def setUp(self):
         self.object = WARegion.objects.create(name="Middle Earth", slug="middleearth")
 
-    # @patch("td.views.WARegionDetailView.get_object")
     def test_get_context_data(self):
         view = setup_view(WARegionDetailView())
         view.object = self.object
