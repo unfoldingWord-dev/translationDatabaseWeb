@@ -67,15 +67,17 @@ class CommentableModel(models.Model):
 
     @property
     def comments(self):
-        return list(CommentWithTags.objects.filter(content_type=self.ctype, object_pk=self.pk).select_related("user")
-                    .values("comment", "user_name", "submit_date"))
+        return list(CommentWithTags.objects.filter(is_removed=False, content_type=self.ctype, object_pk=self.pk).select_related("user")
+                    .values("id", "comment", "user_name", "user_id", "submit_date"))
 
     @property
     def mentions(self):
-        qs = list(CommentWithTags.objects.filter(tags__slug__in=[self.tag_slug]).distinct().select_related("user"))
+        qs = list(CommentWithTags.objects.filter(is_removed=False, tags__slug__in=[self.tag_slug]).distinct().select_related("user"))
         return [{
+            "id": comment.id,
             "comment": comment.comment,
             "user_name": comment.user_name,
+            "user_id": comment.user_id,
             "submit_date": comment.submit_date,
             "source": mark_safe("<span class=\"mention-source\"> - mentioned in <a class=\"mention-source-link\"href=\""
                                 "%s\">%s</a></span>"

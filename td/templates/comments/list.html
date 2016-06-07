@@ -5,14 +5,34 @@
     <h3>Comments <span>({{ comment_list|length }})</span></h3>
   </div>
   <ul class="comment-list">
+
     {% for comment in comment_list|dictsortreversed:"submit_date" %}
       <li>
+
         {{ comment.comment|safe|linebreaks }}
-        <p class="comment-list-info">{{ comment.user_name }}, {{ comment.submit_date }}{{ comment.source }}</p>
+
+        <p class="comment-list-info">
+
+          {{ comment.user_name }}, {{ comment.submit_date }}{{ comment.source }}
+
+          {% if user.id == comment.user_id %}
+            <div class="delete-comment-form-container">
+              <form id="delete-comment-form-{{ comment.id }}" action="{% url "comment:delete_comment" id=comment.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ object.get_absolute_url }}">
+              </form>
+              <i data-comment-id="{{ comment.id }}" class="fa fa-trash comment-delete-icon"></i>
+            </div>
+          {% endif %}
+
+        </p>
+
         {% if not forloop.last %}
           <hr />
         {% endif %}
+
       </li>
     {% endfor %}
+
   </ul>
 </div>

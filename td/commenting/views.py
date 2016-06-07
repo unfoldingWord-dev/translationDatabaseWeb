@@ -3,7 +3,8 @@ from __future__ import absolute_import
 from account.mixins import LoginRequiredMixin
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.utils.html import escape
 
 import django_comments
@@ -11,6 +12,8 @@ from django.views.generic import View
 from django_comments import signals
 from django_comments.views.comments import CommentPostBadRequest
 from django_comments.views.utils import next_redirect
+
+from td.commenting.models import CommentWithTags
 
 
 class PostCommentView(LoginRequiredMixin, View):
@@ -103,3 +106,19 @@ class PostCommentView(LoginRequiredMixin, View):
                                          (escape(ctype), escape(object_pk), e.__class__.__name__))
 
         return model, target
+
+
+class DeleteCommentView(LoginRequiredMixin, View):
+
+    def post(self, request, id=None, next=None):
+
+        print "REQUEST.POST", request.POST
+        print "ID", id
+        print "NEXT", next
+
+        comment = get_object_or_404(CommentWithTags, id=id)
+        if comment.user == request.user:
+            comment.is_removed = True
+            comment.save()
+
+        return HttpResponseRedirect(request.POST.get("next"))
