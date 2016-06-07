@@ -69,7 +69,7 @@ def ordinal(n):
 
 
 def two_digit_datetime(d):
-    return "".join(["0", d])[-2:]
+    return "".join(["0", str(d)])[-2:]
 
 
 class DataTableSourceView(View):
