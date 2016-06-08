@@ -137,3 +137,24 @@ class DataTableSourceViewTestCase(TestCase):
     def test_order_direction_empty(self):
         self.view.request = RequestFactory().get('')
         self.assertEqual(self.view.order_direction, "")
+
+    @patch("td.utils.DataTableSourceView.paging_start_record", new_callable=PropertyMock, return_value=0)
+    @patch("td.utils.DataTableSourceView.paging_page_length", new_callable=PropertyMock, return_value=1)
+    def test_current_page(self, mock_page_length, mock_start_record):
+        result = self.view.current_page
+        self.assertEqual(result, 1)
+
+    @patch("td.utils.DataTableSourceView.paging_start_record", new_callable=PropertyMock, return_value=0)
+    @patch("td.utils.DataTableSourceView.paging_page_length", new_callable=PropertyMock, return_value=0)
+    def test_current_page_w_zero_page_length(self, mock_page_length, mock_start_record):
+        with self.assertRaises(ZeroDivisionError):
+            self.view.current_page
+
+    def test_draw(self):
+        self.view.request = RequestFactory().get('', {"draw": "1"})
+        self.assertEqual(self.view.draw, 1)
+
+    def test_draw_none(self):
+        self.view.request = RequestFactory().get('')
+        with self.assertRaises(TypeError):
+            self.view.draw
