@@ -273,7 +273,7 @@
             // Makes an API call to load content into the target element
             function loadPhase(phase) {
                 $('#phase-view')
-                    .load('ajax/phase_progress/', {'phase': phase}, function(response, status, xhr) {
+                    .load('ajax/phase_progress/' + phase + '/', function(response, status, xhr) {
                         if (status === 'error') displayError(this);
                     })
                     // Insert a loading indicator that will be overriden by the upcoming content

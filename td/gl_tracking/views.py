@@ -23,16 +23,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
 class PhaseView(LoginRequiredMixin, TemplateView):
     template_name = "gl_tracking/_phase_view.html"
 
-    def post(self, request, *args, **kwargs):
-        """
-        Overridden to allow POST and avoid error when doing so. POST will be the default method of calling this view.
-        """
-        context = self.get_context_data()
-        return self.render_to_response(context)
-
     def get_context_data(self, *args, **kwargs):
         context = super(PhaseView, self).get_context_data(**kwargs)
-        phase = self.request.POST["phase"]
+        phase = self.kwargs.get("phase")
         regions = map_gls(Language.objects.filter(gateway_flag=True, variant_of=None), phase)
         for key, region in regions.iteritems():
             region["regional_progress"] = get_regional_progress(region["gateway_languages"])
