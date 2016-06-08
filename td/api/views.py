@@ -49,7 +49,7 @@ class QuestionnaireView(View):
                                answers=answers)
 
             for answer in answers:
-                qid = answer.get("question_id")
+                qid = str(answer.get("question_id"))
                 if qid is not None and qid in field_mapping:
                     answer_text = answer.get("text")
                     if field_mapping[qid] == "country":
