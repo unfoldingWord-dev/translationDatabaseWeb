@@ -96,9 +96,7 @@ class DataTableSourceView(View):
     @property
     def order_direction(self):  # @@@ expand on this if multi-column ordering is needed
         direction = self.request.GET.get("order[0][dir]")
-        if direction == "desc":
-            return "-"
-        return ""
+        return "-" if direction == "desc" else ""
 
     @property
     def order_field(self):  # @@@ expand on this if multi-column ordering is needed
