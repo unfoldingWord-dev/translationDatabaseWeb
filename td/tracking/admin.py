@@ -16,7 +16,7 @@ from .models import (
     Translator,
     TranslationMethod,
 )
-from td.models import Language, Country
+from td.models import Language
 
 
 class CharterResource(resources.ModelResource):
