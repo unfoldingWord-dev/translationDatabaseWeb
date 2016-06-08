@@ -102,9 +102,10 @@ class TempLanguage(models.Model):
 
     @classmethod
     def lang_assigned_data(cls):
-        return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned.ang, "alt": x.lang_assigned.alt_name_all,
-                 "cc": [x.country.code] if x.country is not None else [], "lr": x.lang_assigned.lr,
-                 "gw": x.lang_assigned.gateway_flag, "ld": x.get_direction_display()} for x in cls.objects.all()]
+        return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned and x.lang_assigned.ang,
+                 "alt": x.lang_assigned and x.lang_assigned.alt_name_all, "cc": [x.country.code] if x.country else [],
+                 "lr": x.lang_assigned and x.lang_assigned.lr, "gw": x.lang_assigned and x.lang_assigned.gateway_flag,
+                 "ld": x.get_direction_display()} for x in cls.objects.all().select_related("lang_assigned", "country")]
 
     @classmethod
     def lang_assigned_map(cls):
