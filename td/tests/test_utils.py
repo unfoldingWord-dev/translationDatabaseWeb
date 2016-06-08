@@ -125,3 +125,15 @@ class DataTableSourceViewTestCase(TestCase):
     def test_paging_page_length(self):
         self.view.request = RequestFactory().get('', {"length": "1"})
         self.assertEqual(self.view.paging_page_length, 1)
+
+    def test_order_direction_desc(self):
+        self.view.request = RequestFactory().get('', {"order[0][dir]": "desc"})
+        self.assertEqual(self.view.order_direction, "-")
+
+    def test_order_direction_asc(self):
+        self.view.request = RequestFactory().get('', {"order[0][dir]": "asc"})
+        self.assertEqual(self.view.order_direction, "")
+
+    def test_order_direction_empty(self):
+        self.view.request = RequestFactory().get('')
+        self.assertEqual(self.view.order_direction, "")
