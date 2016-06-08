@@ -42,13 +42,6 @@ class RegionDetailView(LoginRequiredMixin, DetailView):
     model = WARegion
     template_name = "gl_tracking/_region_detail.html"
 
-    def post(self, request, *args, **kwargs):
-        """
-        Overridden to allow POST and avoid error when doing so. POST will be the default method of calling this view.
-        """
-        context = self.get_context_data()
-        return self.render_to_response(context)
-
     def get_context_data(self, *args, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
         context["directors"] = self.object.gl_directors
