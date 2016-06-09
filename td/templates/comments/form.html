@@ -1,0 +1,16 @@
+{% load bootstrap %}
+{% load comments %}
+
+<div class="comment-form-container">
+  <form action="{% comment_form_target %}" method="post" class="clearfix">
+    {% csrf_token %}
+    {{ form.comment|bootstrap }}
+    {{ form.honeypot }}
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
+    <button type="submit" name="submit" class="btn btn-primary pull-right">Save</button>
+  </form>
+</div>

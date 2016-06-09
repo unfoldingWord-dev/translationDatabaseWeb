@@ -1,11 +1,15 @@
 from __future__ import absolute_import
 
+import logging
+
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.db import connection
+from django.db import connection, IntegrityError
 
 from celery import task
 from pinax.eventlog.models import log
 
+from td.commenting.models import CommentTag
 from td.imports.models import (
     EthnologueLanguageCode,
     EthnologueCountryCode,
@@ -20,16 +24,37 @@ from .models import AdditionalLanguage, Country, Language, Region, JSONData
 from .signals import languages_integrated
 
 
+logger = logging.getLogger(__name__)
+
+
+@task()
+def create_comment_tag(instance):
+    try:
+        content_type = ContentType.objects.get_for_model(instance)
+        pk = instance.id
+        delete_comment_tag(instance)
+        CommentTag.objects.create(name=instance.tag_slug, slug=instance.tag_slug, object_id=pk,
+                                  content_type=content_type)
+    except IntegrityError as e:
+        logger.warning("CommentTag object cannot be created for object %s." % instance.__str__())
+        logger.error(e.message)
+        pass
+
+
+@task()
+def delete_comment_tag(instance):
+    content_type = ContentType.objects.get_for_model(instance)
+    tags = CommentTag.objects.filter(content_type=content_type, object_id=instance.id)
+    tags.delete()
+
+
 @task()
 def update_alt_names(code):
-    try:
-        # Filter instead of get because diff langs may have the same
-        #    iso-639-3 code. Specific example: 'pt' and 'pt-br'.
-        for language in Language.objects.filter(iso_639_3=code):
-            language.alt_names = ", ".join(sorted(language.alt_name_all))
-            language.save()
-    except Language.DoesNotExist:
-        print "WARNING: update_alt_names() failed because Language with code '" + code + "' doesn't exist."
+    # Filter instead of get because diff langs may have the same
+    #    iso-639-3 code. Specific example: 'pt' and 'pt-br'.
+    for language in Language.objects.filter(iso_639_3=code):
+        language.alt_names = ", ".join(sorted(language.alt_name_all))
+        language.save()
 
 
 @task()

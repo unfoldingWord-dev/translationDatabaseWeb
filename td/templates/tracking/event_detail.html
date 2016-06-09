@@ -2,6 +2,11 @@
 {% load render_dict %}
 
 {% load humanize %}
+{% load comments %}
+
+
+{% block body_class %}event-detail{% endblock %}
+
 
 {% block body %}
 
@@ -19,6 +24,7 @@
     <div class="col-md-6">
         <table class="table">
             <tbody>
+                <tr><th>Hashtag</th><td>{{ object.hashtag|default:"-" }}</td></tr>
                 <tr><th>Location</th><td>{{ object.location }}</td></tr>
                 <tr><th>Start Date</th><td>{{ object.start_date }}</td></tr>
                 <tr><th>End Date</th><td>{{ object.end_date }}</td></tr>
@@ -26,10 +32,54 @@
                 <tr><th>Contact Person</th><td>{{ object.contact_person }}</td></tr>
                 <tr><th>Partner</th><td>{{ object.partner }}</td></tr>
                 <tr><th>Checking Level (start, end)</th><td>{{ object.current_check_level | default:"n/a" }}, {{ object.target_check_level | default:"n/a" }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
                 <tr><th>Created At</th><td>{{ object.created_at }}</td></tr>
                 <tr><th>Created By</th><td>{{ object.created_by }}</td></tr>
                 <tr><th>Modified At</th><td>{{ object.modified_at }}</td></tr>
                 <tr><th>Modified By</th><td>{{ object.modified_by }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr><th>Facilitators</th>
+                    <td>
+                        {% for person in object.facilitators.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}{% if person.is_lead %}   <i class="fa fa-user" title="Lead facilitator"></i>{% endif %}{% if person.speaks_gl %}   <i class="fa fa-commenting-o" title="This person speaks GL"></i>{% endif %} 
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Materials/Resources</th>
+                    <td>
+                        {% for item in object.materials.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
+                            {% if item.licensed %}   <i class="fa fa-copyright" title="Material is copyrighted"></i>{% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Hardware</th>
+                    <td>
+                        {% for item in object.hardware.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr><th>Software</th>
+                    <td>
+                        {% for item in object.software.all %}
+                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
+                        {% endfor %}
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -76,41 +126,12 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <table class="table">
-            <tbody>
-                <tr><th>Facilitators</th>
-                    <td>
-                        {% for person in object.facilitators.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ person.name | capfirst }}{% if person.is_lead %}   <i class="fa fa-user" title="Lead facilitator"></i>{% endif %}{% if person.speaks_gl %}   <i class="fa fa-commenting-o" title="This person speaks GL"></i>{% endif %} 
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr><th>Materials/Resources</th>
-                    <td>
-                        {% for item in object.materials.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
-                            {% if item.licensed %}   <i class="fa fa-copyright" title="Material is copyrighted"></i>{% endif %}
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr><th>Hardware</th>
-                    <td>
-                        {% for item in object.hardware.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr><th>Software</th>
-                    <td>
-                        {% for item in object.software.all %}
-                            {% if not forloop.first %}<br/>{% endif %}{{ item.name | capfirst }}
-                        {% endfor %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+<!-- COMMENTS VIEW -->
+<div id="comments-view" class="row">
+    <div class="col-md-12">
+        {% render_comment_form for object %}
+        {% include "comments/custom_lists.html" with object=object %}
     </div>
 </div>
 

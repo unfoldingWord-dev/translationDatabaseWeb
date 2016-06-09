@@ -1,6 +1,8 @@
 import json
 import os
 
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core import management
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -10,10 +12,65 @@ from mock import patch
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3,\
     WikipediaISOCountry
 
-from td.models import Language, AdditionalLanguage, TempLanguage, Country, WARegion
+from td.models import Language, AdditionalLanguage, TempLanguage, Country, WARegion, Region, JSONData, Network, \
+    LanguageAltName, LanguageEAV, CountryEAV
 from td.resources.models import Questionnaire
 from td.tasks import integrate_imports, update_countries_from_imports
 from td.gl_tracking.models import Phase, Document, DocumentCategory, Progress
+
+
+class CountryEAVTestCase(TestCase):
+
+    def test_string_representation(self):
+        user, _ = User.objects.get_or_create(username="gandalf")
+        country, _ = Country.objects.get_or_create(name="Gondor", code="GO")
+        obj, _ = CountryEAV.objects.get_or_create(entity=country, attribute="king", value="no one",
+                                                  source_ct=ContentType.objects.get_for_model(user), source_id=user.id)
+        self.assertEqual(obj.__str__(), obj.attribute)
+
+
+class LanguageEAVTestCase(TestCase):
+
+    def test_string_representation(self):
+        user, _ = User.objects.get_or_create(username="gandalf")
+        lang, _ = Language.objects.get_or_create(name="Valarin", code="val")
+        obj, _ = LanguageEAV.objects.get_or_create(entity=lang, attribute="alphabet", value="scribble",
+                                                   source_ct=ContentType.objects.get_for_model(user), source_id=user.id)
+        self.assertEqual(obj.__str__(), obj.attribute)
+
+
+class LanguageAltNameTestCase(TestCase):
+
+    def test_string_representation(self):
+        obj, _ = LanguageAltName.objects.get_or_create(code="aaa", name="Triple A")
+        self.assertEqual(obj.__str__(), obj.name)
+
+
+class RegionTestCase(TestCase):
+
+    def test_string_representation(self):
+        obj = Region.objects.create(name="Middle Earth", slug="middleearth")
+        self.assertEqual(obj.__str__(), obj.name)
+
+
+class NetworkTestCase(TestCase):
+
+    def setUp(self):
+        self.object, _ = Network.objects.get_or_create(name="Network")
+
+    def test_get_absolute_url(self):
+        expected_url = reverse("network_detail", args=[self.object.pk])
+        self.assertEqual(self.object.get_absolute_url(), expected_url)
+
+    def test_string_representation(self):
+        self.assertEqual(self.object.__str__(), self.object.name)
+
+
+class JSONDataTestCase(TestCase):
+
+    def test_string_representation(self):
+        obj, _ = JSONData.objects.get_or_create(name="json data", data={"json": "data"})
+        self.assertEqual(obj.__str__(), obj.name)
 
 
 class TempLanguageTestCase(TestCase):
@@ -242,7 +299,7 @@ class LanguageIntegrationTests(TestCase):
 class LanguageTestCase(TestCase):
 
     def setUp(self):
-        self.lang = Language.objects.create(code="tl", name="Test Language", gateway_flag=True)
+        self.lang = Language.objects.create(code="tl", iso_639_3="tel", name="Test Language", gateway_flag=True)
         self.phase_one = Phase.objects.create(number=1)
         self.phase_two = Phase.objects.create(number=2)
         self.cat_one = DocumentCategory.objects.create(name="Category One", phase=self.phase_one)
@@ -296,6 +353,45 @@ class LanguageTestCase(TestCase):
         self.assertEqual(tmp[0].pk, self.progress_one.pk)
         self.assertEqual(tmp[1].pk, self.progress_two.pk)
 
+    def test_cc_w_country(self):
+        self.assertEqual(self.lang.cc, "")
+
+    def test_cc_w_country_wo_code(self):
+        country, _ = Country.objects.get_or_create(name="Narnia")
+        self.lang.country = country
+        self.lang.save()
+        self.assertEqual(self.lang.cc, "")
+
+    def test_cc_w_country_w_code(self):
+        country, _ = Country.objects.get_or_create(name="Narnia", code="NA")
+        self.lang.country = country
+        self.lang.save()
+        self.assertEqual(self.lang.cc, country.code)
+
+    def test_tag_display_wo_ang(self):
+        self.assertEqual(self.lang.tag_display, self.lang.name)
+
+    def test_tag_display_w_ang(self):
+        self.lang.anglicized_name = "English Name"
+        self.lang.save()
+        self.assertEqual(self.lang.tag_display, self.lang.anglicized_name)
+
+    def test_tag_tip_wo_alt_name(self):
+        self.assertEqual(self.lang.tag_tip, "")
+
+    def test_tag_tip_w_alt_name(self):
+        alt_1, _ = LanguageAltName.objects.get_or_create(code="tel", name="Alt 1")
+        alt_2, _ = LanguageAltName.objects.get_or_create(code="tel", name="Alt 2")
+        # Need to create source so LanguageEAV will be created for alt_name
+        source, _ = User.objects.get_or_create(username="legolas")
+        self.lang.source = source
+        self.lang.alt_name = alt_1
+        self.lang.save()
+        self.lang.alt_name = alt_2
+        self.lang.save()
+        expected_result = ", ".join([alt_1.name, alt_2.name])
+        self.assertEqual(self.lang.tag_tip, expected_result)
+
 
 class CountryTestCase(TestCase):
 
@@ -316,3 +412,13 @@ class WARegionTestCase(TestCase):
         """get_absolute_url of a WA region should return the link to its detail page"""
         self.assertEqual(self.wa_region.get_absolute_url(), reverse("wa_region_detail",
                                                                     kwargs={"slug": self.wa_region.slug}))
+
+    def test_string_representation(self):
+        self.assertEqual(self.wa_region.__str__(), self.wa_region.name)
+
+    def test_tag_tip(self):
+        self.assertEqual(self.wa_region.tag_tip, "")
+
+    def test_slug_all(self):
+        expected_result = list(WARegion.objects.all().values_list("slug", flat=True))
+        self.assertListEqual(WARegion.slug_all(), expected_result)

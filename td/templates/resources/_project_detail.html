@@ -1,51 +1,90 @@
+{% load comments %}
+
 {% if user.is_authenticated %}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <a class="btn btn-default btn-xs pull-right" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i> Edit</a>
-            <h2 class="panel-title">Project Charter</h2>
-            <button class="icon-button" data-toggle="collapse" data-target=".charter-table" title="Expand/Collapse" data-tooltip><i class="fa fa-compress"></i></button>
+    <div class="section">
+        <div class="section-header">
+            <h4 class="section-header-title">Charter</h4>
+            <div class="section-header-line"></div>
+            <div class="section-header-actions">
+                <a class="btn btn-icon" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i></a>
+                <button class="btn btn-icon" data-toggle="collapse" data-target=".charter-section"><i class="fa fa-compress"></i></button>
+            </div>
         </div>
-        <div class="panel-body no-padding charter-table collapse in">
-            <table class="table table-no-border no-margin">
-                <tbody>
-                    <tr><th class="col-md-2">New Start</th><td>{{ data.new_start|yesno|capfirst }}</td></tr>
-                    <tr><th>Start Date</th><td>{{ data.start_date|default:"-" }}</td></tr>
-                    <tr><th>Completion Date</th><td>{{ data.end_date|default:"-" }}</td></tr>
-                    <tr><th>Lead Department</th><td>{{ data.lead_dept|default:"-" }}</td></tr>
-                    <tr><th>Contact Person</th><td>{{ data.contact_person|default:"-" }}</td></tr>
-                    <tr><th>Accounting Number</th><td>{{ data.number|default:"-" }}</td></tr>
-                    <tr><th>Partner</th><td>{{ data.partner.name|default:"-" }}</td></tr>
-                    <tr><th>Created At</th><td>{{ data.created_at|default:"-" }}</td></tr>
-                    <tr><th>Created By</th><td>{{ data.created_by|default:"-" }}</td></tr>
-                    <tr><th>Modified At</th><td>{{ data.modified_at|default:"-" }}</td></tr>
-                    <tr><th>Modified By</th><td>{{ data.modified_by|default:"-" }}</td></tr>
-                </tbody>
-            </table>
+        <div class="section-body charter-section collapse in">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless col-md-6">
+                        <tbody>
+                            <tr><th class="col-md-4">Hashtag</th><td>{{ data.hashtag|default:"-" }}</td></tr>
+                            <tr><th>New Start</th><td>{{ data.new_start|yesno|capfirst }}</td></tr>
+                            <tr><th>Start Date</th><td>{{ data.start_date|default:"-" }}</td></tr>
+                            <tr><th>Completion Date</th><td>{{ data.end_date|default:"-" }}</td></tr>
+                            <tr><th>Lead Department</th><td>{{ data.lead_dept|default:"-" }}</td></tr>
+                            <tr><th>Contact Person</th><td>{{ data.contact_person|default:"-" }}</td></tr>
+                            <tr><th>Accounting Number</th><td>{{ data.number|default:"-" }}</td></tr>
+                            <tr><th>Partner</th><td>{{ data.partner.name|default:"-" }}</td></tr>
+                            <tr><th>Created At</th><td>{{ data.created_at|default:"-" }}</td></tr>
+                            <tr><th>Created By</th><td>{{ data.created_by|default:"-" }}</td></tr>
+                            <tr><th>Modified At</th><td>{{ data.modified_at|default:"-" }}</td></tr>
+                            <tr><th>Modified By</th><td>{{ data.modified_by|default:"-" }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    {% include "comments/custom_lists.html" with object=data prefix="ch" %}
+                    {% render_comment_form for data %}
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <a class="btn btn-primary btn-xs pull-right" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i> Add</a>
-            <h2 class="panel-title">Translation Events/Workshops</h2>
-            <button class="icon-button" data-toggle="collapse" data-target=".event-table" title="Expand/Collapse" data-tooltip><i class="fa fa-expand"></i></button>
+    <div class="section">
+        <div class="section-header">
+            <h4 class="section-header-title">Events</h4>
+            <div class="section-header-line"></div>
+            <div class="section-header-actions">
+                <a class="btn btn-icon" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i></a>
+                <button class="btn btn-icon" data-toggle="collapse" data-target=".event-section"><i class="fa fa-compress"></i></button>
+            </div>
         </div>
-        <div class="panel-body no-padding event-table collapse">
-            <table class="table table-bordered" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
-                <thead>
-                    <tr>
-                        <th>Number</th>
-                        <th>Location</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Lead Department</th>
-                        <th>Contact Person</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Will be populated by dataTables() -->
-                </tbody>
-            </table>
+        <div class="section-body event-section collapse in">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <table class="table table-borderless" data-source="{% url "tracking:ajax_charter_events" charter.pk %}">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Location</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Lead Department</th>
+                                <th>Contact Person</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be populated by dataTables() -->
+                        </tbody>
+                    </table>
+
+                    <div class="events-comments-container">
+                        <h4>Events' Comments</h4>
+                        <ul class="events-comments-list">
+                            {% for event in charter.all_events_comments %}
+                                <li class="events-comments-item">
+                                    <div class="event-number">
+                                      <h4>#{{ event.number }}</h4>
+                                      <p>{{ event.location }}<br>{{ event.start_date|date:"SHORT_DATE_FORMAT" }}<br>{{ event.end_date|date:"SHORT_DATE_FORMAT" }}</p>
+                                    </div>
+                                    {% include "comments/list.html" with comment_list=event.comments_and_mentions %}
+                                </li>
+                           {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
+
 {% endif %}
