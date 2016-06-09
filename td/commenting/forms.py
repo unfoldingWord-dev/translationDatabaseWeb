@@ -15,7 +15,7 @@ class CommentFormWithTags(CommentForm):
 
     def process_tags(self):
         comment = self.cleaned_data.get("comment")
-        tags = [part.replace("#", "") for part in comment.split() if part.__contains__("#")]
+        tags = [part.replace("#", "") for part in comment.split() if "#" in part]
         valid_tags = []
 
         for tag in tags:

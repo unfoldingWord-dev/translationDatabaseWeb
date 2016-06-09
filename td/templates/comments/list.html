@@ -9,7 +9,7 @@
     {% for comment in comment_list|dictsortreversed:"submit_date" %}
       <li>
 
-        {{ comment.comment|safe|linebreaks }}
+        {{ comment.comment|safe|linebreaks|urlize }}
 
         <p class="comment-list-info">
 

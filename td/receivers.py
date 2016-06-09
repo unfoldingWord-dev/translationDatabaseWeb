@@ -60,7 +60,7 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, instance=None, created=False, **kwargs):
-    "code" in instance.tracker.changed().keys() and create_comment_tag(instance)
+    (instance and "code" in instance.tracker.changed().keys()) and create_comment_tag(instance)
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
