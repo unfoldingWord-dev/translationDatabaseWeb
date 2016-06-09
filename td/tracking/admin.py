@@ -1,7 +1,8 @@
 from django.contrib import admin
-from import_export import resources
+from import_export import resources, fields, widgets
 from import_export.admin import ImportExportModelAdmin
 
+from td.gl_tracking.models import Partner
 from .models import (
     Charter,
     Department,
@@ -15,34 +16,26 @@ from .models import (
     Translator,
     TranslationMethod,
 )
-from td.models import Language, Country
+from td.models import Language
 
 
 class CharterResource(resources.ModelResource):
+    language = fields.Field(column_name="language_code", attribute="language",
+                            widget=widgets.ForeignKeyWidget(Language, "code"))
+    lead_dept = fields.Field(column_name="lead_dept_name", attribute="lead_dept",
+                             widget=widgets.ForeignKeyWidget(Department, "name"))
+    partner = fields.Field(column_name="partner_name", attribute="partner",
+                           widget=widgets.ForeignKeyWidget(Partner, "name"))
 
     def before_import(self, dataset, dry_run, **kwargs):
-        language_ids = []
-        lead_dept_ids = []
-        country_ids = []
-        for language in dataset["language_code"]:
-            language_ids.append(Language.objects.get(code=language.lower()).id)
-        for dept in dataset["lead_dept_name"]:
-            lead_dept_ids.append(Department.objects.get(name=dept).id)
-        for countries in dataset["country_codes"]:
-            ids = []
-            codes = countries.split(",")
-            for code in codes:
-                ids.append(str(Country.objects.get(code=code.upper()).id))
-            country_ids.append(",".join(ids))
-        dataset.insert_col(1, language_ids, "language")
-        dataset.insert_col(7, lead_dept_ids, "lead_dept")
-        dataset.insert_col(3, country_ids, "countries")
+        for name in dataset["created_by"]:
+            name = name.title()
         return super(CharterResource, self).before_import(dataset, dry_run, **kwargs)
 
     class Meta:
         model = Charter
-        fields = ("id", "language", "countries", "start_date", "end_date", "lead_dept", "number", "contact_person",
-                  "new_start", "created_by")
+        fields = ("id", "language", "start_date", "end_date", "lead_dept", "contact_person", "new_start", "partner",
+                  "created_by")
 
 
 class EventResource(resources.ModelResource):
