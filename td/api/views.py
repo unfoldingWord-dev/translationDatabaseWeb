@@ -72,7 +72,7 @@ class QuestionnaireView(View):
                     logger.warning("ANSWER TEXT: %s", answer_text)
                     if field_mapping[qid] == "country":
                         obj.country = Country.objects.get(name__iexact=answer_text)
-                        obj_list.append(obj.country)
+                        obj_list.append(obj.country and obj.country.name)
                         logger.warning("OBJ.COUNTRY: %s", obj.country)
                     elif field_mapping[qid] == "direction":
                         obj.direction = "l" if answer_text.lower() == "yes" else "r"
