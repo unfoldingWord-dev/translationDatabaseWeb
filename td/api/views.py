@@ -41,6 +41,11 @@ class QuestionnaireView(View):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         # First pass only. Will need more validation and refactoring
+        data = list()
+        answers = list()
+        answer_list = list()
+        answer_text_list = list()
+        obj_list = list()
         try:
             message = ""
             data = request.POST if len(request.POST) else json.loads(request.body)
@@ -54,10 +59,6 @@ class QuestionnaireView(View):
             obj = TempLanguage(code=data.get("temp_code"), questionnaire=questionnaire, app=data.get("app"),
                                request_id=data.get("request_id"), requester=data.get("requester"),
                                answers=answers)
-
-            answer_list = []
-            answer_text_list = []
-            obj_list = []
 
             for answer in answers:
                 answer_list.append(answer)
@@ -96,8 +97,11 @@ class QuestionnaireView(View):
                 "status": "error" if message else "success",
                 "message": message or "Request submitted",
                 "debug": {
-                    "data": data,
-                    "answers": answers,
+                    "data": data or "no data",
+                    "answers": answers or "no answers",
+                    "answer_list": answer_list or "no answer_list",
+                    "answer_text_list": answer_text_list or "no answer_text_list",
+                    "obj_list": obj_list or "no obj_list"
                 }
             }
         )
