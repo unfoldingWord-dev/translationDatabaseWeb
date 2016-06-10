@@ -60,8 +60,8 @@ class Document(models.Model):
         return self.name
 
     @classmethod
-    def total_words(cls):
-        return sum(cls.objects.filter(is_active=True).values_list("words", flat=True))
+    def total_words(cls, phase):
+        return sum(cls.objects.filter(category__phase__number=phase, is_active=True).values_list("words", flat=True))
 
 
 # -------------- #

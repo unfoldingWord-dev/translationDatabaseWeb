@@ -409,7 +409,7 @@ class Language(CommentableModel):
 
     def get_progress(self, phase):
         words = 0.0
-        total_words = Document.total_words()
+        total_words = Document.total_words(phase)
         for progress in self.get_documents(phase):
             word_count = progress.type.words
             if type(progress.completion_rate) == int:
