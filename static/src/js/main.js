@@ -125,6 +125,12 @@ $(function () {
     $('body').on("click", "[data-toggle='collapse']", function() {
         $(this).find('i').toggleClass("fa-expand fa-compress");
     });
+
+    // Submit delete comment form when clicking on the trash icon
+    $('body').on('click', '.comment-list-container .comment-delete-icon', function(e) {
+        var id = e.target.dataset.commentId;
+        $('#delete-comment-form-' + id).submit();
+    });
 });
 
 // Custom scripts for specific web pages

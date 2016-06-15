@@ -88,3 +88,48 @@ label {
   top: 1rem;
   right: 1rem;
 }
+#id_honeypot,
+.comment-form-container .control-label {
+  display: none;
+}
+.comment-list-container {
+  margin-top: 5rem;
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 2rem;
+  }
+  .comment-list-header {
+    margin-bottom: 3rem;
+    h3 {
+      margin: 0;
+    }
+  }
+  .comment-list-info {
+    color: #999;
+    font-size: 90%;
+  }
+}
+.btn.btn-icon {
+  background-color: transparent;
+  color: #AAA;
+  padding: 3px;
+  &:hover {
+    color: #666;
+  }
+}
+.comment-filter {
+  a {
+    border: 1px solid #AAA;
+    color: #AAA;
+    cursor: pointer;
+  }
+  .active a {
+    border-color: inherit;
+  }
+  .btn-xs {
+    padding: 0.5rem 1rem;
+  }
+}

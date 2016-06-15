@@ -75,11 +75,11 @@ class HomeViewTestCase(TestCase):
 
 class PhaseViewTestCase(TestCase):
     def setUp(self):
-        self.request = RequestFactory().post('/ajax/phase_progress/', {"phase": "1"})
+        self.request = RequestFactory().get('/ajax/phase_progress/1/')
         self.request.user = create_user()
         self.view = setup_view(PhaseView(), self.request)
 
-    def test_post_with_user(self):
+    def test_get_with_user(self):
         """
         Sanity check against errors when going requesting phase view
         """

@@ -1,0 +1,22 @@
+{% load comments %}
+{% load custom_filters %}
+
+<div class="custom-lists-container">
+    <ul class="nav nav-pills pull-right comment-filter">
+        <li role="presentation" class="active"><a data-toggle="tab" class="btn-xs" data-target="#{{ prefix|add:"-"|default:"" }}all-comments">All</a></li>
+        <li role="presentation" class=""><a data-toggle="tab" class="btn-xs" data-target="#{{ prefix|add:"-"|default:"" }}original-comments">Originals</a></li>
+        <li role="presentation" class=""><a data-toggle="tab"class="btn-xs"  data-target="#{{ prefix|add:"-"|default:"" }}mention-comments">Mentions</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="{{ prefix|add:"-"|default:"" }}all-comments" class="tab-pane active">
+            {% include "comments/list.html" with comment_list=object.comments_and_mentions %}
+        </div>
+        <div id="{{ prefix|add:"-"|default:"" }}original-comments" class="tab-pane">
+            {% include "comments/list.html" with comment_list=object.comments %}
+        </div>
+        <div id="{{ prefix|add:"-"|default:"" }}mention-comments" class="tab-pane">
+            {% include "comments/list.html" with comment_list=object.mentions %}
+        </div>
+    </div>
+</div>
