@@ -149,6 +149,8 @@ INSTALLED_APPS = [
     "formtools",
     "import_export",
     "rest_framework",
+    "django_comments",
+    "taggit",
 
     # project
     "td",
@@ -158,7 +160,10 @@ INSTALLED_APPS = [
     "td.tracking",
     "td.gl_tracking",
     "td.api",
+    "td.commenting",
 ]
+
+COMMENTS_APP = "td.commenting"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
 

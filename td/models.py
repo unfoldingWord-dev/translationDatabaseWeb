@@ -6,9 +6,11 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from collections import defaultdict
+
 from jsonfield import JSONField
 from model_utils import FieldTracker
 
+from td.commenting.models import CommentableModel
 from .gl_tracking.models import Document
 
 
@@ -102,9 +104,10 @@ class TempLanguage(models.Model):
 
     @classmethod
     def lang_assigned_data(cls):
-        return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned.ang, "alt": x.lang_assigned.alt_name_all,
-                 "cc": [x.country.code] if x.country is not None else [], "lr": x.lang_assigned.lr,
-                 "gw": x.lang_assigned.gateway_flag, "ld": x.get_direction_display()} for x in cls.objects.all()]
+        return [{"pk": x.pk, "lc": x.code, "ln": x.name, "ang": x.lang_assigned and x.lang_assigned.ang,
+                 "alt": x.lang_assigned and x.lang_assigned.alt_name_all, "cc": [x.country.code] if x.country else [],
+                 "lr": x.lang_assigned and x.lang_assigned.lr, "gw": x.lang_assigned and x.lang_assigned.gateway_flag,
+                 "ld": x.get_direction_display()} for x in cls.objects.all().select_related("lang_assigned", "country")]
 
     @classmethod
     def lang_assigned_map(cls):
@@ -174,7 +177,7 @@ class Region(models.Model):
 
 
 @python_2_unicode_compatible
-class WARegion(models.Model):
+class WARegion(CommentableModel):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, db_index=True)
     tracker = FieldTracker()
@@ -197,13 +200,21 @@ class WARegion(models.Model):
     def gl_helpers(self):
         return [d.name for d in self.gldirector_set.filter(is_helper=True)]
 
+    @property
+    def tag_slug(self):
+        return self.slug
+
+    @property
+    def tag_tip(self):
+        return ""
+
     @classmethod
     def slug_all(cls):
-        return [r.slug for r in cls.objects.all()]
+        return list(WARegion.objects.all().values_list("slug", flat=True))
 
 
 @python_2_unicode_compatible
-class Country(models.Model):
+class Country(CommentableModel):
     code = models.CharField(max_length=2, unique=True)
     alpha_3_code = models.CharField(max_length=3, blank=True, default="")
     name = models.CharField(max_length=75)
@@ -287,7 +298,7 @@ class LanguageAltName(models.Model):
 
 
 @python_2_unicode_compatible
-class Language(models.Model):
+class Language(CommentableModel):
     DIRECTION_CHOICES = (
         ("l", "ltr"),
         ("r", "rtl")
@@ -327,9 +338,7 @@ class Language(models.Model):
 
     @property
     def cc(self):
-        if self.country:
-            return self.country.code.encode("utf-8")
-        return ""
+        return self.country.code.encode("utf-8") if self.country else ""
 
     @property
     def cc_all(self):
@@ -387,9 +396,21 @@ class Language(models.Model):
         alt_names = LanguageAltName.objects.filter(pk__in=pks)
         return [n.name.encode("utf-8") for n in alt_names]
 
+    @property
+    def tag_display(self):
+        return self.anglicized_name or self.name
+
+    @property
+    def tag_tip(self):
+        return ", ".join(self.alt_name_all).decode("utf-8")
+
+    @property
+    def tag_slug(self):
+        return self.code.lower() if len(self.code) > 2 else self.iso_639_3.lower()
+
     def get_progress(self, phase):
         words = 0.0
-        total_words = Document.total_words()
+        total_words = Document.total_words(phase)
         for progress in self.get_documents(phase):
             word_count = progress.type.words
             if type(progress.completion_rate) == int:

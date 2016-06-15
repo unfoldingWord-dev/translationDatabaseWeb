@@ -14,11 +14,12 @@ install:
 
 before_script:
   - npm install
-  - npm run build
 
 script:
   - tox -e py${TRAVIS_PYTHON_VERSION//[.]/}
+
 after_success:
   - coveralls
+
 services:
   - redis-server

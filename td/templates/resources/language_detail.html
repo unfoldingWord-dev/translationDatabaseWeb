@@ -2,6 +2,7 @@
 
 {% load render_dict %}
 {% load humanize %}
+{% load comments %}
 
 
 {% block head_title %}Language Detail{% endblock %}
@@ -32,6 +33,7 @@
         {% if user.is_authenticated %}
             <li role="presentation"><a data-toggle="tab" data-target="#translation-view">Translation Work</a></li>
             <li role="presentation"><a data-toggle="tab" data-target="#translation-progress">Translation Progress</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
         {% endif %}
         <li role="presentation"><a data-toggle="tab" data-target="#jp-view">Joshua Project</a></li>
         <li role="presentation"><a data-toggle="tab" data-target="#sources-view">External Links</a></li>
@@ -50,6 +52,7 @@
                         <tr><th class="col-md-2">Alternate Names</th><td>{{ language.alt_names|default:"-" }}</td><tr>
                         <tr><th>Code</th><td>{{ language.code }}</td></tr>
                         <tr><th>ISO 639-3</th><td>{{ language.iso_639_3|default:"-" }}</td></tr>
+                        <tr><th>Hashtag</th><td>{{ language.hashtag|default:"-" }}</td></tr>
                         <tr>
                             <th>Gateway Language</th>
                             <td>
@@ -154,19 +157,10 @@
         {% if user.is_authenticated %}
 
             <!-- TRANSLATION WORK VIEW -->
-            <div id="translation-view" class="row tab-pane">
+            <div id="translation-view" class="row tab-pane project-detail">
                 <div class="col-md-12">
                     {% if charter %}
                         {% include "resources/_project_detail.html" with data=charter %}
-                        <h2>Event Count</h2>
-                        {% show_event_count_form mode="language" container=".event-count-table-container" selected_option=language.code %}
-                        <hr />
-                        <div class="">
-                            {% include "_loading.html" %}
-                            <div class="event-count-table-container" data-url="{% url "tracking:ajax_event_count" %}" data-mode="language" data-option="{{ language.code|lower }}" data-fiscal-year="0">
-                                <!-- load table here -->
-                            </div>
-                        </div>
                     {% else %}
                         {% url "tracking:charter_add_specific" language.pk as action_url %}
                         {% include "resources/_empty_div_overlay.html" with msg="Project has not been created" action="Create Project" action_url=action_url %}
@@ -178,6 +172,14 @@
             <div id="translation-progress" class="row tab-pane">
                 <div class="col-md-12">
                     {% include "gl_tracking/_language_doc_table.html" with documents=language.documents_ordered %}
+                </div>
+            </div>
+
+            <!-- COMMENTS VIEW -->
+            <div id="comments-view" class="row tab-pane">
+                <div class="col-md-12">
+                    {% render_comment_form for language %}
+                    {% include "comments/custom_lists.html" with object=language %}
                 </div>
             </div>
 

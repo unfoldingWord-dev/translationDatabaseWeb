@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 
 {% load humanize %}
+{% load comments %}
 
 
 {% block head_title %}Country Detail{% endblock %}
@@ -30,6 +31,7 @@
         {% if user.is_authenticated %}
             <li role="presentation"><a data-toggle="tab" data-target="#projects-view">Projects</a></li>
             <li role="presentation"><a data-toggle="tab" data-target="#events-view">Events</a></li>
+            <li role="presentation"><a data-toggle="tab" data-target="#comments-view">Comments</a></li>
         {% endif %}
     </ul>
 
@@ -42,6 +44,7 @@
                 <table class="table table-borderless">
                     <tbody>
                         <tr><th class="col-md-2">Code</th><td>{{ country.code|default:"_" }}</td><tr>
+                        <tr><th>Hashtag</th><td>{{ country.hashtag|default:"-" }}</td></tr>
                         <tr><th>Population</th><td>{{ country.population|default:"-"|intcomma }}</td></tr>
                         <tr><th>Region</th><td>{{ country.region|default:"-" }}</td></tr>
                         <tr><th>WA Region</th><td>{{ country.wa_region|default:"-" }}</td></tr>
@@ -117,6 +120,14 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- COMMENTS VIEW -->
+            <div id="comments-view" class="row tab-pane">
+                <div class="col-md-12">
+                    {% render_comment_form for country %}
+                    {% include "comments/custom_lists.html" with object=country %}
                 </div>
             </div>
 
