@@ -6,7 +6,7 @@ import dj_database_url
 from .settings import *  # noqa
 
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = int(os.environ.get("SITE_ID", "2"))
