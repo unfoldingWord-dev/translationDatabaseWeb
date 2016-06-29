@@ -582,6 +582,7 @@ class NetworkCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, 
     model = Network
     form_class = NetworkForm
     action_kind = "CREATE"
+    template_name = "resources/network_form.html"
 
     def get_success_url(self):
         return reverse("network_detail", args=[self.object.pk])
