@@ -674,8 +674,6 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
         super(TempLanguageWizardView, self).__init__(*args, **kwargs)
         self.questionnaire = Questionnaire.objects.latest('created_at')
 
-    def get_form_list(self):
-        # Update form_list with dynamically-created forms based on the questions in the latest questionnaire
         step = 0
         for group in self.questionnaire.grouped_questions:
             fields = {}
@@ -692,13 +690,12 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                     field = forms.CharField(label=label, help_text=help_text, required=required,
                                             widget=forms.TextInput(attrs=widget_attrs))
                 fields.update({"question-" + str(question["id"]): field})
-            new_form = type("NewForm" + str(step), (forms.Form, ), fields)
+            new_form = type("NewForm" + str(step), (forms.Form,), fields)
             new_form.required_css_class = "required"
             self.form_list.update({unicode(step): new_form})
             step += 1
         # At the end, add TempLanguageForm that contains temp code generator
         self.form_list.update({unicode(step): TempLanguageForm})
-        return self.form_list
 
     def done(self, form_list, **kwargs):
         data = self.get_all_cleaned_data()
