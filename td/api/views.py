@@ -49,12 +49,9 @@ class QuestionnaireView(View):
         try:
             message = ""
             data = request.POST if len(request.POST) else json.loads(request.body)
-            logger.warning("DATA: %s", data)
             questionnaire = Questionnaire.objects.get(pk=data.get("questionnaire_id"))
             field_mapping = questionnaire.field_mapping
-            logger.warning("FIELD MAPPING: %s", field_mapping)
             answers = json.loads(data.get("answers")) if len(request.POST) else data.get("answers")
-            logger.warning("ANSWERS: %s", answers)
 
             obj = TempLanguage(code=data.get("temp_code"), questionnaire=questionnaire, app=data.get("app"),
                                request_id=data.get("request_id"), requester=data.get("requester"),
@@ -62,26 +59,19 @@ class QuestionnaireView(View):
 
             for answer in answers:
                 answer_list.append(answer)
-                logger.warning("PROCESSING ANSWER: %s", answer)
                 qid = str(answer.get("question_id"))
-                logger.warning("QID: %s", qid)
                 if qid is not None and qid in field_mapping:
-                    logger.warning("QID IS IN FIELD MAPPING")
                     answer_text = answer.get("text")
                     answer_text_list.append(answer_text)
-                    logger.warning("ANSWER TEXT: %s", answer_text)
                     if field_mapping[qid] == "country":
                         obj.country = Country.objects.get(name__iexact=answer_text)
                         obj_list.append(obj.country and obj.country.name)
-                        logger.warning("OBJ.COUNTRY: %s", obj.country)
                     elif field_mapping[qid] == "direction":
                         obj.direction = "l" if answer_text.lower() == "yes" else "r"
                         obj_list.append(obj.direction)
-                        logger.warning("OBJ.DIRECTION: %s", obj.direction)
                     else:
                         obj.__dict__[field_mapping[qid]] = answer_text
                         obj_list.append(obj.__dict__[field_mapping[qid]])
-                        logger.warning("OBJ.whatever: %s", obj.__dict__[field_mapping[qid]])
 
             obj.save()
 

@@ -1,3 +1,5 @@
+import types
+
 import requests
 import uuid
 import time
@@ -707,6 +709,15 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
         return redirect(obj.lang_assigned_url)
 
     def _build_forms_from_questionnaire(self):
+        # Somewhere and sometime, WizardView turns self.form_list from a List to an OrderedDict. This check ensures that
+        #     the form_list is converted to an OrderedDict if for some reason it is not. One example is during testing.
+        #     For some reason, when this function is called during testing, form_list is still a list and the test fails
+        #     because 'list' object has no attribute 'update'. But outside of testing, form_list is already converted to
+        #     an OrderedDict and everything is fine. To see what I'm talking about, comment out this check and run the
+        #     test.
+        if isinstance(self.form_list, types.ListType):
+            self.form_list = dict([(str(step), form) for step, form in enumerate(self.form_list)])
+
         step = 0
         for group in self.questionnaire.grouped_questions:
             fields = {}
@@ -729,7 +740,6 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
             step += 1
         # At the end, add TempLanguageForm that contains temp code generator
         self.form_list.update({unicode(step): TempLanguageForm})
-
 
 
 class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):

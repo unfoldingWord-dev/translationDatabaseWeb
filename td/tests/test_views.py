@@ -1,5 +1,7 @@
 import importlib
 import re
+import types
+
 import requests
 
 from mock import patch, Mock
@@ -154,29 +156,12 @@ class TempLanguageWizardViewTestCase(TestCase):
         self.assertIsInstance(self.view.questionnaire, Questionnaire)
         self.assertEqual(self.view.questionnaire, self.questionnaire)
 
-    def test_get_form_list(self):
-        """
-        get_form_list() should return an OrderedDict containing 3 forms. The last form should be TempLanguageForm
-        """
-        # For some reason WizardView turns the form_list from list into an ordered dict. Since I cannot find where and
-        #     when it does this, I manually convert the list into a dictionary before running get_form_list. If not, it
-        #     will still be a list and will complain that 'list' has no property 'update'.
-        self.view.form_list = dict([(str(step), form) for step, form in enumerate(self.view.form_list)])
-        result = self.view.get_form_list()
-        self.assertEqual(len(result), 3)
-        self.assertIn("0", result)
-        self.assertIn("1", result)
-        self.assertIn("2", result)
-        self.assertIs(result["2"], TempLanguageForm)
-
     @patch("td.views.TempLanguage.save")
     @patch("td.views.redirect")
     def test_done(self, mock_redirect, mock_save):
         """
         done() should save TempLanguage and return a redirect
         """
-        # Look at the note in test_get_form_list()
-        self.view.form_list = dict([(str(step), form) for step, form in enumerate(self.view.form_list)])
         mock_cleaned_data = {
             "code": "tst",
             "questionnaire": self.questionnaire,
@@ -185,6 +170,14 @@ class TempLanguageWizardViewTestCase(TestCase):
         self.view.done(self.view.get_form_list)
         self.assertEqual(mock_save.call_count, 1)
         self.assertEqual(mock_redirect.call_count, 1)
+
+    def test_build_forms_from_questionnaire(self):
+        """
+        _build_forms_from_questionnaire() should make form_list a dictionary with TempLanguageForm as the last form
+        """
+        self.view._build_forms_from_questionnaire()
+        self.assertIsInstance(self.view.form_list, types.DictType)
+        self.assertIs(self.view.form_list.get(str(len(self.view.form_list) - 1)), TempLanguageForm)
 
 
 class TempLanguageUpdateViewTestCase(TestCase):
