@@ -673,29 +673,7 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     def __init__(self, *args, **kwargs):
         super(TempLanguageWizardView, self).__init__(*args, **kwargs)
         self.questionnaire = Questionnaire.objects.latest('created_at')
-
-        step = 0
-        for group in self.questionnaire.grouped_questions:
-            fields = {}
-            for question in group:
-                label = question["text"]
-                help_text = question["help"]
-                required = question["required"]
-                widget_attrs = {"class": str(required), "required": required, "autofocus": "true"}
-                if question["input_type"] == "boolean":
-                    field = forms.ChoiceField(label=label, help_text=help_text, required=required,
-                                              choices=(("", ""), ("Yes", "Yes"), ("No", "No")),
-                                              widget=forms.Select(attrs=widget_attrs))
-                else:
-                    field = forms.CharField(label=label, help_text=help_text, required=required,
-                                            widget=forms.TextInput(attrs=widget_attrs))
-                fields.update({"question-" + str(question["id"]): field})
-            new_form = type("NewForm" + str(step), (forms.Form,), fields)
-            new_form.required_css_class = "required"
-            self.form_list.update({unicode(step): new_form})
-            step += 1
-        # At the end, add TempLanguageForm that contains temp code generator
-        self.form_list.update({unicode(step): TempLanguageForm})
+        self._build_forms_from_questionnaire()
 
     def done(self, form_list, **kwargs):
         data = self.get_all_cleaned_data()
@@ -727,6 +705,31 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
 
         obj.save()
         return redirect(obj.lang_assigned_url)
+
+    def _build_forms_from_questionnaire(self):
+        step = 0
+        for group in self.questionnaire.grouped_questions:
+            fields = {}
+            for question in group:
+                label = question["text"]
+                help_text = question["help"]
+                required = question["required"]
+                widget_attrs = {"class": str(required), "required": required, "autofocus": "true"}
+                if question["input_type"] == "boolean":
+                    field = forms.ChoiceField(label=label, help_text=help_text, required=required,
+                                              choices=(("", ""), ("Yes", "Yes"), ("No", "No")),
+                                              widget=forms.Select(attrs=widget_attrs))
+                else:
+                    field = forms.CharField(label=label, help_text=help_text, required=required,
+                                            widget=forms.TextInput(attrs=widget_attrs))
+                fields.update({"question-" + str(question["id"]): field})
+            new_form = type("NewForm" + str(step), (forms.Form,), fields)
+            new_form.required_css_class = "required"
+            self.form_list.update({unicode(step): new_form})
+            step += 1
+        # At the end, add TempLanguageForm that contains temp code generator
+        self.form_list.update({unicode(step): TempLanguageForm})
+
 
 
 class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
