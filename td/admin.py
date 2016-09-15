@@ -52,7 +52,7 @@ class CountryAdmin(EntryTrackingAdmin):
         return self.readonly_fields
 
 
-class LanguageAdmin(EntryTrackingAdmin):
+class LanguageAdmin(EntryTrackingAdmin, ImportExportModelAdmin):
     list_display = ["code", "name", "gateway_language", "direction", "native_speakers"]
     list_filter = ["gateway_flag", "country__region", "wa_region", ]
     search_fields = ["code", "name", "anglicized_name", ]
