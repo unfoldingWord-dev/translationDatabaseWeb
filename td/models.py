@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_str
 
 from collections import defaultdict
 
@@ -430,7 +430,7 @@ class Language(CommentableModel):
     @classmethod
     def names_text(cls):
         return "\n".join([
-            "{}\t{}".format(x.code, x.name.encode("utf-8"))
+            "{}\t{}".format(x.code.encode("utf-8"), x.name.encode("utf-8"))
             for x in cls.objects.all().order_by("code")
         ])
 
