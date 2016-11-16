@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible, smart_str
+from django.utils.encoding import python_2_unicode_compatible
 
 from collections import defaultdict
 
