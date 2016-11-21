@@ -1,14 +1,19 @@
 from __future__ import absolute_import
 
 import logging
+import json
+
+import requests
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.db import connection, IntegrityError
 
 from celery import task
 from pinax.eventlog.models import log
 
+from td import settings
 from td.commenting.models import CommentTag
 from td.imports.models import (
     EthnologueLanguageCode,
@@ -191,3 +196,73 @@ def integrate_imb_language_data():
                 language.country = country
                 language.source = imb
                 language.save()
+
+
+@task()
+def notify_external_apps(action="", instance=None):
+    """ Make a POST request based on action types to urls registered in EXT_APP_PUSH under settings """
+
+    if instance is None:
+        raise ValueError("notify_external_app is called without the 'instance' argument")
+    if action == "":
+        raise ValueError("notify_external_app is called without the 'action' argument")
+
+    if action == "CREATE":
+        # If instance is created, serialize all concrete fields and assign them as data
+        # serialized_instances = serializers.serialize('json', [instance])
+        # serialized_data = json.loads(serialized_instances)[0]
+        # data = serialized_data
+        # data.update({"code": instance.code})
+        pass
+    elif action == "UPDATE":
+        # If instance is edited, only pass the changed fields as data
+        data = {
+            "pk": instance.id,
+            "code": instance.tracker.previous("code") if instance.tracker.has_changed("code") else instance.code,
+            "fields": {key.replace("_id", ""): getattr(instance, key, "") for key in instance.tracker.changed().keys()}
+        }
+    elif action == "DELETE":
+        # If instance is deleted, just pass the id
+        # data = {
+        #     "pk": instance.id,
+        #     "code": instance.code,
+        # }
+        pass
+    else:
+        raise ValueError("%s is not a valid option for 'action'" % action)
+
+    # Include model name and action type in data to meet the spec. If action is 'CREATE', 'model' will be overridden by
+    #    class name instead of what the serializer sets.
+    # Also include (previous) code to help identify records, especially the ones created by outside apps.
+    data.update({
+        "model": instance.__class__.__name__,
+        "action": action,
+    })
+
+    data = [data]
+
+    for app in settings.EXT_APP_PUSH:
+        print app
+        url = app.get("url")
+        if "key" in app:
+            key = app.get("key")
+            url += "?key=" + key if key is not None else ""
+        headers = {'Content-Type': 'application/json'}
+
+        print url
+        post_to_ext_apps.delay(url, json.dumps(data), headers)
+
+
+@task()
+def post_to_ext_apps(url, data, headers):
+    response = requests.post(url, data=data, headers=headers)
+    if response.status_code == 202 and response.content == "":
+        return
+    else:
+        message = "POST to %s has failed with code: %s and message: %s" % (url, response.status_code, response.content)
+        send_mail(
+            "Ops CRM shim rejects POST",
+            message,
+            "admin@unfoldingword.org",
+            ["vleong2332@gmail.com"],
+        )
