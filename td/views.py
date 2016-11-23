@@ -776,7 +776,7 @@ class AjaxTempLanguageListView(TempLanguageTableSourceView):
     link_url_field = "pk"
 
 
-class AjaxTemporaryCode(LoginRequiredMixin, View):
+class AjaxTemporaryCode(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse(self.generate_temp_code())
