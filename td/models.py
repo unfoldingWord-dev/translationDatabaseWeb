@@ -430,7 +430,7 @@ class Language(CommentableModel):
     @classmethod
     def names_text(cls):
         return "\n".join([
-            "{}\t{}".format(x.code, x.name.encode("utf-8"))
+            "{}\t{}".format(x.code.encode("utf-8"), x.name.encode("utf-8"))
             for x in cls.objects.all().order_by("code")
         ])
 
