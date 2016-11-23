@@ -81,6 +81,7 @@ STATICFILES_FINDERS = [
 SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 MIDDLEWARE_CLASSES = [
+    "corsheaders.middleware.CorsMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -151,6 +152,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_comments",
     "taggit",
+    "corsheaders",
 
     # project
     "td",
@@ -267,3 +269,7 @@ REST_FRAMEWORK = {
 }
 
 JP_API_KEY = os.environ.get("JP_API_KEY")
+
+CORS_ORIGIN_WHITELIST = (
+    'wycliffeassociates.crm.dynamics.com',
+)
