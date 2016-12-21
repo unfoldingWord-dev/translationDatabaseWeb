@@ -234,7 +234,7 @@ def notify_external_apps(action="", instance=None):
         raise ValueError("%s is not a valid option for 'action'" % action)
 
     if data is None:
-        return;
+        return
 
     # Include model name and action type in data to meet the spec. If action is 'CREATE', 'model' will be overridden by
     #    class name instead of what the serializer sets.
