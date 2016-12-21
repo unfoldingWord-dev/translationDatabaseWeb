@@ -207,6 +207,8 @@ def notify_external_apps(action="", instance=None):
     if action == "":
         raise ValueError("notify_external_app is called without the 'action' argument")
 
+    data = None
+
     if action == "CREATE":
         # If instance is created, serialize all concrete fields and assign them as data
         # serialized_instances = serializers.serialize('json', [instance])
@@ -231,6 +233,9 @@ def notify_external_apps(action="", instance=None):
     else:
         raise ValueError("%s is not a valid option for 'action'" % action)
 
+    if data is None:
+        return;
+
     # Include model name and action type in data to meet the spec. If action is 'CREATE', 'model' will be overridden by
     #    class name instead of what the serializer sets.
     # Also include (previous) code to help identify records, especially the ones created by outside apps.
@@ -242,14 +247,12 @@ def notify_external_apps(action="", instance=None):
     data = [data]
 
     for app in settings.EXT_APP_PUSH:
-        print app
         url = app.get("url")
         if "key" in app:
             key = app.get("key")
             url += "?key=" + key if key is not None else ""
         headers = {'Content-Type': 'application/json'}
 
-        print url
         post_to_ext_apps.delay(url, json.dumps(data), headers)
 
 

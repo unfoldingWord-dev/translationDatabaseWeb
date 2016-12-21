@@ -1,6 +1,8 @@
 from django.test import TestCase
+
 from ..models import Resource, Media, Title, Publisher, Questionnaire
 from td.models import Language
+from td.tests.models import NoSignalTestCase
 
 
 class MediaTestCase(TestCase):
@@ -21,21 +23,20 @@ class PublisherTestCase(TestCase):
         self.assertEquals(str(publisher), "Test Publisher")
 
 
-class ResourceTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(ResourceTestCase, cls).setUpClass()
-        cls.publisher = Publisher(name="Test Publisher 1")
-        cls.publisher.save()
-        cls.publisher2 = Publisher(name="Test Publisher 2")
-        cls.publisher2.save()
-        cls.title = Title(name="Test Title", slug="test-title")
-        cls.title.publisher = cls.publisher
-        cls.title.save()
-        cls.media = Media(name="Media Title", slug="test-media")
-        cls.media.save()
-        cls.language = Language(code="ztest", name="Z Language")
-        cls.language.save()
+class ResourceTestCase(NoSignalTestCase):
+    def setUp(self):
+        super(ResourceTestCase, self).setUp()
+        self.publisher = Publisher(name="Test Publisher 1")
+        self.publisher.save()
+        self.publisher2 = Publisher(name="Test Publisher 2")
+        self.publisher2.save()
+        self.title = Title(name="Test Title", slug="test-title")
+        self.title.publisher = self.publisher
+        self.title.save()
+        self.media = Media(name="Media Title", slug="test-media")
+        self.media.save()
+        self.language = Language(code="ztest", name="Z Language")
+        self.language.save()
 
     def test_string_representation(self):
         resource = Resource(language=self.language, title=self.title)

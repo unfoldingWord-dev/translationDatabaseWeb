@@ -17,6 +17,7 @@ from td.resources.models import Questionnaire
 from td.views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
     TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView, WARegionDetailView
 from td.forms import TempLanguageForm
+from td.tests.models import NoSignalTestCase
 
 
 def setup_view(view, request=None, *args, **kwargs):
@@ -102,8 +103,9 @@ class TempLanguageListViewTestCase(TestCase):
         self.assertEqual(self.view.template_name, "resources/templanguage_list.html")
 
 
-class TempLanguageDetailViewTestCase(TestCase):
+class TempLanguageDetailViewTestCase(NoSignalTestCase):
     def setUp(self):
+        super(TempLanguageDetailViewTestCase, self).setUp()
         obj = TempLanguage(pk=999, code="tst")
         obj.save()
         self.request = RequestFactory().get("/uw/templanguages/")
