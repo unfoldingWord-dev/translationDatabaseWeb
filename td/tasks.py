@@ -2,13 +2,13 @@ from __future__ import absolute_import
 
 import logging
 import json
-
 import requests
+import types
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.db import connection, IntegrityError
+from django.db import connection, IntegrityError, models
 
 from celery import task
 from pinax.eventlog.models import log
@@ -30,6 +30,12 @@ from .signals import languages_integrated
 
 
 logger = logging.getLogger(__name__)
+
+
+class TaskStatus(object):
+    def __init__(self, success=False):
+        self.success = success
+        self.message = []
 
 
 @task()
@@ -202,10 +208,17 @@ def integrate_imb_language_data():
 def notify_external_apps(action="", instance=None):
     """ Make a POST request based on action types to urls registered in EXT_APP_PUSH under settings """
 
-    if instance is None:
-        raise ValueError("notify_external_app is called without the 'instance' argument")
-    if action == "":
-        raise ValueError("notify_external_app is called without the 'action' argument")
+    task_status = TaskStatus()
+
+    if not isinstance(instance, models.Model):
+        task_status.message.append("function is called with invalid 'instance'")
+        return task_status
+    if not isinstance(action, (str, unicode)) or action.strip() == "":
+        task_status.message.append("function is called with invalid 'action'")
+        return task_status
+    if not isinstance(settings.EXT_APP_PUSH, types.ListType):
+        task_status.message.append("settings.EXT_APP_PUSH is not a list")
+        return task_status
 
     data = None
 
@@ -215,7 +228,8 @@ def notify_external_apps(action="", instance=None):
         # serialized_data = json.loads(serialized_instances)[0]
         # data = serialized_data
         # data.update({"code": instance.code})
-        pass
+        task_status.message.append("%s is not supported at this moment" % action)
+        return task_status
     elif action == "UPDATE":
         # If instance is edited, only pass the changed fields as data
         data = {
@@ -229,12 +243,11 @@ def notify_external_apps(action="", instance=None):
         #     "pk": instance.id,
         #     "code": instance.code,
         # }
-        pass
+        task_status.message.append("%s is not supported at this moment" % action)
+        return task_status
     else:
-        raise ValueError("%s is not a valid option for 'action'" % action)
-
-    if data is None:
-        return
+        task_status.message.append("%s is not a valid option for 'action'" % action)
+        return task_status
 
     # Include model name and action type in data to meet the spec. If action is 'CREATE', 'model' will be overridden by
     #    class name instead of what the serializer sets.
@@ -246,6 +259,7 @@ def notify_external_apps(action="", instance=None):
 
     data = [data]
 
+    # NOTE: Maybe this can be abstracted into a function for easier testing
     for app in settings.EXT_APP_PUSH:
         url = app.get("url")
         if "key" in app:
@@ -254,6 +268,9 @@ def notify_external_apps(action="", instance=None):
         headers = {'Content-Type': 'application/json'}
 
         post_to_ext_apps.delay(url, json.dumps(data), headers)
+
+    task_status.success = True
+    return task_status
 
 
 @task()
