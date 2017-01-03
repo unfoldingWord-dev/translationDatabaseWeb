@@ -1,14 +1,19 @@
 from __future__ import absolute_import
 
 import logging
+import json
+import requests
+import types
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.db import connection, IntegrityError
+from django.core.mail import send_mail
+from django.db import connection, IntegrityError, models
 
 from celery import task
 from pinax.eventlog.models import log
 
+from td import settings
 from td.commenting.models import CommentTag
 from td.imports.models import (
     EthnologueLanguageCode,
@@ -25,6 +30,12 @@ from .signals import languages_integrated
 
 
 logger = logging.getLogger(__name__)
+
+
+class TaskStatus(object):
+    def __init__(self, success=False):
+        self.success = success
+        self.message = []
 
 
 @task()
@@ -191,3 +202,87 @@ def integrate_imb_language_data():
                 language.country = country
                 language.source = imb
                 language.save()
+
+
+@task()
+def notify_external_apps(action="", instance=None):
+    """ Make a POST request based on action types to urls registered in EXT_APP_PUSH under settings """
+
+    task_status = TaskStatus()
+
+    if not isinstance(instance, models.Model):
+        task_status.message.append("function is called with invalid 'instance'")
+        return task_status
+    if not isinstance(action, (str, unicode)) or action.strip() == "":
+        task_status.message.append("function is called with invalid 'action'")
+        return task_status
+    if not isinstance(settings.EXT_APP_PUSH, types.ListType):
+        task_status.message.append("settings.EXT_APP_PUSH is not a list")
+        return task_status
+
+    data = None
+
+    if action == "CREATE":
+        # If instance is created, serialize all concrete fields and assign them as data
+        # serialized_instances = serializers.serialize('json', [instance])
+        # serialized_data = json.loads(serialized_instances)[0]
+        # data = serialized_data
+        # data.update({"code": instance.code})
+        task_status.message.append("%s is not supported at this moment" % action)
+        return task_status
+    elif action == "UPDATE":
+        # If instance is edited, only pass the changed fields as data
+        data = {
+            "pk": instance.id,
+            "code": instance.tracker.previous("code") if instance.tracker.has_changed("code") else instance.code,
+            "fields": {key.replace("_id", ""): getattr(instance, key, "") for key in instance.tracker.changed().keys()}
+        }
+    elif action == "DELETE":
+        # If instance is deleted, just pass the id
+        # data = {
+        #     "pk": instance.id,
+        #     "code": instance.code,
+        # }
+        task_status.message.append("%s is not supported at this moment" % action)
+        return task_status
+    else:
+        task_status.message.append("%s is not a valid option for 'action'" % action)
+        return task_status
+
+    # Include model name and action type in data to meet the spec. If action is 'CREATE', 'model' will be overridden by
+    #    class name instead of what the serializer sets.
+    # Also include (previous) code to help identify records, especially the ones created by outside apps.
+    data.update({
+        "model": instance.__class__.__name__,
+        "action": action,
+    })
+
+    data = [data]
+
+    # NOTE: Maybe this can be abstracted into a function for easier testing
+    for app in settings.EXT_APP_PUSH:
+        url = app.get("url")
+        if "key" in app:
+            key = app.get("key")
+            url += "?key=" + key if key is not None else ""
+        headers = {'Content-Type': 'application/json'}
+
+        post_to_ext_apps.delay(url, json.dumps(data), headers)
+
+    task_status.success = True
+    return task_status
+
+
+@task()
+def post_to_ext_apps(url, data, headers):
+    response = requests.post(url, data=data, headers=headers)
+    if response.status_code == 202 and response.content == "":
+        return
+    else:
+        message = "POST to %s has failed with code: %s and message: %s" % (url, response.status_code, response.content)
+        send_mail(
+            "Ops CRM shim rejects POST",
+            message,
+            "admin@unfoldingword.org",
+            ["vleong2332@gmail.com"],
+        )

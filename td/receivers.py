@@ -10,7 +10,7 @@ from account.signals import user_login_attempt, user_logged_in
 from pinax.eventlog.models import log
 
 from .models import Country, Language, LanguageAltName, AdditionalLanguage, TempLanguage, WARegion
-from .tasks import reset_langnames_cache, update_alt_names, create_comment_tag, delete_comment_tag
+from .tasks import reset_langnames_cache, update_alt_names, create_comment_tag, delete_comment_tag, notify_external_apps
 from .signals import languages_integrated
 from td.resources.tasks import notify_templanguage_created
 
@@ -60,39 +60,50 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, instance=None, created=False, **kwargs):
-    (instance and "code" in instance.tracker.changed().keys()) and create_comment_tag(instance)
+    if instance is not None:
+        notify_external_apps("CREATE" if created else "UPDATE", instance)
+        if "code" in instance.tracker.changed().keys():
+            create_comment_tag(instance)
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Language)
 def handle_language_delete(sender, instance=None, **kwargs):
-    instance and delete_comment_tag(instance)
+    if instance is not None:
+        # notify_external_apps("DELETE", instance)
+        delete_comment_tag(instance)
     reset_langnames_cache.delay()
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_save, sender=LanguageAltName)
-def handle_alt_name_save(sender, instance=None, **kwargs):
+def handle_alt_name_save(sender, instance=None, created=False, **kwargs):
     if instance is not None:
+        # notify_external_apps("CREATE" if created else "UPDATE", instance)
         update_alt_names(instance.code)
 
 
 @receiver(post_delete, sender=LanguageAltName)
 def handle_alt_name_delete(sender, instance=None, **kwargs):
     if instance is not None:
+        # notify_external_apps("DELETE", instance)
         update_alt_names(instance.code)
 
 
 @receiver(post_save, sender=Country)
 def handle_country_save(sender, instance=None, created=False, **kwargs):
-    "code" in instance.tracker.changed().keys() and create_comment_tag(instance)
+    if instance is not None:
+        # notify_external_apps("CREATE" if created else "UPDATE", instance)
+        "code" in instance.tracker.changed().keys() and create_comment_tag(instance)
     cache.set("map_gateway_refresh", True)
 
 
 @receiver(post_delete, sender=Country)
 def handle_country_delete(sender, instance=None, **kwargs):
-    instance and delete_comment_tag(instance)
+    if instance is not None:
+        # notify_external_apps("DELETE", instance)
+        delete_comment_tag(instance)
     cache.set("map_gateway_refresh", True)
 
 

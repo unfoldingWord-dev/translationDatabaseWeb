@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from mock import Mock, patch
 
 from td.models import Language, WARegion
+from td.tests.models import NoSignalTestCase
 from td.gl_tracking.models import (
     Phase,
     DocumentCategory,
@@ -139,8 +140,9 @@ class RegionDetailViewTestCase(TestCase):
         self.assertIn("directors", context)
 
 
-class VariantSplitViewTestCase(TestCase):
+class VariantSplitViewTestCase(NoSignalTestCase):
     def setUp(self):
+        super(VariantSplitViewTestCase, self).setUp()
         self.request = RequestFactory().get('/ajax/variant_split_modal/')
         self.request.user = create_user()
         self.view = setup_view(VariantSplitView(), self.request)
