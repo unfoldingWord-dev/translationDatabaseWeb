@@ -377,6 +377,9 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
     action_kind = "EDIT"
     template_name = "resources/country_form.html"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_success_url(self):
         return reverse("country_detail", args=[self.object.pk])
 
@@ -492,6 +495,9 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin,
     # Removed the following because we don't want user to create additional language on their own
     # template_name = "resources/language_form.html"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def dispatch(self, request, *args, **kwargs):
         self.country = get_object_or_404(Country, pk=self.kwargs.get("pk"))
         return super(LanguageCreateView, self).dispatch(request, *args, **kwargs)
@@ -553,6 +559,9 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
     template_name = "resources/language_form.html"
     action_kind = "EDIT"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_success_url(self):
         return reverse("language_detail", args=[self.object.pk])
 
@@ -566,6 +575,9 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
 
 class LanguageEditModalView(LanguageEditView):
     template_name = "resources/language_modal_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def form_valid(self, form):
         self.object = form.save()
@@ -672,6 +684,9 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     form_list = [forms.Form]
     template_name = "resources/templanguage_wizard_form.html"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def __init__(self, *args, **kwargs):
         super(TempLanguageWizardView, self).__init__(*args, **kwargs)
         self.questionnaire = Questionnaire.objects.latest('created_at')
@@ -746,6 +761,9 @@ class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
     model = TempLanguage
     form_class = TempLanguageForm
     template_name = "resources/templanguage_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def get_context_data(self, **kwargs):
         context = super(TempLanguageUpdateView, self).get_context_data(**kwargs)

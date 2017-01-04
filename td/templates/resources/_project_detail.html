@@ -6,7 +6,7 @@
             <h4 class="section-header-title">Charter</h4>
             <div class="section-header-line"></div>
             <div class="section-header-actions">
-                <a class="btn btn-icon" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i></a>
+{#                <a class="btn btn-icon" href="{% url "tracking:charter_update" charter.pk %}" title="Edit Charter"><i class="fa fa-pencil"></i></a>#}
                 <button class="btn btn-icon" data-toggle="collapse" data-target=".charter-section"><i class="fa fa-compress"></i></button>
             </div>
         </div>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="col-md-6">
                     {% include "comments/custom_lists.html" with object=data prefix="ch" %}
-                    {% render_comment_form for data %}
+{#                    {% render_comment_form for data %}#}
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
             <h4 class="section-header-title">Events</h4>
             <div class="section-header-line"></div>
             <div class="section-header-actions">
-                <a class="btn btn-icon" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i></a>
+{#                <a class="btn btn-icon" href="{% url "tracking:event_add_specific" charter.pk %}"><i class="fa fa-plus"></i></a>#}
                 <button class="btn btn-icon" data-toggle="collapse" data-target=".event-section"><i class="fa fa-compress"></i></button>
             </div>
         </div>
