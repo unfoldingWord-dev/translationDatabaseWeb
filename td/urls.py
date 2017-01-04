@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 
 from .views import (
+    HomeView,
     AdditionalLanguageListView,
     EthnologueCountryCodeListView,
     EthnologueLanguageCodeListView,
@@ -28,7 +29,7 @@ from .views import (
 )
 
 urlpatterns = [
-    url(r"^$", TemplateView.as_view(template_name="homepage.html"), name="home"),
+    url(r"^$", HomeView.as_view(), name="home"),
     url(r"^siteadmin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
     url(r"^invites/", include("pinax.invitations.urls")),

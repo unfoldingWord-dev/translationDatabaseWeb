@@ -207,6 +207,14 @@ class AjaxEventCountView(LoginRequiredMixin, TemplateView):
 class CharterListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
 
+    def get(self, request, *args, **kwargs):
+        print "Something"
+        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
+                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
+                                  " These functions will be made available in the new system, which is launching in"
+                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        return super(CharterListView, self).get(request, *args, **kwargs)
+
 
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
@@ -309,6 +317,14 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 
 class EventListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/event_list.html"
+
+    def get(self, request, *args, **kwargs):
+        print "Something"
+        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
+                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
+                                  " These functions will be made available in the new system, which is launching in"
+                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        return super(EventListView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
