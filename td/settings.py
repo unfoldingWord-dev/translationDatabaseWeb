@@ -275,3 +275,8 @@ EXT_APP_PUSH = [
         "key": os.environ.get("CRM_API_KEY"),
     }
 ]
+
+HOMEPAGE_MESSAGE = "The ability to create and update Languages, WA Regions, Countries, Charters, Events, and Partners " \
+                   "will be suspended for all users starting on Monday, Jan. 9, 2017. These functions will be made " \
+                   "available in the new system, which is launching in a couple of weeks. Please retain the " \
+                   "information you want to enter until then."

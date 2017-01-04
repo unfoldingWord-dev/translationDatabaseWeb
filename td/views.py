@@ -331,10 +331,7 @@ class HomeView(TemplateView):
     template_name="homepage.html"
 
     def get(self, request, *args, **kwargs):
-        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
-                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
-                                  " These functions will be made available in the new system, which is launching in"
-                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
         return super(HomeView, self).get(request, *args, **kwargs)
 
 
@@ -372,10 +369,7 @@ class CountryListView(ListView):
     template_name = "resources/country_list.html"
 
     def get(self, request, *args, **kwargs):
-        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
-                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
-                                  " These functions will be made available in the new system, which is launching in"
-                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
         return super(CountryListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -673,10 +667,7 @@ class WARegionListView(LoginRequiredMixin, ListView):
     template_name = "resources/waregion_list.html"
 
     def get(self, request, *args, **kwargs):
-        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
-                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
-                                  " These functions will be made available in the new system, which is launching in"
-                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
         return super(WARegionListView, self).get(request, *args, **kwargs)
 
 
