@@ -328,7 +328,7 @@ def upload_rtl_list(request):
 
 
 class HomeView(TemplateView):
-    template_name="homepage.html"
+    template_name = "homepage.html"
 
     def get(self, request, *args, **kwargs):
         messages.warning(request, settings.HOMEPAGE_MESSAGE)
