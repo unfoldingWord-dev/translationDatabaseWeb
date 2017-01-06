@@ -209,7 +209,6 @@ class CharterListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
 
     def get(self, request, *args, **kwargs):
-        print "Something"
         messages.warning(request, settings.HOMEPAGE_MESSAGE)
         return super(CharterListView, self).get(request, *args, **kwargs)
 
