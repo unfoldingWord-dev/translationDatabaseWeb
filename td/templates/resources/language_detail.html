@@ -22,7 +22,7 @@
         {% if language.ang != language.ln %}<h2>{{ language.ang }}</h2>{% endif %}
         {% if user.is_authenticated %}
         <span class="top-right-spaced">
-            <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}" title="Edit {{ language.ln }}"><i class="fa fa-pencil"></i> Edit</a>
+{#            <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}" title="Edit {{ language.ln }}"><i class="fa fa-pencil"></i> Edit</a>#}
         </span>
         {% endif %}
     </div>
@@ -162,7 +162,7 @@
                     {% if charter %}
                         {% include "resources/_project_detail.html" with data=charter %}
                     {% else %}
-                        {% url "tracking:charter_add_specific" language.pk as action_url %}
+{#                        {% url "tracking:charter_add_specific" language.pk as action_url %}#}
                         {% include "resources/_empty_div_overlay.html" with msg="Project has not been created" action="Create Project" action_url=action_url %}
                     {% endif %}
                 </div>
@@ -178,7 +178,7 @@
             <!-- COMMENTS VIEW -->
             <div id="comments-view" class="row tab-pane">
                 <div class="col-md-12">
-                    {% render_comment_form for language %}
+{#                    {% render_comment_form for language %}#}
                     {% include "comments/custom_lists.html" with object=language %}
                 </div>
             </div>

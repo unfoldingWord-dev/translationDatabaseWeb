@@ -10,9 +10,9 @@
             <h1>{% blocktrans %}Translation Partners{% endblocktrans %}</h1>
             {% url "gl:partner_create_view" as partner_create %}
             {% if user.is_authenticated %}
-                {% blocktrans %}
-                    <a href="{{ partner_create }}" class="btn btn-primary large">Add a Partner</a>
-                {% endblocktrans %}
+{#                {% blocktrans %}#}
+{#                    <a href="{{ partner_create }}" class="btn btn-primary large">Add a Partner</a>#}
+{#                {% endblocktrans %}#}
             {% endif %}
         </div>
     </section>

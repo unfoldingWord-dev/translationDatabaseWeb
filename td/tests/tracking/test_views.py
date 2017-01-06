@@ -289,7 +289,8 @@ class CharterAddViewTestCase(TestCase):
         Sanity check against errors when going to single charter form
         """
         response = CharterAddView.as_view()(self.request)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -351,7 +352,8 @@ class CharterUpdateViewTestCase(TestCase):
         Sanity check against errors when going to edit charter form
         """
         response = CharterUpdateView.as_view()(self.request, pk=9999)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -390,7 +392,8 @@ class NewCharterModalViewTestCase(TestCase):
         Sanity check against errors when calling for a charter modal
         """
         response = NewCharterModalView.as_view()(self.request)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -428,7 +431,8 @@ class MultiCharterAddViewTestCase(TestCase):
         Sanity check against errors when going to multi-charter form
         """
         response = MultiCharterAddView.as_view()(self.request)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -550,7 +554,8 @@ class EventAddViewTestCase(TestCase):
         Sanity check against errors when going to single event form
         """
         response = EventAddView.as_view()(self.request)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -707,7 +712,8 @@ class EventUpdateViewTestCase(TestCase):
         Sanity check against errors when going to edit an event form
         """
         response = EventUpdateView.as_view()(self.request, pk=9999)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """
@@ -863,7 +869,8 @@ class MultiCharterEventViewTestCase(TestCase):
         Sanity check against errors when going to multi-charter event form
         """
         response = MultiCharterEventView.as_view()(self.request)
-        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_config(self):
         """

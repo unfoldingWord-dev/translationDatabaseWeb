@@ -19,6 +19,7 @@ from django.views.generic import (
     View
 )
 
+from td import settings
 from td.models import Language
 from td.utils import get_wa_fy
 from .utils import get_event_total, get_event_count_data, get_total_by_month
@@ -207,11 +208,18 @@ class AjaxEventCountView(LoginRequiredMixin, TemplateView):
 class CharterListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
 
+    def get(self, request, *args, **kwargs):
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
+        return super(CharterListView, self).get(request, *args, **kwargs)
+
 
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
     form_class = CharterForm
     template_name = "tracking/charter_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def get_initial(self):
         return {
@@ -230,13 +238,14 @@ class CharterUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CharterForm
     template_name_suffix = "_update_form"
 
-    # Overidden to set initial values
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_initial(self):
         return {
             "modified_by": self.request.user.username
         }
 
-    # Overridden to redirect upon valid submission
     def form_valid(self, form):
         self.object = form.save()
         self.object.modified_at = timezone.now()
@@ -246,6 +255,9 @@ class CharterUpdateView(LoginRequiredMixin, UpdateView):
 
 class NewCharterModalView(CharterAddView):
     template_name = 'tracking/new_charter_modal.html'
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def form_valid(self, form):
         self.object = form.save()
@@ -258,6 +270,9 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
     form_class = MultiCharterForm
     extra = 1
     success_url = "/tracking/"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def get_factory_kwargs(self):
         kwargs = super(MultiCharterAddView, self).get_factory_kwargs()
@@ -300,6 +315,11 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 class EventListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/event_list.html"
 
+    def get(self, request, *args, **kwargs):
+        print "Something"
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
+        return super(EventListView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
         context["fy"] = get_wa_fy()
@@ -315,7 +335,9 @@ class EventAddView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
 
-    # Overridden to include initial values
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_initial(self):
         return {
             "start_date": timezone.now().date(),
@@ -380,7 +402,9 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
     form_class = EventForm
 
-    # Overridden to include initial values
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_initial(self):
         return {
             "modified_by": self.request.user.username,
@@ -445,6 +469,9 @@ class MultiCharterEventView(LoginRequiredMixin, SessionWizardView):
     initial_dict = {
         "1": {"start_date": timezone.now().date()}
     }
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     # Overridden to get the context for the dynamic data in step 2
     def get_context_data(self, form, **kwargs):
