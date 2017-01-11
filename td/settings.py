@@ -267,3 +267,16 @@ REST_FRAMEWORK = {
 }
 
 JP_API_KEY = os.environ.get("JP_API_KEY")
+
+EXT_APP_PUSH = [
+    {
+        "name": "wa_ops_crm",
+        "url": "http://wa-td-integration.azurewebsites.net/api/crm/update",
+        "key": os.environ.get("CRM_API_KEY"),
+    }
+]
+
+HOMEPAGE_MESSAGE = "The ability to create and update Languages, WA Regions, Countries, Charters, Events, and Partners " \
+                   "will be suspended for all users starting on Monday, Jan. 9, 2017. These functions will be made " \
+                   "available in the new system, which is launching in a couple of weeks. Please retain the " \
+                   "information you want to enter until then."

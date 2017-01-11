@@ -1,15 +1,16 @@
 import types
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase
 
 from td.models import WARegion, Country, Language
+from td.tests.models import NoSignalTestCase
 from td.templatetags.show_event_count_form import show_event_count_form
 
 
-class ShowEventCountFormTestCase(TestCase):
+class ShowEventCountFormTestCase(NoSignalTestCase):
 
     def setUp(self):
+        super(ShowEventCountFormTestCase, self).setUp()
         self.wa_region, _ = WARegion.objects.get_or_create(name="Middle Earth", slug="me")
         self.country, _ = Country.objects.get_or_create(name="Gondor", code="go")
         self.country.wa_region = self.wa_region

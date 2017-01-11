@@ -2,7 +2,7 @@
     <h3 class="empty-div-msg">{{ msg }}</h3>
     {% if action %}
         {% if user.is_authenticated %}
-            <a class="btn btn-primary btn-empty-div" href="{{ action_url }}">{{ action }}</a>
+{#            <a class="btn btn-primary btn-empty-div" href="{{ action_url }}">{{ action }}</a>#}
         {% else %}
             <a class="btn btn-primary btn-empty-div" href="">Login</a>
         {% endif %}

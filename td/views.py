@@ -327,6 +327,14 @@ def upload_rtl_list(request):
     return render(request, "resources/rtl_languages_update.html", {"form": form})
 
 
+class HomeView(TemplateView):
+    template_name = "homepage.html"
+
+    def get(self, request, *args, **kwargs):
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
+        return super(HomeView, self).get(request, *args, **kwargs)
+
+
 class RegionListView(ListView):
     model = Region
     template_name = "resources/region_list.html"
@@ -360,6 +368,10 @@ class CountryListView(ListView):
     model = Country
     template_name = "resources/country_list.html"
 
+    def get(self, request, *args, **kwargs):
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
+        return super(CountryListView, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = super(CountryListView, self).get_queryset()
         qs = qs.order_by("name")
@@ -376,6 +388,9 @@ class CountryEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, Up
     form_class = CountryForm
     action_kind = "EDIT"
     template_name = "resources/country_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def get_success_url(self):
         return reverse("country_detail", args=[self.object.pk])
@@ -492,6 +507,9 @@ class LanguageCreateView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin,
     # Removed the following because we don't want user to create additional language on their own
     # template_name = "resources/language_form.html"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def dispatch(self, request, *args, **kwargs):
         self.country = get_object_or_404(Country, pk=self.kwargs.get("pk"))
         return super(LanguageCreateView, self).dispatch(request, *args, **kwargs)
@@ -553,6 +571,9 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
     template_name = "resources/language_form.html"
     action_kind = "EDIT"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_success_url(self):
         return reverse("language_detail", args=[self.object.pk])
 
@@ -566,6 +587,9 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
 
 class LanguageEditModalView(LanguageEditView):
     template_name = "resources/language_modal_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def form_valid(self, form):
         self.object = form.save()
@@ -642,6 +666,10 @@ class WARegionListView(LoginRequiredMixin, ListView):
     context_object_name = "wa_regions"
     template_name = "resources/waregion_list.html"
 
+    def get(self, request, *args, **kwargs):
+        messages.warning(request, settings.HOMEPAGE_MESSAGE)
+        return super(WARegionListView, self).get(request, *args, **kwargs)
+
 
 class WARegionDetailView(LoginRequiredMixin, DetailView):
     model = WARegion
@@ -671,6 +699,9 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     #    in get_form_list()
     form_list = [forms.Form]
     template_name = "resources/templanguage_wizard_form.html"
+
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
 
     def __init__(self, *args, **kwargs):
         super(TempLanguageWizardView, self).__init__(*args, **kwargs)
@@ -747,6 +778,9 @@ class TempLanguageUpdateView(LoginRequiredMixin, UpdateView):
     form_class = TempLanguageForm
     template_name = "resources/templanguage_form.html"
 
+    def get(self, request, *args, **kwargs):
+        return redirect("home")
+
     def get_context_data(self, **kwargs):
         context = super(TempLanguageUpdateView, self).get_context_data(**kwargs)
         # Manually passing ietf_tag along because the form input was rendered manually
@@ -776,7 +810,7 @@ class AjaxTempLanguageListView(TempLanguageTableSourceView):
     link_url_field = "pk"
 
 
-class AjaxTemporaryCode(LoginRequiredMixin, View):
+class AjaxTemporaryCode(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse(self.generate_temp_code())

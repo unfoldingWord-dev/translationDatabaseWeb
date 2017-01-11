@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView
@@ -121,6 +122,14 @@ class RegionAssignmentView(LoginRequiredMixin, FormView):
 
 class PartnerListView(LoginRequiredMixin, TemplateView):
     template_name = "gl_tracking/partner_list.html"
+
+    def get(self, request, *args, **kwargs):
+        print "Something"
+        messages.warning(request, "The ability to create and update Languages, WA Regions, Countries, Charters, Events,"
+                                  " and Partners will be suspended for all users starting on Monday, Jan. 9, 2017."
+                                  " These functions will be made available in the new system, which is launching in"
+                                  " a couple of weeks. Please retain the information you want to enter until then.")
+        return super(PartnerListView, self).get(request, *args, **kwargs)
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):
