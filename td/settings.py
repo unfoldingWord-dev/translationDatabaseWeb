@@ -270,9 +270,9 @@ JP_API_KEY = os.environ.get("JP_API_KEY")
 
 EXT_APP_PUSH = [
     {
-        "name": "wa_ops_crm",
-        "url": "http://wa-td-integration.azurewebsites.net/api/crm/update",
-        "key": os.environ.get("CRM_API_KEY"),
+        "name": "port",
+        "url": os.environ.get("PORT_URL"),
+        "key": os.environ.get("PORT_API_KEY"),
     }
 ]
 
