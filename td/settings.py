@@ -271,7 +271,7 @@ JP_API_KEY = os.environ.get("JP_API_KEY")
 EXT_APP_PUSH = [
     {
         "name": "port",
-        "url": os.environ.get("PORT_URL"),
+        "url": os.environ.get("PORT_URL", ""),
         "key": os.environ.get("PORT_API_KEY"),
     }
 ]
