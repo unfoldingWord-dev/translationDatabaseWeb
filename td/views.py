@@ -571,8 +571,8 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
     template_name = "resources/language_form.html"
     action_kind = "EDIT"
 
-    def get(self, request, *args, **kwargs):
-        return redirect("home")
+    # def get(self, request, *args, **kwargs):
+    #     return redirect("home")
 
     def get_success_url(self):
         return reverse("language_detail", args=[self.object.pk])
@@ -588,8 +588,8 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
 class LanguageEditModalView(LanguageEditView):
     template_name = "resources/language_modal_form.html"
 
-    def get(self, request, *args, **kwargs):
-        return redirect("home")
+    # def get(self, request, *args, **kwargs):
+    #     return redirect("home")
 
     def form_valid(self, form):
         self.object = form.save()

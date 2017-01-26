@@ -22,7 +22,7 @@
         {% if language.ang != language.ln %}<h2>{{ language.ang }}</h2>{% endif %}
         {% if user.is_authenticated %}
         <span class="top-right-spaced">
-{#            <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}" title="Edit {{ language.ln }}"><i class="fa fa-pencil"></i> Edit</a>#}
+            <a class="btn btn-default btn-xs" href="{% url "language_edit" language.pk %}" title="Edit {{ language.ln }}"><i class="fa fa-pencil"></i> Edit</a>
         </span>
         {% endif %}
     </div>
