@@ -330,10 +330,6 @@ def upload_rtl_list(request):
 class HomeView(TemplateView):
     template_name = "homepage.html"
 
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(HomeView, self).get(request, *args, **kwargs)
-
 
 class RegionListView(ListView):
     model = Region
@@ -367,10 +363,6 @@ class RegionDetailView(ListView):
 class CountryListView(ListView):
     model = Country
     template_name = "resources/country_list.html"
-
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(CountryListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = super(CountryListView, self).get_queryset()
@@ -665,10 +657,6 @@ class WARegionListView(LoginRequiredMixin, ListView):
     model = WARegion
     context_object_name = "wa_regions"
     template_name = "resources/waregion_list.html"
-
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(WARegionListView, self).get(request, *args, **kwargs)
 
 
 class WARegionDetailView(LoginRequiredMixin, DetailView):

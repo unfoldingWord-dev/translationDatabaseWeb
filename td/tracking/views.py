@@ -19,7 +19,6 @@ from django.views.generic import (
     View
 )
 
-from td import settings
 from td.models import Language
 from td.utils import get_wa_fy
 from .utils import get_event_total, get_event_count_data, get_total_by_month
@@ -208,10 +207,6 @@ class AjaxEventCountView(LoginRequiredMixin, TemplateView):
 class CharterListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/project_list.html"
 
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(CharterListView, self).get(request, *args, **kwargs)
-
 
 class CharterAddView(LoginRequiredMixin, CreateView):
     model = Charter
@@ -314,11 +309,6 @@ class MultiCharterAddView(LoginRequiredMixin, ModelFormSetView):
 
 class EventListView(LoginRequiredMixin, TemplateView):
     template_name = "tracking/event_list.html"
-
-    def get(self, request, *args, **kwargs):
-        print "Something"
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(EventListView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)

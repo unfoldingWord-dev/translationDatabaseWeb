@@ -8,8 +8,6 @@ from .views import (
     upload_rtl_list,
     RegionListView,
     RegionDetailView,
-    WARegionListView,
-    WARegionDetailView,
     AjaxCountryListView,
     CountryListView,
     CountryDetailView,
@@ -43,8 +41,6 @@ urlpatterns = [
 
     url(r"^regions/$", RegionListView.as_view(), name="region_list"),
     url(r"^regions/(?P<slug>\w+)/$", RegionDetailView.as_view(), name="region_detail"),
-    url(r"^wa-regions/$", WARegionListView.as_view(), name="wa_region_list"),
-    url(r"^wa-regions/(?P<slug>\w+)/$", WARegionDetailView.as_view(), name="wa_region_detail"),
 
     url(r"^ajax/countries/$", AjaxCountryListView.as_view(), name="ajax_ds_country_list"),
     url(r"^ajax/countries/(?P<slug>\w+)/$", AjaxCountryListView.as_view(), name="ajax_wa_region_country_list"),

@@ -129,21 +129,11 @@
             <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url "language_list" %}">Languages</a></li>
                 <li><a href="{% url "region_list" %}">Regions</a></li>
-                {% if user.is_authenticated %}
-                    <li class="exclusive"><a href="{% url "wa_region_list" %}">WA Regions</a></li>
-                {% endif %}
                 <li><a href="{% url "country_list" %}">Countries</a></li>
                 <li><a href="{% url "title_list" %}">Titles</a></li>
                 <li><a href="{% url "publisher_list" %}">Publishers</a></li>
-                {% if user.is_authenticated %}
-                    <li class="exclusive"><a href="{% url "tracking:project_list" %}">Charters</a></li>
-                    <li class="exclusive"><a href="{% url "tracking:event_list" %}">Events</a></li>
-                    <li class="exclusive"><a href="{% url "gl:partner_list_view" %}">Partners</a></li>
-                {% endif %}
                 <li><a href="{% url "network_list" %}">Networks</a></li>
                 {% if user.is_authenticated %}
-                    <li class="divider"></li>
-                    <li class="exclusive"><a href="{% url "gl:home" %}">GL Tracker</a></li>
                     <li class="divider"></li>
                     <li><a href="{% url "gateway_flag_update" %}">Update Gateway Languages</a></li>
                     <li><a href="{% url "rtl_languages_update" %}">Update RTL Languages (Scripts)</a></li>
