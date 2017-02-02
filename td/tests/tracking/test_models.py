@@ -1,7 +1,6 @@
 import types
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
@@ -53,10 +52,6 @@ class CharterTestCase(TestCase):
         self.assertEqual(data[0]["ln"], "Test Language")
         self.assertEqual(data[0]["cc"], [""])
         self.assertEqual(data[0]["lr"], "")
-
-    def test_get_absolute_url(self):
-        expected_result = reverse("language_detail", kwargs={"pk": self.model.language_id})
-        self.assertEqual(self.model.get_absolute_url(), expected_result)
 
     def test_tag_display(self):
         expected_result = "%s-Project" % self.model.language.tag_display
@@ -122,10 +117,6 @@ class EventTestCase(TestCase):
         Event should be represented by its ID
         """
         self.assertEqual(self.model.__unicode__(), "9999")
-
-    def test_get_absolute_url(self):
-        expected_result = reverse("tracking:event_detail", kwargs={"pk": self.model.pk})
-        self.assertEqual(self.model.get_absolute_url(), expected_result)
 
     def test_tag_display(self):
         expected_result = "%s-Project-Event %d" % (self.model.charter.language.tag_display, self.model.number)

@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-from django.core.urlresolvers import reverse
 
 
 # ----------- #
@@ -146,9 +145,6 @@ class Partner(models.Model):
         if self.partner_start is None:
             self.partner_start = datetime.date(1900, 1, 1)
         super(Partner, self).save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse("gl:partner_detail_view", kwargs={"pk": self.pk})
 
 
 # ------------ #

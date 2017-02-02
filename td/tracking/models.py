@@ -1,4 +1,3 @@
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from model_utils import FieldTracker
@@ -46,9 +45,6 @@ class Charter(CommentableModel):
 
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
-
-    def get_absolute_url(self):
-        return reverse("language_detail", kwargs={"pk": self.language_id})
 
     @property
     def lang_id(self):
@@ -131,9 +127,6 @@ class Event(CommentableModel):
 
     def __unicode__(self):
         return str(self.id)
-
-    def get_absolute_url(self):
-        return reverse("tracking:event_detail", kwargs={"pk": self.pk})
 
     @property
     def tag_display(self):

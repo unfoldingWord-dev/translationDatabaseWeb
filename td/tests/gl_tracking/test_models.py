@@ -1,8 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-# from mock import Mock
 
 from td.tracking.models import Language
 from td.gl_tracking.models import (
@@ -14,7 +12,6 @@ from td.gl_tracking.models import (
     Method,
     GLDirector,
 )
-# from td.models import Language
 
 
 class PhaseTestCase(TestCase):
@@ -137,14 +134,6 @@ class PartnerTestCase(TestCase):
         name = "Test Partner"
         partner = Partner.objects.create(name=name)
         self.assertEqual(partner.__str__(), name)
-
-    def test_absolute_url(self):
-        """
-        A sanity check to make sure that the absolute url matches what it should be
-        """
-        pk = 1
-        partner = Partner.objects.create(name="Test Partner", pk=pk)
-        self.assertEqual(partner.get_absolute_url(), reverse("gl:partner_detail_view", kwargs={"pk": pk}))
 
 
 class MethodTestCase(TestCase):
