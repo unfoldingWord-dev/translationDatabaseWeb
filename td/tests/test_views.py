@@ -1,23 +1,26 @@
+from __future__ import absolute_import
+
 import importlib
 import re
 import types
-
 import requests
 
 from mock import patch, Mock
 
+from django.http import HttpResponse, JsonResponse
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from djcelery.tests.req import RequestFactory
 
-from td.models import TempLanguage, Language
-from td.resources.models import Questionnaire
-from td.views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
-    TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView
-from td.forms import TempLanguageForm
-from td.tests.models import NoSignalTestCase
+from ..models import TempLanguage, Language
+from ..resources.models import Questionnaire
+from ..views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
+    TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView, codes_text_export, names_text_export,\
+    names_json_export
+from ..forms import TempLanguageForm
+from ..tests.models import NoSignalTestCase
 
 
 def setup_view(view, request=None, *args, **kwargs):
@@ -39,6 +42,46 @@ def create_user():
         email="test@gmail.com",
         password="test_password",
     )
+
+
+class CodesTextExportTestCase(TestCase):
+
+    @patch("td.tracking.models.Language.codes_text")
+    def test_return_http(self, mock_codes_text):
+        response = codes_text_export(None)
+
+        # Must call Language.codes_text()
+        mock_codes_text.assert_called_once_with()
+
+        # Must return HttpResponse
+        self.assertIsInstance(response, HttpResponse)
+
+
+class NamesTextExportTestCase(TestCase):
+
+    @patch("td.tracking.models.Language.names_text")
+    def test_return_http(self, mock_names_text):
+        response = names_text_export(None)
+
+        # Must call Language.names_text()
+        mock_names_text.assert_called_once_with()
+
+        # Must return HttpResponse
+        self.assertIsInstance(response, HttpResponse)
+
+
+class NamesJsonExportTestCase(TestCase):
+
+    @patch("td.models.JSONData.objects.get")
+    def test_return_json(self, mock_jsondata_get):
+        mock_jsondata_get.return_value.data = ""
+        response = names_json_export(None)
+
+        # Must call JSONData.objects.get(name="langnames")
+        mock_jsondata_get.assert_called_once_with(name="langnames")
+
+        # Must return JsonResponse
+        self.assertIsInstance(response, JsonResponse)
 
 
 class LanguageDetailViewTestCase(TestCase):
