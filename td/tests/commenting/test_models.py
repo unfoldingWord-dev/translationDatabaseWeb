@@ -15,7 +15,7 @@ class CommentTagTestCase(NoSignalTestCase):
         content_type = ContentType.objects.get_for_model(self.language)
         self.comment = CommentTag.objects.create(name=self.language.tag_slug, slug=self.language.tag_slug,
                                                  object_id=self.language.id, content_type=content_type)
-    
+
     def tearDown(self):
         super(CommentTagTestCase, self).tearDown()
 

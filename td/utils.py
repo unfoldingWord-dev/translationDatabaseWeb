@@ -1,8 +1,6 @@
 import operator
 import types
 
-from datetime import datetime
-
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
