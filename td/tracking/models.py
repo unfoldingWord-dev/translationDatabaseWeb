@@ -4,7 +4,7 @@ from model_utils import FieldTracker
 
 from td.commenting.models import CommentableModel
 from td.models import Language, Country, Network
-from td.utils import ordinal
+# from td.utils import ordinal
 
 
 # ------------- #
@@ -46,46 +46,46 @@ class Charter(CommentableModel):
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
 
-    @property
-    def lang_id(self):
-        return self.language.id
-
-    @property
-    def tag_display(self):
-        return "%s-Project" % self.language.tag_display
-
-    @property
-    def tag_tip(self):
-        return self.language.tag_tip
-
-    @property
-    def tag_slug(self):
-        # NOTE: For some reason, when the language_id is changed through the language edit form, self.language is not
-        # changed until later. This results in the handler receiving the old language code for the tag_slug. Could
-        # self.language be a GenericForeignKey and self.language_id the object_id? Maybe that causes the relationship to
-        # not be updated until the next time it's referenced?
-        language = Language.objects.get(id=self.language_id)
-        return "-".join([language.tag_slug, "proj"])
-
-    @property
-    def all_events_comments(self):
-        # return [(e.number, e.comments_and_mentions) for e in self.event_set.all() if len(e.comments_and_mentions)]
-        return [
-            {
-                "number": e.number,
-                "location": e.location,
-                "start_date": e.start_date,
-                "end_date": e.end_date,
-                "comments_and_mentions": e.comments_and_mentions
-            } for e in self.event_set.all() if len(e.comments_and_mentions)
-        ]
-
-    @classmethod
-    def lang_data(cls):
-        return [
-            dict(pk=x.language.pk, lc=x.language.lc, ln=x.language.ln, cc=[x.language.cc], lr=x.language.lr)
-            for x in cls.objects.all()
-        ]
+    # @property
+    # def lang_id(self):
+    #     return self.language.id
+    #
+    # @property
+    # def tag_display(self):
+    #     return "%s-Project" % self.language.tag_display
+    #
+    # @property
+    # def tag_tip(self):
+    #     return self.language.tag_tip
+    #
+    # @property
+    # def tag_slug(self):
+    #     # NOTE: For some reason, when the language_id is changed through the language edit form, self.language is not
+    #     # changed until later. This results in the handler receiving the old language code for the tag_slug. Could
+    #     # self.language be a GenericForeignKey and self.language_id the object_id? Maybe that causes the relationship to
+    #     # not be updated until the next time it's referenced?
+    #     language = Language.objects.get(id=self.language_id)
+    #     return "-".join([language.tag_slug, "proj"])
+    #
+    # @property
+    # def all_events_comments(self):
+    #     # return [(e.number, e.comments_and_mentions) for e in self.event_set.all() if len(e.comments_and_mentions)]
+    #     return [
+    #         {
+    #             "number": e.number,
+    #             "location": e.location,
+    #             "start_date": e.start_date,
+    #             "end_date": e.end_date,
+    #             "comments_and_mentions": e.comments_and_mentions
+    #         } for e in self.event_set.all() if len(e.comments_and_mentions)
+    #     ]
+    #
+    # @classmethod
+    # def lang_data(cls):
+    #     return [
+    #         dict(pk=x.language.pk, lc=x.language.lc, ln=x.language.ln, cc=[x.language.cc], lr=x.language.lr)
+    #         for x in cls.objects.all()
+    #     ]
 
 
 # ----------- #
@@ -128,19 +128,19 @@ class Event(CommentableModel):
     def __unicode__(self):
         return str(self.id)
 
-    @property
-    def tag_display(self):
-        return "%s-Project-Event %d" % (self.charter.language.tag_display, self.number)
-
-    @property
-    def tag_tip(self):
-        return "The %s event of %s project" % (ordinal(self.number), self.charter.language.tag_display)
-
-    @property
-    def tag_slug(self):
-        # NOTE: look at Charter.tag_slug's note
-        charter = Charter.objects.get(id=self.charter_id)
-        return "-".join([charter.language.tag_slug, "proj", "e" + str(self.number)])
+    # @property
+    # def tag_display(self):
+    #     return "%s-Project-Event %d" % (self.charter.language.tag_display, self.number)
+    #
+    # @property
+    # def tag_tip(self):
+    #     return "The %s event of %s project" % (ordinal(self.number), self.charter.language.tag_display)
+    #
+    # @property
+    # def tag_slug(self):
+    #     # NOTE: look at Charter.tag_slug's note
+    #     charter = Charter.objects.get(id=self.charter_id)
+    #     return "-".join([charter.language.tag_slug, "proj", "e" + str(self.number)])
 
 
 # ------------------------ #

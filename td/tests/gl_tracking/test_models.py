@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.utils import timezone
+# from django.utils import timezone
 from django.contrib.auth.models import User
 
 from td.tracking.models import Language
@@ -88,41 +88,41 @@ class ProgressTestCase(TestCase):
         object = Progress.objects.create(language=self.language, type=self.doc)
         self.assertEqual(object.__str__(), "Test Document")
 
-    def test_save_new(self):
-        """
-        When saving Progress:
-           created_at should be set almost immediately
-           modified_at should be set almost immediately
-           created_at and modified_at should be almost identical
-        """
-        object = Progress(language=self.language, type=self.doc)
-        object.save()
-        delta_created = timezone.now() - object.created_at
-        delta_modified = timezone.now() - object.modified_at
-        delta = object.modified_at - object.created_at
-        self.assertAlmostEqual(delta_created.seconds, 0)
-        self.assertAlmostEqual(delta_modified.seconds, 0)
-        self.assertAlmostEqual(delta.seconds, 0)
+    # def test_save_new(self):
+    #     """
+    #     When saving Progress:
+    #        created_at should be set almost immediately
+    #        modified_at should be set almost immediately
+    #        created_at and modified_at should be almost identical
+    #     """
+    #     object = Progress(language=self.language, type=self.doc)
+    #     object.save()
+    #     delta_created = timezone.now() - object.created_at
+    #     delta_modified = timezone.now() - object.modified_at
+    #     delta = object.modified_at - object.created_at
+    #     self.assertAlmostEqual(delta_created.seconds, 0)
+    #     self.assertAlmostEqual(delta_modified.seconds, 0)
+    #     self.assertAlmostEqual(delta.seconds, 0)
 
-    def test_save_modify(self):
-        """
-        When modifying Progress:
-           created_at should stay the same at creation
-           modified_at should be changed at modification
-           modified_at should be different than created_at
-        """
-        object = Progress(language=self.language, type=self.doc)
-        object.save()
-        created1 = object.created_at
-        modified1 = object.modified_at
-        object.is_online = True
-        object.save()
-        created2 = object.created_at
-        modified2 = object.modified_at
-        delta = timezone.now() - object.modified_at
-        self.assertEqual(created1, created2)
-        self.assertNotEqual(modified1, modified2)
-        self.assertAlmostEqual(delta.seconds, 0)
+    # def test_save_modify(self):
+    #     """
+    #     When modifying Progress:
+    #        created_at should stay the same at creation
+    #        modified_at should be changed at modification
+    #        modified_at should be different than created_at
+    #     """
+    #     object = Progress(language=self.language, type=self.doc)
+    #     object.save()
+    #     created1 = object.created_at
+    #     modified1 = object.modified_at
+    #     object.is_online = True
+    #     object.save()
+    #     created2 = object.created_at
+    #     modified2 = object.modified_at
+    #     delta = timezone.now() - object.modified_at
+    #     self.assertEqual(created1, created2)
+    #     self.assertNotEqual(modified1, modified2)
+    #     self.assertAlmostEqual(delta.seconds, 0)
 
 
 class PartnerTestCase(TestCase):

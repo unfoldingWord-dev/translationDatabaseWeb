@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.contrib.auth.models import User
-from django.utils import timezone
+# from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 
@@ -58,9 +58,9 @@ class Document(models.Model):
     def __str__(self):
         return self.name
 
-    @classmethod
-    def total_words(cls, phase):
-        return sum(cls.objects.filter(category__phase__number=phase, is_active=True).values_list("words", flat=True))
+    # @classmethod
+    # def total_words(cls, phase):
+    #     return sum(cls.objects.filter(category__phase__number=phase, is_active=True).values_list("words", flat=True))
 
 
 # -------------- #
@@ -102,12 +102,12 @@ class Progress(models.Model):
     def __str__(self):
         return str(self.type)
 
-    def save(self, *args, **kwargs):
-        """ Update Timestamp on save """
-        if not self.id:
-            self.created_at = timezone.now()
-        self.modified_at = timezone.now()
-        return super(Progress, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     """ Update Timestamp on save """
+    #     if not self.id:
+    #         self.created_at = timezone.now()
+    #     self.modified_at = timezone.now()
+    #     return super(Progress, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ("language", "type")
@@ -139,12 +139,12 @@ class Partner(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        # The "default" arg in DateField() seems to only work for existing record, not new ones.
-        # There's need to set initial value in the form after this.
-        if self.partner_start is None:
-            self.partner_start = datetime.date(1900, 1, 1)
-        super(Partner, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # The "default" arg in DateField() seems to only work for existing record, not new ones.
+    #     # There's need to set initial value in the form after this.
+    #     if self.partner_start is None:
+    #         self.partner_start = datetime.date(1900, 1, 1)
+    #     super(Partner, self).save(*args, **kwargs)
 
 
 # ------------ #
@@ -171,11 +171,11 @@ class GLDirector(models.Model):
     def __str__(self):
         return self.user.username
 
-    @property
-    def name(self):
-        full_name = " ".join([self.user.first_name, self.user.last_name])
-        return full_name if full_name != " " else self.user.username
-
-    @classmethod
-    def super_gl_directors(cls):
-        return [d.user.username for d in cls.objects.filter(is_super=True)]
+    # @property
+    # def name(self):
+    #     full_name = " ".join([self.user.first_name, self.user.last_name])
+    #     return full_name if full_name != " " else self.user.username
+    #
+    # @classmethod
+    # def super_gl_directors(cls):
+    #     return [d.user.username for d in cls.objects.filter(is_super=True)]
