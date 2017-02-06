@@ -28,11 +28,12 @@ def handle_wa_region_delete(sender, instance=None, **kwargs):
 @receiver(post_save, sender=TempLanguage)
 def handle_templanguage_save(sender, instance, **kwargs):
     if kwargs["created"]:
-        lang = Language.objects.create(code=instance.code)
-        lang.name = instance.name
-        lang.direction = instance.direction
-        lang.country = instance.country
-        lang.save()
+        lang = Language.objects.create(
+            code=instance.code,
+            name=instance.name,
+            direction=instance.direction,
+            country=instance.country,
+        )
         instance.lang_assigned = lang
         instance.save()
         notify_templanguage_created(instance, lang)
@@ -60,6 +61,7 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, instance=None, created=False, **kwargs):
+    print "language save handler", instance, kwargs
     if instance is not None:
         notify_external_apps("CREATE" if created else "UPDATE", instance)
         if "code" in instance.tracker.changed().keys():
