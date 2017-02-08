@@ -61,7 +61,6 @@ def handle_additionallanguage_delete(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Language)
 def handle_language_save(sender, instance=None, created=False, **kwargs):
-    print "language save handler", instance, kwargs
     if instance is not None:
         notify_external_apps("CREATE" if created else "UPDATE", instance)
         if "code" in instance.tracker.changed().keys():
