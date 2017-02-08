@@ -1,8 +1,6 @@
 import operator
 import types
 
-from datetime import datetime
-
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
@@ -43,25 +41,6 @@ def flatten_tuple(t):
         return ()
     else:
         return flatten_tuple(t[0]) + flatten_tuple(t[1:])
-
-
-def get_wa_fy(year=None, month=None):
-    """
-    Parse a given year and/or month onto a dictionary containing info about the fiscal year.
-    :param year: Year to be parsed
-    :param month: Month to be parsed
-    :return: A dictionary that contains "year", "full_year", "current_start", and "current_end" of the financial year.
-    """
-    month = month or datetime.now().date().month
-    year = year or datetime.now().date().year
-    if month >= 10:
-        year += 1
-    return {
-        "year": str(year)[-2:],
-        "full_year": str(year),
-        "current_start": str(year - 1) + "-10-1",
-        "current_end": str(year) + "-9-30"
-    }
 
 
 def ordinal(n):

@@ -234,7 +234,6 @@ EMAIL_NOTIFY_LIST = ["publishing@unfoldingword.org"]
 EMAIL_FROM = "uwadmin@unfoldingword.org"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ACCOUNT_OPEN_SIGNUP = False
 ACCOUNT_EMAIL_UNIQUE = True
@@ -275,8 +274,3 @@ EXT_APP_PUSH = [
         "key": os.environ.get("PORT_API_KEY"),
     }
 ]
-
-HOMEPAGE_MESSAGE = "The ability to create and update Languages, WA Regions, Countries, Charters, Events, and Partners " \
-                   "will be suspended for all users starting on Monday, Jan. 9, 2017. These functions will be made " \
-                   "available in the new system, which is launching in a couple of weeks. Please retain the " \
-                   "information you want to enter until then."

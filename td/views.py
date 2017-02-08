@@ -30,7 +30,7 @@ from .imports.models import (
     IMBPeopleGroup
 )
 from .tracking.models import Event
-from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion, TempLanguage
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, TempLanguage
 from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm, TempLanguageForm
 from .resources.models import transform_country_data, Questionnaire
 from .resources.tasks import get_map_gateways
@@ -330,10 +330,6 @@ def upload_rtl_list(request):
 class HomeView(TemplateView):
     template_name = "homepage.html"
 
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(HomeView, self).get(request, *args, **kwargs)
-
 
 class RegionListView(ListView):
     model = Region
@@ -367,10 +363,6 @@ class RegionDetailView(ListView):
 class CountryListView(ListView):
     model = Country
     template_name = "resources/country_list.html"
-
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(CountryListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = super(CountryListView, self).get_queryset()
@@ -571,8 +563,8 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
     template_name = "resources/language_form.html"
     action_kind = "EDIT"
 
-    def get(self, request, *args, **kwargs):
-        return redirect("home")
+    # def get(self, request, *args, **kwargs):
+    #     return redirect("home")
 
     def get_success_url(self):
         return reverse("language_detail", args=[self.object.pk])
@@ -588,8 +580,8 @@ class LanguageEditView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin, U
 class LanguageEditModalView(LanguageEditView):
     template_name = "resources/language_modal_form.html"
 
-    def get(self, request, *args, **kwargs):
-        return redirect("home")
+    # def get(self, request, *args, **kwargs):
+    #     return redirect("home")
 
     def form_valid(self, form):
         self.object = form.save()
@@ -658,29 +650,6 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
         context.update({
             "language": self.language
         })
-        return context
-
-
-class WARegionListView(LoginRequiredMixin, ListView):
-    model = WARegion
-    context_object_name = "wa_regions"
-    template_name = "resources/waregion_list.html"
-
-    def get(self, request, *args, **kwargs):
-        messages.warning(request, settings.HOMEPAGE_MESSAGE)
-        return super(WARegionListView, self).get(request, *args, **kwargs)
-
-
-class WARegionDetailView(LoginRequiredMixin, DetailView):
-    model = WARegion
-    context_object_name = "wa_region"
-    template_name = "resources/waregion_detail.html"
-
-    def get_context_data(self, **kwargs):
-        wa_region = self.get_object()
-        context = super(WARegionDetailView, self).get_context_data(**kwargs)
-        context["gl_directors"] = wa_region.gldirector_set.filter(is_helper=False)
-        context["gl_helpers"] = wa_region.gldirector_set.filter(is_helper=True)
         return context
 
 
