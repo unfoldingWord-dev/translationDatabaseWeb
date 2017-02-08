@@ -30,7 +30,7 @@ from .imports.models import (
     IMBPeopleGroup
 )
 from .tracking.models import Event
-from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, WARegion, TempLanguage
+from .models import Language, Country, Region, Network, AdditionalLanguage, JSONData, TempLanguage
 from .forms import NetworkForm, CountryForm, LanguageForm, UploadGatewayForm, TempLanguageForm
 from .resources.models import transform_country_data, Questionnaire
 from .resources.tasks import get_map_gateways
@@ -650,25 +650,6 @@ class BaseLanguageView(LoginRequiredMixin, EventLogMixin, EntityTrackingMixin):
         context.update({
             "language": self.language
         })
-        return context
-
-
-class WARegionListView(LoginRequiredMixin, ListView):
-    model = WARegion
-    context_object_name = "wa_regions"
-    template_name = "resources/waregion_list.html"
-
-
-class WARegionDetailView(LoginRequiredMixin, DetailView):
-    model = WARegion
-    context_object_name = "wa_region"
-    template_name = "resources/waregion_detail.html"
-
-    def get_context_data(self, **kwargs):
-        wa_region = self.get_object()
-        context = super(WARegionDetailView, self).get_context_data(**kwargs)
-        context["gl_directors"] = wa_region.gldirector_set.filter(is_helper=False)
-        context["gl_helpers"] = wa_region.gldirector_set.filter(is_helper=True)
         return context
 
 

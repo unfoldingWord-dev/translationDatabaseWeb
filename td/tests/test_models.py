@@ -12,11 +12,10 @@ from mock import patch
 from td.imports.models import WikipediaISOLanguage, EthnologueCountryCode, EthnologueLanguageCode, SIL_ISO_639_3,\
     WikipediaISOCountry
 
-from td.models import Language, AdditionalLanguage, TempLanguage, Country, WARegion, Region, JSONData, Network, \
+from td.models import Language, AdditionalLanguage, TempLanguage, Country, Region, JSONData, Network, \
     LanguageAltName, LanguageEAV, CountryEAV
 from td.resources.models import Questionnaire
 from td.tasks import integrate_imports, update_countries_from_imports
-from td.gl_tracking.models import Phase, Document, DocumentCategory, Progress
 
 
 class CountryEAVTestCase(TestCase):
@@ -300,16 +299,6 @@ class LanguageTestCase(TestCase):
 
     def setUp(self):
         self.lang = Language.objects.create(code="tl", iso_639_3="tel", name="Test Language", gateway_flag=True)
-        self.phase_one = Phase.objects.create(number=1)
-        self.phase_two = Phase.objects.create(number=2)
-        self.cat_one = DocumentCategory.objects.create(name="Category One", phase=self.phase_one)
-        self.cat_two = DocumentCategory.objects.create(name="Category Two", phase=self.phase_two)
-        self.doc_one = Document.objects.create(name="Document One", code="one", category=self.cat_one)
-        self.doc_two = Document.objects.create(name="Document Two", code="two", category=self.cat_two)
-        self.progress_one = Progress.objects.create(language=self.lang, type=self.doc_one)
-        self.progress_two = Progress.objects.create(language=self.lang, type=self.doc_two)
-        self.lang.progress_set.add(self.progress_one)
-        self.lang.progress_set.add(self.progress_two)
 
     def test_string_repr(self):
         """__str__ should return the language name"""
@@ -346,12 +335,6 @@ class LanguageTestCase(TestCase):
         self.assertIn("ld", result[0])
         self.assertIn("gw", result[0])
         self.assertIn("cc", result[0])
-
-    def test_documents_ordered(self):
-        tmp = self.lang.documents_ordered
-        self.assertEqual(len(tmp), 2)
-        self.assertEqual(tmp[0].pk, self.progress_one.pk)
-        self.assertEqual(tmp[1].pk, self.progress_two.pk)
 
     def test_cc_w_country(self):
         self.assertEqual(self.lang.cc, "")
@@ -401,24 +384,3 @@ class CountryTestCase(TestCase):
     def test_get_absolute_url(self):
         """get_absolute_url of a country should return the link to its detail page"""
         self.assertEqual(self.country.get_absolute_url(), reverse("country_detail", kwargs={"pk": self.country.pk}))
-
-
-class WARegionTestCase(TestCase):
-
-    def setUp(self):
-        self.wa_region, _ = WARegion.objects.get_or_create(name="Middle Earth", slug="middleearth")
-
-    def test_get_absolute_url(self):
-        """get_absolute_url of a WA region should return the link to its detail page"""
-        self.assertEqual(self.wa_region.get_absolute_url(), reverse("wa_region_detail",
-                                                                    kwargs={"slug": self.wa_region.slug}))
-
-    def test_string_representation(self):
-        self.assertEqual(self.wa_region.__str__(), self.wa_region.name)
-
-    def test_tag_tip(self):
-        self.assertEqual(self.wa_region.tag_tip, "")
-
-    def test_slug_all(self):
-        expected_result = list(WARegion.objects.all().values_list("slug", flat=True))
-        self.assertListEqual(WARegion.slug_all(), expected_result)
