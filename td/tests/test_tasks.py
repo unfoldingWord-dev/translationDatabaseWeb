@@ -3,7 +3,7 @@ from django.test import TestCase
 from mock import patch, Mock
 
 from td.models import Language, JSONData
-from td.tasks import reset_langnames_cache, update_langnames_data, post_to_ext_apps, notify_external_apps
+from td.tasks import reset_langnames_cache, update_langnames_data, post_to_ext_app, notify_external_apps
 from td.tests.models import NoSignalTestCase
 
 
@@ -99,7 +99,7 @@ class UpdateLangnamesDataTestCase(TestCase):
         self.assertIn("ld", json)
 
 
-class PostToExtAppsTestCase(TestCase):
+class PostToExtAppTestCase(TestCase):
     def setUp(self):
         self.patcher_post = patch("td.tasks.requests.post")
         self.patcher_send_mail = patch("td.tasks.send_mail")
@@ -119,7 +119,7 @@ class PostToExtAppsTestCase(TestCase):
         response = {"status_code": 202, "content": ""}
         self.mock_response.configure_mock(**response)
 
-        post_to_ext_apps("fake_url", "fake_data", "fake_headers")
+        post_to_ext_app("fake_url", "fake_data", "fake_headers")
 
         self.mock_post.assert_called_once_with("fake_url", data="fake_data", headers="fake_headers")
         self.assertFalse(self.mock_send_mail.called)
@@ -131,7 +131,7 @@ class PostToExtAppsTestCase(TestCase):
         response = {"status_code": 202, "content": "something's wrong"}
         self.mock_response.configure_mock(**response)
 
-        post_to_ext_apps("fake_url", "fake_data", "fake_headers")
+        post_to_ext_app("fake_url", "fake_data", "fake_headers")
 
         self.mock_post.assert_called_once_with("fake_url", data="fake_data", headers="fake_headers")
         self.assertEqual(self.mock_send_mail.call_count, 1)
@@ -143,7 +143,7 @@ class PostToExtAppsTestCase(TestCase):
         response = {"status_code": 403}
         self.mock_response.configure_mock(**response)
 
-        post_to_ext_apps("fake_url", "fake_data", "fake_headers")
+        post_to_ext_app("fake_url", "fake_data", "fake_headers")
 
         self.mock_post.assert_called_once_with("fake_url", data="fake_data", headers="fake_headers")
         self.assertEqual(self.mock_send_mail.call_count, 1)
@@ -283,7 +283,7 @@ class NotifyExternalAppTestCase(NoSignalTestCase):
         self.assertGreater(len(status.message), 0)
 
     @patch("td.tasks.settings")
-    @patch("td.tasks.post_to_ext_apps.delay")
+    @patch("td.tasks.post_to_ext_app.delay")
     def test_no_ext_apps(self, mock_async_post, mock_settings):
         """
         If called with the right arguments but no ext apps, function should return success status and post should
@@ -297,7 +297,7 @@ class NotifyExternalAppTestCase(NoSignalTestCase):
         self.assertFalse(mock_async_post.called)
 
     @patch("td.tasks.settings")
-    @patch("td.tasks.post_to_ext_apps.delay")
+    @patch("td.tasks.post_to_ext_app.delay")
     def test_with_ext_apps(self, mock_async_post, mock_settings):
         """
         If called with the right arguments and ext app settings, function should return success status, no message

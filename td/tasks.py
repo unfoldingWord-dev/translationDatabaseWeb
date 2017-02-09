@@ -267,22 +267,25 @@ def notify_external_apps(action="", instance=None):
             url += "?key=" + key if key is not None else ""
         headers = {'Content-Type': 'application/json'}
 
-        post_to_ext_apps.delay(url, json.dumps(data), headers)
+        post_to_ext_app.delay(url, json.dumps(data), headers)
 
     task_status.success = True
     return task_status
 
 
 @task()
-def post_to_ext_apps(url, data, headers):
+def post_to_ext_app(url, data, headers):
     response = requests.post(url, data=data, headers=headers)
-    if response.status_code == 202 and response.content == "":
-        return
-    else:
-        message = "POST to %s has failed with code: %s and message: %s" % (url, response.status_code, response.content)
+    if response.status_code != 202 or response.content != "":
+        message = "POST to %s has failed." % url
+        message += "\n"
+        message += "\nsite_id: %s" % settings.SITE_ID
+        message += "\ncontent: %s" % response.content
+        message += "\ndata: %s" % data
+        message += "\nstatus_code: %s" % response.status_code
         send_mail(
-            "Ops CRM shim rejects POST",
+            "PORT shim rejects POST",
             message,
             "admin@unfoldingword.org",
-            ["vleong2332@gmail.com"],
+            ["vicky_leong@wycliffeassociates.org"],
         )

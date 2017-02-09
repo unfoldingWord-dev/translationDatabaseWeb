@@ -669,9 +669,6 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
     form_list = [forms.Form]
     template_name = "resources/templanguage_wizard_form.html"
 
-    def get(self, request, *args, **kwargs):
-        return redirect("home")
-
     def __init__(self, *args, **kwargs):
         super(TempLanguageWizardView, self).__init__(*args, **kwargs)
         self.questionnaire = Questionnaire.objects.latest('created_at')
