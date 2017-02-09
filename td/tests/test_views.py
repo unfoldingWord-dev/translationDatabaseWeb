@@ -177,8 +177,7 @@ class TempLanguageWizardViewTestCase(TestCase):
         Requesting temporary language creation form should return a success response
         """
         response = TempLanguageWizardView.as_view()(self.request)
-        # self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_init(self):
         """
