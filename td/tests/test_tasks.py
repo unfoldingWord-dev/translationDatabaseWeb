@@ -283,7 +283,7 @@ class NotifyExternalAppTestCase(NoSignalTestCase):
         self.assertGreater(len(status.message), 0)
 
     @patch("td.tasks.settings")
-    @patch("td.tasks.post_to_ext_apps.delay")
+    @patch("td.tasks.post_to_ext_app.delay")
     def test_no_ext_apps(self, mock_async_post, mock_settings):
         """
         If called with the right arguments but no ext apps, function should return success status and post should
@@ -297,7 +297,7 @@ class NotifyExternalAppTestCase(NoSignalTestCase):
         self.assertFalse(mock_async_post.called)
 
     @patch("td.tasks.settings")
-    @patch("td.tasks.post_to_ext_apps.delay")
+    @patch("td.tasks.post_to_ext_app.delay")
     def test_with_ext_apps(self, mock_async_post, mock_settings):
         """
         If called with the right arguments and ext app settings, function should return success status, no message

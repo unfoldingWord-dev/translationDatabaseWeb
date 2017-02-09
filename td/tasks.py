@@ -276,7 +276,7 @@ def notify_external_apps(action="", instance=None):
 @task()
 def post_to_ext_app(url, data, headers):
     response = requests.post(url, data=data, headers=headers)
-    if response.status_code != 202 and response.content != "":
+    if response.status_code != 202 or response.content != "":
         message = "POST to %s has failed." % url
         message += "\n"
         message += "\nsite_id: %s" % settings.SITE_ID
