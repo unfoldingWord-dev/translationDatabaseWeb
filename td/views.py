@@ -112,6 +112,34 @@ def languages_autocomplete(request):
     return JsonResponse({"results": d, "count": len(d), "term": term})
 
 
+# TODO: Like languages_autocomplete() but only for gateway languages. Candidate for refactor.
+def gateway_languages_autocomplete(request):
+    term = request.GET.get("q").lower()
+    data = Language.get_gateway_languages()
+    d = []
+    if len(term) <= 3:
+        term = term.encode("utf-8")
+        # search: lc
+        # first do a *starts with* style search of language code (lc)
+        d.extend([
+            x
+            for x in data
+            if term == x["lc"].lower()[:len(term)]
+        ])
+    if len(term) >= 3:
+        # search: lc, ln, lr
+        term = term.encode("utf-8")
+        d.extend([
+            x
+            for x in data
+            if (
+                term in x["lc"] or term in x["ln"].lower() or
+                term in x["ang"].lower() or term in x["lr"].lower()
+            )
+        ])
+    return JsonResponse({"results": d, "count": len(d), "term": term})
+
+
 class AdditionalLanguageListView(TemplateView):
     template_name = "td/additionallanguage_list.html"
 
