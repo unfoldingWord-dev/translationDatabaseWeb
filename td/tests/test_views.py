@@ -4,6 +4,8 @@ import importlib
 import re
 import types
 import requests
+import json
+from absoluteuri import reverse
 
 from mock import patch, Mock
 
@@ -18,7 +20,7 @@ from ..models import TempLanguage, Language
 from ..resources.models import Questionnaire
 from ..views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
     TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView, codes_text_export, names_text_export,\
-    names_json_export
+    names_json_export, gateway_languages_autocomplete
 from ..forms import TempLanguageForm
 from ..tests.models import NoSignalTestCase
 
@@ -308,3 +310,44 @@ class TempLanguageAdminViewTestCase(TestCase):
         TempLanguage.objects.create(pk=999, code="abc")
         returned = self.view.get_context_data()
         self.assertIn("pending", returned)
+
+
+class GatewayLanguagesAutocompleteTestCase(TestCase):
+    def setUp(self):
+        self.request = RequestFactory().get(reverse("gateway_languages"))
+        self.ol = Language.objects.create(code="ol", iso_639_3="tol", name="Test Other Language",
+                                          gateway_flag=False)
+        self.gl = Language.objects.create(code="gl", iso_639_3="tgl", name="Test Gateway Language",
+                                          gateway_flag=True)
+
+    def test_returns_json(self):
+        response = gateway_languages_autocomplete(self.request)
+        self.assertIsInstance(response, JsonResponse)
+        self.assertIn("results", response.content)
+        self.assertIn("count", response.content)
+        self.assertIn("term", response.content)
+
+    @patch("td.views.Language.get_gateway_languages")
+    def test_call_get_gateway_languages(self, mock_get_gateway_languages):
+        gateway_languages_autocomplete(self.request)
+        mock_get_gateway_languages.assert_called_once_with()
+
+    def test_search_other_language(self):
+        term = "ol"
+        expected_results = []
+        request = RequestFactory().get("/ac/gateway-langnames/?q=" + term)
+        response = gateway_languages_autocomplete(request)
+        data = json.loads(response.content)
+        self.assertListEqual(data.get("results"), expected_results)
+        self.assertEqual(data.get("term"), "ol")
+        self.assertEqual(data.get("count"), 0)
+
+    def test_search_gateway_language(self):
+        term = "gl"
+        expected_results = [dict(pk=self.gl.pk, lc=self.gl.lc, ln=self.gl.ln, lr=self.gl.lr, ang=self.gl.ang)]
+        request = RequestFactory().get("/ac/gateway-langnames/?q=" + term)
+        response = gateway_languages_autocomplete(request)
+        data = json.loads(response.content)
+        self.assertListEqual(data.get("results"), expected_results)
+        self.assertEqual(data.get("term"), term)
+        self.assertEqual(data.get("count"), 1)

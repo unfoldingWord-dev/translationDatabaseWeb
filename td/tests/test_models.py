@@ -375,6 +375,17 @@ class LanguageTestCase(TestCase):
         expected_result = ", ".join([alt_1.name, alt_2.name])
         self.assertEqual(self.lang.tag_tip, expected_result)
 
+    def test_get_gateway_languages(self):
+        other_language = Language.objects.create(code="ol", iso_639_3="tol", name="Test Other Language",
+                                                 gateway_flag=False)
+        result = Language.get_gateway_languages()
+        expected_gateway_language = dict(pk=self.lang.pk, lc=self.lang.lc, ln=self.lang.ln, ang=self.lang.ang,
+                                         lr=self.lang.lr)
+        expected_other_language = dict(pk=other_language.pk, lc=other_language.lc, ln=other_language.ln,
+                                       ang=other_language.ang, lr=other_language.lr)
+        self.assertIn(expected_gateway_language, result)
+        self.assertNotIn(expected_other_language, result)
+
 
 class CountryTestCase(TestCase):
 
