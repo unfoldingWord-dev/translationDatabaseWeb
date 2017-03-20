@@ -321,6 +321,9 @@ class GatewayLanguagesAutocompleteTestCase(TestCase):
                                           gateway_flag=True)
 
     def test_returns_json(self):
+        """
+        Must return JsonResponse with results, count, and term
+        """
         response = gateway_languages_autocomplete(self.request)
         self.assertIsInstance(response, JsonResponse)
         self.assertIn("results", response.content)
@@ -333,6 +336,9 @@ class GatewayLanguagesAutocompleteTestCase(TestCase):
         mock_get_gateway_languages.assert_called_once_with()
 
     def test_search_other_language(self):
+        """
+        Should not return any languages
+        """
         term = "ol"
         expected_results = []
         request = RequestFactory().get("/ac/gateway-langnames/?q=" + term)
@@ -343,6 +349,9 @@ class GatewayLanguagesAutocompleteTestCase(TestCase):
         self.assertEqual(data.get("count"), 0)
 
     def test_search_gateway_language(self):
+        """
+        Should return one gateway language
+        """
         term = "gl"
         expected_results = [dict(pk=self.gl.pk, lc=self.gl.lc, ln=self.gl.ln, lr=self.gl.lr, ang=self.gl.ang)]
         request = RequestFactory().get("/ac/gateway-langnames/?q=" + term)
