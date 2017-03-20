@@ -453,6 +453,10 @@ class Language(CommentableModel):
                                 gw=x.gateway_flag, ld=x.get_direction_display()))
         return data
 
+    @classmethod
+    def get_gateway_languages(cls):
+        return [dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr) for x in cls.objects.filter(gateway_flag=True)]
+
 
 class EAVBase(models.Model):
     attribute = models.CharField(max_length=100)

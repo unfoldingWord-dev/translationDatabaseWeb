@@ -95,7 +95,7 @@ class LanguageForm(EntityTrackingForm):
             widget=forms.TextInput(
                 attrs={
                     "class": "language-selector",
-                    "data-source-url": reverse("names_autocomplete")
+                    "data-source-url": reverse("gateway_languages")
                 }
             ),
             required=False
