@@ -121,8 +121,8 @@ def celerybeat_healthz(request):
     failing_tasks = []
 
     next_sixty_seconds = -60
-    for task in PeriodicTask.objects.filter(enabled=True).order_by("?"):
-        # retrieve the estimated number of seconds until the next time the task should be rans
+    for task in PeriodicTask.objects.filter(enabled=True):
+        # retrieve the estimated number of seconds until the next time the task should be ran
         seconds_until_next_execution = task.schedule.remaining_estimate(task.last_run_at).total_seconds()
         if seconds_until_next_execution > next_sixty_seconds:
             succesful_tasks.append(task.name)
