@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -113,6 +114,9 @@ def lang_assignment_changed_json(request):
 
 
 def celerybeat_healthz(request):
+    if request.GET.get("key") != settings.CELERYBEAT_HEALTHZ_AUTH_KEY:
+        return JsonResponse({"message": "Not authorized."}, status=403)
+
     succesful_tasks = []
     failing_tasks = []
 
