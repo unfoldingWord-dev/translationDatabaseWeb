@@ -5,7 +5,6 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from django.utils import timezone
 
 from djcelery.models import PeriodicTask
 
@@ -130,7 +129,7 @@ def celerybeat_healthz(request):
         else:
             # the task should have been scheduled already
             failing_tasks.append(task.name)
-    
+
     healthy = True
     status_code = 200
     if failing_tasks:
@@ -138,8 +137,8 @@ def celerybeat_healthz(request):
         status_code = 503
 
     data = {
-        "healthy": healthy, 
+        "healthy": healthy,
         "failing": failing_tasks,
-        "succesful": succesful_tasks, 
+        "succesful": succesful_tasks,
     }
     return JsonResponse(data, status=status_code)
