@@ -256,6 +256,7 @@ CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']   # for security reasons, don't allow pickle
 CELERY_RESULT_BACKEND = "redis://"
+CELERYBEAT_HEALTHZ_AUTH_KEY = os.environ.get("CELERYBEAT_HEALTHZ_AUTH_KEY", "celerybeat-healthz")
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
