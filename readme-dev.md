@@ -7,7 +7,7 @@ Also, the instructions assume you are using PyCharm or IntelliJ IDEA.
 
 ### Ubuntu prerequisites
 
-    sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+    sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk libpq-dev
 
 
 ### Install python versions
@@ -144,4 +144,3 @@ wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key a
 sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 ```
-  
