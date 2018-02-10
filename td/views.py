@@ -51,12 +51,21 @@ def names_json_export(request):
     # NOTE: Temp solution to langnames.json caching problem
     # NOTE: This is the caching way
     # data = get_langnames()
-    # NOTE: This is the direct, snychronous way
+    # NOTE: This is the direct, synchronous way
     # data = Language.names_data()
     # NOTE: This is the DB/management command way
     langnames = JSONData.objects.get(name="langnames")
     # Set safe to False to allow list instead of dict to be returned
     return JsonResponse(langnames.data, safe=False)
+
+
+def names_json_export_short(request):
+
+    # NOTE: This is the direct, synchronous way
+    data = Language.names_data(True)
+
+    # Set safe to False to allow list instead of dict to be returned
+    return JsonResponse(data, safe=False)
 
 
 @csrf_exempt
@@ -87,7 +96,9 @@ def get_langnames(short=False):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower()
-    data = get_langnames(short=True)
+    # Using `Language.names_data(True)` because `get_langnames(short=True)` produces inconsistent results
+    # data = get_langnames(short=True)
+    data = Language.names_data(True)
     d = []
     if len(term) <= 3:
         term = term.encode("utf-8")
