@@ -23,6 +23,7 @@ from .views import (
     codes_text_export,
     names_text_export,
     names_json_export,
+    names_json_export_short,
     export_svg,
     languages_autocomplete,
     gateway_languages_autocomplete,
@@ -37,6 +38,7 @@ urlpatterns = [
     url(r"^exports/codes-d43.txt$", codes_text_export, name="codes_text_export"),
     url(r"^exports/langnames.txt$", names_text_export, name="names_text_export"),
     url(r"^exports/langnames.json$", names_json_export, name="names_json_export"),
+    url(r"^exports/langnames_short.json$", names_json_export_short, name="names_json_export_short"),
     url(r"^exports/gatewaylanguages-map/$", export_svg, name="gateway_languages_map_export"),
 
     url(r"^uw/", include("td.resources.urls")),

@@ -438,7 +438,7 @@ class Language(CommentableModel):
     def names_data(cls, short=False):
         languages = cls.objects.all().order_by("code")
         if short:
-            data = [dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr) for x in languages]
+            data = [dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, lr=x.lr, hc=x.cc) for x in languages]
         else:
             # Filter out languages that have pending or rejected temporary language
             # NOTE: Can this be simplified or turned into a list comprehension?
@@ -450,7 +450,7 @@ class Language(CommentableModel):
                     x = lang
                 if x:
                     data.append(dict(pk=x.pk, lc=x.lc, ln=x.ln, ang=x.ang, alt=x.alt_name_all, cc=x.cc_all, lr=x.lr,
-                                gw=x.gateway_flag, ld=x.get_direction_display()))
+                                gw=x.gateway_flag, ld=x.get_direction_display(), hc=x.cc))
         return data
 
     @classmethod
