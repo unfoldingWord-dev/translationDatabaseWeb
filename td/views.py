@@ -61,11 +61,11 @@ def names_json_export(request):
 
 def names_json_export_short(request):
 
-    # NOTE: This is the direct, synchronous way
-    data = Language.names_data(True)
+    # NOTE: This is the DB/management command way
+    langnames = JSONData.objects.get(name="langnames_short")
 
     # Set safe to False to allow list instead of dict to be returned
-    return JsonResponse(data, safe=False)
+    return JsonResponse(langnames.data, safe=False)
 
 
 @csrf_exempt
@@ -96,9 +96,7 @@ def get_langnames(short=False):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower()
-    # Using `Language.names_data(True)` because `get_langnames(short=True)` produces inconsistent results
-    # data = get_langnames(short=True)
-    data = Language.names_data(True)
+    data = get_langnames(short=True)
     d = []
     if len(term) <= 3:
         term = term.encode("utf-8")

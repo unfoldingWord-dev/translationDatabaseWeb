@@ -64,3 +64,17 @@ After installing requirements (via pip) within your environment or virtualenv:
 * `python manage.py reload_imports`
 
 At this point, the basic country and language datasets will be populated but without many optional fields or extra data.
+
+### Updating the `/exports/langnames.json` and `/exports/langnames_short.json` endpoints
+
+When languages are added or updated, run this command to update the data locally:
+
+```bash
+python manage.py rebuild_langnames
+```
+
+Switch to the master branch and run this command to update the data on the server:
+
+```bash
+ec run web python manage.py rebuild_langnames
+```
