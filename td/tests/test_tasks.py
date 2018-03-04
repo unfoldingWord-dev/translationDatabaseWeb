@@ -97,6 +97,7 @@ class UpdateLangnamesDataTestCase(TestCase):
         self.assertIn("lr", json)
         self.assertIn("gw", json)
         self.assertIn("ld", json)
+        self.assertIn("hc", json)
 
 
 class PostToExtAppTestCase(TestCase):
