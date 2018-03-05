@@ -88,13 +88,13 @@ class NamesJsonExportTestCase(TestCase):
 
 class NamesJsonExportShortTestCase(TestCase):
 
-    @patch("td.models.Language.names_data")
-    def test_return_json(self, mock_lang_names_data):
-        mock_lang_names_data.return_value = [dict(pk=1, lc="en", ln="English", ang="English", lr="Europe", hc="GB")]
+    @patch("td.models.JSONData.objects.get")
+    def test_return_json(self, mock_jsondata_get):
+        mock_jsondata_get.return_value.data = [dict(pk=1, lc="en", ln="English", ang="English", lr="Europe", hc="GB")]
         response = names_json_export_short(None)
 
-        # Must call Language.names_data(True)
-        mock_lang_names_data.assert_called_once_with(True)
+        # Must call JSONData.objects.get(name="langnames_short")
+        mock_jsondata_get.assert_called_once_with(name="langnames_short")
 
         # Must return JsonResponse
         self.assertIsInstance(response, JsonResponse)

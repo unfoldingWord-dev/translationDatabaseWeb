@@ -77,6 +77,10 @@ def update_langnames_data():
     langnames.data = Language.names_data()
     langnames.save()
 
+    shorter, created = JSONData.objects.get_or_create(name="langnames_short")
+    shorter.data = Language.names_data(True)
+    shorter.save()
+
 
 @task()
 def reset_langnames_cache(short=False):
