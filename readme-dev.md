@@ -91,7 +91,8 @@ Now, restart the service: `sudo service postgresql restart`.
 
 Run this script to initialize the database with a dump from the production server:
 
-    ec run db --instance=primary -- pg_dump --no-owner --no-acl | ./manage.py dbshell
+    curl $(ec postgres dump) > db.dump
+    pg_restore --no-owner --no-acl --verbose -d td db.dump
 
 If you get timeout errors running the above command, this is an alternative that has worked:
 
@@ -118,6 +119,14 @@ If you get timeout errors running the above command, this is an alternative that
   If there are command line options for the script, do it like this:
   ```ec run web --cli-option -- python manage.py --command-option add_publishing_group```
   * PostgreSQL repository: `deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main`
+
+
+### Deploying
+
+1. Switch to the develop branch (for td-demo) or the master branch (for td).
+2. Make sure changes have been pushed to Github.
+3. Run this command:
+```ec deploy```
 
 
 ### Upgrade PostgreSQL 9.3 to 9.5 on Ubuntu 14.04
