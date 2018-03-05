@@ -7,7 +7,7 @@ Also, the instructions assume you are using PyCharm or IntelliJ IDEA.
 
 ### Ubuntu prerequisites
 
-    sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+    sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk libpq-dev
 
 
 ### Install python versions
@@ -91,7 +91,8 @@ Now, restart the service: `sudo service postgresql restart`.
 
 Run this script to initialize the database with a dump from the production server:
 
-    ec run db --instance=primary -- pg_dump --no-owner --no-acl | ./manage.py dbshell
+    curl $(ec postgres dump) > db.dump
+    pg_restore --no-owner --no-acl --verbose -d td db.dump
 
 If you get timeout errors running the above command, this is an alternative that has worked:
 
@@ -120,6 +121,14 @@ If you get timeout errors running the above command, this is an alternative that
   * PostgreSQL repository: `deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main`
 
 
+### Deploying
+
+1. Switch to the develop branch (for td-demo) or the master branch (for td).
+2. Make sure changes have been pushed to Github.
+3. Run this command:
+```ec deploy```
+
+
 ### Upgrade PostgreSQL 9.3 to 9.5 on Ubuntu 14.04
 
 This was required because the `publishing_publishrequest` contains a `jsonb` field, a new type that was introduced in PostgreSQL 9.4.
@@ -144,4 +153,3 @@ wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key a
 sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 ```
-  

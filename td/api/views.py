@@ -1,9 +1,12 @@
 import json
 import logging
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+
+from djcelery.models import PeriodicTask
 
 from td.models import TempLanguage, Country
 from td.resources.models import Questionnaire
@@ -107,3 +110,35 @@ def lang_assignment_json(request):
 
 def lang_assignment_changed_json(request):
     return JsonResponse(TempLanguage.lang_assigned_changed_map(), safe=False)
+
+
+def celerybeat_healthz(request):
+    if request.GET.get("key") != settings.CELERYBEAT_HEALTHZ_AUTH_KEY:
+        return JsonResponse({"message": "Not authorized."}, status=403)
+
+    succesful_tasks = []
+    failing_tasks = []
+
+    past_sixty_seconds = -60
+    for task in PeriodicTask.objects.filter(enabled=True):
+        # retrieve the estimated number of seconds until the next time the task should be ran
+        seconds_until_next_execution = task.schedule.remaining_estimate(task.last_run_at).total_seconds()
+
+        if seconds_until_next_execution > past_sixty_seconds:
+            succesful_tasks.append(task.name)
+        else:
+            # the task should have been scheduled already
+            failing_tasks.append(task.name)
+
+    healthy = True
+    status_code = 200
+    if failing_tasks:
+        healthy = False
+        status_code = 503
+
+    data = {
+        "healthy": healthy,
+        "failing": failing_tasks,
+        "succesful": succesful_tasks,
+    }
+    return JsonResponse(data, status=status_code)

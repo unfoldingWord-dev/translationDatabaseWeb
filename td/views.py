@@ -51,10 +51,19 @@ def names_json_export(request):
     # NOTE: Temp solution to langnames.json caching problem
     # NOTE: This is the caching way
     # data = get_langnames()
-    # NOTE: This is the direct, snychronous way
+    # NOTE: This is the direct, synchronous way
     # data = Language.names_data()
     # NOTE: This is the DB/management command way
     langnames = JSONData.objects.get(name="langnames")
+    # Set safe to False to allow list instead of dict to be returned
+    return JsonResponse(langnames.data, safe=False)
+
+
+def names_json_export_short(request):
+
+    # NOTE: This is the DB/management command way
+    langnames = JSONData.objects.get(name="langnames_short")
+
     # Set safe to False to allow list instead of dict to be returned
     return JsonResponse(langnames.data, safe=False)
 

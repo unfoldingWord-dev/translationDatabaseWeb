@@ -20,7 +20,7 @@ from ..models import TempLanguage, Language
 from ..resources.models import Questionnaire
 from ..views import TempLanguageListView, TempLanguageDetailView, TempLanguageUpdateView, AjaxTemporaryCode,\
     TempLanguageAdminView, TempLanguageWizardView, LanguageDetailView, codes_text_export, names_text_export,\
-    names_json_export, gateway_languages_autocomplete
+    names_json_export, names_json_export_short, gateway_languages_autocomplete
 from ..forms import TempLanguageForm
 from ..tests.models import NoSignalTestCase
 
@@ -81,6 +81,20 @@ class NamesJsonExportTestCase(TestCase):
 
         # Must call JSONData.objects.get(name="langnames")
         mock_jsondata_get.assert_called_once_with(name="langnames")
+
+        # Must return JsonResponse
+        self.assertIsInstance(response, JsonResponse)
+
+
+class NamesJsonExportShortTestCase(TestCase):
+
+    @patch("td.models.JSONData.objects.get")
+    def test_return_json(self, mock_jsondata_get):
+        mock_jsondata_get.return_value.data = [dict(pk=1, lc="en", ln="English", ang="English", lr="Europe", hc="GB")]
+        response = names_json_export_short(None)
+
+        # Must call JSONData.objects.get(name="langnames_short")
+        mock_jsondata_get.assert_called_once_with(name="langnames_short")
 
         # Must return JsonResponse
         self.assertIsInstance(response, JsonResponse)
