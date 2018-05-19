@@ -94,6 +94,8 @@ Run this script to initialize the database with a dump from the production serve
     curl $(ec postgres dump) > db.dump
     pg_restore --no-owner --no-acl --verbose -d td db.dump
 
+** 03 MAR 2018: The following may be OBSOLETE **
+
 If you get timeout errors running the above command, this is an alternative that has worked:
 
     ec run db --instance=primary -- pg_dump --no-owner --no-acl -T imports_* > dump.sql
