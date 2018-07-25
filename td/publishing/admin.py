@@ -64,7 +64,6 @@ class SourceTextFilter(admin.SimpleListFilter):
         return texts
 
     def queryset(self, request, queryset):
-        print self.value()
         if self.value() == "NoneSelected":
             return queryset.filter(source_text__isnull=True)
         if self.value():

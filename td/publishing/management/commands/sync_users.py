@@ -28,4 +28,4 @@ class Command(BaseCommand):
                     }
                 )
                 if created:
-                    print "Created {}".format(obj.name)
+                    print("Created {}".format(obj.name))

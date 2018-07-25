@@ -735,7 +735,7 @@ class TempLanguageWizardView(LoginRequiredMixin, SessionWizardView):
                 except Country.DoesNotExist:
                     # NOTE: what's the best way to handle non-existing country? maybe if it's a selectbox, we don't need
                     #    to check this
-                    print "- ERR! Country %s doesn't exist."
+                    print("- ERR! Country %s doesn't exist.")
                     pass
 
         obj.save()

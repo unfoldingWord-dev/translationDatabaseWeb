@@ -128,9 +128,6 @@ class ContactDetail(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        print self.object
-        print request.user
-        print request.POST
         context = self.get_context_data(object=self.object)
         if "recent_com" in request.POST:
             form_com = RecentComForm(

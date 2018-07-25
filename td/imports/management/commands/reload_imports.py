@@ -13,7 +13,7 @@ class Command(BaseCommand):
         session = requests.Session()
         for obj in models.__dict__.values():
             if hasattr(obj, "reload") and callable(obj.reload):
-                print "Loading {} records".format(obj._meta.verbose_name)
+                print("Loading {} records".format(obj._meta.verbose_name))
                 obj.reload(session)
         update_countries_from_imports()
         integrate_imports()
