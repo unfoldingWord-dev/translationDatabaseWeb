@@ -99,7 +99,7 @@ def languages_autocomplete(request):
     data = get_langnames(short=True)
     d = []
     if len(term) <= 3:
-        term = term.encode("utf-8")
+        term = term
         # search: lc
         # first do a *starts with* style search of language code (lc)
         d.extend([
@@ -109,7 +109,7 @@ def languages_autocomplete(request):
         ])
     if len(term) >= 3:
         # search: lc, ln, lr
-        term = term.encode("utf-8")
+        term = term
         d.extend([
             x
             for x in data
@@ -126,7 +126,7 @@ def gateway_languages_autocomplete(request):
     term = request.GET.get("q", "")
     data = Language.get_gateway_languages()
     d = []
-    term = term.lower().encode("utf-8")
+    term = term.lower()
     if len(term) <= 3:
         # search: lc
         # first do a *starts with* style search of language code (lc)
