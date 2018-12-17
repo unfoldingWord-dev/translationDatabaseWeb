@@ -12,7 +12,7 @@ TEMPLATE_DEBUG = DEBUG
 SITE_ID = int(os.environ.get("SITE_ID", "2"))
 
 ALLOWED_HOSTS = [
-    os.environ.get("GONDOR_INSTANCE_DOMAIN"),
+    "translation-database.herokuapp.com",
     "td.unfoldingword.org",
     "td-demo.unfoldingword.org"
 ]
@@ -36,7 +36,7 @@ CACHES = {
 BROKER_URL = os.environ["REDIS_URL"]  # celery config
 CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]  # celery results config
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 2525)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
