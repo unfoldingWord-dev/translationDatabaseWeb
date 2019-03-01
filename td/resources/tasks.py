@@ -80,7 +80,7 @@ def update_map_gateways():
         }
         for country in Country.objects.all()
     }
-    cache.set("map_gateways", country_gateways)
+    cache.set("map_gateways", country_gateways, None)
     log(user=None, action="UPDATE_MAP_GATEWAYS")
 
 
@@ -94,9 +94,7 @@ def get_map_gateways():
 
 @task()
 def check_map_gateways():
-    if cache.get("map_gateways_refresh", True):
-        cache.set("map_gateways_refresh", False)
-        update_map_gateways()
+    update_map_gateways()
 
 
 def notify_templanguage_created(templanguage, language):
