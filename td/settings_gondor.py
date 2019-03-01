@@ -17,8 +17,8 @@ ALLOWED_HOSTS = [
     "td-demo.unfoldingword.org"
 ]
 
-if "REDISCLOUD_URL" in os.environ:
-    REDIS_URL = os.environ["REDISCLOUD_URL"]
+if "REDIS_URL" in os.environ:
+    REDIS_URL = os.environ["REDIS_URL"]
     parsed_redis_url = urlparse.urlparse(REDIS_URL)
     CACHES = {
         "default": {
