@@ -12,7 +12,7 @@ TEMPLATE_DEBUG = DEBUG
 SITE_ID = int(os.environ.get("SITE_ID", "2"))
 
 ALLOWED_HOSTS = [
-    "translation-database.herokuapp.com",
+    ".herokuapp.com",
     "td.unfoldingword.org",
     "td-demo.unfoldingword.org"
 ]
