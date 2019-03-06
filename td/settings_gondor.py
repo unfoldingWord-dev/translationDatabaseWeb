@@ -12,31 +12,29 @@ TEMPLATE_DEBUG = DEBUG
 SITE_ID = int(os.environ.get("SITE_ID", "2"))
 
 ALLOWED_HOSTS = [
-    os.environ.get("GONDOR_INSTANCE_DOMAIN"),
+    ".herokuapp.com",
     "td.unfoldingword.org",
     "td-demo.unfoldingword.org"
 ]
 
-DATABASES = {
-    "default": dj_database_url.config(),
-}
-
-urlparse.uses_netloc.append("redis")
-url = urlparse.urlparse(os.environ["REDIS_URL"])
-port = 6379 if url.port is None else url.port
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "{}:{}".format(url.hostname, port),
-        "OPTIONS": {
-            "DB": 0
+if "REDIS_URL" in os.environ:
+    REDIS_URL = os.environ["REDIS_URL"]
+    parsed_redis_url = urlparse.urlparse(REDIS_URL)
+    CACHES = {
+        "default": {
+            "BACKEND": "redis_cache.RedisCache",
+            "LOCATION": "%s:%s" % (parsed_redis_url.hostname, parsed_redis_url.port),
+            "OPTIONS": {
+                "DB": 0
+            },
         },
-    },
-}
-BROKER_URL = os.environ["REDIS_URL"]  # celery config
-CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]  # celery results config
+    }
+    if parsed_redis_url.password is not None:
+        CACHES["default"]["OPTIONS"]["PASSWORD"] = parsed_redis_url.password
+    BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 2525)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")

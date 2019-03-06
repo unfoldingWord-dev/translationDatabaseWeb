@@ -82,7 +82,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 MIDDLEWARE_CLASSES = [
     "reversion.middleware.RevisionMiddleware",
-    "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -141,7 +140,6 @@ INSTALLED_APPS = [
     "pinax.eventlog",
     "pinax.invitations",
     "metron",
-    "opbeat.contrib.django",
     "djcelery",
     "reversion",
     "absoluteuri",
@@ -172,12 +170,6 @@ AWS_S3_SECURE_URLS = False
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-
-OPBEAT = {
-    "ORGANIZATION_ID": "8a3b7a200665489f999b242d38fac348",
-    "APP_ID": "0a390f34de",
-    "SECRET_TOKEN": "33bfd9626aefc97b73a376310d184b6da1715ed6"
-}
 
 DEFAULT_FROM_EMAIL = "admin@unfoldingword.org"
 
@@ -275,3 +267,16 @@ EXT_APP_PUSH = [
         "key": os.environ.get("PORT_API_KEY"),
     }
 ]
+
+
+import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    integrations=[
+        CeleryIntegration(),
+        DjangoIntegration()
+    ],
+    environment=os.environ.get("SENTRY_ENVIRONMENT", "dev")
+)
