@@ -564,10 +564,10 @@ class LanguageDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
-        jp_resp = requests.get('http://joshuaproject.net/api/v2/languages', {
+        jp_resp = requests.get('https://joshuaproject.net/api/v2/languages', {
             'api_key': settings.JP_API_KEY,
             'ROL3': self.object.iso_639_3,
-        })
+        }, timeout=settings.JOSHUA_PROJECT_REQUEST_TIMEOUT)
         try:
             jp_status_code = jp_resp.json()['status']['status_code']
         except ValueError:
