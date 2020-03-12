@@ -10,7 +10,7 @@ django-appconf==1.0.3
 django-bootstrap-form==3.2
 django-celery==3.1.17
 django-contrib-comments==1.7.1
-django-cors-headers=3.0.2
+django-cors-headers==3.0.2
 django-model-utils==2.4
 django-multiupload==0.5
 django-redis-cache==1.6.5
