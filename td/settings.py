@@ -271,10 +271,11 @@ EXT_APP_PUSH = [
 ]
 
 # Added RJH Mar2020 for django-cors-headers package
-CORS_ORIGIN_ALLOW_ALL = True
+# NOTE: We are using django-cors-headers 2.4.1 to be compatible with Django 1.9
+#           and it doesn't specify the URI scheme (https://) in the whitelist.
 CORS_ORIGIN_WHITELIST = [
-    "https://door43.org",
-    "https://dev.door43.org",
+    "door43.org",
+    "dev.door43.org",
 ]
 
 
