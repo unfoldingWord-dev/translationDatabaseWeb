@@ -81,6 +81,7 @@ STATICFILES_FINDERS = [
 SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 MIDDLEWARE_CLASSES = [
+    "corsheaders.middleware.CorsMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -149,6 +150,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_comments",
     "taggit",
+    "corsheaders",
 
     # project
     "td",
@@ -266,6 +268,14 @@ EXT_APP_PUSH = [
         "url": os.environ.get("PORT_URL", ""),
         "key": os.environ.get("PORT_API_KEY"),
     }
+]
+
+# Added RJH Mar2020 for django-cors-headers package
+# NOTE: We are using django-cors-headers 2.4.1 to be compatible with Django 1.9
+#           and it doesn't specify the URI scheme (https://) in the whitelist.
+CORS_ORIGIN_WHITELIST = [
+    "door43.org",
+    "dev.door43.org",
 ]
 
 
