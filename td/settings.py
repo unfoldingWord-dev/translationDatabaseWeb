@@ -81,6 +81,7 @@ STATICFILES_FINDERS = [
 SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 MIDDLEWARE_CLASSES = [
+    "corsheaders.middleware.CorsMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -149,6 +150,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_comments",
     "taggit",
+    "corsheaders",
 
     # project
     "td",
