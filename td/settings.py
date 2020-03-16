@@ -271,6 +271,7 @@ EXT_APP_PUSH = [
 ]
 
 # Added RJH Mar2020 for django-cors-headers package
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = [
     "https://door43.org",
     "https://dev.door43.org",
