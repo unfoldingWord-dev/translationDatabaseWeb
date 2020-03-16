@@ -270,6 +270,12 @@ EXT_APP_PUSH = [
     }
 ]
 
+# Added RJH Mar2020 for django-cors-headers package
+CORS_ORIGIN_WHITELIST = [
+    "https://door43.org",
+    "https://dev.door43.org",
+]
+
 
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
