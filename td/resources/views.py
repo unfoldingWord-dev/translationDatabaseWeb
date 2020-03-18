@@ -122,7 +122,6 @@ class ResourceEditView(LoginRequiredMixin, UpdateView):
     action_kind = "EDIT"
 
     def get_success_url(self):
-        print self.object.language.pk
         return reverse("language_detail", args=[self.object.language.pk])
 
     def get_context_data(self, **kwargs):

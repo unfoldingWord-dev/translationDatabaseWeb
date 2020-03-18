@@ -9,7 +9,7 @@ class NoSignalTestCase(TestCase):
         Evaluate if the receiver is in the provided lookup_keys; instantly terminates when found.
         """
         for key in lookup_keys:
-            #           print '%s - %s - %s' % (key[0], receiver[0][1], key[1])
+            #           print('%s - %s - %s' % (key[0], receiver[0][1], key[1]))
             if (receiver[0][0] == key[0] or key[0] is None) and receiver[0][1] == key[1]:
                 return True
         return False

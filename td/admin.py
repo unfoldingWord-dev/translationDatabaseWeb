@@ -80,8 +80,8 @@ class LanguageAltNameResource(resources.ModelResource):
         result = super(LanguageAltNameResource, self).skip_row(instance, original)
         try:
             LanguageAltName.objects.get(code=instance.code, name=instance.name)
-            print "".join(["*LanguageAltName with code ", instance.code,
-                           " and ", instance.name, " already exist. Skipped."])
+            print("".join(["*LanguageAltName with code ", instance.code,
+                           " and ", instance.name, " already exist. Skipped."]))
             return True
         except LanguageAltName.DoesNotExist:
             return result
@@ -97,7 +97,7 @@ class LanguageAltNameResource(resources.ModelResource):
                     language.source = self.source
                     language.save()
             except Language.DoesNotExist:
-                print "Language code: " + instance.code + " doesn't exist."
+                print("Language code: " + instance.code + " doesn't exist.")
 
     class Meta:
         model = LanguageAltName

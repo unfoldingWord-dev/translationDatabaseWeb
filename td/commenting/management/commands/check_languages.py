@@ -15,12 +15,12 @@ class Command(BaseCommand):
 
             try:
                 language_codes.index(cc)
-                print cc
+                print(cc)
                 count += 1
             except ValueError:
                 pass
 
-        print "%d duplicate(s) found\n" % count
+        print("%d duplicate(s) found\n" % count)
 
         if len(language_codes) != len(set(language_codes)):
             print "internal duplicate(s) found"
@@ -29,11 +29,11 @@ class Command(BaseCommand):
                 mapping[lc] = mapping.get(lc, 0) + 1
             for lc in mapping:
                 if mapping[lc] > 1:
-                    print "%s: %dx" % (lc, mapping[lc])
-            print "\n"
+                    print("%s: %dx" % (lc, mapping[lc]))
+            print("\n")
 
         empty_iso_languages = [l for l in Language.objects.all() if (len(l.code) <= 2 and l.iso_639_3 == " ")]
         # for l in empty_iso_languages:
         #     print l
-        print empty_iso_languages
-        print "\n"
+        print(empty_iso_languages)
+        print("\n")
