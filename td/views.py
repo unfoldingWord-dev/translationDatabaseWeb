@@ -19,6 +19,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView, ListView, DetailView, UpdateView, CreateView
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 
 from .imports.models import (
@@ -47,6 +48,7 @@ def names_text_export(request):
     return HttpResponse(Language.names_text(), content_type="text/plain")
 
 
+@cache_page(settings.LANGNAMES_HTTP_CACHE_DURATION)
 def names_json_export(request):
     # NOTE: Temp solution to langnames.json caching problem
     # NOTE: This is the caching way
@@ -59,6 +61,7 @@ def names_json_export(request):
     return JsonResponse(langnames.data, safe=False)
 
 
+@cache_page(settings.LANGNAMES_HTTP_CACHE_DURATION)
 def names_json_export_short(request):
 
     # NOTE: This is the DB/management command way
@@ -564,10 +567,10 @@ class LanguageDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LanguageDetailView, self).get_context_data(**kwargs)
-        jp_resp = requests.get('http://joshuaproject.net/api/v2/languages', {
+        jp_resp = requests.get('https://joshuaproject.net/api/v2/languages', {
             'api_key': settings.JP_API_KEY,
             'ROL3': self.object.iso_639_3,
-        })
+        }, timeout=settings.JOSHUA_PROJECT_REQUEST_TIMEOUT)
         try:
             jp_status_code = jp_resp.json()['status']['status_code']
         except ValueError:

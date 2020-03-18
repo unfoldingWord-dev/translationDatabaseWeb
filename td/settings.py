@@ -290,3 +290,6 @@ sentry_sdk.init(
     ],
     environment=os.environ.get("SENTRY_ENVIRONMENT", "dev")
 )
+
+JOSHUA_PROJECT_REQUEST_TIMEOUT = int(os.environ.get("JOSHUA_PROJECT_REQUEST_TIMEOUT", "5"))
+LANGNAMES_HTTP_CACHE_DURATION = int(os.environ.get("LANGNAMES_HTTP_CACHE_DURATION", "60"))
