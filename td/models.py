@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -338,7 +340,7 @@ class Language(CommentableModel):
 
     @property
     def cc(self):
-        return self.country.code.encode("utf-8") if self.country else ""
+        return self.country.code if self.country else ""
 
     @property
     def cc_all(self):
@@ -346,11 +348,11 @@ class Language(CommentableModel):
                for pk in self.attributes.filter(attribute="country_id")
                                         .values_list("value", flat=True)]
         countries = Country.objects.filter(pk__in=pks)
-        return [c.code.encode("utf-8") for c in countries]
+        return [c.code for c in countries]
 
     @property
     def lr(self):
-        return self.country.region.name.encode("utf-8") if self.country and self.country.region else ""
+        return self.country.region.name if self.country and self.country.region else ""
 
     @property
     def lc(self):
@@ -358,7 +360,7 @@ class Language(CommentableModel):
 
     @property
     def ln(self):
-        return self.name.encode("utf-8")
+        return self.name
 
     @property
     def ang(self):
@@ -394,7 +396,7 @@ class Language(CommentableModel):
                for pk in self.attributes.filter(attribute="alt_name_id")
                                         .values_list("value", flat=True)]
         alt_names = LanguageAltName.objects.filter(pk__in=pks)
-        return [n.name.encode("utf-8") for n in alt_names]
+        return [n.name for n in alt_names]
 
     @property
     def tag_display(self):
@@ -402,7 +404,7 @@ class Language(CommentableModel):
 
     @property
     def tag_tip(self):
-        return ", ".join(self.alt_name_all).decode("utf-8")
+        return ", ".join(self.alt_name_all)
 
     @property
     def tag_slug(self):
@@ -430,7 +432,7 @@ class Language(CommentableModel):
     @classmethod
     def names_text(cls):
         return "\n".join([
-            "{}\t{}".format(x.code.encode("utf-8"), x.name.encode("utf-8"))
+            "{}\t{}".format(x.code, x.name)
             for x in cls.objects.all().order_by("code")
         ])
 

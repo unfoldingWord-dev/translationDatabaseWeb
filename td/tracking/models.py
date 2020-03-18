@@ -41,7 +41,7 @@ class Charter(CommentableModel):
 
     def __unicode__(self):
         # Returning the language.name cause encoding error in admin
-        return self.language.code.encode("utf-8")
+        return self.language.code
 
     __unicode__.allow_tags = True
     __unicode__.admin_order_field = "language"
