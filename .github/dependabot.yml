@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "08:00"
+    timezone: America/Cancun
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: docutils
+    versions:
+    - "0.16"
+    - "0.17"
+  - dependency-name: coverage
+    versions:
+    - "5.4"
+  - dependency-name: requests-mock
+    versions:
+    - 1.8.0
