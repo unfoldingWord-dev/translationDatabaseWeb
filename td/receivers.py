@@ -1,4 +1,7 @@
+import re
+
 from django.core.cache import cache
+from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from account.signals import password_changed
 from account.signals import user_sign_up_attempt, user_signed_up
 from account.signals import user_login_attempt, user_logged_in
+from corsheaders.signals import check_request_enabled
 
 from pinax.eventlog.models import log
 
@@ -163,3 +167,16 @@ def handle_user_signed_up(sender, **kwargs):
         action="USER_SIGNED_UP",
         extra={}
     )
+
+@receiver(check_request_enabled)
+def cors_allow_all(sender, request, **kwargs):
+    """
+    Sets Access-Control-Allow-Origin: * for paths defined in the
+    `CORS_ALLOW_ALL_ORIGINS_PATH_REGEX_WHITELIST` setting.
+
+    https://github.com/adamchainz/django-cors-headers/tree/f29997e958becf4f1f7b730475e68566b08d62de#signals
+    """
+    for exemption in settings.CORS_ALLOW_ALL_ORIGINS_PATH_REGEX_WHITELIST:
+        if re.match(exemption, request.path):
+            return True
+    return False
