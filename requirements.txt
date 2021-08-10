@@ -43,6 +43,6 @@ boto==2.38.0
 django-formtools==1.0.0
 django-extra-views==0.7.1
 django-import-export==0.4.1
-djangorestframework==3.3.2
+djangorestframework==3.11.2
 html2text==2016.1.8
 sentry-sdk==0.7.4
