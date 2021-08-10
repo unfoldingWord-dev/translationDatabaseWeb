@@ -278,6 +278,9 @@ CORS_ORIGIN_WHITELIST = [
     "dev.door43.org",
 ]
 
+CORS_ALLOW_ALL_ORIGINS_PATH_REGEX_WHITELIST = [
+    r"^/exports/*",
+]
 
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
