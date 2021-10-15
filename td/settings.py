@@ -81,6 +81,7 @@ STATICFILES_FINDERS = [
 SECRET_KEY = os.environ.get("SECRET_KEY", "notasecret")
 
 MIDDLEWARE_CLASSES = [
+    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -296,3 +297,9 @@ sentry_sdk.init(
 
 JOSHUA_PROJECT_REQUEST_TIMEOUT = int(os.environ.get("JOSHUA_PROJECT_REQUEST_TIMEOUT", "5"))
 LANGNAMES_HTTP_CACHE_DURATION = int(os.environ.get("LANGNAMES_HTTP_CACHE_DURATION", "60"))
+
+
+# https://docs.djangoproject.com/en/1.8/topics/security/#ssl-https
+SECURE_SSL_REDIRECT = bool(int(os.environ.get("SECURE_SSL_REDIRECT", 0)))
+if SECURE_SSL_REDIRECT:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
