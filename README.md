@@ -78,3 +78,33 @@ Switch to the master branch and run this command to update the data on the serve
 ```bash
 ec run web python manage.py rebuild_langnames
 ```
+## Docker Deployments
+
+translationDatabase was previously built using the [Heroku-18 stack](https://devcenter.heroku.com/articles/heroku-18-stack) and deployed on Heroku dynos.
+
+It is now being deployed using Heroku's Docker container support.
+
+This was configured via:
+
+```
+heroku stack:set container -a ${HEROKU_APP_NAME:-translation-database-demo}
+```
+(and repeated using `HEROKU_APP_NAME=translation-database`).
+
+### Deploying via heroku.yml
+This application can be deployed to Heroku via Git.
+
+Heroku's documentation on Git / GitHub deployments can be found here:
+- https://devcenter.heroku.com/articles/git
+- https://devcenter.heroku.com/articles/github-integration
+
+To deploy the `master` branch to the `translation-database-demo` site:
+
+```
+git checkout master
+heroku git:remote -a translation-database-demo
+git push heroku master:main
+```
+
+
+For additional documentation, see [Building Docker Images with heroku.yml](https://devcenter.heroku.com/articles/build-docker-images-heroku-yml)
