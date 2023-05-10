@@ -6,5 +6,6 @@ build:
 run:
   web: gunicorn --log-file - td.wsgi
   worker:
-    command: celery worker --app=td --autoscale=1,${CELERY_WORKER_COUNT:-2} --pool=prefork --no-color --loglevel=info --beat --maxtasksperchild=10
+    command:
+      - celery worker --app=td --autoscale=1,${CELERY_WORKER_COUNT:-2} --pool=prefork --no-color --loglevel=info --beat --maxtasksperchild=10
     image: web
