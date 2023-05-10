@@ -1,4 +1,10 @@
 build:
   docker:
     web: Dockerfile
-    worker: Dockerfile
+# see https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#run-defining-the-processes-to-run
+# these command override the commands called via devops/dyno.sh
+run:
+  web: gunicorn --log-file - td.wsgi
+  worker:
+    command: celery worker --app=td --autoscale=1,${CELERY_WORKER_COUNT:-2} --pool=prefork --no-color --loglevel=info --beat --maxtasksperchild=10
+    image: web
