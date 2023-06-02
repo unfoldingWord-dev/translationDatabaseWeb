@@ -283,6 +283,8 @@ CORS_ALLOW_ALL_ORIGINS_PATH_REGEX_WHITELIST = [
     r"^/exports/*",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
