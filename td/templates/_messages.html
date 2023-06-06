@@ -1,0 +1,12 @@
+{% load pinax_theme_bootstrap_tags %}
+{% for message in messages %}
+    <div class="alert fade in {% get_message_tags message %}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+{% endfor %}
+<div class="alert fade in alert-danger">
+    <p style="margin-bottom: 2.0rem;">Dear users,</p>
+    <p style="margin-bottom: 2.0rem;">We regret to inform you that translationDatabase will be decommissioned soon. After careful consideration, we have decided to discontinue this website and focus our efforts on other projects.</p>
+    <p>Effective from August 31st, the main website will no longer be available, and you will be forwarded to <a href='http://openlanguages.io/'>openlanguages.io</a> instead. This website is currently under construction. The basic language name and code information found at <a href='http://td.unfoldingword.org/exports/langnames.json'>td.unfoldingword.org/exports/langnames.json</a> will remain at that location for compatibility. You may continue to point applications at that endpoint for basic language information.</p>
+</div>
